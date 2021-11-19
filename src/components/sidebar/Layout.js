@@ -20,6 +20,8 @@ function Layout() {
     setToggled(value);
   };
 
+
+
   return (
     <div className={`app ${rtl ? 'rtl' : ''} ${toggled ? 'toggled' : ''}`}>
       {
