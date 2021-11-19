@@ -2,7 +2,10 @@ import { GitAction } from "../action/gitAction";
 
 const INITIAL_STATE = {
   loading: false,
-  currentUser: [],
+  logonUser: [],
+  userProfile: [],
+  registrationReturn: [],
+  sidebars: [],
 };
 
 export function counterReducer(state = INITIAL_STATE, action) {
@@ -13,7 +16,7 @@ export function counterReducer(state = INITIAL_STATE, action) {
     case GitAction.LoginSuccess:
       return Object.assign({}, state, {
         loading: false,
-        currentUser: action.payload
+        logonUser: action.payload
       });
 
     case GitAction.Logout:
@@ -21,9 +24,40 @@ export function counterReducer(state = INITIAL_STATE, action) {
     case GitAction.UserLoggedOut:
       return Object.assign({}, state, {
         loading: false,
-        currentUser: action.payload
+        logonUser: action.payload
       });
 
+    case GitAction.RegisterUser:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.UserRegistered:
+      return Object.assign({}, state, {
+        loading: false,
+        registrationReturn: action.payload
+      });
+    case GitAction.ResetRegistrationReturn:
+      return Object.assign({}, state, { registrationReturn: [] });
+
+    case GitAction.GetUserProfile:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotUserProfile:
+      return Object.assign({}, state, {
+        loading: false,
+        userProfile: action.payload
+      });
+    case GitAction.ResetUserProfile:
+      return Object.assign({}, state, { userProfile: [] });
+
+    ///////////////////////////////////////////////////  sidebar configuration ///////////////////////////////////////////////////
+
+    case GitAction.FetchSidebar:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.SidebarFetched:
+      return Object.assign({}, state, {
+        loading: false,
+        sidebars: action.payload
+      });
+    case GitAction.ResetSidebar:
+      return Object.assign({}, state, { sidebars: [] });
 
     /////////////////////////////////////////////////// Default ///////////////////////////////////////////////////
     default:

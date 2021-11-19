@@ -4,9 +4,11 @@ import { counterReducer } from "./reducer/gitReducer"; //reducers
 import { gitEpic } from "./epic/gitEpic"; //epics
 
 const rootEpic = combineEpics(
-  //========================== USER ==========================//
-  gitEpic.UserLogin,
-  gitEpic.UserLogout,
+  gitEpic.User_Login,
+  gitEpic.User_Logout,
+  gitEpic.User_Register,
+  gitEpic.User_ProfileByID,
+  gitEpic.User_ViewPage,
 );
 
 const rootReducer = combineReducers({ counterReducer });

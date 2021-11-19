@@ -24,7 +24,7 @@ const Main = ({
       </div>
       <header>
         <h1>
-          <img width={80} src={reactLogo} alt="react logo" /> EZ Logitstic Management
+          <img width={80} src={reactLogo} alt="react logo" /> Template
         </h1>
       </header>
 

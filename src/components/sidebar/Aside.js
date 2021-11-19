@@ -1,55 +1,57 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ProSidebar,
   Menu,
   MenuItem,
-  SubMenu,
   SidebarHeader,
   SidebarFooter,
   SidebarContent,
 } from 'react-pro-sidebar';
 import sidebar_items from './data/SidebarConfiguration';
 import SubMenuItems from "./SubMenuItems"
+import SidebarProfile from "./SidebarProfile"
+import SidebarButtons from "./SidebarButtons";
 
 // utility and icons
 import { isStringNullOrEmpty } from "../../tools/Helpers"
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 
-const Aside = ({ collapsed, rtl, toggled, handleToggleSidebar }) => {
+const Aside = ({ rtl, toggled, handleToggleSidebar }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false) // check the sidebar is actually collapsed 
+  const [collapsed, setCollapsed] = useState(false)
+
+  const handleCollapseSidebar = (value) => {
+    setIsCollapsed(typeof value !== "undefined" && value !== null ? value : !isCollapsed);
+    setCollapsed(typeof value !== "undefined" && value !== null ? value : !isCollapsed);
+  };
+
   return (
     <ProSidebar
       image={false} // can set the image background under this option
       rtl={rtl}
-      collapsed={collapsed}
       toggled={toggled}
+      collapsed={collapsed}
       breakPoint="md"
       onToggle={handleToggleSidebar}
+      onMouseEnter={() => { isCollapsed && setCollapsed(false) }}
+      onMouseLeave={() => { isCollapsed && setCollapsed(true)  }}
     >
       <SidebarHeader>
-        <div
-          style={{
-            padding: '24px',
-            textTransform: 'uppercase',
-            fontWeight: 'bold',
-            fontSize: 14,
-            letterSpacing: '1px',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          Testing
-        </div>
+        <SidebarButtons handleCollapseSidebar={handleCollapseSidebar} isCollapsed={isCollapsed} />
+        {
+          !isCollapsed && <SidebarProfile />
+        }
       </SidebarHeader>
 
-      <SidebarContent>
-        <Menu iconShape="circle">
+      <SidebarContent className="thin-scrollbar">
+        <Menu iconShape="circle" innerSubMenuArrows={false} popperArrow={false} subMenuBullets={false}>
           {
             sidebar_items.length > 0 && sidebar_items.map((item, index) => {
               return (
-                typeof item.submenus === "undefined" || item.submenus === null  ?
+                typeof item.submenus === "undefined" || item.submenus === null ?
                   <MenuItem
+                    key={item.title}
                     prefix={typeof item.prefix !== "undefined" && item.prefix !== null ? item.prefix : null}
                     icon={typeof item.icon !== "undefined" && item.icon !== null ? item.icon : ""}
                     suffix={typeof item.suffix !== "undefined" && item.suffix !== null ? item.suffix : null}
@@ -57,7 +59,7 @@ const Aside = ({ collapsed, rtl, toggled, handleToggleSidebar }) => {
                     {item.title} {!isStringNullOrEmpty(item.to) ? <Link to={item.to} /> : ""}
                   </MenuItem>
                   :
-                  <SubMenuItems item={item} />
+                  <SubMenuItems key={'submenu-' + item.title} item={item} />
 
               )
             })

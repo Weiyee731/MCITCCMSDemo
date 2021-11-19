@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
 import Aside from './Aside';
 import Main from './Main';
+import { isUserLogon } from "../auth/AuthManagement";
+import Login from "../../pages/Login/Login";
+import "./styles/sidebar.css";
 
-function Layout({ setLocale }) {
+function Layout() {
   const [rtl, setRtl] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
   const [toggled, setToggled] = useState(false);
+  const [isLogon, setIsLogon] = useState(isUserLogon());
 
-  const handleCollapsedChange = (checked) => {
-    setCollapsed(checked);
-  };
 
   // set sidebar to the right
   const handleRtlChange = (checked) => {
     setRtl(checked);
-    setLocale(checked ? 'ar' : 'en');
   };
-
 
   const handleToggleSidebar = (value) => {
     setToggled(value);
@@ -24,24 +22,28 @@ function Layout({ setLocale }) {
 
   return (
     <div className={`app ${rtl ? 'rtl' : ''} ${toggled ? 'toggled' : ''}`}>
-      <Aside
-        image={false} // can set the background image for the sidebar here
-        collapsed={collapsed}
-        rtl={rtl}
-        toggled={toggled}
-        handleToggleSidebar={handleToggleSidebar}
-      />
-      <Main
-        image={false} // can set the background image for the sidebar here
-        toggled={toggled}
-        collapsed={collapsed}
-        rtl={rtl}
-        handleToggleSidebar={handleToggleSidebar}
-        handleCollapsedChange={handleCollapsedChange}
-        handleRtlChange={handleRtlChange}
-      />
-    </div>
-  );
+      {
+        isLogon === true ?
+          <>
+            <Aside
+              image={false} // can set the background image for the sidebar here
+              rtl={rtl}
+              toggled={toggled}
+              handleToggleSidebar={handleToggleSidebar}
+            />
+            <Main
+              image={false} // can set the background image for the sidebar here
+              toggled={toggled}
+              rtl={rtl}
+              handleToggleSidebar={handleToggleSidebar}
+              handleRtlChange={handleRtlChange}
+            />
+          </>
+          :
+          <Login />
+      }
+    </div >
+  )
 }
 
 export default Layout;
