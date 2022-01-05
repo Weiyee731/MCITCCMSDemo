@@ -1,4 +1,5 @@
 /**
+ * "user manual": sidebar configuration 
  * Bsaic use of template for the sidebar configuration, 
  * if wish to pass the parameter such as 'page/Id',
  * you can use page/:Id, and the passing param can be accessed using "this.props.params.match.Id",
@@ -6,7 +7,7 @@
  *   {
         to: "/",    //if you are rendering submenu, leave 'to:' option to be blank, else put the link
         title: "Dashboard",
-        icon: <MenuOutlinedIcon />,
+        icon: <MenuOutlinedIcon />, //component or string from material design icon
         prefix: <span className="badge gray">3</span>,
         suffix: <span className="badge red">3</span>,
         submenus: [
@@ -48,87 +49,31 @@ const sidebar_items = [
     {
         to: "/",
         title: "Dashboard",
-        icon: <DashboardIcon />,
+        icon: "dashboard",
         // prefix: <span className="badge gray">3</span>,
         // suffix: <span className="badge red">3</span>,
     },
     {
         to: "/UserManagement",
         title: "User Management",
-        icon: <AssignmentIndIcon />,
+        icon: "assignment_ind",
     },
     {
         to: "",
         title: "Stock Management",
-        icon: <IndeterminateCheckBoxIcon />,
-        submenus:[
+        icon: "indeterminate_check_box",
+        submenus: [
             {
                 to: "/OverallStock",
                 title: "Overall",
-                icon: <AllInboxIcon />,
+                icon: "all_inbox",
             },
             {
                 to: "/StockGoods",
                 title: "Stock Order Goods",
-                icon: <AssignmentTurnedInIcon />,
+                icon: "assignment_turned_in",
             },
         ]
-    },
-    {
-        to: "",
-        title: "Reporting",
-        icon: <InsertDriveFileIcon />,
-        submenus:[
-            {
-                to: "/Invoice",
-                title: "Invoice",
-                icon: <ReceiptLongIcon />,
-            },
-            {
-                to: "/DeliveryOrder",
-                title: "Delivery Order (DO)",
-                icon: <DescriptionIcon />,
-            },
-            {
-                to: "/CreditNote",
-                title: "Credit Note(CN)",
-                icon: <LocalAtmIcon />,
-            },
-        ]
-    },
-    {
-        to: "",
-        title: "Data Management",
-        icon: <AddBusinessIcon />,
-        submenus:[
-            {
-                to: "/ImportExcelData",
-                title: "Upload Orders (Excel)",
-                icon: <FileUploadIcon />,
-            },
-        ]
-    },
-    {
-        to: "",
-        title: "Payments",
-        icon: <AccountBalanceIcon />,
-        submenus:[
-            {
-                to: "/AllPayments",
-                title: "All Payments",
-                icon: <PaymentsIcon />,
-            },
-            {
-                to: "/BalanceSettlement",
-                title: "Payment Knockoff/Settlement",
-                icon: <ReceiptIcon />,
-            },
-        ]
-    },
-    {
-        to: "/Statements",
-        title: "Statements",
-        icon: <FeedIcon />,
     },
 ]
 

@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { connect } from "react-redux";
+import { GitAction } from "../../store/action/gitAction";
+import { withRouter } from 'react-router'
 import { Link } from 'react-router-dom';
 import {
   ProSidebar,
@@ -16,10 +19,34 @@ import SidebarButtons from "./SidebarButtons";
 // utility and icons
 import { isStringNullOrEmpty } from "../../tools/Helpers"
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
+import Dashboard from '@mui/icons-material/Dashboard';
+
+// "user manual": set your default icon styles here
+const MaterialIconStyles = {
+  DefaultMaterialIcon: "material-icons",
+  OutlinedMaterialIcon: "material-icons-outlined",
+  RoundMaterialIcon: "material-icons-round",
+  SharpMaterialIcon: "material-icons-sharp",
+  TwoToneMaterialIcon: "material-icons-two-tone",
+}
+
+function mapStateToProps(state) {
+  return {
+    // user: state.counterReducer["user"],
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    // CallUserProfile: () => dispatch(GitAction.CallUserProfile()),
+  };
+}
+
 
 const Aside = ({ rtl, toggled, handleToggleSidebar }) => {
   const [isCollapsed, setIsCollapsed] = useState(false) // check the sidebar is actually collapsed 
   const [collapsed, setCollapsed] = useState(false)
+  const [MaterialIconStyle, setMaterialIconStyle] = useState(MaterialIconStyles.OutlinedMaterialIcon) // "user manual": set your default icon styles here
 
   const handleCollapseSidebar = (value) => {
     setIsCollapsed(typeof value !== "undefined" && value !== null ? value : !isCollapsed);
@@ -35,7 +62,7 @@ const Aside = ({ rtl, toggled, handleToggleSidebar }) => {
       breakPoint="md"
       onToggle={handleToggleSidebar}
       onMouseEnter={() => { isCollapsed && setCollapsed(false) }}
-      onMouseLeave={() => { isCollapsed && setCollapsed(true)  }}
+      onMouseLeave={() => { isCollapsed && setCollapsed(true) }}
     >
       <SidebarHeader>
         <SidebarButtons handleCollapseSidebar={handleCollapseSidebar} isCollapsed={isCollapsed} />
@@ -53,13 +80,13 @@ const Aside = ({ rtl, toggled, handleToggleSidebar }) => {
                   <MenuItem
                     key={item.title}
                     prefix={typeof item.prefix !== "undefined" && item.prefix !== null ? item.prefix : null}
-                    icon={typeof item.icon !== "undefined" && item.icon !== null ? item.icon : ""}
+                    icon={typeof item.icon !== "undefined" && item.icon !== null ? <span className={MaterialIconStyle}>{item.icon}</span> : ""}
                     suffix={typeof item.suffix !== "undefined" && item.suffix !== null ? item.suffix : null}
                   >
                     {item.title} {!isStringNullOrEmpty(item.to) ? <Link to={item.to} /> : ""}
                   </MenuItem>
                   :
-                  <SubMenuItems key={'submenu-' + item.title} item={item} />
+                  <SubMenuItems key={'submenu-' + item.title} item={item} MaterialIconStyle={MaterialIconStyle} />
 
               )
             })
@@ -67,14 +94,11 @@ const Aside = ({ rtl, toggled, handleToggleSidebar }) => {
         </Menu>
       </SidebarContent >
 
-
       <SidebarFooter style={{ textAlign: 'center' }}>
-        <div
-          className="sidebar-btn-wrapper"
-          style={{ padding: '20px 24px', }}
-        >
+        {/** "user manual" : updatable footer is here */}
+        <div className="sidebar-btn-wrapper" style={{ padding: '20px 24px', }}>
           <a
-            href="https://github.com/azouaoui-med/react-pro-sidebar"
+            href="https://github.com/WHTeoh/InitiateProject.git"
             target="_blank"
             className="sidebar-btn"
             rel="noopener noreferrer"
@@ -90,4 +114,4 @@ const Aside = ({ rtl, toggled, handleToggleSidebar }) => {
   );
 };
 
-export default Aside;
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Aside));

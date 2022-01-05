@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom';
 import { isStringNullOrEmpty } from "../../tools/Helpers"
 
 const SubMenuItems = (props) => {
-    const { item } = props
+    const { item, MaterialIconStyle } = props
     return (
         <SubMenu
             key={'submenu-' + item.title}
             prefix={typeof item.prefix !== "undefined" && item.prefix !== null ? item.prefix : null}
-            icon={typeof item.icon !== "undefined" && item.icon !== null ? item.icon : ""}
+            icon={typeof item.icon !== "undefined" && item.icon !== null ? <span className={MaterialIconStyle}>{item.icon}</span> : ""}
             suffix={typeof item.suffix !== "undefined" && item.suffix !== null ? item.suffix : null}
             title={item.title}
         >
@@ -22,7 +22,7 @@ const SubMenuItems = (props) => {
                             <MenuItem
                                 key={"submenu-items-" + index}
                                 prefix={typeof menuitem.prefix !== "undefined" && menuitem.prefix !== null ? menuitem.prefix : null}
-                                icon={typeof menuitem.icon !== "undefined" && menuitem.icon !== null ? menuitem.icon : ""}
+                                icon={typeof menuitem.icon !== "undefined" && menuitem.icon !== null ? <span className={MaterialIconStyle}>{menuitem.icon}</span> : ""}
                                 suffix={typeof menuitem.suffix !== "undefined" && menuitem.suffix !== null ? menuitem.suffix : null}
                             >
                                 {menuitem.title} {!isStringNullOrEmpty(menuitem.to) ? <Link to={menuitem.to} /> : ""}
