@@ -11,13 +11,13 @@ import {
   SidebarFooter,
   SidebarContent,
 } from 'react-pro-sidebar';
-import sidebar_items from './data/SidebarConfiguration';
+import sidebar_items from './data/SidebarConfiguration';  // "user manual": if you pull from api and you can set it in useeffect
 import SubMenuItems from "./SubMenuItems"
 import SidebarProfile from "./SidebarProfile"
 import SidebarButtons from "./SidebarButtons";
 
 // utility and icons
-import { isStringNullOrEmpty } from "../../tools/Helpers"
+import { isArrayNotEmpty, isStringNullOrEmpty } from "../../tools/Helpers"
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import Dashboard from '@mui/icons-material/Dashboard';
 
@@ -43,7 +43,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 
-const Aside = ({ rtl, toggled, handleToggleSidebar }) => {
+const Aside = ({ rtl, toggled, handleToggleSidebar, sidebarItems }) => {
   const [isCollapsed, setIsCollapsed] = useState(false) // check the sidebar is actually collapsed 
   const [collapsed, setCollapsed] = useState(false)
   const [MaterialIconStyle, setMaterialIconStyle] = useState(MaterialIconStyles.OutlinedMaterialIcon) // "user manual": set your default icon styles here
@@ -74,7 +74,7 @@ const Aside = ({ rtl, toggled, handleToggleSidebar }) => {
       <SidebarContent className="thin-scrollbar">
         <Menu iconShape="circle" innerSubMenuArrows={false} popperArrow={false} subMenuBullets={false}>
           {
-            sidebar_items.length > 0 && sidebar_items.map((item, index) => {
+            isArrayNotEmpty(sidebarItems) && sidebarItems.map((item, index) => {
               return (
                 typeof item.submenus === "undefined" || item.submenus === null ?
                   <MenuItem

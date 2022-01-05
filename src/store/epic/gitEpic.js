@@ -180,3 +180,82 @@ export class GitEpic {
 
 }
 export let gitEpic = new GitEpic();
+
+
+// "user manual": adding the api call backs here
+
+// by get API
+// User_ViewPage = action$ =>
+//   action$.ofType(GitAction.FetchSidebar).switchMap(async ({ payload }) => {
+//     // console.log(url + 
+//     //   double_click_and_paste_url_here
+//     // )
+//     try {
+//       const response = await fetch(url +
+//         "User_ViewPage?" +
+//         "ROLEGROUPID=" + payload.ROLEGROUPID +
+//         "&USERID=" + payload.USERID
+//       );
+
+//       let json = await response.json();
+//       json = JSON.parse(json)
+//       return {
+//         type: GitAction.SidebarFetched,
+//         payload: json,
+//       };
+//     }
+//     catch (error) {
+//       toast.error("Error Code: FetchSidebar")
+//       return {
+//         type: GitAction.SidebarFetched,
+//         payload: [],
+//       };
+//     }
+//   });
+
+// by post API
+// Inventory_UpdateStockDetailByPost = action$ =>
+// action$.ofType(GitAction.UpdateStockDetailByPost).switchMap(async ({ payload }) => {
+
+//   return fetch(
+//     url + "Inventory_UpdateStockDetailByPost"
+//     , {
+//       method: 'POST',
+//       headers: {
+//         'Accept': 'application/json',
+//         'Content-Type': 'application/json'
+//       },
+//       body: JSON.stringify({
+//         STOCKID: payload.StockID,
+//         USERCODE: payload.UserCode,
+//         TRACKINGNUMBER: payload.TrackingNumber,
+//         PRODUCTWEIGHT: payload.ProductWeight,
+//         PRODUCTHEIGHT: payload.ProductDimensionHeight,
+//         PRODUCTWIDTH: payload.ProductDimensionWidth,
+//         PRODUCTDEEP: payload.ProductDimensionDeep,
+//         AREACODE: payload.AreaCode,
+//         ITEM: payload.Item,
+//         TRACKINGSTATUSID: payload.TRACKINGSTATUSID,
+//         CONTAINERNAME: payload.ContainerName,
+
+//         CONTAINERDATE: payload.ContainerDate,
+//         REMARK: payload.Remark,
+//         EXTRACHARGE: payload.AdditionalCharges
+//       })
+//     }
+//   )
+//     .then(response => response.json())
+//     .then(json => {
+//       if (json !== "fail") {
+//         json = json;
+//         toast.success("Successfully update stock. Fetching the latest data..", { autoClose: 3000 })
+//       } else {
+//         json = [];
+//       }
+//       return {
+//         type: GitAction.UpdatedStockDetailByPost,
+//         payload: json,
+//       };
+//     })
+//     .catch(error => toast.error("Error code: 8003"));
+// });

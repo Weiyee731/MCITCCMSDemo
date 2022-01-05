@@ -23,6 +23,14 @@ export const setLogonUser = (loginUser) => {
     }
 }
 
+export const setSidebaritems = () => {
+    return localStorage.setItem("sidebarItem")
+}
+
+export const getSidebaritems = () => {
+    return localStorage.getItem("sidebarItem")
+}
+
 export const isUserLogon = () => {
     // if want to bypass the auth, then uncomment this
     return true
@@ -34,6 +42,8 @@ export const isUserLogon = () => {
 export const resetLogonUser = () => {
     localStorage.removeItem("userToken")
     localStorage.removeItem("loginUser")
+    localStorage.removeItem("sidebarItem");
+    window.location.href = "/Login"
 }
 
 export const updateLogonUser = (key, value) => {

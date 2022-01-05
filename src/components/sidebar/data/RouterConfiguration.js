@@ -1,3 +1,24 @@
+// "user manual" : add your page in this configuration
+/**
+ *  sample:
+ * 
+    import Dashboard from "../../../pages/Dashboard/Dashboard";
+ * 
+ * const routes = [
+    {
+        path: "/",
+        exact: true,
+        element: <Dashboard />,
+    },
+    // if need to pass the params into the page, then follow the configuration below
+    {
+        path: "/UserDetail/:name/:fat",
+        exact: true,
+        element: <UserDetail />,
+    },
+]
+
+ */
 import Dashboard from "../../../pages/Dashboard/Dashboard";
 import UserManagement from '../../../pages/UserManagement/UserManagement';
 import OverallStock from "../../../pages/Stock/OverallStock/OverallStock";
