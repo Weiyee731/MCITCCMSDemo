@@ -31,10 +31,14 @@ function PaperComponent(props) {
 
 /**
  *  @param {object} props 
- *  @param {bool} props.fullScreen 
-*   @requires @param {function}  props.handleOnClose 
- *  @param {string} props.maxWidth "default: lg, value => sm | md | lg | xl "
- *  @param {bool} props.draggable
+ *  @required @param {function}  props.handleOnClose  // onclose function
+ *  @required @param {bool} props.open                // state to turn modal on or off
+ *  @param {string} props.title                       // title of the modal in h6 tag
+ *  @param {bool} props.fullScreen                    // make it full screen modal
+ *  @param {string} props.maxWidth                    // "default: lg, value => sm | md | lg | xl "
+ *  @param {bool} props.draggable                     // make it draggable modal
+ *  @param {string} props.fullScreenHeaderbgColor     // change the modal header bg color
+ *  @param {children} props.DialogActionsButton       // pass the action buttons components under the dialog action      
  *  
  */
 
@@ -45,8 +49,8 @@ export default function ModalComponent(props) {
       maxWidth={isStringNullOrEmpty(props.maxWidth) ? "lg" : props.maxWidth}
       open={props.open}
       onClose={() => { typeof props.handleOnClose === "function" ? props.handleOnClose() : console.log("Dialog -> handleOnClose() required") }}
-      PaperComponent={props.draggable === true ? PaperComponent : null}
       sx={{ zIndex: (props.fullScreen || props.maxWidth === "xl") ? 1301 : 1300 }}
+      PaperComponent={props.draggable === true ? PaperComponent : null}
       aria-labelledby="modal-component"
     >
       {
