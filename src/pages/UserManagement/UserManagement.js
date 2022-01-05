@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { GitAction } from "../../store/action/gitAction";
 import { withRouter } from 'react-router'
 import EnhancedTable from "../../components/table/table";
-import AlertDialog from "../../components/modal/Modal"
 
 function mapStateToProps(state) {
     return {
@@ -128,13 +127,6 @@ class UserManagement extends Component {
                     handleToggleDialog={this.handleToggleDialog}
                     handleRowDetail={this.handleRowDetail}
                     handleAdd={this.handleAdd}
-                />
-                <AlertDialog
-                    open={open}
-                    handleToggleDialog={this.handleToggleDialog}
-                    handleConfirmFunc={this.handleDeleteRow}
-                    title={"Delete item(s)"}
-                    message={"Are you sure want to delete the selected item(s)?"}
                 />
             </div>
         )
