@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { GitAction } from "../../store/action/gitAction";
 import { browserHistory } from "react-router";
-
+import SearchBar from "../../components/SearchBar/SearchBar";
 function mapStateToProps(state) {
     return {
     };
@@ -26,17 +26,28 @@ class Dashboard extends Component {
     }
 
     componentDidMount() {
-        
+
     }
 
     componentDidUpdate(prevProps, prevState) {
-        
+
     }
 
     render() {
         return (
             <div>
-                <h1>Hello</h1>
+                <SearchBar
+                    label="search"
+                    placeholder="Enter Member No, Tracking No or Container No to search"
+                    buttonOnClick={() => this.onSearch("", "")}
+                    onChange={() => { }}
+                    className="searchbar-input"
+                    disableButton={this.state.isDataFetching}
+                    tooltipText="Search with current data"
+                    value={this.state.searchKeywords}
+                    variant="standard"
+                    hideButton={true}
+                />
             </div>
         )
     }

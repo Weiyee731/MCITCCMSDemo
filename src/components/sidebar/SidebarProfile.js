@@ -14,7 +14,7 @@ export default function Profile(props) {
                 whiteSpace: 'nowrap',
             }}
         >
-            Testing
+            Template
         </div>
     )
 }
