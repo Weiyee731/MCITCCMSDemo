@@ -1,4 +1,62 @@
-import * as React from 'react';
+/***************************************
+ * 
+ * @required @param {array} Data |=> The list of the data that render in the table
+ * @required @param {array} tableHeaders |=> The list of data header
+ * @required @param {object} tableRows |=> The list of data rows and columns
+ * @param {array} paginationOptions |=> by example value [5, 100, 250, { label: 'All', value: -1 }]. By default it will hide the table pagination. You should set settings for pagination options as in array,
+ * @param {component} tableTopLeft |=> table top left
+ * @param {component} tableTopRight |=> table top right
+ * @required @param {component} tableRows.renderTableRows |=> This is how you design your table column in any form
+ * ** @param {boolean} tableRows.checkbox |=> render checkbox at every row
+ * ** @param {string} tableRows.checkboxColor |=> checkbox color, "primary | secondary"
+ * ** @param {boolean} tableRows.onRowClickSelect |=> allow on row click
+ * 
+ * @required @param {object} tableOptions |=> The options for table
+ * ** @required @param {string} tableOptions.sortingIndex |=> This is the sorting index that used in table column, it is based on id. Read the example below
+ * ** @param {boolean} tableOptions.dense |=> Remove table rows margin
+ * ** @param {string} tableOptions.tableOrderBy |=> ascending or descending, "asc | desc"
+ * ** @param {boolean} tableOptions.stickyTableHeader |=> the table header will stick on top when scrolling through the table data
+ * ** @param {int} tableOptions.stickyTableHeight |=> to fix table height
+ * ** @param {int} tableOptions.elevation |=> the shadow of the table
+ * 
+ * *** Method that can pass into this table with callback
+ * @methods 
+ * 
+ * 
+ * Example:
+ *  <TableComponents
+        // table settings 
+        tableTopLeft={<h3 style={{ fontWeight: 600 }}>Table Name</h3>}  //components on table top left
+        tableTopRight={<Button>OnClick</Button>}                        //components on table top right
+        tableOptions={{
+            dense: true,                // optional, default is false
+            tableOrderBy: 'asc',        // optional, default is asc
+            sortingIndex: "fat",        // require, it must the same as the desired table header
+            stickyTableHeader: false,    // optional, default is true
+            stickyTableHeight: 300,     // optional, default is 300px
+            elevation: 1
+        }}
+        paginationOptions={[5, 100, 250, { label: 'All', value: -1 }]} // optional, by default it will hide the table pagination. You should set settings for pagination options as in array, eg.: [5, 100, 250, { label: 'All', value: -1 }]
+        tableHeaders={headCells}        //required
+        tableRows={{
+            renderTableRows: this.renderTableRows,   // required, it is a function, please refer to the example I have done in Table Components
+            checkbox: true,                          // optional, by default is true
+            checkboxColor: "primary",                // optional, by default is primary, as followed the MUI documentation
+            onRowClickSelect: false                  // optional, by default is false. If true, the ** onTableRowClick() ** function will be ignored
+        }}
+        Data={rows}                                  // required, the data that listing in the table
+        onSelectRow={(e) => console.log(e)}
+        onSelectAllRows={(e) => console.log(e)}
+        onTableRowClick={this.onTableRowClick}       // optional, onTableRowClick = (event, row) => { }. The function should follow the one shown, as it will return the data from the selected row 
+        SelectionActionButtons={<Button onClick={() => alert('hi')}>SelectionActionButtons</Button>}     // optional, onAddButtonClick = () => { }. The function should follow the one shown, as it will return the action that set in this page
+        SelectionExtraInfo={<div>Hi</div>}  
+    />
+ *
+ *
+ *
+ */
+
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { alpha, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -23,7 +81,6 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import AddIcon from '@mui/icons-material/Add';
-
 import { isObjectUndefinedOrNull, isArrayNotEmpty, isStringNullOrEmpty } from "../../tools/Helpers"
 
 function descendingComparator(a, b, orderBy) {
@@ -40,20 +97,23 @@ function getComparator(order, orderBy) {
 
 // This method is created for cross-browser compatibility, if you don't
 // need to support IE11, you can use Array.prototype.sort() directly
+
 function stableSort(array, comparator) {
-    const stabilizedThis = array.map((el, index) => [el, index]);
-    stabilizedThis.sort((a, b) => {
-        const order = comparator(a[0], b[0]);
-        if (order !== 0) {
-            return order;
-        }
-        return a[1] - b[1];
-    });
-    return stabilizedThis.map((el) => el[0]);
+    if (isArrayNotEmpty(array)) {
+        const stabilizedThis = array.map((el, index) => [el, index]);
+        stabilizedThis.sort((a, b) => {
+            const order = comparator(a[0], b[0]);
+            if (order !== 0) {
+                return order;
+            }
+            return a[1] - b[1];
+        });
+        return stabilizedThis.map((el) => el[0]);
+    } else return [];
 }
 
 function EnhancedTableHead(props) {
-    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, tableHeaders, renderCheckbox, checkboxColor } = props;
+    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, tableHeaders, renderCheckbox, checkboxColor, headerColor } = props;
     const createSortHandler = (property) => (event) => { onRequestSort(event, property); };
 
     return (
@@ -61,7 +121,7 @@ function EnhancedTableHead(props) {
             <TableRow>
                 {
                     renderCheckbox === true &&
-                    <TableCell padding="checkbox">
+                    <TableCell padding="checkbox" sx={{ bgcolor: headerColor }}>
                         <Checkbox
                             color={checkboxColor}
                             indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -71,7 +131,6 @@ function EnhancedTableHead(props) {
                         />
                     </TableCell>
                 }
-
                 {
                     isArrayNotEmpty(tableHeaders) && tableHeaders.map((headCell) => (
                         <TableCell
@@ -79,8 +138,10 @@ function EnhancedTableHead(props) {
                             align={isStringNullOrEmpty(headCell.align) ? "left" : headCell.align}
                             padding={headCell.disablePadding ? 'none' : 'normal'}
                             sortDirection={orderBy === headCell.id ? order : false}
+                            sx={{ bgcolor: headerColor, fontWeight: "medium", }}
                         >
                             <TableSortLabel
+                                className="fw-bold"
                                 active={orderBy === headCell.id}
                                 direction={orderBy === headCell.id ? order : 'asc'}
                                 onClick={createSortHandler(headCell.id)}
@@ -112,55 +173,37 @@ EnhancedTableHead.propTypes = {
 };
 
 const EnhancedTableToolbar = (props) => {
-    const { selectedRows, tableTopLeft, OnActionButtonClick, OnDeleteButtonClick, tableTopRight } = props;
+    /** 
+     * @param {ReactElement} tableTopLeft :-> render any elements like <div></div> on the table top left side when there is no selected data
+     * @param {ReactElement} tableTopRight :-> render any elements like <div></div> on the table top right side when there is no selected data
+     * @param {ReactElement} SelectionActionButtons :-> render any elements like <div></div> or Buttons on the table top right side when there is selected data
+    */
+    const { selectedRows, tableTopLeft, tableTopRight, SelectionActionButtons, SelectionExtraInfo } = props;
     const numSelected = selectedRows.length
 
     return (
-        <Toolbar
-            sx={{
-                pl: { sm: 2 },
-                pr: { xs: 1, sm: 1 },
-                ...(numSelected > 0 && {
-                    bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-                }),
-            }}
-        >
+        <Toolbar sx={{ pl: { sm: 2 }, pr: { xs: 1, sm: 1 }, ...(numSelected > 0 && { bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity) }) }}>
             {
                 numSelected > 0 ? (
-                    <Typography
-                        sx={{ flex: '1 1 100%' }}
-                        color="inherit"
-                        variant="subtitle1"
-                        component="div"
-                    >
+                    <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div" >
                         {numSelected} selected
+                        {SelectionExtraInfo}
                     </Typography>
                 ) : (
-                    <Typography
-                        sx={{ flex: '1 1 100%' }}
-                        id="tableTitle"
-                        component="div"
-                    >
+                    <Typography sx={{ flex: '1 1 100%' }} id="tableTitle" component="div">
                         {tableTopLeft}
                     </Typography>
                 )
             }
-
             {
                 numSelected > 0 ? (
-                    <Tooltip title="Delete">
-                        <IconButton onClick={() => { OnDeleteButtonClick(selectedRows) }} >
-                            <DeleteIcon />
-                        </IconButton>
-                    </Tooltip>
+                    <div>
+                        {SelectionActionButtons}
+                    </div>
                 ) : (
-                    tableTopRight === null ?
-                        <Tooltip title="Add New Items">
-                            <IconButton onClick={(event) => { typeof OnActionButtonClick === "function" && OnActionButtonClick(selectedRows) }}>
-                                <AddIcon />
-                            </IconButton>
-                        </Tooltip>
-                        : tableTopRight
+                    <div>
+                        {tableTopRight}
+                    </div>
                 )
             }
         </Toolbar>
@@ -177,32 +220,60 @@ TableComponents.propTypes = {
     tableHeaders: PropTypes.array.isRequired,
     tableRows: PropTypes.object.isRequired,
     Data: PropTypes.array.isRequired,
-    selectedIndexKey: PropTypes.string.isRequired,
 };
 
 export default function TableComponents(props) {
-    const [selected, setSelected] = React.useState([]);
-    const [page, setPage] = React.useState(0);
+    const [selected, setSelected] = useState([]);
+    const [page, setPage] = useState(0);
 
     // render from props
     // table settings
-    const [stickyTableHeader, setTableHeaderSticky] = React.useState(isObjectUndefinedOrNull(props.tableOptions) && props.tableOptions.stickyTableHeader === null ? true : props.tableOptions.stickyTableHeader);
-    const [stickyTableHeight, setTableStickyHeight] = React.useState(isObjectUndefinedOrNull(props.tableOptions) && props.tableOptions.stickyTableHeight === null ? 300 : props.tableOptions.stickyTableHeight);
-    const [dense, setDense] = React.useState(isObjectUndefinedOrNull(props.tableOptions) && props.tableOptions.dense === null ? false : props.tableOptions.dense);
-    const [tableTopRight, setTableTopRight] = React.useState(isObjectUndefinedOrNull(props.tableTopRight) || props.tableTopRight === null ? null : props.tableTopRight);
-
+    const [stickyTableHeader, setTableHeaderSticky] = useState(isObjectUndefinedOrNull(props.tableOptions) && props.tableOptions.stickyTableHeader === null ? true : props.tableOptions.stickyTableHeader);
+    const [stickyTableHeight, setTableStickyHeight] = useState(isObjectUndefinedOrNull(props.tableOptions) && props.tableOptions.stickyTableHeight === null ? 300 : props.tableOptions.stickyTableHeight);
+    const [dense, setDense] = useState(isObjectUndefinedOrNull(props.tableOptions) && props.tableOptions.dense === null ? false : props.tableOptions.dense);
+    const [tableTopLeft, setTableTopLeft] = useState(isObjectUndefinedOrNull(props.tableTopLeft) || props.tableTopLeft === null ? null : props.tableTopLeft);
+    const [tableTopRight, setTableTopRight] = useState(isObjectUndefinedOrNull(props.tableTopRight) || props.tableTopRight === null ? null : props.tableTopRight);
+    const [elevation, setElevation] = useState(isStringNullOrEmpty(props.tableOptions.elevation) ? 1 : props.tableOptions.elevation);
+    const headerColor = !isObjectUndefinedOrNull(props.tableRows.headerColor) ? props.tableRows.headerColor : "";
     //pagination settings
-    const [rowsPerPage, setRowsPerPage] = React.useState((isArrayNotEmpty(props.paginationOptions) ? props.paginationOptions[0] : 25));
-    const [pagePaginationOptions, setPagePaginationOptions] = React.useState((isArrayNotEmpty(props.paginationOptions)) ? props.paginationOptions : []);
+    const [rowsPerPage, setRowsPerPage] = useState((isArrayNotEmpty(props.paginationOptions) ? props.paginationOptions[0] : 25));
+    const [pagePaginationOptions, setPagePaginationOptions] = useState((isArrayNotEmpty(props.paginationOptions)) ? props.paginationOptions : []);
 
     //table and table data settings
-    const [order, setOrder] = React.useState(isObjectUndefinedOrNull(props.tableOptions) && props.tableOptions.tableOrderBy === null ? 'asc' : props.tableOptions.tableOrderBy);
-    const [orderBy, setOrderBy] = React.useState(isObjectUndefinedOrNull(props.tableOptions) && props.tableOptions.sortingIndex === null ? "" : props.tableOptions.sortingIndex);
-    const [objectKey, setObjectKey] = React.useState(!isStringNullOrEmpty(props.selectedIndexKey) ? props.selectedIndexKey : "id")
-    const [rows, setRows] = React.useState((isArrayNotEmpty(props.Data) ? props.Data : []));
-    const [tableHeaders, setTableHeaders] = React.useState((isArrayNotEmpty(props.tableHeaders) ? props.tableHeaders : []));
-    const [renderCheckbox, setRenderCheckbox] = React.useState(!isObjectUndefinedOrNull(props.tableRows.checkbox) ? props.tableRows.checkbox : true);
-    const [onRowSelect, setOnRowSelect] = React.useState(!isObjectUndefinedOrNull(props.tableRows.onRowClickSelect) ? props.tableRows.onRowClickSelect : false);
+    const [order, setOrder] = useState(isObjectUndefinedOrNull(props.tableOptions) && props.tableOptions.tableOrderBy === null ? 'asc' : props.tableOptions.tableOrderBy);
+    const [orderBy, setOrderBy] = useState(isObjectUndefinedOrNull(props.tableOptions) && props.tableOptions.sortingIndex === null ? "" : props.tableOptions.sortingIndex);
+    const [rows, setRows] = useState((isArrayNotEmpty(props.Data) ? props.Data : []));
+    const [tableHeaders, setTableHeaders] = useState((isArrayNotEmpty(props.tableHeaders) ? props.tableHeaders : []));
+    const [renderCheckbox, setRenderCheckbox] = useState(!isObjectUndefinedOrNull(props.tableRows.checkbox) ? props.tableRows.checkbox : true);
+    const [onRowSelect, setOnRowSelect] = useState(!isObjectUndefinedOrNull(props.tableRows.onRowClickSelect) ? props.tableRows.onRowClickSelect : false);
+
+    // the state in this component will update as the props update. CHANGE ONLY YOU HAVE TO
+    useEffect(() => {
+        let isMounted = true;
+        if (isMounted) {
+            setRows(props.Data);
+            setTableHeaders(props.tableHeaders);
+            setTableTopLeft(props.tableTopLeft);
+            setTableTopRight(props.tableTopRight);
+        }
+        return () => {
+            setRows([]);
+            setTableHeaders([]);
+            setTableTopLeft(null);
+            setTableTopRight(null);
+            isMounted = false;
+        };
+    }, [props]);
+
+    useEffect(() => {
+        setRenderCheckbox(props.tableRows.checkbox);
+    }, [props.tableRows]);
+
+    // This will reset the selected data
+    useEffect(() => {
+        if (props.CallResetSelected === true) //*
+            setSelected([]);
+    }, [props.CallResetSelected]);
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -212,14 +283,18 @@ export default function TableComponents(props) {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = rows.map((n) => n[objectKey]);
+            const newSelecteds = rows.map((n) => n);
             setSelected(newSelecteds);
+            typeof props.onSelectAllRows === "function" && props.onSelectAllRows(newSelecteds) //*
             return;
+        } else {
+            setSelected([]);
+            typeof props.onSelectAllRows === "function" && props.onSelectAllRows([]) //*
         }
-        setSelected([]);
     };
 
     const handleSelectItem = (event, key) => {
+        event.stopPropagation();
         const selectedIndex = selected.indexOf(key);
         let newSelected = [];
         if (selectedIndex === -1) {
@@ -235,27 +310,28 @@ export default function TableComponents(props) {
             );
         }
         setSelected(newSelected);
+        typeof props.onSelectRow === "function" && props.onSelectRow(newSelected);
     }
 
-    const handleRowClick = (event, row) => { (onRowSelect) ? handleSelectItem(event, row[objectKey]) : props.onTableRowClick(event, row) };
+    const handleRowClick = (event, row) => { (onRowSelect) ? handleSelectItem(event, row) : typeof props.onTableRowClick === "function" && props.onTableRowClick(event, row) };
     const handleChangePage = (event, newPage) => { setPage(newPage); };
     const handleChangeRowsPerPage = (event) => { setRowsPerPage(parseInt(event.target.value, 10)); setPage(0); };
     const isSelected = (name) => selected.indexOf(name) !== -1;
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
     const TableData = (rowsPerPage !== -1) ? stableSort(rows, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : stableSort(rows, getComparator(order, orderBy))
-    const checkboxColor = !isObjectUndefinedOrNull(props.tableRows.checkboxColor) ? props.tableRows.checkboxColor : "primary"
+    const checkboxColor = !isObjectUndefinedOrNull(props.tableRows.checkboxColor) ? props.tableRows.checkboxColor : "primary" //*
     const emptyRowColSpan = renderCheckbox ? tableHeaders.length + 1 : tableHeaders.length
 
     return (
         <Box sx={{ width: '100%' }}>
-            <Paper sx={{ width: '100%', mb: 2 }}>
+            <Paper sx={{ width: '100%', mb: 2 }} elevation={elevation}>
                 <EnhancedTableToolbar
                     selectedRows={selected}
-                    tableTopLeft={props.tableTopLeft}
+                    tableTopLeft={tableTopLeft}
                     tableTopRight={tableTopRight}
-                    OnActionButtonClick={props.onActionButtonClick}
-                    OnDeleteButtonClick={props.onDeleteButtonClick}
+                    SelectionActionButtons={props.SelectionActionButtons}
+                    SelectionExtraInfo={props.SelectionExtraInfo}
                 />
                 <TableContainer sx={(stickyTableHeader) ? { maxHeight: stickyTableHeight } : { maxHeight: '100%' }}>
                     <Table
@@ -270,16 +346,17 @@ export default function TableComponents(props) {
                             orderBy={orderBy}
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
-                            rowCount={rows.length}
+                            rowCount={isArrayNotEmpty(rows) ? rows.length : 0}
                             tableHeaders={tableHeaders}
                             renderCheckbox={renderCheckbox}
                             checkboxColor={checkboxColor}
+                            headerColor={headerColor}
 
                         />
                         <TableBody>
                             {
                                 isArrayNotEmpty(TableData) && TableData.map((row, index) => {
-                                    const isItemSelected = isSelected(row[objectKey]);
+                                    const isItemSelected = isSelected(row);
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
@@ -288,7 +365,7 @@ export default function TableComponents(props) {
                                             onClick={(event) => handleRowClick(event, row)}
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
-                                            key={row[objectKey]}
+                                            key={"table_row__" + index}
                                             selected={isItemSelected}
                                         >
                                             {
@@ -298,7 +375,7 @@ export default function TableComponents(props) {
                                                         color={checkboxColor}
                                                         checked={isItemSelected}
                                                         inputProps={{ 'aria-labelledby': labelId, }}
-                                                        onClick={(event) => handleSelectItem(event, row[objectKey])}
+                                                        onClick={(event) => handleSelectItem(event, row)}
                                                     />
                                                 </TableCell>
                                             }
@@ -331,7 +408,6 @@ export default function TableComponents(props) {
                         ActionsComponent={TablePaginationActions}
                     />
                 }
-
             </Paper>
         </Box>
     );
@@ -395,43 +471,34 @@ function TablePaginationActions(props) {
 /***************************************
  * Example:
  *
- * 1. how to set the table cells according to desired settngs
- * renderTableRows = (data, index) => {
-        return (
-            <>
-                <TableCell
-                    component="th"
-                    id={`enhanced-table-checkbox-${index}`}
-                    scope="row"
-                    padding="normal"
-                >
-                    {data.name}
-                </TableCell>
-                <TableCell align="center">{data.calories}</TableCell>
-                <TableCell align="center">{data.fat}</TableCell>
-                <TableCell align="center">{data.carbs}</TableCell>
-                <TableCell align="center">{data.protein}</TableCell>
-            </>
-        )
-    }
- *
- * 2. how to render the top right side of the table corner
- *   renderTableActionButton = () => {
-        return (
-            <div className="d-flex">
-                <Tooltip sx={{ marginLeft: 5 }} title="Add New Items">
-                    <IconButton onClick={(event) => { this.onAddButtonClick() }}>
-                        <AddIcon />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Buton">
-                    <IconButton onClick={(event) => { this.onAddButtonClick() }}>
-                        <AddIcon />
-                    </IconButton>
-                </Tooltip>
-            </div>
-        )
-    }
+ *  <TableComponents
+        // table settings 
+        tableTopLeft={<h3 style={{ fontWeight: 600 }}>Table Name</h3>}  //components on table top left
+        tableTopRight={<Button>OnClick</Button>}                        //components on table top right
+        tableOptions={{
+            dense: true,                // optional, default is false
+            tableOrderBy: 'asc',        // optional, default is asc
+            sortingIndex: "fat",        // require, it must the same as the desired table header
+            stickyTableHeader: false,    // optional, default is true
+            stickyTableHeight: 300,     // optional, default is 300px
+            elevation: 1
+        }}
+        paginationOptions={[5, 100, 250, { label: 'All', value: -1 }]} // optional, by default it will hide the table pagination. You should set settings for pagination options as in array, eg.: [5, 100, 250, { label: 'All', value: -1 }]
+        tableHeaders={headCells}        //required
+        tableRows={{
+            renderTableRows: this.renderTableRows,   // required, it is a function, please refer to the example I have done in Table Components
+            checkbox: true,                          // optional, by default is true
+            checkboxColor: "primary",                // optional, by default is primary, as followed the MUI documentation
+            onRowClickSelect: false                  // optional, by default is false. If true, the ** onTableRowClick() ** function will be ignored
+        }}
+        selectedIndexKey={"pid"}                    // required, as follow the data targetting key of the row, else the data will not be chosen when checkbox is click. 
+        Data={rows}                                  // required, the data that listing in the table
+        onSelectRow={(e) => console.log(e)}
+        onSelectAllRows={(e) => console.log(e)}
+        onTableRowClick={this.onTableRowClick}       // optional, onTableRowClick = (event, row) => { }. The function should follow the one shown, as it will return the data from the selected row 
+        SelectionActionButtons={<Button onClick={() => alert('hi')}>SelectionActionButtons</Button>}     // optional, onAddButtonClick = () => { }. The function should follow the one shown, as it will return the action that set in this page
+        SelectionExtraInfo={<div>Hi</div>}  // required, onDeleteButtonClick = (items) => { }. The function should follow the one shown, as it will return the lists of selected items
+    />
  *
  *
  *
