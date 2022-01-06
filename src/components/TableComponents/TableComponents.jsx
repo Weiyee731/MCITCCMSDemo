@@ -2,11 +2,14 @@
  * 
  * @required @param {array} Data |=> The list of the data that render in the table
  * @required @param {array} tableHeaders |=> The list of data header
- * @required @param {object} tableRows |=> The list of data rows and columns
  * @param {array} paginationOptions |=> by example value [5, 100, 250, { label: 'All', value: -1 }]. By default it will hide the table pagination. You should set settings for pagination options as in array,
- * @param {component} tableTopLeft |=> table top left
- * @param {component} tableTopRight |=> table top right
- * @required @param {component} tableRows.renderTableRows |=> This is how you design your table column in any form
+ * @param {component} tableTopLeft |=> component for table top left
+ * @param {component} tableTopRight |=> component for table top left
+ * @param {component} SelectionActionButtons component for the top right, the rendered buttons when checkbox is selected
+ * @param {component} SelectionExtraInfo component for the top left, text or info to be rendered when checkbox is selected
+ * 
+ * @required @param {object} tableRows |=> The list of data rows and columns
+ * ** @required @param {component} tableRows.renderTableRows |=> This is how you design your table column in any form
  * ** @param {boolean} tableRows.checkbox |=> render checkbox at every row
  * ** @param {string} tableRows.checkboxColor |=> checkbox color, "primary | secondary"
  * ** @param {boolean} tableRows.onRowClickSelect |=> allow on row click
@@ -21,9 +24,12 @@
  * 
  * *** Method that can pass into this table with callback
  * @methods 
- * 
+ * @param {function} onSelectRow(row) {  console.log(row) } :-> return selected row, trigger when selecting one row. **From Parents, you need to set state the selected values
+ * @param {function} onSelectAllRows(rows) {  console.log(rows) } :-> return selected rows, trigger when selecting all row. **From Parents, you need to set state the selected values
+ * @param {function} onTableRowClick(event, row) {  console.log(event, row) } :-> return selected row, trigger when selecting row.
  * 
  * Example:
+ *  @method TableComponents
  *  <TableComponents
         // table settings 
         tableTopLeft={<h3 style={{ fontWeight: 600 }}>Table Name</h3>}  //components on table top left
@@ -52,6 +58,60 @@
         SelectionExtraInfo={<div>Hi</div>}  
     />
  *
+    @method renderTableRows
+        renderTableRows = (data, index) => {
+            return (
+                <>
+                    <TableCell
+                        component="th"
+                        id={`enhanced-table-checkbox-${index}`}
+                        scope="row"
+                        padding="normal"
+                    >
+                        {data.name}
+                    </TableCell>
+                    <TableCell align="center">{data.calories}</TableCell>
+                    <TableCell align="center">{data.fat}</TableCell>
+                    <TableCell align="center">{data.carbs}</TableCell>
+                    <TableCell align="center">{data.protein}</TableCell>
+                </>
+            )
+        }
+
+    @param {array} headcells
+        const headCells = [
+            {
+                id: 'name',
+                align: 'left',
+                disablePadding: false,
+                label: 'Dessert ',
+            },
+            {
+                id: 'calories',
+                align: 'center',
+                disablePadding: false,
+                label: 'Calories',
+            },
+            {
+                id: 'fat',
+                align: 'center',
+                disablePadding: false,
+                label: 'Fat (g)',
+            },
+            {
+                id: 'carbs',
+                align: 'center',
+                disablePadding: false,
+                label: 'Carbs (g)',
+            },
+            {
+                id: 'protein',
+                align: 'center',
+                disablePadding: false,
+                label: 'Protein (g)',
+            },
+        ];
+
  *
  *
  */
