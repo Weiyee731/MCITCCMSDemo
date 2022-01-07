@@ -35,13 +35,13 @@ export class GitAction {
     };
   }
 
-  static GetUserProfile = "GET_USER_PROFILE";
-  static GotUserProfile = "GOT_USER_PROFILE";
+  static GetUserProfile = "GET-USERSPROFILE";
+  static GotUserProfile = "GOT-USERSPROFILE";
   static ResetUserProfile = "RESET-USER_PROFILE";
-  static CallUserProfileByID(propsData) {
+  static CallUserProfile(propsData) {
     return {
       type: GitAction.GetUserProfile,
-      payload: propsData
+      payload: propsData,
     };
   }
   static CallResetUserProfile() {
@@ -64,6 +64,279 @@ export class GitAction {
   static CallResetSidebar() {
     return {
       type: GitAction.ResetSidebar,
+    };
+  }
+
+  ///////////////////////////////////////////////////  Address  ///////////////////////////////////////////////////
+
+  static GetAllAddress = "GET-ALL-ADDRESS";
+  static GotAllAddress = "GOT-ALL-ADDRESS";
+  static CallAllUserAddress() {
+    return {
+      type: GitAction.GetAllAddress,
+    };
+  }
+
+  ///////////////////////////////////////////////////  Order  ///////////////////////////////////////////////////
+
+  static AddOrder = "ADD-ORDER";
+  static AddedOrder = "ADDED-ORDER";
+  static CallAddOrder(prodData) {
+    return {
+      type: GitAction.AddOrder,
+      payload: prodData,
+    };
+  }
+
+  static GetTransactions = "GET-TRANSACTION";
+  static GotTransactions = "GOT-TRANSACTION";
+  static CallGetTransaction(transactionData) {
+    return {
+      type: GitAction.GetTransactions,
+      payload: transactionData,
+    };
+  }
+
+  ///////////////////////////////////////////////////  Merchant  ///////////////////////////////////////////////////
+
+  static GetMerchants = "GET-MERCHANTS";
+  static GotMerchants = "GOT-MERCHANTS";
+  static CallMerchants(propsData) {
+    return {
+      type: GitAction.GetMerchants,
+      payload: propsData,
+    };
+  }
+
+  ///////////////////////////////////////////////////  Product  ///////////////////////////////////////////////////
+  static AddProduct = "ADD-PRODUCT";
+  static AddedProduct = "ADDED-PRODUCT";
+  static CallAddProduct(prodData) {
+    return {
+      type: GitAction.AddProduct,
+      payload: prodData,
+    };
+  }
+
+  static UpdateProduct = "UPDATE-PRODUCT";
+  static UpdatedProduct = "UPDATED-PRODUCT";
+  static CallUpdateProduct(prodData) {
+    return {
+      type: GitAction.UpdateProduct,
+      payload: prodData,
+    };
+  }
+
+  static DeleteProduct = "DELETE-PRODUCT";
+  static DeletedProduct = "DELETED-PRODUCT";
+  static CallDeleteProduct(prodData) {
+    return {
+      type: GitAction.DeleteProduct,
+      payload: prodData,
+    };
+  }
+
+  static GetProduct = "GET-PRODUCT";
+  static GotProduct = "GOT-PRODUCT";
+  static ResetProductDetails = "RESET-PRODUCT-DETAILS-RETURN-VALUE";
+  static CallAllProducts(propData) {
+    return {
+      type: GitAction.GetProduct,
+      payload: propData
+    };
+  }
+  static CallResetProductDetails() {
+    return {
+      type: GitAction.ResetProductDetails
+    }
+  }
+
+  static ResetProductManagementValue = "RESET-PRODUCT-MANAGEMENT-RETURN-VALUE";
+  static CallResetProductMgmtReturnVal() {
+    return {
+      type: GitAction.ResetProductManagementValue
+    }
+  }
+
+  static EndorseProduct = "ENDOSE-PRODUCT";
+  static ProductEndorsed = "ENDOSED-PRODUCT";
+  static CallEndorseProduct(prodData) {
+    return {
+      type: GitAction.EndorseProduct,
+      payload: prodData,
+    };
+  }
+
+  static CheckProduct = "CHECK-PRODUCT";
+  static ProductChecked = "CHECKED-PRODUCT";
+  static CallCheckProduct(prodData) {
+    return {
+      type: GitAction.CheckProduct,
+      payload: prodData,
+    };
+  }
+
+  ///////////////////////////////////////////////////  Product Variation  ///////////////////////////////////////////////////
+
+  static AddProductVariation = "ADD-PRODUCTVARIATION";
+  static AddedProductVariation = "ADDED-PRODUCTVARIATION";
+  static CallAddProductVariation(prodData) {
+    return {
+      type: GitAction.AddProductVariation,
+      payload: prodData,
+    };
+  }
+
+  static UpdateProductVariation = "UPDATE-PRODUCTVARIATION";
+  static UpdatedProductVariation = "UPDATED-PRODUCTVARIATION";
+  static CallUpdateProductVariation(prodData) {
+    return {
+      type: GitAction.UpdateProductVariation,
+      payload: prodData,
+    };
+  }
+
+  static DeleteProductVariation = "DELETE-PRODUCTVARIATION";
+  static DeletedProductVariation = "DELETED-PRODUCTVARIATION";
+  static CallDeleteProductVariation(prodData) {
+    return {
+      type: GitAction.DeleteProductVariation,
+      payload: prodData,
+    };
+  }
+
+  ///////////////////////////////////////////////////  Product Variation Details ///////////////////////////////////////////////////
+
+  static AddProductVariationDetail = "ADD-PRODUCTVARIATIONDETAIL";
+  static AddedProductVariationDetail = "ADDED-PRODUCTVARIATIONDETAIL";
+  static ResetProductVariationDetailResult = "RESET-PRODUCTVARIATIONDETAIL";
+  static CallAddProductVariationDetail(prodData) {
+    return {
+      type: GitAction.AddProductVariationDetail,
+      payload: prodData,
+    };
+  }
+  static CallResetProductVariationDetailResult() {
+    return {
+      type: GitAction.ResetProductVariationDetailResult,
+    };
+  }
+
+  static UpdateProductVariationDetail = "UPDATE-PRODUCTVARIATIONDETAIL";
+  static UpdatedProductVariationDetail = "UPDATED-PRODUCTVARIATIONDETAIL";
+  static CallUpdateProductVariationDetail(prodData) {
+    return {
+      type: GitAction.UpdateProductVariationDetail,
+      payload: prodData,
+    };
+  }
+
+  static DeleteProductVariationDetail = "DELETE-PRODUCTVARIATIONDETAIL";
+  static DeletedProductVariationDetail = "DELETED-PRODUCTVARIATIONDETAIL";
+  static CallDeleteProductVariationDetail(prodData) {
+    return {
+      type: GitAction.DeleteProductVariationDetail,
+      payload: prodData,
+    };
+  }
+
+  ///////////////////////////////////////////////////  Product Specification  ///////////////////////////////////////////////////
+
+  static AddProductSpecsDetail = "ADD-PRODUCT-SPECS-DETAILS";
+  static AddedProductSpecsDetail = "ADDED-PRODUCT-SPECS-DETAILS";
+  static ResetProductSpecsDetailResult = "RESET-PRODUCT-SPECS-DETAILS";
+  static CallAddProductSpecsDetail(prodData) {
+    return {
+      type: GitAction.AddProductSpecsDetail,
+      payload: prodData
+    };
+  }
+  static CallResetProductSpecsDetailResults() {
+    return {
+      type: GitAction.ResetProductSpecsDetailResult,
+    };
+  }
+
+  static UpdateProductSpecsDetail = "UPDATE-PRODUCT-SPECS-DETAILS";
+  static UpdatedProductSpecsDetail = "UPDATED-PRODUCT-SPECS-DETAILS";
+  static ResetUpdateProductSpecsDetailResult = "RESET-UPDATE-PRODUCT-SPECS-DETAILS";
+  static CallUpdateProductSpecsDetail(prodData) {
+    return {
+      type: GitAction.UpdateProductSpecsDetail,
+      payload: prodData
+    };
+  }
+  static CallResetUpdateProductSpecsDetail() {
+    return {
+      type: GitAction.ResetUpdateProductSpecsDetailResult,
+    };
+  }
+
+  static DeleteProductSpecsDetail = "DELETE-PRODUCT-SPECS-DETAILS";
+  static DeletedProductSpecsDetail = "DELETED-PRODUCT-SPECS-DETAILS";
+
+  static CallDeleteProductSpecsDetail(prodData) {
+    return {
+      type: GitAction.DeleteProductSpecsDetail,
+      payload: prodData
+    };
+  }
+
+  ///////////////////////////////////////////////////  Product Media  ///////////////////////////////////////////////////
+
+  static AddProductMedia = "ADD-PRODUCTMEDIA";
+  static ProductMediaAdded = "ADDED-PRODUCTMEDIA";
+  static CallAddProductMedia(prodData) {
+    return {
+      type: GitAction.AddProductMedia,
+      payload: prodData,
+    };
+  }
+
+  static deleteProductMedia = "DELETE-PRODUCTMEDIA";
+  static deletedProductMedia = "DELETED-PRODUCTMEDIA";
+  static CallDeleteProductMedia(prodData) {
+    return {
+      type: GitAction.deleteProductMedia,
+      payload: prodData,
+    };
+  }
+
+  ///////////////////////////////////////////////////  Product Category  ///////////////////////////////////////////////////
+
+  static AddProductCategory = "ADD-PRODUCTCATEGORY";
+  static AddedProductCategory = "ADDED-PRODUCTCATEGORY";
+  static CallAddProductCategory(prodData) {
+    return {
+      type: GitAction.AddProductCategory,
+      payload: prodData,
+    };
+  }
+
+  static UpdateProductCategory = "UPDATE-PRODUCTCATEGORY";
+  static UpdatedProductCategory = "UPDATED-PRODUCTCATEGORY";
+  static CallUpdateProductCategory(prodData) {
+    return {
+      type: GitAction.UpdateProductCategory,
+      payload: prodData,
+    };
+  }
+
+  static DeleteProductCategory = "DELETE-PRODUCTCATEGORY";
+  static DeletedProductCategory = "DELETED-PRODUCTCATEGORY";
+  static CallDeleteProductCategory(prodData) {
+    return {
+      type: GitAction.DeleteProductCategory,
+      payload: prodData,
+    };
+  }
+
+  static GetProductCategory = "GET-PRODUCTCATEGORY";
+  static GotProductCategory = "GOT-PRODUCTCATEGORY";
+  static CallAllProductCategory(prodData) {
+    return {
+      type: GitAction.GetProductCategory,
+      payload: prodData,
     };
   }
 

@@ -45,6 +45,31 @@ export const convertDateTimeToString112Format = (date, fetchTime) => {
     }
 }
 
+export const convertDateTimeToString = (date) => {
+    try {
+        let date112 = typeof date !== "undefined" && date !== "" ? new Date(date) : new Date();
+        let dd = (date112.getDate().toString().length <= 1) ? "0" + date112.getDate() : date112.getDate().toString()
+        let mm = ((date112.getMonth() + 1).toString().length <= 1) ? "0" + (date112.getMonth() + 1) : (date112.getMonth() + 1).toString()
+        let yyyy = date112.getFullYear();
+        let HH = (date112.getHours().toString().length <= 1) ? "0" + date112.getHours() : date112.getHours().toString()
+        let MM = (date112.getMinutes().toString().length <= 1) ? "0" + date112.getMinutes() : date112.getMinutes().toString()
+        let ss = (date112.getSeconds().toString().length <= 1) ? "0" + date112.getSeconds() : date112.getSeconds().toString()
+
+        return (yyyy.toString() + mm + dd + HH + MM + ss)
+    }
+    catch (e) {
+        let date112 = new Date();
+        let dd = (date112.getDate().toString().length <= 1) ? "0" + date112.getDate() : date112.getDate().toString()
+        let mm = ((date112.getMonth() + 1).toString().length <= 1) ? "0" + (date112.getMonth() + 1) : (date112.getMonth() + 1).toString()
+        let yyyy = date112.getFullYear();
+        let HH = (date112.getHours().toString().length <= 1) ? "0" + date112.getHours() : date112.getHours().toString()
+        let MM = (date112.getMinutes().toString().length <= 1) ? "0" + date112.getMinutes() : date112.getMinutes().toString()
+        let ss = (date112.getSeconds().toString().length <= 1) ? "0" + date112.getSeconds() : date112.getSeconds().toString()
+
+        return (yyyy.toString() + mm + dd + HH + MM + ss)
+    }
+}
+
 export const convertDateTimeTo112Format_Moment = (date) => {
     return date.getFullYear() + "" + leftPad(parseInt(date.getMonth() + 1), 2) + "" + leftPad(date.getDate(), 2)
 }
@@ -70,7 +95,7 @@ export const convertArrayToStringWithSpecialCharacter = (list, sc) => {
     }
 }
 export const extractNumberFromStrings = (text) => { return (typeof text === "string") ? Number("5g".replace(/[^0-9\.]+/g, "")) : 0 }
- 
+
 // image utilities functions
 export const getImageOrientationType = (imageWidth, imageHeight) => {
     if (Number(imageWidth) > Number(imageHeight))
@@ -259,4 +284,34 @@ export const splitArray = (arr, len) => {
         chunks.push(arr.slice(i, i += len));
     }
     return chunks;
+}
+
+
+export const url = {
+    home: () => "/",
+
+    catalog: () => "/shop/catalog",
+
+    category: (category) => category.ProductName !== null ? `/shop/catalog/${category.ProductName}` : `/shop/catalog`,
+
+    // product: (product) => product.ProductName !== null ? `/shop/products/${product.ProductName.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_')}` :  `/shop/products/`,
+
+    merchant: (merchant) => merchant.UserID !== null ? `/merchant/${merchant.UserID}` : `/merchant`,
+
+    cartMerchant: (merchantID) => merchantID !== null ? `/merchant/${merchantID}` : `/merchant`,
+
+    inventoryProduct: (ProductID) => ProductID !== null ? `/viewProductDetail/${ProductID}` : `/viewProductDetail/`,
+
+    inventoryProductDetails: (ProductID) => ProductID !== null ? `/viewProductDetailList/${ProductID}` : `/viewProductDetailList/`,
+
+    product: (product) => product.ProductID !== null ? `/shop/products/${product.ProductID}` : `/shop/products/`,
+    // product: (product) => `/shop/products/${product.slug}`,
+
+    productcateogory: (category) => category.ProductName !== null ? `/shop/ProductCategory/${category.ProductName}` : `/shop/ProductCategory/`,
+};
+
+export function getCategoryParents(category) {
+    return category.parent
+        ? [...getCategoryParents(category.parent), category.parent]
+        : [];
 }

@@ -8,11 +8,16 @@ import { toast } from "react-toastify";
  *   @function resetLogonUser => void
  */
 
-export const setLogonUser = (loginUser) => {
+export const setLogonUser = (loginUser, sidebarItem, project) => {
     if (typeof loginUser !== "undefined" && loginUser !== null) {
         try {
             localStorage.setItem("userToken", true);
             localStorage.setItem("loginUser", JSON.stringify(loginUser));
+            localStorage.setItem("sidebarItem", JSON.stringify(sidebarItem));
+            localStorage.setItem("project", project)
+            window.location.href = "/" + project + "/Main"
+            window.location.reload(false);
+            
         }
         catch (e) {
             toast.error("Error: 1101: Unable to set login status. Please contact your software warehouse.")
@@ -33,7 +38,8 @@ export const getSidebaritems = () => {
 
 export const isUserLogon = () => {
     // if want to bypass the auth, then uncomment this
-    return true
+    // return true
+    return localStorage.getItem("loginUser") === null ? false : true
 
     // else we will go for normal operation with the function below
     // return (typeof localStorage.getItem("userToken") !== "undefined" && localStorage.getItem("userToken") !== null) ? true : false

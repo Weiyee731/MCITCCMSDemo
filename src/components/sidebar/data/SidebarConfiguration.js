@@ -54,6 +54,28 @@ const sidebar_items = [
         // suffix: <span className="badge red">3</span>,
     },
     {
+        to: "",
+        title: "Product",
+        icon: "indeterminate_check_box",
+        submenus: [
+            {
+                to: "/viewProduct",
+                title: "Product Listing",
+                icon: "inventory",
+            },
+            {
+                to: "",
+                title: "Product Endorsement",
+                icon: "assignment_turned_in",
+            },
+            {
+                to: "",
+                title: "Product Promotion",
+                icon: "assignment_turned_in",
+            },
+        ]
+    },
+    {
         to: "/UserManagement",
         title: "User Management",
         icon: "assignment_ind",

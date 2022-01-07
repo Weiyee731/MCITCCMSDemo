@@ -3,9 +3,19 @@ import Aside from './Aside';
 import Main from './Main';
 import { isUserLogon, getSidebaritems } from "../auth/AuthManagement";
 import Login from "../../pages/Login/Login";
-import sidebar_items from './data/SidebarConfiguration'; 
+import sidebar_items from './data/SidebarConfiguration';
 import "./styles/sidebar.css";
 import { isArrayNotEmpty } from '../../tools/Helpers';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {
+  Route,
+} from "react-router-dom";
+
+// Product
+import ViewProductComponent from "../../pages/Product/ProductListing/viewProduct.component";
+import AddProductAllInOne from "../../pages/Product/addProduct/addProductAllInOne.component";
+
 
 function Layout() {
   const [rtl, setRtl] = useState(false);
@@ -34,6 +44,7 @@ function Layout() {
 
   return (
     <div className={`app ${rtl ? 'rtl' : ''} ${toggled ? 'toggled' : ''}`}>
+      <ToastContainer />
       {
         isLogon === true ?
           <>
@@ -51,6 +62,8 @@ function Layout() {
               handleToggleSidebar={handleToggleSidebar}
               handleRtlChange={handleRtlChange}
             />
+            <Route path="/viewProduct" component={ViewProductComponent} />
+            <Route path="/addProduct" component={AddProductAllInOne} />
           </>
           :
           <Login />

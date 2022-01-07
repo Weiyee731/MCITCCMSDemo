@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { GitAction } from "../../store/action/gitAction";
-import { browserHistory } from "react-router";
+// import { browserHistory } from "react-router";
 import { setLogonUser } from "../../components/auth/AuthManagement"
 import { GetDefaultImage } from "../../tools/MediaHelpers"
 import { isStringNullOrEmpty, isArrayNotEmpty } from "../../tools/Helpers"
@@ -18,6 +18,8 @@ import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import IconButton from '@mui/material/IconButton';
+import { toast } from "react-toastify";
+
 
 // import css
 import "./Login.css"
@@ -41,6 +43,7 @@ const INITIAL_STATE = {
     username: "",
     password: "",
     showPassword: false,
+    isSubmit: false
 }
 
 class Dashboard extends Component {
@@ -53,14 +56,14 @@ class Dashboard extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log(this.props.logonUser)
-        console.log(this.props.loading)
-        if (!this.props.loading && isArrayNotEmpty(this.props.logonUser)) {
-            //success
-
-        }
-        else {
-            //failure
+        console.log("this.props", this.props)
+        if (prevProps.logonUser !== this.props.logonUser && this.state.isSubmit === true) {
+            if (this.props.logonUser[0].ReturnVal !== "0") {
+                setLogonUser(this.props.logonUser, this.props.sidebars, window.location.pathname.split(".")[1])
+            }
+            else {
+                toast.error("The username and password does not match.")
+            }
         }
     }
 
@@ -86,16 +89,27 @@ class Dashboard extends Component {
     }
 
     OnSubmitLogin = () => {
-        console.log('yes')
-        console.log(this.isInputsVerified())
-        if (this.isInputsVerified()) {
-            let object = {
-                username: this.state.username,
-                password: this.state.password,
+
+        let project = ""
+        project = window.location.pathname !== "" && window.location.pathname.split(".")[1];
+
+        if (project !== "") {
+            if (this.isInputsVerified()) {
+                let object = {
+                    username: this.state.username,
+                    password: this.state.password,
+                    ProjectDomainName: project
+                }
+                this.props.CallUserLogin(object)
             }
-            this.props.CallUserLogin(object)
+            this.setState({ isSubmit: true })
         }
+        else
+            toast.error("Error: 1101.2: Unable to login. Project Error")
+
     }
+
+
 
     render() {
         return (

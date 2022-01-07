@@ -55,12 +55,6 @@ export default function FullWidthTabs(props) {
     setValue(index);
   };
 
-  React.useEffect(() => {
-    console.log(props.settings)
-  }, [])
-
-  console.log(isArrayNotEmpty(props.Headers))
-
   const { Headers, Body } = props.settings
   return (
     <Box sx={{ bgcolor: 'background.paper', width: '100%' }}>
