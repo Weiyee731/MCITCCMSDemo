@@ -1,0 +1,114 @@
+.product-general-info {
+    font-size: 10pt;
+    font-weight: 300;
+    font-style: italic;
+}
+
+.product-general-info b {
+    font-size: inherit;
+    font-weight: 600;
+}
+
+.product-general-info span {
+    font-size: inherit;
+}
+
+
+/* Carousel -- Start */
+
+.product-image-carousel-container div {}
+
+.product-medias {
+    width: 300px;
+    height: 300px;
+    margin: auto;
+}
+
+.product-carousel-button {
+    position: absolute;
+    top: 40%;
+}
+
+.product-carousel-button.prev-btn {
+    left: 5px;
+}
+
+.product-carousel-button.next-btn {
+    right: 5px;
+}
+
+.product-medias-gallery {
+    display: flex;
+    width: 100%;
+    overflow-y: auto;
+}
+
+.product-medias-gallery .product-medias-gallery-image {
+    width: 80px;
+    height: 80px;
+    border: 1px solid rgba(0, 0, 0, 0.6);
+    margin-left: 5px;
+    cursor: pointer;
+    opacity: 1;
+    transition: .2s opacity ease-in;
+}
+
+.product-medias-gallery .product-medias-gallery-image:hover {
+    opacity: 0.7;
+    transition: .2s opacity ease-out;
+}
+
+
+/* Carousel -- End  */
+
+.product-detail {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.product-specification {}
+
+.product-description {}
+
+
+/* merchant profile */
+
+.merchant-profile {
+    margin-top: 1rem;
+}
+
+.merchant-profile-image {
+    width: 85px;
+    height: 85px;
+    /* border: 1px solid rgba(22, 22, 22, 0.5); */
+}
+
+.merchant-name {
+    font-size: 14pt;
+    font-weight: 600;
+}
+
+.merchant-joined-date {
+    font-size: 9pt;
+    font-weight: 300;
+}
+
+.merchant-description {
+    font-size: 10pt;
+}
+
+
+/* common css */
+
+.merchant-profile,
+.product-description,
+.product-specification {
+    border: 1px solid rgba(22, 22, 22, 0.5);
+    padding: 0.75rem 1.25rem;
+}
+
+.product-detail,
+.product-image-carousel-container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}

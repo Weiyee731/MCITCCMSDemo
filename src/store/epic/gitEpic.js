@@ -436,61 +436,109 @@ export class GitEpic {
     });
 
 
-
-  Product_Update = (action$) =>
+    Product_Update = (action$) =>
     action$.ofType(GitAction.UpdateProduct).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_UpdateProduct?PRODUCTID=" + payload.ProductID +
-        "&name=" + payload.name +
-        "&manufacturer=1" +
-        "&description=" + payload.description +
-        "&productCategory=" + payload.productCategory +
-        "&productSupplier=" +
-        payload.productSupplier + "&productShoplot=1&productGrid=1&height=" + payload.height +
-        "&width=" + payload.width +
-        "&depth=" + payload.depth +
-        "&weight=" + payload.weight +
-        "&sku=" + payload.sku +
-        "&brand=" + payload.brand +
-        "&model=" + payload.model +
-        "&tags=" + payload.tags +
-        "&USERID=" + payload.UserID
-      )
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_UpdateProduct?PRODUCTID=" + payload.ProductID +
-          "&name=" + payload.name +
-          "&manufacturer=1" +
-          "&description=" + payload.description +
-          "&productCategory=" + payload.productCategory +
-          "&productSupplier=" +
-          payload.productSupplier + "&productShoplot=1&productGrid=1&height=" + payload.height +
-          "&width=" + payload.width +
-          "&depth=" + payload.depth +
-          "&weight=" + payload.weight +
-          "&sku=" + payload.sku +
-          "&brand=" + payload.brand +
-          "&model=" + payload.model +
-          "&tags=" + payload.tags +
-          "&USERID=" + payload.UserID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
 
-        return {
-          type: GitAction.UpdatedProduct,
-          payload: json,
-        };
-      } catch (error) {
-        alert('updateProduct: ' + error);
-        return {
-          type: GitAction.UpdatedProduct,
-          payload: [],
-        };
-      }
+      return fetch(
+        url + project + "/Product_UpdateProduct"
+        , {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            PRODUCTID: payload.ProductID,
+            PRODUCTNAME: payload.name,
+            PROJECTID: payload.ProjectID,
+            MERCHANTID: payload.productSupplier,
+            PRODUCTDESC: payload.description,
+            PRODUCTCATEGORYID: payload.productCategory,
+            PRODUCTHEIGHT: payload.height,
+            PRODUCTWIDTH: payload.width,
+            PRODUCTDEPTH: payload.depth,
+            PRODUCTWEIGHT: payload.weight,
+            PRODUCTSKU: payload.sku,
+            PRODUCTBRAND: payload.brand,
+
+            PRODUCTMODEL: payload.model,
+            PRODUCTTAG: payload.tags
+          })
+        }
+      )
+        .then(response => response.json())
+        .then(json => {
+          json = json;
+          // if (json !== "fail") {
+          //   json = json;
+          //   // toast.success("Successfully update stock. Fetching the latest data..", { autoClose: 3000 })
+          // } else {
+          //   json = [];
+          // }
+          return {
+            type: GitAction.UpdatedProduct,
+            payload: json,
+          };
+        })
+        .catch(error => alert('UpdateProduct: ' + error));
     });
+
+
+
+  // Product_Update = (action$) =>
+  //   action$.ofType(GitAction.UpdateProduct).switchMap(async ({ payload }) => {
+  //     console.log(
+  //       url + project + "/" +
+  //       "Product_UpdateProduct?PRODUCTID=" + payload.ProductID +
+  //       "&name=" + payload.name +
+  //       "&manufacturer=1" +
+  //       "&description=" + payload.description +
+  //       "&productCategory=" + payload.productCategory +
+  //       "&productSupplier=" +
+  //       payload.productSupplier + "&productShoplot=1&productGrid=1&height=" + payload.height +
+  //       "&width=" + payload.width +
+  //       "&depth=" + payload.depth +
+  //       "&weight=" + payload.weight +
+  //       "&sku=" + payload.sku +
+  //       "&brand=" + payload.brand +
+  //       "&model=" + payload.model +
+  //       "&tags=" + payload.tags +
+  //       "&USERID=" + payload.UserID
+  //     )
+  //     try {
+  //       const response = await fetch(
+  //         url + project + "/" +
+  //         "Product_UpdateProduct?PRODUCTID=" + payload.ProductID +
+  //         "&name=" + payload.name +
+  //         "&manufacturer=1" +
+  //         "&description=" + payload.description +
+  //         "&productCategory=" + payload.productCategory +
+  //         "&productSupplier=" +
+  //         payload.productSupplier + "&productShoplot=1&productGrid=1&height=" + payload.height +
+  //         "&width=" + payload.width +
+  //         "&depth=" + payload.depth +
+  //         "&weight=" + payload.weight +
+  //         "&sku=" + payload.sku +
+  //         "&brand=" + payload.brand +
+  //         "&model=" + payload.model +
+  //         "&tags=" + payload.tags +
+  //         "&USERID=" + payload.UserID
+  //       );
+  //       let json = await response.json();
+  //       json = JSON.parse(json);
+
+  //       return {
+  //         type: GitAction.UpdatedProduct,
+  //         payload: json,
+  //       };
+  //     } catch (error) {
+  //       alert('updateProduct: ' + error);
+  //       return {
+  //         type: GitAction.UpdatedProduct,
+  //         payload: [],
+  //       };
+  //     }
+  //   });
 
   Product_Delete = (action$) =>
     action$.ofType(GitAction.DeleteProduct).switchMap(async ({ payload }) => {
