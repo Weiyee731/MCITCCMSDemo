@@ -17,6 +17,7 @@ const INITIAL_STATE = {
   addResult: [],
   products: [],
   productsByID: [],
+  returnUpdateProduct: [],
   productMgmtResult: [],
   endorsedProduct: [],
   exists: [],
@@ -34,6 +35,9 @@ const INITIAL_STATE = {
   order: [],
   transactions: [],
 
+  // Review
+  reviews: [],
+  reviewReturn: [],
 };
 
 export function counterReducer(state = INITIAL_STATE, action) {
@@ -141,6 +145,8 @@ export function counterReducer(state = INITIAL_STATE, action) {
         returnUpdateProduct: action.payload,
         loading: false
       });
+    case GitAction.ResetUpdateProduct:
+      return Object.assign({}, state, { returnUpdateProduct: [] });
 
     case GitAction.DeleteProduct:
       return Object.assign({}, state, { loading: true });
@@ -169,6 +175,8 @@ export function counterReducer(state = INITIAL_STATE, action) {
         loading: false,
         endorsedProduct: action.payload,
       });
+    case GitAction.ResetProductEndorse:
+      return Object.assign({}, state, { endorsedProduct: [] });
 
     case GitAction.CheckProduct:
       return Object.assign({}, state, { loading: true });
@@ -176,6 +184,14 @@ export function counterReducer(state = INITIAL_STATE, action) {
       return Object.assign({}, state, {
         loading: false,
         exists: action.payload,
+      });
+
+    case GitAction.GetProductDetail:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotProductDetail:
+      return Object.assign({}, state, {
+        loading: false,
+        productsByID: action.payload,
       });
 
     ///////////////////////////////////////////////////  Product Variation  ///////////////////////////////////////////////////
@@ -231,6 +247,11 @@ export function counterReducer(state = INITIAL_STATE, action) {
         loading: false,
         variationResult: action.payload,
       });
+    case GitAction.ResetUpdateProductVariationDetailResult:
+      return Object.assign({}, state, {
+        loading: false,
+        variationResult: []
+      });
 
     case GitAction.DeleteProductVariationDetail:
       return Object.assign({}, state, { loading: true });
@@ -238,6 +259,17 @@ export function counterReducer(state = INITIAL_STATE, action) {
       return Object.assign({}, state, {
         loading: false,
         variationResult: action.payload,
+      });
+
+    ///////////////////////////////////////////////////  Product Stock  ///////////////////////////////////////////////////
+
+    case GitAction.UpdateProductVariationStock:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.UpdatedProductVariationStock:
+      return Object.assign({}, state, {
+        loading: false,
+        variationStock: action.payload,
+        productsByID: action.payloadProduct
       });
 
     ///////////////////////////////////////////////////  Product Specification  ///////////////////////////////////////////////////
@@ -295,6 +327,13 @@ export function counterReducer(state = INITIAL_STATE, action) {
         productMediaResult: action.payload,
       });
 
+
+    case GitAction.ResetProductMediaReturnVal:
+      return Object.assign({}, state, {
+        loading: false,
+        productMediaResult: []
+      });
+
     ///////////////////////////////////////////////////  Product Category  ///////////////////////////////////////////////////
 
     case GitAction.AddProductCategory:
@@ -335,6 +374,27 @@ export function counterReducer(state = INITIAL_STATE, action) {
       return Object.assign({}, state, {
         loading: false,
         productCategories: action.payload,
+      });
+
+
+    ///////////////////////////////////////////////////  Product Review  ///////////////////////////////////////////////////
+
+    case GitAction.GetProductReviewByProductID:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotProductReviewByProductID:
+      return Object.assign({}, state, {
+        loading: false,
+        reviews: action.payload,
+      });
+
+
+    case GitAction.addProductReview:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.addedProductReview:
+      return Object.assign({}, state, {
+        loading: false,
+        reviews: action.payload,
+        reviewReturn: action.payload2
       });
 
 

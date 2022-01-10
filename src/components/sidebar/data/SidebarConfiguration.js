@@ -64,7 +64,7 @@ const sidebar_items = [
                 icon: "inventory",
             },
             {
-                to: "",
+                to: "/viewProductEndorsement",
                 title: "Product Endorsement",
                 icon: "assignment_turned_in",
             },

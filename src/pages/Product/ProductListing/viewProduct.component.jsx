@@ -1,20 +1,22 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import {
-  Select,
-  TableCell,
-} from "@material-ui/core";
+
 import { GitAction } from "../../../store/action/gitAction";
+import { toast } from "react-toastify";
+import TableComponents from "../../../components/TableComponents/TableComponents";
+
+// Share Component
+import SearchBar from "../../../components/SearchBar/SearchBar"
+import { url } from "../../../tools/Helpers";
+import Logo from "../../../assets/logos/logo.png";
+
+// UI Component
+import GroupAddIcon from '@mui/icons-material/Add';
+import FormControl from "@material-ui/core/FormControl";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import DeleteIcon from '@mui/icons-material/Delete';
-import Logo from "../../../assets/logos/logo.png";
-import { toast } from "react-toastify";
-import { url } from "../../../tools/Helpers";
-import TableComponents from "../../../components/TableComponents/TableComponents";
-import FormControl from "@material-ui/core/FormControl";
-import SearchBar from "../../../components/SearchBar/SearchBar"
-import GroupAddIcon from '@mui/icons-material/Add';
+import { Select, TableCell, } from "@material-ui/core";
 
 
 function mapStateToProps(state) {

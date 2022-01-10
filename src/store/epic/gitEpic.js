@@ -558,6 +558,36 @@ export class GitEpic {
       }
     });
 
+  Product_ViewDetail = (action$) =>
+    action$.ofType(GitAction.GetProductDetail).switchMap(async ({ payload }) => {
+      console.log(
+        url + project + "/" +
+        "Product_ItemDetailByProductID?ProductID=" + payload.productId +
+        "&USERID=" + payload.userId +
+        "&ProjectID=" + payload.ProjectID
+      )
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Product_ItemDetailByProductID?ProductID=" + payload.productId +
+          "&USERID=" + payload.userId +
+          "&ProjectID=" + payload.ProjectID
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        return {
+          type: GitAction.GotProductDetail,
+          payload: json,
+        };
+      } catch (error) {
+        alert('getProductDetail: ' + error);
+        return {
+          type: GitAction.GotProductDetail,
+          payload: [],
+        };
+      }
+    });
+
   Product_Endorse = (action$) =>
     action$.ofType(GitAction.EndorseProduct).switchMap(async ({ payload }) => {
       console.log(
@@ -851,6 +881,53 @@ export class GitEpic {
         alert('getAllProductVariationByCategoryID: ' + error);
         return {
           type: GitAction.GotProductVariationByCategoryID,
+          payload: [],
+        };
+      }
+    });
+
+
+  ///////////////////////////////////////////////////  Product Stock  ///////////////////////////////////////////////////
+
+  ProductVariationStock_Update = (action$) =>
+    action$.ofType(GitAction.UpdateProductVariationStock).switchMap(async ({ payload }) => {
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Product_UpdateProductStockVariation?PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailID +
+          "&PRODUCTSTOCK=" + payload.stock
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        if (json[0].ReturnVal === 1)
+          toast.success("Variation stock updated successfully")
+
+        try {
+          const response = await fetch(
+            url + project + "/" +
+            "Product_ItemDetailByProductID?ProductID=" + payload.productId +
+            "&USERID=" + payload.userId +
+            "&ProjectID=" + payload.ProjectID
+          );
+          let json2 = await response.json();
+          json2 = JSON.parse(json2);
+          return {
+            type: GitAction.UpdatedProductVariationStock,
+            payloadProduct: json2,
+            payload: json,
+          };
+        } catch (error) {
+          alert('UpdatedProductVariationStock: ' + error);
+          return {
+            type: GitAction.UpdatedProductVariationStock,
+            payload: [],
+          };
+        }
+
+      } catch (error) {
+        alert('updateProductVariationStock: ' + error);
+        return {
+          type: GitAction.UpdatedProductVariationStock,
           payload: [],
         };
       }
@@ -1173,6 +1250,88 @@ export class GitEpic {
     });
 
 
+  ///////////////////////////////////////////////////  Product Review ///////////////////////////////////////////////////
+
+  ProductReview_ViewByID = (action$) =>
+    action$.ofType(GitAction.GetProductReviewByProductID).switchMap(async ({ payload }) => {
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Product_ViewReviewByProductID?PRODUCTID=" +
+          payload.ProductID +
+          "&PARENTPRODUCTREVIEWID=" +
+          payload.ParentProductReviewID
+        );
+        let json = await response.json();
+        return {
+          type: GitAction.GotProductReviewByProductID,
+          payload: json,
+        };
+      } catch (error) {
+        alert('viewProductReviewByProductID: ' + error);
+        return {
+          type: GitAction.GotProductReviewByProductID,
+          payload: [],
+        };
+      }
+    });
+
+  ProductReview_Add = (action$) =>
+    action$.ofType(GitAction.addProductReview).switchMap(async ({ payload }) => {
+      console.log(url + project + "/" +
+        "Product_AddReview?PARENTPRODUCTREVIEWID=" + payload.parentProductReviewID
+        + "&PRODUCTID=" + payload.productID
+        + "&USERID=" + payload.UserID
+        + "&PRODUCTREVIEWRATING=" + payload.productReviewRating
+        + "&PRODUCTREVIEWCOMMENT=" + payload.productReviewComment
+        + "&REPLYPARENTID=" + payload.replyParentID)
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Product_AddReview?PARENTPRODUCTREVIEWID=" + payload.parentProductReviewID
+          + "&PRODUCTID=" + payload.productID
+          + "&USERID=" + payload.UserID
+          + "&PRODUCTREVIEWRATING=" + payload.productReviewRating
+          + "&PRODUCTREVIEWCOMMENT=" + payload.productReviewComment
+          + "&REPLYPARENTID=" + payload.replyParentID
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        console.log("json add review", json)
+        if (json[0].ReturnVal === 1) {
+          toast.success("Sucessfully send a review");
+        }
+        try {
+
+          console.log(url + project + "/" +
+            "Product_ViewReviewByProductID?PRODUCTID=" + payload.productID +
+            "&PARENTPRODUCTREVIEWID=0")
+          const response_1 = await fetch(
+            url + project + "/" +
+            "Product_ViewReviewByProductID?PRODUCTID=" + payload.productID +
+            "&PARENTPRODUCTREVIEWID=0"
+          );
+          let json_1 = await response_1.json();
+          return {
+            type: GitAction.addedProductReview,
+            payload: json_1,
+            payload2: json,
+          };
+        } catch (error) {
+          alert('viewProductReviewByProductID: ' + error);
+          return {
+            type: GitAction.addedProductReview,
+            payload: [],
+          };
+        }
+      } catch (error) {
+        alert('addProductReview: ' + error);
+        return {
+          type: GitAction.addedProductReview,
+          payload: [],
+        };
+      }
+    });
 
   ///////////////////////////////////////////////////  sidebar configurations ///////////////////////////////////////////////////
   User_ViewPage = action$ =>

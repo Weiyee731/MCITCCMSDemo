@@ -1,0 +1,549 @@
+.MainContainer {
+    margin: 2%;
+    padding: 8px;
+  }
+  
+  .SubContainer {
+    padding: 16px;
+  }
+  
+  .HorizontalContainer {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .MuiStepConnector-lineVertical {
+    height: 8px !important;
+    min-height: 8px !important;
+  }
+  
+  .MuiStepper-root {
+    padding: 8px !important;
+  }
+  .StepContainer {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .MainTab {
+    width: 72%;
+  }
+  
+  .ProgressTab {
+    position: fixed;
+    width: 20%;
+    right: 2%;
+  }
+  
+  .Heading {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  .Label {
+    font-size: 14px;
+    color: #5c5c5c;
+    margin: 8px;
+  }
+  
+  .FontType1 {
+    font-size: 14px !important;
+    color: #5c5c5c;
+    margin: 8px !important;
+  }
+  
+  .FontType4 {
+    font-size: 12px !important;
+    color: #5c5c5c;
+    margin: 5px !important;
+  }
+  
+  .MuiTypography-body2 {
+    font-size: 0.8rem !important;
+  }
+  
+  .FontType3 {
+    font-size: 14px !important;
+    color: #5c5c5c;
+    /* margin: 8px !important; */
+    margin-top: 8px !important;
+    margin-left: 8px !important;
+    margin-bottom: 8px !important;
+  }
+  
+  .FontTypeInputLabel {
+    font-size: 14px !important;
+    color: #5c5c5c;
+    width: 100%;
+    margin: 8px !important;
+    text-align: left;
+  }
+  
+  .InputField {
+    font-size: 14px !important;
+    color: #5c5c5c;
+    margin: 8px auto !important;
+    width: 100% !important;
+    background: #fff;
+  }
+  
+  .InputFieldMiddleElement {
+    /* margin-right: 8px !important;
+      margin-left: 8px !important; */
+    width: 100% !important;
+    /* margin-top: 8px;
+      margin-bottom: 8px; */
+    font-size: 14px !important;
+  }
+  
+  .InputFieldMiddleElementNested {
+    margin-right: 8px !important;
+    margin-left: 8px !important;
+    width: 100% !important;
+    /* margin-top: 8px;
+      margin-bottom: 8px; */
+    font-size: 14px !important;
+  }
+  
+  .InputFieldFirstElement {
+    margin-right: 8px !important;
+    width: 100% !important;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    font-size: 14px !important;
+  }
+  
+  .InputFieldSecondElement {
+    margin-left: 8px !important;
+    width: 100% !important;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    font-size: 14px !important;
+  }
+  
+  .ItemContainer {
+    width: 100% !important;
+  }
+  
+  .Margin {
+    margin: 8px auto;
+  }
+  
+  .ContainerWithMargin {
+    margin: 8px auto !important;
+    width: 100% !important;
+  }
+  
+  .CategorySelector {
+    border-radius: 8px;
+    padding: 16px;
+    background: #f7f7f7;
+    margin: 8px auto;
+  }
+  
+  .CategorySelectorBody {
+    display: flex;
+    height: 300px;
+    justify-content: space-between;
+  }
+  
+  .CategorySelectorSection {
+    border: 0.5px solid #e6e6e6;
+    width: 100%;
+    border-left: 0px;
+    border-bottom: 0px;
+    overflow-y: scroll;
+    margin-top: 8px;
+  }
+  
+  .CategorySelectorItem {
+    width: 100%;
+    font-size: 14px;
+  }
+  
+  .error {
+    color: #e31e10;
+    margin-left: 8px;
+    font-size: 14px;
+  }
+  
+  .MuiCardContent-root {
+    padding: 16px;
+  }
+  
+  .MuiCardContent-root:last-child {
+    padding: 16px !important;
+  }
+  
+  .AddButton {
+    width: 100% !important;
+    background: #e3e3e3 !important;
+    border: 0px !important;
+    margin: 8px auto !important;
+  }
+  
+  .AddButtonContainer {
+    text-align: center !important;
+    width: 100% !important;
+  }
+  
+  .CloseButton {
+    margin-left: 24px;
+  }
+  
+  .VariantMain {
+    display: flex !important;
+    width: 100% !important;
+    justify-content: space-around !important;
+    padding: 16px !important;
+    background: #f7f7f7 !important;
+    border-radius: 10px !important;
+  }
+  
+  .VariantContainer {
+    width: 100%;
+    display: flex;
+    align-items: baseline;
+  }
+  
+  .ApplyAllButton {
+    width: 100% !important;
+    margin-left: 8px !important;
+    background: #e3e3e3 !important;
+    border: 0px !important;
+  }
+  
+  .VariantText {
+    width: 20%;
+    text-align: center;
+    font-size: 14px;
+  }
+  
+  .VariantOptionsSection {
+    width: 80%;
+  }
+  
+  .VariantOption {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+  
+  .DeleteOptionButton {
+    align-self: center;
+    margin-right: 8px;
+  }
+  
+  .DeleteVariantButton {
+    margin-left: 16px !important;
+  }
+  
+  .StockField {
+    width: 100% !important;
+    margin-left: 8px !important;
+  }
+  
+  .InputField2 {
+    width: 100% !important;
+    font-size: 14px !important;
+    background: #fff !important;
+  }
+  
+  .MarginRight {
+    margin-right: 16px;
+  }
+  
+  .MiddleText {
+    width: 100%;
+    font-size: 14px;
+    background: #fff;
+    margin-right: 8px !important;
+    margin-left: 8px !important;
+  }
+  
+  .MiddleDiv {
+    width: 100% !important;
+    margin-right: 8px !important;
+    margin-left: 8px !important;
+  }
+  
+  .wholeSale {
+    display: flex;
+    width: 100%;
+    background: #f7f7f7;
+    padding: 16px;
+  }
+  
+  .wholeSaleRows {
+    display: flex;
+    justify-content: space-between;
+    margin: 16px;
+    width: 100%;
+  }
+  
+  .deleteButtonWholeSale {
+    align-self: center;
+  }
+  
+  .PriceList {
+    display: flex;
+    width: 80%;
+  }
+  
+  .DropZoneMain {
+    /* display: flex !important; */
+    width: 100%;
+    /* justify-content: space-between; */
+    margin: 0 auto;
+  }
+  
+  .DropZoneImageMain {
+    position: relative;
+  }
+  
+  .dropzone {
+    background: #f0f0f0;
+    padding: 20px;
+    margin: 8px auto;
+    border-style: dashed;
+    border-width: 2px;
+    border-radius: 10px;
+    text-align: center;
+    align-self: center;
+    width: 100px;
+    height: 100px;
+    font-weight: normal;
+  }
+  
+  .DropZoneImage {
+    width: 100px;
+    height: 100px;
+    margin: 8px;
+    border: 0.5px solid;
+    border-color: #c9c9c9;
+    padding: 2px;
+    border-radius: 10px;
+  }
+  
+  .DropZoneAddIcon {
+    margin: 16px;
+  }
+  
+  .DropZoneImageDeleteButtonDiv {
+    position: absolute;
+  }
+  
+  .DropZoneImageDeleteButtonIconLocation {
+    float: right;
+    width: 35px;
+    height: 35px;
+    left: 85px;
+    bottom: 10px;
+  }
+  
+  .DropZoneImageDeleteButtonIcon {
+    background: #fff;
+    border-radius: 50px;
+    border: 2px solid;
+    border-color: #525252;
+    padding: 5px;
+    width: 25px;
+    height: 25px;
+  }
+  
+  .DropZoneImageForMeasurment {
+    display: none;
+  }
+  
+  .DropZoneVariantMain {
+    /* display: flex !important; */
+    width: 100%;
+    /* justify-content: space-between; */
+    margin: 0 auto;
+  }
+  
+  .DropZoneGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(116px, 1fr));
+    grid-auto-flow: column;
+    /* grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr; */
+  }
+  
+  .DropZoneItemContainerVariant {
+    width: 100%;
+    margin-right: 8px;
+  }
+  
+  .DropZoneVariantName {
+    width: 100%;
+    text-align: center;
+    margin: 0 auto;
+    font-size: 14px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  
+  .TableMain {
+    background: #f7f7f7;
+    border-radius: 10px;
+    font-size: 14px !important;
+    min-width: 0px !important;
+    table-layout: fixed;
+  }
+  
+  .trHeading {
+    font-size: 14px !important;
+    align-items: center;
+    text-align: left;
+    border-bottom: 1px solid #cfcfcf;
+    border-collapse: collapse;
+    word-break: break-all !important;
+  }
+  
+  .trBody {
+    font-size: 14px !important;
+    border-bottom: 1px solid #cfcfcf;
+    border-collapse: collapse;
+    padding: 0px;
+    margin: 0px;
+  }
+  
+  .trBody:last-child {
+    border-bottom: 0px;
+  }
+  
+  .tdBody {
+    padding: 0px;
+    margin: 0px;
+    text-align: center;
+  }
+  
+  .trNested {
+    font-size: 14px !important;
+    align-items: center;
+    text-align: left;
+    border-bottom: 1px solid #cfcfcf;
+    border-collapse: collapse;
+    word-break: break-all;
+  }
+  
+  .trNested:last-child {
+    border-bottom: 0px;
+  }
+  
+  .tdHeading {
+    margin: 16px auto;
+    padding: 14px;
+    width: 20%;
+    word-break: break-all !important;
+  }
+  .tdNestedNew {
+    width: 25%;
+    padding: 14px;
+    word-break: break-all;
+  }
+  
+  .tdNestedText {
+    width: 20%;
+    padding: 14px;
+    word-break: break-all;
+  }
+  
+  .tdNestedText2 {
+    margin: 16px auto;
+    padding: 14px;
+    text-align: left;
+    vertical-align: middle !important;
+    width: 100% !important;
+  }
+  
+  .tdNested {
+    padding: 16px;
+    align-self: stretch;
+  }
+  
+  .tdNestedNormalInput {
+    padding: 15px;
+    align-self: stretch;
+  }
+  
+  .tableNested {
+    margin: 0px;
+    padding: 0px;
+  }
+  
+  .TextFieldsTables {
+    font-size: 14px !important;
+    color: #5c5c5c;
+    margin: 8px auto !important;
+    width: 100% !important;
+    background: #fff;
+  }
+  
+  .searchIcon {
+    color: blue;
+  }
+  
+  .HintsContainer {
+    /* padding: 8px !important; */
+  }
+  
+  .HintsTitleContainer {
+    display: flex;
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  
+  .HintsIcon {
+    width: 15% !important;
+    height: 15% !important;
+    margin-right: 8px;
+  }
+  
+  .HintsTitleText {
+    align-self: center;
+    margin: 0 auto;
+    width: 100%;
+    font-size: 14px;
+  }
+  
+  .HintsBodyContanier {
+    margin-top: 8px;
+    width: 100%;
+  }
+  
+  .HintsCard {
+    background: #e3e3e3 !important;
+  }
+  
+  .HintBodyText {
+    font-size: 12px !important;
+    word-break: normal !important;
+  }
+  
+  .SubmitButtonContainer {
+    width: 72%;
+  }
+  
+  .SubmitButton {
+    width: 100%;
+    margin: 0 auto;
+    background: #e3e3e3 !important;
+    border: 0px !important;
+  }
+  
+  .ck-content {
+    width: 100% !important;
+    height: 500px !important;
+  }
+  
+  /* .MuiTooltip-popper {
+      color: #fff;
+      background: red;
+    } */
+  
+  .input-group-text {
+    font-size: 14px !important;
+  }
+  

@@ -12,7 +12,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 
 const DescriptionFunction = (props) => {
-    const { post_content, content, handleChange, imageFileUrl } = props
+    const { post_content, content, handleChange, imageFileUrl, editorState } = props
     const [isOpen, setOpen] = React.useState(true);
 
 
@@ -28,6 +28,7 @@ const DescriptionFunction = (props) => {
                 initialValue={post_content}
                 value={content}
                 onEditorChange={(e) => handleChange(e)}
+                disabled={editorState === true ? false : true}
                 init={{
                     height: 600,
                     menubar: false,

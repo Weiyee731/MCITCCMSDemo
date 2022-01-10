@@ -7,23 +7,19 @@ import {
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
-// import TextField from "@material-ui/core/TextField";.
 import TextField from '@mui/material/TextField';
 import Select from "@material-ui/core/Select";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import { GitAction } from "../../../store/action/gitAction";
-// import "../../app/App.scss";
 import SwipeableViews from "react-swipeable-views";
 import MaterialTable from "material-table";
 import Dropzone from "react-dropzone";
 import axios from "axios";
-// import { browserHistory } from "react-router";
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@material-ui/core/IconButton";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-// import Fade from "@material-ui/core/Fade";
 import DescriptionFunction from "../../../tools/editor";
 import { Editor } from '@tinymce/tinymce-react';
 import Resizer from "react-image-file-resizer";
@@ -108,7 +104,7 @@ const editorConfiguration = {
 
 function mapDispatchToProps(dispatch) {
   return {
-    CallAllProductCategoryListing: () => dispatch(GitAction.CallAllProductCategoryListing()),
+    CallAllProductCategoryListing: (prodData) => dispatch(GitAction.CallAllProductCategoryListing(prodData)),
     CallAllProductsCategories: (prodData) => dispatch(GitAction.CallAllProductCategory(prodData)),
 
 
@@ -479,7 +475,6 @@ class AddProductComponent extends Component {
 
     this.myRef = React.createRef();
     this.props.CallAllProductCategoryListing({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID });
-    console.log("HTTPS", JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID)
     this.props.CallAllProductsCategories({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID });
 
     this.handlePrevClickButton = this.handlePrevClickButton.bind(this);
@@ -3489,17 +3484,7 @@ class AddProductComponent extends Component {
 
   render() {
 
-    console.log("DESCRIPTION", this.state.description)
-    console.log("THIS.STAE", this.state)
-
-    console.log("WINDOW", window)
-    console.log("WINDOW", window.location)
-
-
-
     const { isOnViewState } = this.props  //this props used to indicate it is on the state of viewing product details or it is adding product
-
-    console.log("this.state", this.state)
     const steps = [
       "Basic Information",
       "Product Details",

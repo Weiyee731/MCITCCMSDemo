@@ -25,6 +25,7 @@ const rootEpic = combineEpics(
   gitEpic.Product_Update,
   gitEpic.Product_Delete,
   gitEpic.Product_ViewAll,
+  gitEpic.Product_ViewDetail,
   gitEpic.Product_Endorse,
   gitEpic.Product_CheckDuplicate,
 
@@ -38,6 +39,9 @@ const rootEpic = combineEpics(
   gitEpic.ProductVariationDetail_Update,
   gitEpic.ProductVariationDetail_Delete,
   gitEpic.ProductVariationDetail_ViewAllByCategoryID,
+
+  // Product Stock
+  gitEpic.ProductVariationStock_Update,
 
   // Product Specification
   gitEpic.ProductSpecsDetail_Add,
@@ -54,6 +58,10 @@ const rootEpic = combineEpics(
   gitEpic.ProductCategory_Delete,
   gitEpic.ProductCategory_ViewAll,
   gitEpic.ProductCategory_ViewAllWithParent,
+
+  // Product Review
+  gitEpic.ProductReview_ViewByID,
+  gitEpic.ProductReview_Add,
 );
 
 const rootReducer = combineReducers({ counterReducer });

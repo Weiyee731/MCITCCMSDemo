@@ -14,6 +14,9 @@ import {
 
 // Product
 import ViewProductComponent from "../../pages/Product/ProductListing/viewProduct.component";
+import ViewProductGeneralInfo from "../../pages/Product/ProductListing/viewProductGeneralInfo.component";
+import ProductDetailsComponent from "../../pages/Product/ProductListing/viewProductDetailsList";
+import viewProductEndorsementComponent from "../../pages/Product/ProductEndorsement/ProductEndorsement";
 import AddProductAllInOne from "../../pages/Product/addProduct/addProductAllInOne.component";
 
 
@@ -64,6 +67,38 @@ function Layout() {
             />
             <Route path="/viewProduct" component={ViewProductComponent} />
             <Route path="/addProductsAllIn" component={AddProductAllInOne} />
+            <Route
+              exact
+              path="/viewProductDetail/:productId"
+              render={(props) => (
+                <>
+                  <ViewProductGeneralInfo
+                    {...props}
+                    layout="standard"
+                    productId={props.match.params.productId}
+                  />
+                </>
+              )}
+            />
+
+            <Route
+              exact
+              path="/viewProductDetailList/:productId"
+              render={(props) => (
+                <>
+                  <ProductDetailsComponent
+                    {...props}
+                    layout="standard"
+                    productId={props.match.params.productId}
+                  />
+                </>
+              )}
+            />
+
+            <Route
+              path="/viewProductEndorsement"
+              component={viewProductEndorsementComponent}
+            />
           </>
           :
           <Login />

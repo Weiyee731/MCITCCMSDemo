@@ -120,10 +120,17 @@ export class GitAction {
 
   static UpdateProduct = "UPDATE-PRODUCT";
   static UpdatedProduct = "UPDATED-PRODUCT";
+  static ResetUpdateProduct = "RESET-UPDATE-PRODUCT";
+
   static CallUpdateProduct(prodData) {
     return {
       type: GitAction.UpdateProduct,
       payload: prodData,
+    };
+  }
+  static CallResetUpdateProduct() {
+    return {
+      type: GitAction.ResetUpdateProduct,
     };
   }
 
@@ -160,12 +167,20 @@ export class GitAction {
 
   static EndorseProduct = "ENDOSE-PRODUCT";
   static ProductEndorsed = "ENDOSED-PRODUCT";
+  static ResetProductEndorse = "RESET-PRODUCT-ENDORSE";
   static CallEndorseProduct(prodData) {
     return {
       type: GitAction.EndorseProduct,
       payload: prodData,
     };
   }
+  static CallResetEndorseProduct(prodData) {
+    return {
+      type: GitAction.ResetProductEndorse,
+      payload: prodData,
+    };
+  }
+
 
   static CheckProduct = "CHECK-PRODUCT";
   static ProductChecked = "CHECKED-PRODUCT";
@@ -173,6 +188,15 @@ export class GitAction {
     return {
       type: GitAction.CheckProduct,
       payload: prodData,
+    };
+  }
+
+  static GetProductDetail = "GET-PRODUCT-DETAIL";
+  static GotProductDetail = "GOT-PRODUCT-DETAIL";
+  static CallProductDetail(propData) {
+    return {
+      type: GitAction.GetProductDetail,
+      payload: propData
     };
   }
 
@@ -233,10 +257,16 @@ export class GitAction {
 
   static UpdateProductVariationDetail = "UPDATE-PRODUCTVARIATIONDETAIL";
   static UpdatedProductVariationDetail = "UPDATED-PRODUCTVARIATIONDETAIL";
+  static ResetUpdateProductVariationDetailResult = "RESET-UPDATEPRODUCTVARIATIONDETAIL";
   static CallUpdateProductVariationDetail(prodData) {
     return {
       type: GitAction.UpdateProductVariationDetail,
       payload: prodData,
+    };
+  }
+  static CallResetUpdateProductVariationDetail() {
+    return {
+      type: GitAction.ResetUpdateProductVariationDetailResult,
     };
   }
 
@@ -246,6 +276,27 @@ export class GitAction {
     return {
       type: GitAction.DeleteProductVariationDetail,
       payload: prodData,
+    };
+  }
+
+  ///////////////////////////////////////////////////  Product Stock  ///////////////////////////////////////////////////
+
+
+  static UpdateProductVariationStock = "UPDATE-PRODUCTVARIATIONSTOCK";
+  static UpdatedProductVariationStock = "UPDATED-PRODUCTVARIATIONSTOCK";
+  static CallUpdateProductVariationStock(prodData) {
+    return {
+      type: GitAction.UpdateProductVariationStock,
+      payload: prodData,
+    };
+  }
+
+  static addProductReview = "ADD-PRODUCTREVIEW";
+  static addedProductReview = "ADDED-PRODUCTREVIEW";
+  static CallAddProductReview(suppData) {
+    return {
+      type: GitAction.addProductReview,
+      payload: suppData,
     };
   }
 
@@ -311,6 +362,13 @@ export class GitAction {
     };
   }
 
+  static ResetProductMediaReturnVal = "RESET-PRODUCT-MEDIA-RETURN-VALUE";
+  static CallResetProductMediaResult() {
+    return {
+      type: GitAction.ResetProductMediaReturnVal,
+    };
+  }
+
   ///////////////////////////////////////////////////  Product Category  ///////////////////////////////////////////////////
 
   static AddProductCategory = "ADD-PRODUCTCATEGORY";
@@ -358,5 +416,14 @@ export class GitAction {
     };
   }
 
+
+  static GetProductReviewByProductID = "GET-PRODUCTREVIEWBYPRODUCTID";
+  static GotProductReviewByProductID = "GOT-PRODUCTREVIEWBYPRODUCTID";
+  static CallProductReviewByProductID(suppData) {
+    return {
+      type: GitAction.GetProductReviewByProductID,
+      payload: suppData,
+    };
+  }
 }
 
