@@ -24,6 +24,17 @@ import IconButton from "@material-ui/core/IconButton";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 // import Fade from "@material-ui/core/Fade";
+import DescriptionFunction from "../../../tools/editor";
+import { Editor } from '@tinymce/tinymce-react';
+import Resizer from "react-image-file-resizer";
+
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import { Modal, ModalBody, ModalHeader } from "reactstrap"
+import { ModalPopOut } from "../../../components/ModalComponent/ModalComponent";
 
 
 // import NestedMenuItem from "material-ui-nested-menu-item";
@@ -68,7 +79,7 @@ function mapStateToProps(state) {
     productMediaResult: state.counterReducer["productMediaResult"],
     variations: state.counterReducer["variations"],
 
-    // productCategories: state.counterReducer["productCategories"],
+    productCategories: state.counterReducer["productCategories"],
     productCategoriesFullList: state.counterReducer["categories"],
 
     addProductVariationResult: state.counterReducer["addProductVariationResult"],
@@ -97,8 +108,8 @@ const editorConfiguration = {
 
 function mapDispatchToProps(dispatch) {
   return {
-    // CallAllProductCategoryListing: () => dispatch(GitAction.CallAllProductCategoryListing()),
-    CallAllProductsCategories: () => dispatch(GitAction.CallAllProductCategory()),
+    CallAllProductCategoryListing: () => dispatch(GitAction.CallAllProductCategoryListing()),
+    CallAllProductsCategories: (prodData) => dispatch(GitAction.CallAllProductCategory(prodData)),
 
 
     callAddProduct: (prodData) => dispatch(GitAction.CallAddProduct(prodData)),
@@ -326,7 +337,7 @@ const INITIAL_STATE = {
   name: "",
   description: "",
   productCategory: "",
-  productSupplier: localStorage.getItem("id"),
+  productSupplier: localStorage.getItem("loginUser") !== null && JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
   height: "",
   width: "",
   depth: "",
@@ -457,6 +468,9 @@ const INITIAL_STATE = {
   selectedVariationID: 0,
   isSubmit: false,
   isProductIntoBind: false,
+
+  OnCheckMedia: false,
+  isCompresss: false
 }
 
 class AddProductComponent extends Component {
@@ -464,7 +478,7 @@ class AddProductComponent extends Component {
     super(props);
 
     this.myRef = React.createRef();
-    // this.props.CallAllProductCategoryListing();
+    this.props.CallAllProductCategoryListing({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID });
     console.log("HTTPS", JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID)
     this.props.CallAllProductsCategories({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID });
 
@@ -1068,7 +1082,7 @@ class AddProductComponent extends Component {
     }
 
     if (this.state.name !== "") {
-      this.props.callCheckProduct(this.state.name.replaceAll(" ", "%20"));
+      this.props.callCheckProduct({ ProductName: this.state.name.replaceAll(" ", "%20"), ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID });
     }
   };
 
@@ -1984,6 +1998,22 @@ class AddProductComponent extends Component {
     }
   };
 
+  resizeFile = (file, extension) =>
+    new Promise((resolve) => {
+      Resizer.imageFileResizer(
+        file,
+        300,
+        400,
+        extension,
+        80,
+        0,
+        (uri) => {
+          resolve(uri);
+        },
+        "base64"
+      );
+    });
+
   uploadFile = (productID) => {
     // combine images and video for upload in an array
     let uploadingMedia = [...this.state.file, ...this.state.file3]
@@ -2001,9 +2031,40 @@ class AddProductComponent extends Component {
       let imageWidth = ""
       let imageHeight = ""
 
+      // for (let i = 0; i < uploadingMedia.length; i++) {
+      //   let fileExt = getFileExtension(uploadingMedia[i])
+      //   let filename = productID + "_" + i + "_" + convertDateTimeToString(new Date())
+
+      //   filenames += filename + "." + fileExt
+      //   mediaType += getFileTypeByExtension(fileExt)
+      //   variationID += "0"
+      //   slideOrder += i
+      //   imageWidth += "0"
+      //   imageHeight += "0"
+
+      //   formData.append("upload[]", uploadingMedia[i]);
+      //   formData.append("imageName[]", filename);
+
+      //   if (i !== (uploadingMedia.length - 1)) {
+      //     filenames += ","
+      //     variationID += ","
+      //     slideOrder += ","
+      //     mediaType += ","
+      //     imageWidth += ","
+      //     imageHeight += ","
+      //   }
+      // }
+
+
       for (let i = 0; i < uploadingMedia.length; i++) {
         let fileExt = getFileExtension(uploadingMedia[i])
+        // console.log("resize", this.resizeFile(uploadingMedia[i], fileExt))
         let filename = productID + "_" + i + "_" + convertDateTimeToString(new Date())
+        let image = uploadingMedia[i]
+        if (this.state.isCompresss === true) {
+          image = this.resizeFile(uploadingMedia[i], fileExt);
+          console.log("resize", image);
+        }
 
         filenames += filename + "." + fileExt
         mediaType += getFileTypeByExtension(fileExt)
@@ -2012,7 +2073,7 @@ class AddProductComponent extends Component {
         imageWidth += "0"
         imageHeight += "0"
 
-        formData.append("upload[]", uploadingMedia[i]);
+        formData.append("upload[]", image);
         formData.append("imageName[]", filename);
 
         if (i !== (uploadingMedia.length - 1)) {
@@ -2023,6 +2084,8 @@ class AddProductComponent extends Component {
           imageWidth += ","
           imageHeight += ","
         }
+
+        // console.log()
       }
 
       let object = {
@@ -2034,8 +2097,16 @@ class AddProductComponent extends Component {
         imageWidth: imageWidth,
         imageHeight: imageHeight,
       }
+
+      // console.log("OBJECT",object)
+      // console.log("OBJECT",formData)
+
+
+
+      let imageURL = "https://" + localStorage.getItem("projectDomain") + "/images/uploadproductImages.php"
       // axios.post("https://tourism.denoo.my/MCITCApi/php/uploadproductImages.php", formData, config).then((res) => {
-      axios.post("https://myemporia.my/emporiaimage/uploadproductImages.php", formData, config).then((res) => {
+      // axios.post("https://myemporia.my/emporiaimage/uploadproductImages.php", formData, config).then((res) => {
+      axios.post(imageURL, formData, config).then((res) => {
         console.log(res)
         if (res.status === 200 && res.data === 1) {
           this.props.callAddProductMedia(object)
@@ -2091,6 +2162,7 @@ class AddProductComponent extends Component {
 
   }
 
+
   onSubmitProductSpecification = (ProductID) => {
     const { productSpecificationOptions } = this.state
     let ProductVariation = ""
@@ -2116,6 +2188,7 @@ class AddProductComponent extends Component {
   }
 
   handleChange(data, e) {
+    console.log("HERE")
     if (data === "product") {
       this.setState({
         name: e.target.value,
@@ -2802,6 +2875,8 @@ class AddProductComponent extends Component {
       this.setState({
         productCategory: elemId,
       });
+
+      console.log("CHECKING", elemId)
       this.props.CallAllProductVariationByCategoryID(elemId);
       setTimeout(
         function () {
@@ -3187,8 +3262,18 @@ class AddProductComponent extends Component {
     else return 0
   }
 
+
+
+
   OnSubmit = () => {
-    this.checkEverything();
+    // this.checkEverything();
+    // this.uploadFile(1)
+    console.log("this.check", this.state.file)
+    console.log("this.check", this.state.file2)
+    console.log("this.check", this.state.file3)
+    console.log("this.check", this.state.file !== [] || this.state.file2 !== [] || this.state.file3 !== [])
+
+    console.log("this.state", this.state)
 
     if (this.checkGeneral() === 1) {
       toast.error("Please fill in all required information")
@@ -3200,6 +3285,11 @@ class AddProductComponent extends Component {
         || this.state.brand === "" || this.state.model === "" || this.state.tags === "")
         toast.error("Please fill in all required information")
       else {
+
+        if (this.state.file !== [] || this.state.file2 !== [] || this.state.file3 !== []) {
+          this.setState({ OnCheckMedia: true })
+        }
+
         let object = {
           name: encodeURIComponent(this.state.name),
           description: encodeURIComponent(this.state.description),
@@ -3392,7 +3482,21 @@ class AddProductComponent extends Component {
     }
   }
 
+  handleChangeEditor = (content, editor) => {
+    this.setState({ description: content });
+  }
+
+
   render() {
+
+    console.log("DESCRIPTION", this.state.description)
+    console.log("THIS.STAE", this.state)
+
+    console.log("WINDOW", window)
+    console.log("WINDOW", window.location)
+
+
+
     const { isOnViewState } = this.props  //this props used to indicate it is on the state of viewing product details or it is adding product
 
     console.log("this.state", this.state)
@@ -3996,8 +4100,9 @@ class AddProductComponent extends Component {
                     <option aria-label="None" value="">None Selected</option>
                     {/* {createSupplierMenu} */}
                     {/* {createSupplierMenu} */}
-                    <option value={localStorage.getItem("id")}>
-                      {localStorage.getItem("firstname") + " " + localStorage.getItem("lastname")}
+                    <option value={JSON.parse(localStorage.getItem("loginUser"))[0].UserID}>
+                      {/* <option value={JSON.parse(localStorage.getItem("loginUser"))[0].UserID}> */}
+                      {JSON.parse(localStorage.getItem("loginUser"))[0].UserFullName}
                     </option>
                   </Select>
                 </FormControl>
@@ -4141,36 +4246,21 @@ class AddProductComponent extends Component {
             <Card id="descriptionCard" className="SubContainer">
               <CardContent>
                 <p className="Heading">Product Description</p>
-
-                {/* <CKEditor
-                  className="descriptionContainer"
-                  editor={Editor}
-                  config={editorConfiguration}
-                  data=""
-                  onReady={(editor) => {
-                    // You can store the "editor" and use when it is needed.
-                    // console.log("Editor is ready to use!", editor);
-                  }}
-                  onChange={(event, editor) => {
-                    const data = editor.getData();
-                    // this.handleChange.bind(this, "description");
-                    this.setState({ description: data });
-                  }}
-                  onBlur={(event, editor) => {
-                  }}
-                  onFocus={(event, editor) => {
-                  }}
+                <DescriptionFunction
+                  post_content=""
+                  // postId="1333"
+                  handleChange={this.handleChangeEditor}
+                  content={this.state.description}
+                  imageFileUrl="products"
+                />
+                {/* <DescriptionFunction
+                  post_content=""
+                  // postId="1333"
+                  handleChange={this.handleChange}
+                  content={this.state.description}
+                  imageFileUrl="products"
                 /> */}
 
-                {/* <Button
-                  onClick={this.saveDesign}
-                  variant="outlined"
-                  className="AddButton"
-                >
-                  Save Design
-                </Button> */}
-
-                
                 {this.state.productDesciptionEmpty && (
                   <p className="error">Product description cannot be empty.</p>
                 )}
@@ -4812,6 +4902,7 @@ class AddProductComponent extends Component {
               </CardContent>
             </Card>
             <br />
+
             <Card className="SubContainer" id="productMedia">
               <CardContent>
                 <p className="Heading">Product Media</p>
@@ -5343,6 +5434,38 @@ class AddProductComponent extends Component {
                 </CardContent>
               </Card>
             </Fade>
+
+
+            <ModalPopOut open={this.state.OnCheckMedia} title="Error Report" showAction={false}>
+              <div className="container-fluid">
+                <div className="container">
+                  <h3>Compress Product Image</h3>
+                  <label>Do you want to compress product image before upload?</label>
+                  <p className="text-danger"><i>Disclaimer: Image resolution will be reduced </i></p>
+
+                  <div style={{ textAlign: "right" }}>
+                    <Button variant="contained" color="primary" onClick={() =>
+
+                      <>
+                        {/* {this.uploadFile(1)} */}
+                        {this.setState({ isCompresss: true, OnCheckMedia: false })}
+                      </>
+                    }>
+                      Yes
+                    </Button>
+                    <Button variant="contained" color="secondary" onClick={() =>
+                      <>
+                        {/* {this.uploadFile(1)} */}
+                        {this.setState({ isCompresss: false, OnCheckMedia: false })}
+                      </>
+                    }>
+                      No
+                    </Button>
+                  </div>
+
+                </div>
+              </div>
+            </ModalPopOut>
           </div>
         </div>
       </div>

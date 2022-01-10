@@ -22,11 +22,13 @@ const INITIAL_STATE = {
   exists: [],
   addProductVariationResult: [],
   variationResult: [],
+  variations: [],
   productSpecsDetail: [],
   SpecsDetail: [],
   deleteproductSpecsDetail: [],
   productMediaResult: [],
   categories: [],
+  productCategories: [],
 
   // Order
   order: [],
@@ -199,6 +201,14 @@ export function counterReducer(state = INITIAL_STATE, action) {
         loading: false,
       });
 
+    case GitAction.GetProductVariationByCategoryID:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotProductVariationByCategoryID:
+      return Object.assign({}, state, {
+        loading: false,
+        variations: action.payload,
+      });
+
     ///////////////////////////////////////////////////  Product Variation Details  ///////////////////////////////////////////////////
 
     case GitAction.AddProductVariationDetail:
@@ -317,6 +327,14 @@ export function counterReducer(state = INITIAL_STATE, action) {
       return Object.assign({}, state, {
         loading: false,
         categories: action.payload,
+      });
+
+    case GitAction.GetProductCategoryListing:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotProductCategoryListing:
+      return Object.assign({}, state, {
+        loading: false,
+        productCategories: action.payload,
       });
 
 

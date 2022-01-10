@@ -355,55 +355,87 @@ export class GitEpic {
 
   ///////////////////////////////////////////////////  Products  ///////////////////////////////////////////////////
 
+  // Product_Add = (action$) =>
+  //   action$.ofType(GitAction.AddProduct).switchMap(async ({ payload }) => {
+  //     try {
+  //       const response = await fetch(
+  //         url + project + "/" +
+  //         "Product_AddProduct?PRODUCTNAME=" + payload.name +
+  //         "&PRODUCTDESC=" + payload.description +
+  //         "&PRODUCTCATEGORYID=" + payload.productCategory +
+  //         "&MERCHANTID=" + payload.productSupplier +
+  //         "&PRODUCTHEIGHT=" + payload.height +
+  //         "&PRODUCTWIDTH=" + payload.width +
+  //         "&PRODUCTDEPTH=" + payload.depth +
+  //         "&PRODUCTWEIGHT=" + payload.weight +
+  //         "&PRODUCTSKU=" + payload.sku +
+  //         "&PRODUCTBRAND=" + payload.brand +
+  //         "&PRODUCTMODEL=" + payload.model +
+  //         "&PRODUCTTAG=" + payload.tags +
+  //         "&ProjectID=" + payload.ProjectID
+  //       );
+  //       let json = await response.json();
+  //       json = JSON.parse(json);
+  //       return {
+  //         type: GitAction.AddedProduct,
+  //         payload: json,
+  //       };
+  //     } catch (error) {
+  //       alert('addProduct: ' + error);
+  //       return {
+  //         type: GitAction.AddedProduct,
+  //         payload: [],
+  //       };
+  //     }
+  //   });
+
   Product_Add = (action$) =>
     action$.ofType(GitAction.AddProduct).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_AddProduct?PRODUCTNAME=" + payload.name +
-        "&PRODUCTDESC=" + payload.description +
-        "&PRODUCTCATEGORYID=" + payload.productCategory +
-        "&MERCHANTID=" + payload.productSupplier +
-        "&PRODUCTHEIGHT=" + payload.height +
-        "&PRODUCTWIDTH=" + payload.width +
-        "&PRODUCTDEPTH=" + payload.depth +
-        "&PRODUCTWEIGHT=" + payload.weight +
-        "&PRODUCTSKU=" + payload.sku +
-        "&PRODUCTBRAND=" + payload.brand +
-        "&PRODUCTMODEL=" + payload.model +
-        "&PRODUCTTAG=" + payload.tags +
-        "&ProjectID=" + payload.ProjectID
+
+      return fetch(
+        url + project + "/Product_AddProductByPost"
+        , {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            PRODUCTNAME: payload.name,
+            PROJECTID: payload.ProjectID,
+            MERCHANTID: payload.productSupplier,
+            PRODUCTDESC: payload.description,
+            PRODUCTCATEGORYID: payload.productCategory,
+            PRODUCTHEIGHT: payload.height,
+            PRODUCTWIDTH: payload.width,
+            PRODUCTDEPTH: payload.depth,
+            PRODUCTWEIGHT: payload.weight,
+            PRODUCTSKU: payload.sku,
+            PRODUCTBRAND: payload.brand,
+
+            PRODUCTMODEL: payload.model,
+            PRODUCTTAG: payload.tags
+          })
+        }
       )
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_AddProduct?PRODUCTNAME=" + payload.name +
-          "&PRODUCTDESC=" + payload.description +
-          "&PRODUCTCATEGORYID=" + payload.productCategory +
-          "&MERCHANTID=" + payload.productSupplier +
-          "&PRODUCTHEIGHT=" + payload.height +
-          "&PRODUCTWIDTH=" + payload.width +
-          "&PRODUCTDEPTH=" + payload.depth +
-          "&PRODUCTWEIGHT=" + payload.weight +
-          "&PRODUCTSKU=" + payload.sku +
-          "&PRODUCTBRAND=" + payload.brand +
-          "&PRODUCTMODEL=" + payload.model +
-          "&PRODUCTTAG=" + payload.tags +
-          "&ProjectID=" + payload.ProjectID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.AddedProduct,
-          payload: json,
-        };
-      } catch (error) {
-        alert('addProduct: ' + error);
-        return {
-          type: GitAction.AddedProduct,
-          payload: [],
-        };
-      }
+        .then(response => response.json())
+        .then(json => {
+          json = json;
+          // if (json !== "fail") {
+          //   json = json;
+          //   // toast.success("Successfully update stock. Fetching the latest data..", { autoClose: 3000 })
+          // } else {
+          //   json = [];
+          // }
+          return {
+            type: GitAction.AddedProduct,
+            payload: json,
+          };
+        })
+        .catch(error => alert('addProduct: ' + error));
     });
+
+
 
   Product_Update = (action$) =>
     action$.ofType(GitAction.UpdateProduct).switchMap(async ({ payload }) => {
@@ -799,6 +831,31 @@ export class GitEpic {
       }
     });
 
+  ProductVariationDetail_ViewAllByCategoryID = (action$) =>
+    action$.ofType(GitAction.GetProductVariationByCategoryID).switchMap(async ({ payload }) => {
+
+      console.log(url + project + "/" +
+        "Product_ViewProductVariationByCategoryID?PRODUCTCATEGORYID=" + payload)
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Product_ViewProductVariationByCategoryID?PRODUCTCATEGORYID=" + payload
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        return {
+          type: GitAction.GotProductVariationByCategoryID,
+          payload: json,
+        };
+      } catch (error) {
+        alert('getAllProductVariationByCategoryID: ' + error);
+        return {
+          type: GitAction.GotProductVariationByCategoryID,
+          payload: [],
+        };
+      }
+    });
+
   ///////////////////////////////////////////////////  Product Specification Details  ///////////////////////////////////////////////////
 
   ProductSpecsDetail_Add = (action$) =>
@@ -1077,6 +1134,7 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
+        console.log("json", json)
         return {
           type: GitAction.GotProductCategory,
           payload: json,
@@ -1089,7 +1147,31 @@ export class GitEpic {
         };
       }
     });
-    
+
+
+  ProductCategory_ViewAllWithParent = (action$) =>
+    action$.ofType(GitAction.GetProductCategoryListing).switchMap(async (payload) => {
+
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Product_CategoryListing?ProjectID=" + payload.ProjectID
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        return {
+          type: GitAction.GotProductCategoryListing,
+          payload: json,
+        };
+      } catch (error) {
+        alert('getAllCategoriesListing: ' + error);
+        return {
+          type: GitAction.GotProductCategoryListing,
+          payload: [],
+        };
+      }
+    });
+
 
 
   ///////////////////////////////////////////////////  sidebar configurations ///////////////////////////////////////////////////

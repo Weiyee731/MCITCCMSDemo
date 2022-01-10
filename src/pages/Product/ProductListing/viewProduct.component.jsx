@@ -163,6 +163,7 @@ class ViewProductComponent extends Component {
   }
 
   render() {
+    console.log("this.props.allstocks ", this.props.allstocks)
     const DataList = JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? this.props.allstocks :
       JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 && this.props.allstocks !== undefined ? this.props.allstocks.filter((x) => parseInt(x.MerchantID) === parseInt(localStorage.getItem("loginUser")[0].UserID)) : []
 
@@ -182,7 +183,7 @@ class ViewProductComponent extends Component {
       return (
         <div className="d-flex">
           <Tooltip title="Add New Product">
-            <IconButton size="medium" sx={{ border: "2px solid #0074ea", color: "#0074ea", marginRight: 1 }} onClick={() => window.location.href = "/addProduct"}>
+            <IconButton size="medium" sx={{ border: "2px solid #0074ea", color: "#0074ea", marginRight: 1 }} onClick={() => window.location.href = "/addProductsAllIn"}>
               <GroupAddIcon />
             </IconButton>
           </Tooltip>
@@ -233,7 +234,7 @@ class ViewProductComponent extends Component {
               sortingIndex: "ProductName",        // require, it must the same as the desired table header
               stickyTableHeader: false,    // optional, default is true
             }}
-            paginationOptions={[5, 100, 250, { label: 'All', value: -1 }]} // optional, by default it will hide the table pagination. You should set settings for pagination options as in array, eg.: [5, 100, 250, { label: 'All', value: -1 }]
+            paginationOptions={[5, 10, 25, { label: 'All', value: -1 }]} // optional, by default it will hide the table pagination. You should set settings for pagination options as in array, eg.: [5, 100, 250, { label: 'All', value: -1 }]
             tableHeaders={tableHeadCells}        //required
             tableRows={{
               renderTableRows: this.renderTableRows,   // required, it is a function, please refer to the example I have done in Table Components

@@ -8,16 +8,17 @@ import { toast } from "react-toastify";
  *   @function resetLogonUser => void
  */
 
-export const setLogonUser = (loginUser, sidebarItem, project) => {
+export const setLogonUser = (loginUser, sidebarItem, project, SLD) => {
     if (typeof loginUser !== "undefined" && loginUser !== null) {
         try {
             localStorage.setItem("userToken", true);
             localStorage.setItem("loginUser", JSON.stringify(loginUser));
             localStorage.setItem("sidebarItem", JSON.stringify(sidebarItem));
             localStorage.setItem("project", project)
+            localStorage.setItem("projectDomain", project + "." + SLD)
             window.location.href = "/" + project + "/Main"
             window.location.reload(false);
-            
+
         }
         catch (e) {
             toast.error("Error: 1101: Unable to set login status. Please contact your software warehouse.")

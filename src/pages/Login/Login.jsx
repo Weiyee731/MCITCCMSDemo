@@ -59,7 +59,7 @@ class Dashboard extends Component {
         console.log("this.props", this.props)
         if (prevProps.logonUser !== this.props.logonUser && this.state.isSubmit === true) {
             if (this.props.logonUser[0].ReturnVal !== "0") {
-                setLogonUser(this.props.logonUser, this.props.sidebars, window.location.pathname.split(".")[1])
+                setLogonUser(this.props.logonUser, this.props.sidebars, window.location.pathname.split(".")[1], window.location.pathname.split(".")[2])
             }
             else {
                 toast.error("The username and password does not match.")

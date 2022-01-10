@@ -63,7 +63,7 @@ function Layout() {
               handleRtlChange={handleRtlChange}
             />
             <Route path="/viewProduct" component={ViewProductComponent} />
-            <Route path="/addProduct" component={AddProductAllInOne} />
+            <Route path="/addProductsAllIn" component={AddProductAllInOne} />
           </>
           :
           <Login />

@@ -6,7 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import CloseIcon from '@mui/icons-material/Close';
-import { isObjectUndefinedOrNull, isStringNullOrEmpty } from '../../tools/Helpers';
+import { isStringNullOrEmpty } from '../../tools/Helpers';
 import Slide from '@mui/material/Slide';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -14,6 +14,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Draggable from 'react-draggable';
 import Paper from '@mui/material/Paper';
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -21,7 +22,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 function PaperComponent(props) {
   return (
     <Draggable
-      handle="#modal-component"
+      handle="#alert-dialog-title"
       cancel={'[class*="MuiDialogContent-root"]'}
     >
       <Paper {...props} />
@@ -29,29 +30,83 @@ function PaperComponent(props) {
   );
 }
 
-/**
- *  @param {object} props 
- *  @required @param {function}  props.handleOnClose  // onclose function
- *  @required @param {bool} props.open                // state to turn modal on or off
- *  @param {string} props.title                       // title of the modal in h6 tag
- *  @param {bool} props.fullScreen                    // make it full screen modal
- *  @param {string} props.maxWidth                    // "default: lg, value => sm | md | lg | xl "
- *  @param {bool} props.draggable                     // make it draggable modal
- *  @param {string} props.fullScreenHeaderbgColor     // change the modal header bg color
- *  @param {children} props.DialogActionsButton       // pass the action buttons components under the dialog action      
- *  
- */
+export default function AlertDialog(props) {
+  return (
+    <Dialog
+      fullWidth={typeof props.fullWidth === "undefined" ? true : props.fullWidth}
+      maxWidth={isStringNullOrEmpty(props.maxWidth) ? "lg" : props.maxWidth}
+      open={props.open}
+      onClose={() => props.handleToggleDialog()}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+      PaperComponent={props.draggable ? PaperComponent : null}
+    >
+      <DialogTitle
+        id="alert-dialog-title"
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          fontSize: '18pt',
+          fontWeight: 500,
+        }}
+      >
+        {props.title}
+        <IconButton sx={{ marginLeft: 'auto' }} onClick={() => props.handleToggleDialog()}>
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent>
+        {props.message ?
+          <DialogContentText id="alert-dialog-description">
+            {props.message}
+          </DialogContentText>
+          :
+          <>
+            {props.children}
+          </>
+        }
+      </DialogContent>
+      {props.showAction &&
+        <DialogActions>
+          {props.singleButton ?
+            <Button
+              onClick={() => props.handleConfirmFunc()}
+              variant='contained'
+              fullWidth
+            >
+              {props.buttonTitle}
+            </Button>
+            :
+            <>
+              <Button onClick={() => props.handleToggleDialog()}>No</Button>
+              <Button onClick={() => props.handleConfirmFunc()} variant='contained'>
+                {props.buttonTitle}
+              </Button>
+            </>
+          }
+        </DialogActions>
+      }
+    </Dialog>
+  );
+}
 
-export default function ModalComponent(props) {
+export function ModalPopOut(props) {
   return (
     <Dialog
       fullScreen={props.fullScreen ? props.fullScreen : false}    //fullscreen modal
-      maxWidth={isStringNullOrEmpty(props.maxWidth) ? "lg" : props.maxWidth}
+      hideBackdrop={props.hideBackdrop ? props.hideBackdrop : false}   //hide back
+      onClose={(event, reason) => {
+        if (reason !== 'backdropClick') {
+          props.handleToggleDialog()
+        }
+      }}
+      maxWidth="xl"
       open={props.open}
-      onClose={() => { typeof props.handleOnClose === "function" ? props.handleOnClose() : console.log("Dialog -> handleOnClose() required") }}
-      sx={{ zIndex: (props.fullScreen || props.maxWidth === "xl") ? 1301 : 1300 }}
-      PaperComponent={props.draggable === true ? PaperComponent : null}
-      aria-labelledby="modal-component"
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+      PaperComponent={props.fullScreen ? null : PaperComponent}
+      style={{ zIndex: (props.fullScreen ? 1350 : 1300) }}
     >
       {
         props.fullScreen &&
@@ -63,7 +118,7 @@ export default function ModalComponent(props) {
             <IconButton
               edge="end"
               color="inherit"
-              onClick={() => { typeof props.handleOnClose === "function" ? props.handleOnClose() : console.log("Dialog -> handleOnClose() required") }}
+              onClick={() => { props.handleToggleDialog() }}
               aria-label="close"
             >
               <CloseIcon />
@@ -72,23 +127,20 @@ export default function ModalComponent(props) {
         </AppBar>
       }
 
-      <DialogTitle id="modal-component" className="d-flex justify-content-between">
-        {props.title}
-        <IconButton sx={{ marginLeft: 'auto' }} onClick={() => { typeof props.handleOnClose === "function" ? props.handleOnClose() : console.log("Dialog -> handleOnClose() required") }}>
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          {props.children}
-        </DialogContentText>
+        {/* <DialogContentText id="alert-dialog-description"> */}
+        {typeof props.children !== "undefined" ? props.children : props.message}
+        {/* </DialogContentText> */}
       </DialogContent>
-      {
-        !isObjectUndefinedOrNull(props.DialogActionsButton) &&
-        <DialogActions>
-          {props.DialogActionsButton}
-        </DialogActions>
-      }
+      <DialogActions>
+        {props.showCancel ? <Button onClick={() => props.handleToggleDialog()}>Cancel</Button> : ""}
+        {
+          typeof props.handleConfirmFunc === "function" &&
+          <Button onClick={() => props.handleConfirmFunc()} variant='contained'>
+            {props.checked ? "Unchecked" : "Confirm"}
+          </Button>
+        }
+      </DialogActions>
     </Dialog>
   );
 }

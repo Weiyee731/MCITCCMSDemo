@@ -205,6 +205,15 @@ export class GitAction {
     };
   }
 
+  static GetProductVariationByCategoryID = "GET-PRODUCTVARIATIONBYCATEGORYID";
+  static GotProductVariationByCategoryID = "GOT-PRODUCTVARIATIONBYCATEGORYID";
+  static CallAllProductVariationByCategoryID(prodData) {
+    return {
+      type: GitAction.GetProductVariationByCategoryID,
+      payload: prodData,
+    };
+  }
+
   ///////////////////////////////////////////////////  Product Variation Details ///////////////////////////////////////////////////
 
   static AddProductVariationDetail = "ADD-PRODUCTVARIATIONDETAIL";
@@ -336,6 +345,15 @@ export class GitAction {
   static CallAllProductCategory(prodData) {
     return {
       type: GitAction.GetProductCategory,
+      payload: prodData,
+    };
+  }
+
+  static GetProductCategoryListing = "GET-PRODUCTCATEGORYLISTING";
+  static GotProductCategoryListing = "GOT-PRODUCTCATEGORYLISTING";
+  static CallAllProductCategoryListing(prodData) {
+    return {
+      type: GitAction.GetProductCategoryListing,
       payload: prodData,
     };
   }

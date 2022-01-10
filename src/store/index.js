@@ -1,7 +1,7 @@
 import { combineReducers, createStore, applyMiddleware } from "redux";
 import { combineEpics, createEpicMiddleware } from "redux-observable";
 import { counterReducer } from "./reducer/gitReducer"; //reducers
-import { gitEpic } from "./epic/gitEpic"; //epics
+import { GitEpic, gitEpic } from "./epic/gitEpic"; //epics
 
 const rootEpic = combineEpics(
   gitEpic.User_Login,
@@ -37,6 +37,7 @@ const rootEpic = combineEpics(
   gitEpic.ProductVariationDetail_Add,
   gitEpic.ProductVariationDetail_Update,
   gitEpic.ProductVariationDetail_Delete,
+  gitEpic.ProductVariationDetail_ViewAllByCategoryID,
 
   // Product Specification
   gitEpic.ProductSpecsDetail_Add,
@@ -52,6 +53,7 @@ const rootEpic = combineEpics(
   gitEpic.ProductCategory_Update,
   gitEpic.ProductCategory_Delete,
   gitEpic.ProductCategory_ViewAll,
+  gitEpic.ProductCategory_ViewAllWithParent,
 );
 
 const rootReducer = combineReducers({ counterReducer });
