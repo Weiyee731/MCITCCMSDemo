@@ -17,7 +17,8 @@ import { ServerConfiguration } from "../serverConf";
 //   1. testing server url    //
 //   2. live server url       // 
 const url = ServerConfiguration.ServerUrl;
-const project = window.localStorage.getItem("project")
+// const project = window.localStorage.getItem("project")
+const project = "myemporia"
 // const project = window.location.pathname.split(".")[1]
 
 export class GitEpic {

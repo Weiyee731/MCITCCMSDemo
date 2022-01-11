@@ -17,7 +17,7 @@ export const setLogonUser = (loginUser, sidebarItem, project, SLD, projectURL) =
             localStorage.setItem("project", project)
             localStorage.setItem("projectURL", projectURL)
             localStorage.setItem("projectDomain", project + "." + SLD)
-            window.location.href = "/" + project + "/viewProduct"
+            window.location.href = "/viewProduct"
             window.location.reload(false);
 
         }
@@ -52,7 +52,8 @@ export const resetLogonUser = () => {
     localStorage.removeItem("userToken")
     localStorage.removeItem("loginUser")
     localStorage.removeItem("sidebarItem");
-    window.location.href = "/" + projectURL + "/"
+    window.location.href = "/"
+    // window.location.href = "/" + projectURL + "/"
 }
 
 export const updateLogonUser = (key, value) => {

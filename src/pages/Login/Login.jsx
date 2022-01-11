@@ -59,12 +59,19 @@ class Dashboard extends Component {
         console.log("this.props", this.props)
         if (prevProps.logonUser !== this.props.logonUser && this.state.isSubmit === true) {
             if (this.props.logonUser[0].ReturnVal !== "0") {
-                console.log("window.location", window.location.pathname.split("/")[1])
-                setLogonUser(this.props.logonUser,
+                // console.log("window.location", window.location.pathname.split("/")[1])
+                // setLogonUser(this.props.logonUser,
+                //     this.props.sidebars,
+                //     window.location.pathname.split(".")[1],
+                //     window.location.pathname.split(".")[2],
+                //     window.location.pathname.split("/")[1]
+                // )
+                setLogonUser(
+                    this.props.logonUser,
                     this.props.sidebars,
-                    window.location.pathname.split(".")[1],
-                    window.location.pathname.split(".")[2],
-                    window.location.pathname.split("/")[1]
+                    "myemporia",
+                    "myemporia.my",
+                    "CMS.myemporia.my"
                 )
             }
             else {
@@ -97,7 +104,8 @@ class Dashboard extends Component {
     OnSubmitLogin = () => {
 
         let project = ""
-        project = window.location.pathname !== "" && window.location.pathname.split(".")[1];
+        // project = window.location.pathname !== "" && window.location.pathname.split(".")[1];
+        project = "myemporia"
 
         if (project !== "") {
             if (this.isInputsVerified()) {
