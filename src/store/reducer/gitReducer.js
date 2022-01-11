@@ -121,6 +121,8 @@ export function counterReducer(state = INITIAL_STATE, action) {
         loading: false,
         shopUpdated: action.payload,
       });
+    case GitAction.ClearUpdateShop:
+      return Object.assign({}, state, { loading: true, shopUpdated: [] });
 
     case GitAction.UpdateProfileImage:
       return Object.assign({}, state, { loading: true });
@@ -129,6 +131,7 @@ export function counterReducer(state = INITIAL_STATE, action) {
         loading: false,
         currentUser: action.payload,
       });
+
 
     ///////////////////////////////////////////////////  Address  ///////////////////////////////////////////////////
 

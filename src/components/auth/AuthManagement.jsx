@@ -17,7 +17,7 @@ export const setLogonUser = (loginUser, sidebarItem, project, SLD, projectURL) =
             localStorage.setItem("project", project)
             localStorage.setItem("projectURL", projectURL)
             localStorage.setItem("projectDomain", project + "." + SLD)
-            window.location.href = "/" + project + "/Main"
+            window.location.href = "/" + project + "/viewProduct"
             window.location.reload(false);
 
         }

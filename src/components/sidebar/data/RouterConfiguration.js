@@ -33,6 +33,25 @@ import Statements from "../../../pages/Statements/Statements";
 import UserDetail from "../../../pages/UserManagement/UserDetail"
 import AddUser from "../../../pages/UserManagement/AddUser";
 
+// Product
+import ViewProductComponent from "../../../pages/Product/ProductListing/viewProduct.component";
+import ViewProductGeneralInfo from "../../../pages/Product/ProductListing/viewProductGeneralInfo.component";
+import ProductDetailsComponent from "../../../pages/Product/ProductListing/viewProductDetailsList";
+import viewProductEndorsementComponent from "../../../pages/Product/ProductEndorsement/ProductEndorsement";
+import AddProductAllInOne from "../../../pages/Product/addProduct/addProductAllInOne.component";
+
+// Transaction
+import ViewTransactionsComponent from "../../../pages/Transaction/viewTransaction.component";
+import TransactionDetailsComponent from "../../../pages/Transaction/transactionDetails.component";
+
+
+// User Management
+import ViewMerchantsComponent from "../../../pages/UserManagement/Merchant/viewMerchant.component";
+import ViewUserComponent from "../../../pages/UserManagement/User/viewUser.component";
+import EditShopProfile from "../../../pages/Shop/viewShopProfile";
+
+
+
 const routes = [
     {
         path: "/",
@@ -99,6 +118,36 @@ const routes = [
         exact: true,
         element: <AddUser />,
     },
+
+    // {
+    //     path: "/viewProduct",
+    //     exact: true,
+    //     element: <ViewProductComponent />,
+    // },
+    // {
+    //     path: "/addProductsAllIn",
+    //     exact: true,
+    //     element: <AddProductAllInOne />,
+    // },
+    // {
+    //     path: "/viewProduct",
+    //     exact: true,
+    //     element: <ViewProductComponent />,
+    // },
+    // {
+    //     path: "/viewProductDetail/:productId",
+    //     exact: true,
+    //     element: (props) => (
+    //         <>
+    //             <ViewProductGeneralInfo
+    //                 {...props}
+    //                 layout="standard"
+    //                 productId={props.match.params.productId}
+    //             />
+    //         </>
+    //     ),
+    // },
+
 
 ]
 

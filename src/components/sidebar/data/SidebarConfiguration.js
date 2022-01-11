@@ -46,25 +46,25 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import FeedIcon from '@mui/icons-material/Feed';
 
 const sidebar_items = [
-    {
-        to: "/",
-        title: "Dashboard",
-        icon: "dashboard",
-        // prefix: <span className="badge gray">3</span>,
-        // suffix: <span className="badge red">3</span>,
-    },
+    // {
+    //     to: "/",
+    //     title: "Dashboard",
+    //     icon: "dashboard",
+    //     // prefix: <span className="badge gray">3</span>,
+    //     // suffix: <span className="badge red">3</span>,
+    // },
     {
         to: "",
         title: "Product",
         icon: "indeterminate_check_box",
         submenus: [
             {
-                to: "/viewProduct",
+                to: "./viewProduct",
                 title: "Product Listing",
                 icon: "inventory",
             },
             {
-                to: "/viewProductEndorsement",
+                to: "./viewProductEndorsement",
                 title: "Product Endorsement",
                 icon: "assignment_turned_in",
             },
@@ -76,7 +76,7 @@ const sidebar_items = [
         ]
     },
     {
-        to: "/viewTransactions",
+        to: "./viewTransactions",
         title: "Transaction",
         icon: "money",
     },
@@ -91,12 +91,12 @@ const sidebar_items = [
         icon: "inventory",
         submenus: [
             {
-                to: "/viewMerchants",
+                to: "./viewMerchants",
                 title: "Merchant",
                 icon: "inventory",
             },
             {
-                to: "/viewUser",
+                to: "./viewUser",
                 title: "User",
                 icon: "inventory",
             },

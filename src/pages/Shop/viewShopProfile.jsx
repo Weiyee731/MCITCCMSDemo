@@ -148,7 +148,7 @@ class EditShopProfile extends Component {
 
             })
             if (this.props.merchant !== null) {
-                console.log(this.props.merchant[0])
+                console.log("check", this.props.merchant[0])
                 let shopDetails = this.props.merchant[0];
                 if (shopDetails !== undefined) {
                     this.setDetails(shopDetails)
@@ -322,18 +322,20 @@ class EditShopProfile extends Component {
     }
 
     updateShop() {
-        // if (
-        //   this.state.SHOPPOSCODE.length !== 0 &&
-        //   this.state.SHOPSTATE.length !== 0 &&
-        //   this.state.SHOPCITY.length !== 0 &&
-        //   this.state.SHOPCOUNTRYID.length !== 0
-        // ) {
-        console.log("UPDATE", this.state)
-        this.props.CallUpdateShopDetail(this.state);
+        let data = []
+        this.props.merchant.map((row) => {
+            data.push(row)
+        })
+        this.props.CallUpdateShopDetail({
 
-        // } else {
-        //   toast.error("Please fill in all required data");
-        // }
+            USERID: this.state.USERID === "" ? data.UserID : this.state.USERID,
+            SHOPNAME: this.state.SHOPNAME === "" ? data.ShopName : this.state.SHOPNAME,
+            SHOPDESC: this.state.SHOPDESC === "" ? data.ShopDescription : this.state.SHOPDESC,
+            SHOPPOSCODE: this.state.SHOPPOSCODE === "" ? data.ShopPoscode : this.state.SHOPPOSCODE,
+            SHOPCITY: this.state.SHOPCITY === "" ? data.ShopCity : this.state.SHOPCITY,
+            SHOPSTATE: this.state.SHOPSTATE === "" ? data.ShopState : this.state.SHOPSTATE,
+            SHOPCOUNTRYID: this.state.SHOPCOUNTRYID === "" ? data.ShopCountryID : this.state.SHOPCOUNTRYID
+        });
     }
 
     uploadHandler(e) {
@@ -345,6 +347,9 @@ class EditShopProfile extends Component {
     }
 
     render() {
+
+        console.log("THIS.PROPS", this.props)
+        console.log("THIS.state", this.state)
         let userid = JSON.parse(localStorage.getItem("loginUser"))[0].UserID;
         const merchantDetails = this.props.merchant.length > 0 &&
             this.props.merchant[0].ReturnVal === undefined && this.props.merchant[0];

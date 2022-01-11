@@ -101,6 +101,13 @@ export class GitAction {
       payload: propsData,
     };
   }
+  
+  static ClearUpdateShop = "CLEAR-UPDATE-SHOP"
+  static CallClearShopUpdate() {
+    return {
+      type: GitAction.ClearUpdateShop,
+    };
+  }
 
   ///////////////////////////////////////////////////  Address  ///////////////////////////////////////////////////
 
