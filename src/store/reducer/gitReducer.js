@@ -12,6 +12,7 @@ const INITIAL_STATE = {
 
   // Merchant
   merchant: [],
+  merchantOrders: [],
 
   // Product
   addResult: [],
@@ -34,10 +35,17 @@ const INITIAL_STATE = {
   // Order
   order: [],
   transactions: [],
+  transactionStatus: [],
+  tracking: [],
+
 
   // Review
   reviews: [],
   reviewReturn: [],
+
+  //General
+  countries: [],
+  logistic: []
 };
 
 export function counterReducer(state = INITIAL_STATE, action) {
@@ -79,6 +87,16 @@ export function counterReducer(state = INITIAL_STATE, action) {
     case GitAction.ResetUserProfile:
       return Object.assign({}, state, { currentUser: [] });
 
+    case GitAction.UpdateUserStatus:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.UpdatedUserStatus:
+      return Object.assign({}, state, {
+        loading: false,
+        currentUser: action.payload,
+      });
+
+    case GitAction.ClearCurrentUser:
+      return Object.assign({}, state, { loading: true, currentUser: [] });
     ///////////////////////////////////////////////////  sidebar configuration ///////////////////////////////////////////////////
 
     case GitAction.FetchSidebar:
@@ -111,6 +129,17 @@ export function counterReducer(state = INITIAL_STATE, action) {
         order: action.payload,
       });
 
+    case GitAction.ClearOrder:
+      return Object.assign({}, state, { order: [], });
+
+    case GitAction.OrderUserDetailsUpdate:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.OrderUserDetailsUpdated:
+      return Object.assign({}, state, {
+        loading: false,
+        order: action.payload,
+      });
+
     case GitAction.GetTransactions:
       return Object.assign({}, state, { loading: true });
     case GitAction.GotTransactions:
@@ -118,6 +147,27 @@ export function counterReducer(state = INITIAL_STATE, action) {
         loading: false,
         transactions: action.payload,
       });
+
+    case GitAction.GetTransactionStatus:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotTransactionStatus:
+      return Object.assign({}, state, {
+        loading: false,
+        transactionStatus: action.payload,
+      });
+
+    case GitAction.updateTrackingNumber:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.updatedTrackingNumber:
+      return Object.assign({}, state, {
+        loading: false,
+        tracking: action.payload,
+      });
+
+    case GitAction.resetTracking:
+      return Object.assign({}, state, { tracking: [] });
+
+
 
     ///////////////////////////////////////////////////  Merchant  ///////////////////////////////////////////////////
 
@@ -128,6 +178,16 @@ export function counterReducer(state = INITIAL_STATE, action) {
         loading: false,
         merchant: action.payload,
       });
+
+    case GitAction.GetMerchantOrders:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotMerchantOrders:
+      return Object.assign({}, state, {
+        loading: false,
+        merchantOrders: action.payload,
+      });
+
+
     ///////////////////////////////////////////////////  Product  ///////////////////////////////////////////////////
 
     case GitAction.AddProduct:
@@ -397,6 +457,23 @@ export function counterReducer(state = INITIAL_STATE, action) {
         reviewReturn: action.payload2
       });
 
+    ///////////////////////////////////////////////////  General  ///////////////////////////////////////////////////
+
+    case GitAction.GetCountry:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotCountry:
+      return Object.assign({}, state, {
+        loading: false,
+        countries: action.payload,
+      });
+
+    case GitAction.GetCourierService:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotCourierService:
+      return Object.assign({}, state, {
+        loading: false,
+        logistic: action.payload,
+      });
 
     /////////////////////////////////////////////////// Default ///////////////////////////////////////////////////
     default:

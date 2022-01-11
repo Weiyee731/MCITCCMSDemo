@@ -1,0 +1,71 @@
+.mainContainer {
+    width: 100%;
+  }
+  
+  .heading {
+    margin-top: 20px;
+    margin-right: 20px;
+    margin-left: 20px;
+    font-size: 2rem !important;
+    font-weight: bold;
+  }
+  
+  .selectContainer {
+    width: 100%;
+    text-align: right !important;
+    padding-right: 24px;
+  }
+  
+  Select {
+    font-size: 14px !important;
+  }
+  
+  p {
+    font-size: 14px !important;
+  }
+  
+  .subHeading {
+    font-size: 16px !important;
+    font-weight: bold;
+  }
+  
+  .orderButton {
+    width: 100%;
+    margin: 0 auto;
+    background: #e3e3e3 !important;
+    border: 0px !important;
+  }
+  
+  .fadedText {
+    text-align: center;
+    color: grey;
+  }
+  
+  .subTable {
+    background: #f7f7f7;
+  }
+  
+  .subTextLeft {
+    padding: 8px;
+    width: 130px;
+    padding-left: 0px;
+  }
+  
+  .subTextRight {
+    padding: 8px;
+    width: 130px;
+  }
+  
+  .subTextField {
+    padding: 8px;
+    background: #fff;
+    border-radius: 10px;
+    color: grey;
+    flex-grow: 1;
+  }
+  
+  .subContainer {
+    width: 100%;
+    display: flex;
+  }
+  

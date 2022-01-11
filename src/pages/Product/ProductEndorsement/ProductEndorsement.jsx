@@ -2,42 +2,21 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import {
-  Table,
-  TableBody,
   TableCell,
-  TableHead,
-  TableRow,
 } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
 import { GitAction } from "../../../store/action/gitAction";
-// import "../../app/App.scss";
-// import "react-table/react-table.css";
+import { toast } from "react-toastify";
+
+// Shared Components
 import ProductDetailsComponent from "./ProductInfo";
-import PropTypes from "prop-types";
-import clsx from "clsx";
-import { lighten, makeStyles } from "@material-ui/core/styles";
-import TableContainer from "@material-ui/core/TableContainer";
-import TablePagination from "@material-ui/core/TablePagination";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
-import Checkbox from "@material-ui/core/Checkbox";
+import TableComponents from "../../../components/TableComponents/TableComponents";
+import Logo from "../../../assets/logos/logo.png";
+import SearchBar from "../../../components/SearchBar/SearchBar"
+
+// UI Components
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
-import DoneAllIcon from '@mui/icons-material/DoneAll';
-import Logo from "../../../assets/logos/logo.png";
-// import SearchBox from "../../components/SearchBox/SearchBox";
-import SearchBar from "../../../components/SearchBar/SearchBar"
-import { toast } from "react-toastify";
-// import { browserHistory } from "react-router";
-import TableComponents from "../../../components/TableComponents/TableComponents";
-// import DeleteIcon from '@mui/icons-material/Delete';
 import Endorse from '@mui/icons-material/DomainVerification';
-
-
 
 function mapStateToProps(state) {
   return {
@@ -243,8 +222,8 @@ class ViewProductEndorsementComponent extends Component {
                   onSelectAllRows={(e) => this.setState({ selectedListID: e })}
                   onTableRowClick={this.onTableRowClick}       // optional, onTableRowClick = (event, row) => { }. The function should follow the one shown, as it will return the data from the selected row
                   SelectionActionButtons={
-                    <Tooltip title="Delete">
-                      <IconButton aria-label="delete" onClick={() => { this.onEndorse() }}   >
+                    <Tooltip title="Endorse">
+                      <IconButton aria-label="endorse" onClick={() => { this.onEndorse() }}   >
                         <Endorse />
                       </IconButton>
                     </Tooltip>

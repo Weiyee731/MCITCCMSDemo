@@ -50,6 +50,21 @@ export class GitAction {
     };
   }
 
+  static UpdateUserStatus = "UPDATE-USERPROFILE-STATUS";
+  static UpdatedUserStatus = "UPDATED-USERPROFILE-STATUS";
+  static CallUpdateUserStatus(propsData) {
+    return {
+      type: GitAction.UpdateUserStatus,
+      payload: propsData,
+    };
+  }
+  static ClearCurrentUser = "CLEAR-CURRENTUSER";
+  static CallClearCurrentUser() {
+    return {
+      type: GitAction.ClearCurrentUser,
+    };
+  }
+
 
   ///////////////////////////////////////////////////  sidebar configuration  ///////////////////////////////////////////////////
   static FetchSidebar = "FETCH_SIDEBAR";
@@ -71,9 +86,10 @@ export class GitAction {
 
   static GetAllAddress = "GET-ALL-ADDRESS";
   static GotAllAddress = "GOT-ALL-ADDRESS";
-  static CallAllUserAddress() {
+  static CallAllUserAddress(propsData) {
     return {
       type: GitAction.GetAllAddress,
+      payload: propsData
     };
   }
 
@@ -87,6 +103,21 @@ export class GitAction {
       payload: prodData,
     };
   }
+  static ClearOrder = "CLEAR-ORDER";
+  static CallClearOrder() {
+    return {
+      type: GitAction.ClearOrder
+    };
+  }
+
+  static OrderUserDetailsUpdate = "UPDATE-ORDER-USERDETAILS";
+  static OrderUserDetailsUpdated = "UPDATED-ORDER-USERDETAILS";
+  static CallUpdateOrderUserDetails(prodData) {
+    return {
+      type: GitAction.OrderUserDetailsUpdate,
+      payload: prodData,
+    };
+  }
 
   static GetTransactions = "GET-TRANSACTION";
   static GotTransactions = "GOT-TRANSACTION";
@@ -97,6 +128,37 @@ export class GitAction {
     };
   }
 
+  static GetTransactionStatus = "GET-TRANSACTIONSTATUS";
+  static GotTransactionStatus = "GOT-TRANSACTIONSTATUS";
+  static CallGetTransactionStatus() {
+    return {
+      type: GitAction.GetTransactionStatus,
+    };
+  }
+
+  static updateTrackingNumber = "UPDATE-TRACKING-NUMBER";
+  static updatedTrackingNumber = "UPDATED-TRACKING-NUMBER";
+  static CallUpdateOrderTracking(prodData) {
+    return {
+      type: GitAction.updateTrackingNumber,
+      payload: prodData,
+    };
+  }
+  static resetTracking = "RESET-TRACKING-NUMBER";
+  static CallResetOrderTracking(prodData) {
+    return {
+      type: GitAction.resetTracking,
+      payload: prodData,
+    };
+  }
+
+
+
+
+
+
+
+
   ///////////////////////////////////////////////////  Merchant  ///////////////////////////////////////////////////
 
   static GetMerchants = "GET-MERCHANTS";
@@ -104,6 +166,15 @@ export class GitAction {
   static CallMerchants(propsData) {
     return {
       type: GitAction.GetMerchants,
+      payload: propsData,
+    };
+  }
+
+  static GetMerchantOrders = "GET-MERCHANTSORDERS";
+  static GotMerchantOrders = "GOT-MERCHANTSORDERS";
+  static CallGetMerchantsOrders(propsData) {
+    return {
+      type: GitAction.GetMerchantOrders,
       payload: propsData,
     };
   }
@@ -423,6 +494,24 @@ export class GitAction {
     return {
       type: GitAction.GetProductReviewByProductID,
       payload: suppData,
+    };
+  }
+
+  ///////////////////////////////////////////////////  General  ///////////////////////////////////////////////////
+
+  static GetCourierService = "GET-COURIER-SERVICE";
+  static GotCourierService = "GOT-COURIER-SERVICE";
+  static CallCourierService() {
+    return {
+      type: GitAction.GetCourierService,
+    };
+  }
+
+  static GetCountry = "GET-COUNTRY";
+  static GotCountry = "GOT-COUNTRY";
+  static CallCountry() {
+    return {
+      type: GitAction.GetCountry,
     };
   }
 }

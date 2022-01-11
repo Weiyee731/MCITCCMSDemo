@@ -332,7 +332,7 @@ const INITIAL_STATE = {
     name: "",
     description: "",
     productCategory: "",
-    productSupplier: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+    productSupplier: localStorage.getItem("loginUser") !== null && JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
     height: "",
     width: "",
     depth: "",

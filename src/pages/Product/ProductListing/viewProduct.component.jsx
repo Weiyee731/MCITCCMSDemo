@@ -132,7 +132,7 @@ class ViewProductComponent extends Component {
     let DataSet = JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? this.props.allstocks :
       JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 && this.props.allstocks !== undefined ? this.props.allstocks.filter((x) => parseInt(x.MerchantID) === parseInt(localStorage.getItem("loginUser")[0].UserID)) : []
 
-    DataSet.filter((searchedItem) =>
+    DataSet.length > 0 && DataSet.filter((searchedItem) =>
       searchedItem.ProductName !== null && searchedItem.ProductName.toLowerCase().includes(
         value.toLowerCase()
       )

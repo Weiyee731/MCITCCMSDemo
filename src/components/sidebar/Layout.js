@@ -19,6 +19,15 @@ import ProductDetailsComponent from "../../pages/Product/ProductListing/viewProd
 import viewProductEndorsementComponent from "../../pages/Product/ProductEndorsement/ProductEndorsement";
 import AddProductAllInOne from "../../pages/Product/addProduct/addProductAllInOne.component";
 
+// Transaction
+import ViewTransactionsComponent from "../../pages/Transaction/viewTransaction.component";
+import TransactionDetailsComponent from "../../pages/Transaction/transactionDetails.component";
+
+
+// User Management
+import ViewMerchantsComponent from "../../pages/UserManagement/Merchant/viewMerchant.component";
+
+
 
 function Layout() {
   const [rtl, setRtl] = useState(false);
@@ -98,6 +107,15 @@ function Layout() {
             <Route
               path="/viewProductEndorsement"
               component={viewProductEndorsementComponent}
+            />
+
+            <Route path="/viewTransactions" component={ViewTransactionsComponent} />
+
+            <Route path="/viewMerchants" component={ViewMerchantsComponent} />
+
+            <Route
+              path="/viewTransactioDetails"
+              component={TransactionDetailsComponent}
             />
           </>
           :

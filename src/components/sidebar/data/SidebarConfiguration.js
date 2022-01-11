@@ -76,9 +76,31 @@ const sidebar_items = [
         ]
     },
     {
-        to: "/UserManagement",
-        title: "User Management",
-        icon: "assignment_ind",
+        to: "/viewTransactions",
+        title: "Transaction",
+        icon: "money",
+    },
+    // {
+    //     to: "/UserManagement",
+    //     title: "User Management",
+    //     icon: "assignment_ind",
+    // },
+    {
+        to: "",
+        title: "UserManagement",
+        icon: "inventory",
+        submenus: [
+            {
+                to: "/viewMerchants",
+                title: "Merchant",
+                icon: "inventory",
+            },
+            {
+                to: "/",
+                title: "User",
+                icon: "inventory",
+            },
+        ]
     },
     {
         to: "",

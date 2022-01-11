@@ -155,6 +155,38 @@ export class GitEpic {
       }
     });
 
+  User_UpdateProfileStatus = (action$) =>
+    action$.ofType(GitAction.UpdateUserStatus).switchMap(async ({ payload }) => {
+      console.log(
+        url + project + "/" +
+        "User_UpdateProfileStatus?USERID=" + payload.USERID +
+        "&USERSTATUS=" + payload.USERSTATUS
+      )
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "User_UpdateProfileStatus?USERID=" + payload.USERID +
+          "&USERSTATUS=" + payload.USERSTATUS
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        console.log("this. json", json)
+        if (json.map((val) => val.ReturnVal === 1)) {
+          toast.success("Updated Successful");
+        }
+        return {
+          type: GitAction.UpdatedUserStatus,
+          payload: json,
+        };
+      } catch (error) {
+        alert('UpdateUserProfileStatus: ' + error);
+        return {
+          type: GitAction.UpdatedUserStatus,
+          payload: [],
+        };
+      }
+    });
+
   // User_ProfileByID = action$ =>
   //   action$.ofType(GitAction.GetUserProfile).switchMap(async ({ payload }) => {
   //     // console.log(url + 
@@ -279,6 +311,104 @@ export class GitEpic {
       }
     });
 
+  Order_UpdateUserDetails = (action$) =>
+    action$.ofType(GitAction.OrderUserDetailsUpdate).switchMap(async ({ payload }) => {
+      console.log(url + project + "/" +
+        "Order_UpdateOrderUserDetails?OrderID=" + payload.OrderID +
+        "&FirstName=" + payload.FirstName +
+        "&LastName=" + payload.LastName +
+        "&UserContactNo=" + payload.UserContactNo +
+        "&PickUpInd=" + payload.PickUpInd +
+        "&UserEmailAddress=" + payload.UserEmailAddress +
+        "&UserAddressLine1=" + payload.UserAddressLine1 +
+        "&UserAddressLine2=" + payload.UserAddressLine2 +
+        "&UserPoscode=" + payload.UserPoscode +
+        "&UserState=" + payload.UserState +
+        "&UserCity=" + payload.UserCity +
+        "&CountryID=" + payload.CountryID)
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Order_UpdateOrderUserDetails?OrderID=" + payload.OrderID +
+          "&FirstName=" + payload.FirstName +
+          "&LastName=" + payload.LastName +
+          "&UserContactNo=" + payload.UserContactNo +
+          "&PickUpInd=" + payload.PickUpInd +
+          "&UserEmailAddress=" + payload.UserEmailAddress +
+          "&UserAddressLine1=" + payload.UserAddressLine1 +
+          "&UserAddressLine2=" + payload.UserAddressLine2 +
+          "&UserPoscode=" + payload.UserPoscode +
+          "&UserState=" + payload.UserState +
+          "&UserCity=" + payload.UserCity +
+          "&CountryID=" + payload.CountryID
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+
+        return {
+          type: GitAction.OrderUserDetailsUpdated,
+          payload: json,
+        };
+      }
+      catch (error) {
+        alert('OrderUserDetailsUpdate: ' + error);
+        return {
+          type: GitAction.OrderUserDetailsUpdated,
+          payload: [],
+        };
+      }
+    });
+
+  Transaction_ViewStatus = (action$) =>
+    action$.ofType(GitAction.GetTransactionStatus).switchMap(async () => {
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Order_ViewOrderStatus"
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        return {
+          type: GitAction.GotTransactionStatus,
+          payload: json,
+        };
+      } catch (error) {
+        alert('getAllTransactionStatus: ' + error);
+        return {
+          type: GitAction.GotTransactionStatus,
+          payload: []
+        };
+      }
+    });
+
+  Order_UpdateTrackingNumber = (action$) =>
+    action$.ofType(GitAction.updateTrackingNumber).switchMap(async ({ payload }) => {
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Order_UpdateTrackingNumber?ORDERTRACKINGNUMBER=" + payload.ORDERTRACKINGNUMBER +
+          "&LOGISTICID=" + payload.LOGISTICID +
+          "&ORDERPRODUCTDETAILSID=" + payload.ORDERPRODUCTDETAILSID
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        console.log("JSON", json)
+        if (json[0].ReturnVal === 1)
+          toast.success("Logistic Data is successfully Updated")
+        return {
+          type: GitAction.updatedTrackingNumber,
+          payload: json,
+        };
+      } catch (error) {
+        alert('getDeliverableList: ' + error);
+        return {
+          type: GitAction.updatedTrackingNumber,
+          payload: [],
+        };
+      }
+    });
+
+
   ///////////////////////////////////////////////////  Address  ///////////////////////////////////////////////////
 
   Address_ViewAll = (action$) =>
@@ -352,6 +482,30 @@ export class GitEpic {
       }
     });
 
+  Merchants_ViewAllOrder = (action$) =>
+    action$.ofType(GitAction.GetMerchantOrders).switchMap(async ({ payload }) => {
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Order_ViewOrderByUserID?TRACKINGSTATUS=" +
+          payload.trackingStatus +
+          "&USERID=" +
+          payload.UserID
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        return {
+          type: GitAction.GotMerchantOrders,
+          payload: json,
+        };
+      } catch (error) {
+        alert('getAllMerchantOrders: ' + error);
+        return {
+          type: GitAction.GotMerchantOrders,
+          payload: [],
+        };
+      }
+    });
 
   ///////////////////////////////////////////////////  Products  ///////////////////////////////////////////////////
 
@@ -436,7 +590,7 @@ export class GitEpic {
     });
 
 
-    Product_Update = (action$) =>
+  Product_Update = (action$) =>
     action$.ofType(GitAction.UpdateProduct).switchMap(async ({ payload }) => {
 
       return fetch(
@@ -1380,6 +1534,54 @@ export class GitEpic {
         };
       }
     });
+
+  ///////////////////////////////////////////////////  General   ///////////////////////////////////////////////////
+
+  CourierService_ViewAll = (action$) =>
+    action$.ofType(GitAction.GetCourierService).switchMap(async ({ payload }) => {
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "User_ViewCourierService"
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        return {
+          type: GitAction.GotCourierService,
+          payload: json,
+        };
+
+      } catch (error) {
+        alert('getAllCourierService: ' + error);
+        return {
+          type: GitAction.GotCourierService,
+          payload: [],
+        };
+      }
+    });
+
+  Country_ViewAll = (action$) =>
+    action$.ofType(GitAction.GetCountry).switchMap(async () => {
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "General_CountryList"
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        return {
+          type: GitAction.GotCountry,
+          payload: json,
+        };
+      } catch (error) {
+        alert('getCountry: ' + error);
+        return {
+          type: GitAction.GotCountry,
+          payload: [],
+        };
+      }
+    });
+
 
   ///////////////////////////////////////////////////  sidebar configurations ///////////////////////////////////////////////////
   User_ViewPage = action$ =>

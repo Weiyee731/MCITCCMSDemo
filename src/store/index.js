@@ -9,6 +9,7 @@ const rootEpic = combineEpics(
   gitEpic.User_Register,
   gitEpic.User_ViewProfile,
   gitEpic.User_ViewPage,
+  gitEpic.User_UpdateProfileStatus,
 
   // Address
   gitEpic.Address_ViewAll,
@@ -16,9 +17,13 @@ const rootEpic = combineEpics(
   // Order
   gitEpic.Order_Add,
   gitEpic.Order_ViewAll,
+  gitEpic.Order_UpdateUserDetails,
+  gitEpic.Transaction_ViewStatus,
+  gitEpic.Order_UpdateTrackingNumber,
 
   // Merchant
   gitEpic.Merchants_ViewProfile,
+  gitEpic.Merchants_ViewAllOrder,
 
   // Product
   gitEpic.Product_Add,
@@ -62,6 +67,10 @@ const rootEpic = combineEpics(
   // Product Review
   gitEpic.ProductReview_ViewByID,
   gitEpic.ProductReview_Add,
+
+  // General
+  gitEpic.Country_ViewAll,
+  gitEpic.CourierService_ViewAll,
 );
 
 const rootReducer = combineReducers({ counterReducer });
