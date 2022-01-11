@@ -82,6 +82,26 @@ export class GitAction {
     };
   }
 
+  ///////////////////////////////////////////////////  Shop  ///////////////////////////////////////////////////
+
+  static UpdateShopDetail = "UPDATE-SHOP-DETAIL";
+  static UpdatedShopDetail = "UPDATED-SHOP-DETAIL";
+  static CallUpdateShopDetail(propsData) {
+    return {
+      type: GitAction.UpdateShopDetail,
+      payload: propsData,
+    };
+  }
+
+  static UpdateProfileImage = "UPDATE-PROFILEIMAGE";
+  static UpdatedProfileImage = "UPDATED-PROFILEIMAGE";
+  static CallUpdateProfileImage(propsData) {
+    return {
+      type: GitAction.UpdateProfileImage,
+      payload: propsData,
+    };
+  }
+
   ///////////////////////////////////////////////////  Address  ///////////////////////////////////////////////////
 
   static GetAllAddress = "GET-ALL-ADDRESS";
@@ -227,6 +247,15 @@ export class GitAction {
     return {
       type: GitAction.ResetProductDetails
     }
+  }
+
+  static GetProductListing = "GET-PRODUCTLISTING";
+  static GotProductListing = "GOT-PRODUCTLISTING";
+  static CallAllProductsListing(propData) {
+    return {
+      type: GitAction.GetProductListing,
+      payload: propData
+    };
   }
 
   static ResetProductManagementValue = "RESET-PRODUCT-MANAGEMENT-RETURN-VALUE";

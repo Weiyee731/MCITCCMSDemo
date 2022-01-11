@@ -26,6 +26,8 @@ import TransactionDetailsComponent from "../../pages/Transaction/transactionDeta
 
 // User Management
 import ViewMerchantsComponent from "../../pages/UserManagement/Merchant/viewMerchant.component";
+import ViewUserComponent from "../../pages/UserManagement/User/viewUser.component";
+import EditShopProfile from "../../pages/Shop/viewShopProfile";
 
 
 
@@ -112,11 +114,15 @@ function Layout() {
             <Route path="/viewTransactions" component={ViewTransactionsComponent} />
 
             <Route path="/viewMerchants" component={ViewMerchantsComponent} />
+            <Route path="/viewUser" component={ViewUserComponent} />
 
             <Route
               path="/viewTransactioDetails"
               component={TransactionDetailsComponent}
             />
+
+            <Route path="/viewShopProfile" component={EditShopProfile} />
+
           </>
           :
           <Login />

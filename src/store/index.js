@@ -11,6 +11,10 @@ const rootEpic = combineEpics(
   gitEpic.User_ViewPage,
   gitEpic.User_UpdateProfileStatus,
 
+  // Shop
+  gitEpic.Shop_UpdateDetails,
+  gitEpic.Shop_UpdateProfileImage,
+
   // Address
   gitEpic.Address_ViewAll,
 

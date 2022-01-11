@@ -8,13 +8,14 @@ import { toast } from "react-toastify";
  *   @function resetLogonUser => void
  */
 
-export const setLogonUser = (loginUser, sidebarItem, project, SLD) => {
+export const setLogonUser = (loginUser, sidebarItem, project, SLD, projectURL) => {
     if (typeof loginUser !== "undefined" && loginUser !== null) {
         try {
             localStorage.setItem("userToken", true);
             localStorage.setItem("loginUser", JSON.stringify(loginUser));
             localStorage.setItem("sidebarItem", JSON.stringify(sidebarItem));
             localStorage.setItem("project", project)
+            localStorage.setItem("projectURL", projectURL)
             localStorage.setItem("projectDomain", project + "." + SLD)
             window.location.href = "/" + project + "/Main"
             window.location.reload(false);
@@ -47,10 +48,11 @@ export const isUserLogon = () => {
 }
 
 export const resetLogonUser = () => {
+    let projectURL = localStorage.getItem("projectURL")
     localStorage.removeItem("userToken")
     localStorage.removeItem("loginUser")
     localStorage.removeItem("sidebarItem");
-    window.location.href = "/Login"
+    window.location.href = "/" + projectURL + "/"
 }
 
 export const updateLogonUser = (key, value) => {

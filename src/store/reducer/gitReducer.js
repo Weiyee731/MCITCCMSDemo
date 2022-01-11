@@ -7,6 +7,8 @@ const INITIAL_STATE = {
   registrationReturn: [],
   sidebars: [],
 
+  // Shop
+  shopUpdated: [],
   // Address
   allAddress: [],
 
@@ -17,6 +19,7 @@ const INITIAL_STATE = {
   // Product
   addResult: [],
   products: [],
+  productsListing: [],
   productsByID: [],
   returnUpdateProduct: [],
   productMgmtResult: [],
@@ -108,6 +111,24 @@ export function counterReducer(state = INITIAL_STATE, action) {
       });
     case GitAction.ResetSidebar:
       return Object.assign({}, state, { sidebars: [] });
+
+    ///////////////////////////////////////////////////  Shop  ///////////////////////////////////////////////////
+
+    case GitAction.UpdateShopDetail:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.UpdatedShopDetail:
+      return Object.assign({}, state, {
+        loading: false,
+        shopUpdated: action.payload,
+      });
+
+    case GitAction.UpdateProfileImage:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.UpdatedProfileImage:
+      return Object.assign({}, state, {
+        loading: false,
+        currentUser: action.payload,
+      });
 
     ///////////////////////////////////////////////////  Address  ///////////////////////////////////////////////////
 
@@ -227,6 +248,15 @@ export function counterReducer(state = INITIAL_STATE, action) {
       return Object.assign({}, state, { productsByID: [] });
     case GitAction.ResetProductManagementValue:
       return Object.assign({}, state, { productMgmtResult: [] });
+
+
+    case GitAction.GetProductListing:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotProductListing:
+      return Object.assign({}, state, {
+        loading: false,
+        productsListing: action.payload,
+      });
 
     case GitAction.EndorseProduct:
       return Object.assign({}, state, { loading: true });

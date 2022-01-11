@@ -7,6 +7,8 @@ import clsx from "clsx";
 // Share Components
 import TransactionDetails from "../../Transaction/transactionDetails.component";
 import Logo from "../../../assets/logos/logo.png";
+import SearchBar from "../../../components/SearchBar/SearchBar"
+import { ArrowRoundedLeft8x13Svg, } from '../../../assets/svg';
 
 // UI Components
 import Toolbar from "@material-ui/core/Toolbar";
@@ -537,7 +539,13 @@ class DisplayTable extends Component {
               placeholder="Search Order Number..."
               onChange={(e) => this.setState({ searchFilter: e.target.value })}
             /> */}
-
+            <SearchBar
+              id=""
+              placeholder="Search Order Number..."
+              buttonOnClick={() => this.onSearch("", "")}
+              onChange={(e) => this.setState({ searchFilter: e.target.value })}
+              value={this.state.searchFilter}
+            />
             <div>
               <Paper style={divStyle}>
                 <TableContainer>
@@ -804,6 +812,7 @@ class MerchantDetailsComponent extends Component {
       USERSTATUS: status
     })
   }
+
   render() {
 
     const handleChange = (event, newValue) => {
@@ -1004,7 +1013,8 @@ class MerchantDetailsComponent extends Component {
             <div>
               <h2>Merchant Details</h2>
               <Button onClick={back}>
-                <i className="fas fa-chevron-left"></i>Back
+                <ArrowRoundedLeft8x13Svg fontSize="inherit" />
+                {" "}Back
               </Button>
               <Card style={{ width: "80%", margin: "0 auto" }}>
                 <CardContent>

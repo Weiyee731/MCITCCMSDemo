@@ -1,6 +1,23 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { GitAction } from "../../store/action/gitAction";
+import PropTypes from "prop-types";
+import clsx from "clsx";
+
+// UI Components
+import { lighten, makeStyles } from "@material-ui/core/styles";
+import TableContainer from "@material-ui/core/TableContainer";
+import TablePagination from "@material-ui/core/TablePagination";
+import TableSortLabel from "@material-ui/core/TableSortLabel";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import Paper from "@material-ui/core/Paper";
+import Checkbox from "@material-ui/core/Checkbox";
+import IconButton from "@material-ui/core/IconButton";
+import Box from "@material-ui/core/Box";
+import FormControl from "@material-ui/core/FormControl";
+import Collapse from "@material-ui/core/Collapse";
+import { toast } from "react-toastify";
 import {
     Select,
     Table,
@@ -11,47 +28,13 @@ import {
     TextField,
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-import { GitAction } from "../../store/action/gitAction";
-// import "../../app/App.scss";
-// import "react-table/react-table.css";
 
-// import TransactionDetails from "../transactionDetails/transactionDetails.component";
-
-import PropTypes from "prop-types";
-import clsx from "clsx";
-import { lighten, makeStyles } from "@material-ui/core/styles";
-import TableContainer from "@material-ui/core/TableContainer";
-import TablePagination from "@material-ui/core/TablePagination";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
-import Checkbox from "@material-ui/core/Checkbox";
-import IconButton from "@material-ui/core/IconButton";
-// import Tooltip from "@material-ui/core/Tooltip";
-// import FormControlLabel from "@material-ui/core/FormControlLabel";
-// import Switch from "@material-ui/core/Switch";
-// import DeleteIcon from "@material-ui/icons/Delete";
-import Logo from "../../assets/logos/logo.png";
-// import SearchBox from "../../components/SearchBox/SearchBox";
-// import Tabs from "@material-ui/core/Tabs";
-// import Tab from "@material-ui/core/Tab";
-// import AppBar from "@material-ui/core/AppBar";
-import Box from "@material-ui/core/Box";
+// Share Components
 import "./viewTransaction.component.css";
-import FormControl from "@material-ui/core/FormControl";
-// import "../viewTransaction.component.css";
-import Collapse from "@material-ui/core/Collapse";
-// import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
-// import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+import Logo from "../../assets/logos/logo.png";
+import SearchBar from "../../components/SearchBar/SearchBar"
 import { ArrowRoundedUp13x8Svg, ArrowRoundedDown12x7Svg } from '../../assets/svg';
-
-import Input from "@material-ui/core/Input";
-import { ConstructionOutlined } from "@mui/icons-material";
 import { isContactValid, isEmailValid, isStringNullOrEmpty } from "../../tools/Helpers";
-
-import Divider from '@mui/material/Divider';
-import { toast } from "react-toastify";
 
 function mapStateToProps(state) {
     return {
@@ -369,7 +352,7 @@ function Row(props) {
         return (
             <div className="col-8" style={{ paddingTop: "10px" }}>
                 <div className="row">
-                    <div className="col-3" style={{ width: "10%" }}>
+                    <div className="col-3" style={{ width: "20%" }}>
                         <img
                             height={60}
                             src={product.ProductImage !== null ? JSON.parse(product.ProductImages)[0] : Logo}
@@ -1210,6 +1193,7 @@ class DisplayTable extends Component {
             deleteActive: false,
             isFiltered: false,
             filteredProduct: [],
+            searchKeywords: "",
         };
 
         this.handleRequestSort = this.handleRequestSort.bind(this);
@@ -1316,6 +1300,8 @@ class DisplayTable extends Component {
 
     searchSpace = (value) => {
         var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+
+        this.setState({ searchKeywords: value })
         this.state.filteredProduct.splice(0, this.state.filteredProduct.length)
 
         this.props.Data.filter((searchedItem) =>
@@ -1383,12 +1369,6 @@ class DisplayTable extends Component {
                     //   />
                 ) : (
                     <div>
-                        {/* <SearchBox
-              style={divStyle}
-              placeholder="Search By Tracking Number or Order Number..."
-              onChange={e => this.searchSpace(e.target.value)}
-            /> */}
-
                         <div>
                             <Paper style={divStyle}>
                                 <TableContainer>
@@ -1510,7 +1490,11 @@ class ViewTransactionsComponent extends Component {
             value: 0,
             tabsHidden: false,
             currentlyChosen: "Payment Confirm",
-            setting: false
+            setting: false,
+
+            searchKeywords: "",
+            isFiltered: false,
+            filteredProduct: [],
         };
     }
 
@@ -1560,6 +1544,53 @@ class ViewTransactionsComponent extends Component {
             currentlyChosen: e.target.value,
         });
     };
+
+    searchSpace = (value) => {
+
+        let transactionList = []
+        if (JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1)
+            this.props.alltransactions.filter((x) => x.TrackingStatus === this.state.currentlyChosen).map((y) => {
+                transactionList.push(y)
+            })
+
+        if (JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16) {
+            this.props.alltransactions !== null && this.props.alltransactions.map((list) => {
+                list.OrderProductDetail !== null && JSON.parse(list.OrderProductDetail).filter((y) => parseInt(y.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) && list.TrackingStatus === this.state.currentlyChosen).map((data) => {
+                    transactionList.push(list)
+                })
+            })
+        }
+
+        console.log("transactionList", transactionList)
+
+
+        // var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+
+        this.setState({ searchKeywords: value })
+        this.state.filteredProduct.splice(0, this.state.filteredProduct.length)
+
+
+        transactionList.length > 0 && transactionList.filter((searchedItem) =>
+            searchedItem.OrderName !== null && searchedItem.OrderName.toLowerCase().includes(
+                value.toLowerCase()
+            )
+        ).map((filteredItem) => {
+            this.state.filteredProduct.push(filteredItem);
+        })
+
+        transactionList.length > 0 && transactionList.map((list) => {
+            list.OrderProductDetail !== null && JSON.parse(list.OrderProductDetail).filter(x => x.TrackingNumber !== null
+                && x.TrackingNumber.toLowerCase().includes(value.toLowerCase())).map(filteredItem => {
+                    this.state.filteredProduct.push(list);
+                });
+        })
+
+
+        console.log("filteredProduct", this.state.filteredProduct)
+        let removeDeplicate = this.state.filteredProduct.filter((ele, ind) => ind === this.state.filteredProduct.findIndex(elem => elem.OrderID === ele.OrderID))
+        this.setState({ isFiltered: true, filteredProduct: removeDeplicate })
+    }
+
 
     render() {
         const handleChange = (event, newValue) => {
@@ -1612,35 +1643,6 @@ class ViewTransactionsComponent extends Component {
         }
 
         if (allTransactionStatusData.length > 0) {
-            // var generateTabs = allTransactionStatusData.map((status, i) => {
-            //   return (
-            //     <Tab
-            //       label={status.TrackingStatus}
-            //       {...a11yProps(i)}
-            //     // onClick={changeData.bind(this, status.TrackingStatus)}
-            //     />
-            //   );
-            // });
-            // var generatePanels = allTransactionStatusData.map((status, i) => {
-            //   var transactionList = this.props.alltransactions;
-            //   transactionList = transactionList.filter(
-            //     (items) =>
-
-            //       items.TrackingStatusID === allTransactionStatusData[i].TrackingStatusID
-            //   );
-            //   return (
-            //     <TabPanel value={this.state.value} index={i}>
-            //       <DisplayTable
-            //         Data={transactionList}
-            //         ProductProps={this.props}
-            //         history={this.props.history}
-            //         tabsHidden={this.state.tabsHidden}
-            //         setTabsHidden={this.setTabsHidden}
-            //       ></DisplayTable>
-            //     </TabPanel>
-            //   );
-            // });
-
             let transactionList = []
             if (JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1)
                 this.props.alltransactions.filter((x) => x.TrackingStatus === this.state.currentlyChosen).map((y) => {
@@ -1654,12 +1656,16 @@ class ViewTransactionsComponent extends Component {
                     })
                 })
             }
-
             var generateTable =
                 (
                     <div>
                         <DisplayTable
-                            Data={transactionList.filter((ele, ind) => ind === transactionList.findIndex(elem => elem.OrderID === ele.OrderID))}
+                            Data={
+                                this.state.isFiltered === false ?
+                                    transactionList.filter((ele, ind) => ind === transactionList.findIndex(elem => elem.OrderID === ele.OrderID))
+                                    :
+                                    this.state.filteredProduct.filter((ele, ind) => ind === this.state.filteredProduct.findIndex(elem => elem.OrderID === ele.OrderID))
+                            }
                             ProductProps={this.props}
                             history={this.props.history}
                             tabsHidden={this.state.tabsHidden}
@@ -1675,26 +1681,44 @@ class ViewTransactionsComponent extends Component {
                     <div>
                         <p className="heading">Orders List</p>
                         <div className="selectContainer">
-                            <FormControl variant="outlined" size="small">
-                                <Select
-                                    native
-                                    value={this.state.productSupplier}
-                                    onChange={this.updateList.bind(this)}
-                                    inputProps={{
-                                        name: "Product Supplier",
-                                        id: "productSupplier",
-                                    }}
-                                    className="select"
-                                >
-                                    {generateOptions}
-                                </Select>
-                            </FormControl>
+                            <div className="row" style={{ marginBottom: "10px" }}>
+                                <div className="col-md-10 col-10 m-auto" >
+                                    <SearchBar
+                                        id=""
+                                        placeholder="Search By Tracking Number or Order Number..."
+                                        buttonOnClick={() => this.onSearch("", "")}
+                                        onChange={(e) => this.searchSpace(e.target.value)}
+                                        className="searchbar-input mb-auto"
+                                        disableButton={this.state.isDataFetching}
+                                        tooltipText="Search with current data"
+                                        value={this.state.searchKeywords}
+                                    />
+                                </div>
+
+                                <div className="col-md-2 col-2 m-auto" style={{ paddingTop: "10px" }}>
+                                    <div className="selectContainer">
+                                        <FormControl variant="outlined" size="small">
+                                            <Select
+                                                native
+                                                value={this.state.productSupplier}
+                                                onChange={this.updateList.bind(this)}
+                                                inputProps={{
+                                                    name: "Product Supplier",
+                                                    id: "productSupplier",
+                                                }}
+                                                className="select"
+                                            >
+                                                {generateOptions}
+                                            </Select>
+                                        </FormControl>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 ) : null}
                 {generateTable}
                 {console.log("list", this.props)}
-                {/* {console.log("list transactionList", transactionList)} */}
             </div>
         );
     }

@@ -20,6 +20,9 @@ import SidebarButtons from "./SidebarButtons";
 import { isArrayNotEmpty, isStringNullOrEmpty } from "../../tools/Helpers"
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import Dashboard from '@mui/icons-material/Dashboard';
+import { resetLogonUser } from "../../components/auth/AuthManagement"
+import LogoutIcon from '@mui/icons-material/Logout';
+import Button from '@mui/material/Button';
 
 // "user manual": set your default icon styles here
 const MaterialIconStyles = {
@@ -63,7 +66,7 @@ const Aside = ({ rtl, toggled, handleToggleSidebar, sidebarItems }) => {
       onToggle={handleToggleSidebar}
       onMouseEnter={() => { isCollapsed && setCollapsed(false) }}
       onMouseLeave={() => { isCollapsed && setCollapsed(true) }}
-      style={{zIndex: 1301}}
+      style={{ zIndex: 1301 }}
     >
       <SidebarHeader>
         <SidebarButtons handleCollapseSidebar={handleCollapseSidebar} isCollapsed={isCollapsed} />
@@ -97,7 +100,7 @@ const Aside = ({ rtl, toggled, handleToggleSidebar, sidebarItems }) => {
 
       <SidebarFooter style={{ textAlign: 'center' }}>
         {/** "user manual" : updatable footer is here */}
-        <div className="sidebar-btn-wrapper" style={{ padding: '20px 24px', }}>
+        {/* <div className="sidebar-btn-wrapper" style={{ padding: '20px 24px', }}>
           <a
             href="https://github.com/WHTeoh/InitiateProject.git"
             target="_blank"
@@ -109,6 +112,9 @@ const Aside = ({ rtl, toggled, handleToggleSidebar, sidebarItems }) => {
               View Source
             </span>
           </a>
+        </div> */}
+        <div className="sidebar-btn-wrapper" style={{ padding: '20px 24px', }}>
+          <Button onClick={(e) => { resetLogonUser() }}>Logout <LogoutIcon /></Button>
         </div>
       </SidebarFooter>
     </ProSidebar >

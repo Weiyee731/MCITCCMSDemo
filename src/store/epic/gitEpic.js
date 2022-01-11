@@ -213,6 +213,90 @@ export class GitEpic {
   //     }
   //   });
 
+
+  Shop_UpdateDetails = (action$) =>
+    action$.ofType(GitAction.UpdateShopDetail).switchMap(async ({ payload }) => {
+
+      console.log(
+        url + project + "/" +
+        "User_UpdateShopDetail?USERID=" + payload.USERID +
+        "&SHOPNAME=" + payload.SHOPNAME +
+        "&SHOPDESC=" + payload.SHOPDESC +
+        "&SHOPPOSCODE=" + payload.SHOPPOSCODE +
+        "&SHOPCITY=" + payload.SHOPCITY +
+        "&SHOPSTATE=" + payload.SHOPSTATE +
+        "&SHOPCOUNTRYID=" + payload.SHOPCOUNTRYID
+
+      )
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "User_UpdateShopDetail?USERID=" + payload.USERID +
+          "&SHOPNAME=" + payload.SHOPNAME +
+          "&SHOPDESC=" + payload.SHOPDESC +
+          "&SHOPPOSCODE=" + payload.SHOPPOSCODE +
+          "&SHOPCITY=" + payload.SHOPCITY +
+          "&SHOPSTATE=" + payload.SHOPSTATE +
+          "&SHOPCOUNTRYID=" + payload.SHOPCOUNTRYID
+        );
+        let json = await response.json();
+        console.log("json", json)
+        json = JSON.parse(json);
+        if (json.map((val) => val.ReturnVal === 1)) {
+          toast.success("Upload Successful");
+        }
+        return {
+          type: GitAction.UpdatedShopDetail,
+          payload: json,
+        };
+      } catch (error) {
+        alert('UpdatedShopDetail: ' + error);
+        return {
+          type: GitAction.UpdatedShopDetail,
+          payload: [],
+        };
+      }
+    });
+
+  Shop_UpdateProfileImage = (action$) =>
+    action$.ofType(GitAction.UpdateProfileImage).switchMap(async ({ payload }) => {
+      console.log(url + project + "/" +
+        "User_UserUpdatePhoto?USERID=" +
+        payload.USERID +
+        "&TYPE=" +
+        payload.TYPE +
+        "&USERPROFILEIMAGE=" +
+        payload.USERPROFILEIMAGE)
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "User_UserUpdatePhoto?USERID=" +
+          payload.USERID +
+          "&TYPE=" +
+          payload.TYPE +
+          "&USERPROFILEIMAGE=" +
+          payload.USERPROFILEIMAGE
+        );
+        let json = await response.json();
+        console.log("json")
+        json = JSON.parse(json);
+
+        if (json.map((val) => val.ReturnVal === 1)) {
+          toast.success("Upload Successful");
+        }
+        return {
+          type: GitAction.UpdatedProfileImage,
+          payload: json,
+        };
+      } catch (error) {
+        alert('updateProfileImage: ' + error);
+        return {
+          type: GitAction.UpdatedProfileImage,
+          payload: [],
+        };
+      }
+    });
+
   ///////////////////////////////////////////////////  Order  ///////////////////////////////////////////////////
   Order_Add = (action$) =>
     action$.ofType(GitAction.AddOrder).switchMap(async ({ payload }) => {
@@ -755,6 +839,40 @@ export class GitEpic {
         alert('getAllProducts: ' + error);
         return {
           type: GitAction.GotProduct,
+          payload: [],
+        };
+      }
+    });
+
+  getProductsListing = (action$) =>
+    action$.ofType(GitAction.GetProductListing).switchMap(async ({ payload }) => {
+      console.log(url + project + "/" +
+        "Product_ItemListByType?Type=" + payload.type +
+        "&TypeValue=" + payload.typeValue +
+        "&USERID=" + payload.userId +
+        "&PRODUCTPERPAGE=" + payload.productPage +
+        "&PAGE=" + payload.page +
+        "&ProjectID=" + payload.ProjectID)
+
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Product_ItemListByType?Type=" + payload.type +
+          "&TypeValue=" + payload.typeValue +
+          "&USERID=" + payload.userId +
+          "&PRODUCTPERPAGE=" + payload.productPage +
+          "&PAGE=" + payload.page +
+          "&ProjectID=" + payload.ProjectID
+        );
+        const json = await response.json();
+        return {
+          type: GitAction.GotProductListing,
+          payload: json,
+        };
+      } catch (error) {
+        alert('getProductsListing: ' + error);
+        return {
+          type: GitAction.GotProductListing,
           payload: [],
         };
       }

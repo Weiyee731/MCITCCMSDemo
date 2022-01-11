@@ -96,29 +96,34 @@ const sidebar_items = [
                 icon: "inventory",
             },
             {
-                to: "/",
+                to: "/viewUser",
                 title: "User",
                 icon: "inventory",
             },
         ]
     },
     {
-        to: "",
-        title: "Stock Management",
-        icon: "indeterminate_check_box",
-        submenus: [
-            {
-                to: "/OverallStock",
-                title: "Overall",
-                icon: "all_inbox",
-            },
-            {
-                to: "/StockGoods",
-                title: "Stock Order Goods",
-                icon: "assignment_turned_in",
-            },
-        ]
+        to: "/viewShopProfile",
+        title: "Shop Profile",
+        icon: "shop",
     },
+    // {
+    //     to: "",
+    //     title: "Stock Management",
+    //     icon: "indeterminate_check_box",
+    //     submenus: [
+    //         {
+    //             to: "/OverallStock",
+    //             title: "Overall",
+    //             icon: "all_inbox",
+    //         },
+    //         {
+    //             to: "/StockGoods",
+    //             title: "Stock Order Goods",
+    //             icon: "assignment_turned_in",
+    //         },
+    //     ]
+    // },
 ]
 
 export default sidebar_items
