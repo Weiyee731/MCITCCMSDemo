@@ -101,7 +101,7 @@ export class GitAction {
       payload: propsData,
     };
   }
-  
+
   static ClearUpdateShop = "CLEAR-UPDATE-SHOP"
   static CallClearShopUpdate() {
     return {
@@ -209,12 +209,20 @@ export class GitAction {
   ///////////////////////////////////////////////////  Product  ///////////////////////////////////////////////////
   static AddProduct = "ADD-PRODUCT";
   static AddedProduct = "ADDED-PRODUCT";
+  static ResetProductReturnVal = "RESET-PRODUCT-RETURN-VALUE";
   static CallAddProduct(prodData) {
     return {
       type: GitAction.AddProduct,
       payload: prodData,
     };
   }
+  static CallResetProductReturnVal() {
+    return {
+      type: GitAction.ResetProductReturnVal,
+    };
+  }
+
+
 
   static UpdateProduct = "UPDATE-PRODUCT";
   static UpdatedProduct = "UPDATED-PRODUCT";

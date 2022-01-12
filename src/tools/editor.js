@@ -9,12 +9,11 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 // import { View, StyleSheet, Alert } from "react-native";
+import { ModalPopOut } from "../components/ModalComponent/ModalComponent";
 
 
 const DescriptionFunction = (props) => {
     const { post_content, content, handleChange, imageFileUrl, editorState } = props
-    const [isOpen, setOpen] = React.useState(true);
-
 
 
     let uploadURL = "https://" + localStorage.getItem("projectDomain") + "/emporiaimage/uploadProduct.php"
@@ -23,12 +22,15 @@ const DescriptionFunction = (props) => {
     return (
         <>
             <Editor
+
+            
                 id="editor1"
                 apiKey='x4mqgazypswvw9k7ylkasipxjmrgp49stwbne96rwg4l1xhi'
                 initialValue={post_content}
                 value={content}
                 onEditorChange={(e) => handleChange(e)}
                 disabled={editorState === true ? false : true}
+            
                 init={{
                     height: 600,
                     menubar: false,
@@ -42,13 +44,15 @@ const DescriptionFunction = (props) => {
                         'alignright alignjustify | bullist numlist outdent indent | ' +
                         'removeformat | table | fontsizeselect | link | image | codesample code | fontselect',
                     menubar: 'file edit view insert format tools table help',
-                    // toolbar: 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl',
+
                     a11y_advanced_options: true,
                     media_alt_source: false,
                     media_poster: false,
+                    maxSize:5242880,
 
                     font_formats: "Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Oswald=oswald; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats",
                     content_style: "body { font-family: Montserrat; }",
+
                     image_caption: true,
                     quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
                     noneditable_noneditable_class: 'mceNonEditable',
@@ -63,6 +67,7 @@ const DescriptionFunction = (props) => {
                         var input = document.createElement('input');
                         input.setAttribute('type', 'file');
                         input.setAttribute('accept', 'image/*');
+                        console.log("meta", meta)
 
                         input.onchange = function () {
                             var file = this.files[0];
@@ -89,7 +94,6 @@ const DescriptionFunction = (props) => {
                                     console.log("this is the link", link)
 
                                     cb(link, { title: imagename });
-                                    // button[0].innerHTML = `<div role="presentation" class="tox-dialog__footer-start"></div><div role="presentation" class="tox-dialog__footer-end"><button title="Cancel" type="button" tabindex="-1" data-alloy-tabstop="true" class="tox-button tox-button--secondary">Cancel</button><button title="Save" type="button" tabindex="-1" data-alloy-tabstop="true" class="tox-button">Save</button></div>`
                                     reader.onerror = error => { };
                                 }
                             });
@@ -98,57 +102,7 @@ const DescriptionFunction = (props) => {
                     },
 
                     images_upload_handler: function example_image_upload_handler(blobInfo, success, failure, progress) {
-
-                        <>
-                            {setOpen(false)}
-                            {/* {console.log("aaa", isOpen)} */}
-                            {/* <Dialog
-                                open={isOpen}
-                            // onClose={handleClose}
-                            // aria-labelledby="alert-dialog-title"
-                            // aria-describedby="alert-dialog-description"
-                            >
-                                <DialogTitle id="alert-dialog-title">
-                                    {"Use Google's location service?"}
-                                </DialogTitle>
-                                <DialogContent>
-                                    <DialogContentText id="alert-dialog-description">
-                                        Let Google help apps determine location. This means sending anonymous
-                                        location data to Google, even when no apps are running.
-                                    </DialogContentText>
-                                </DialogContent>
-                                <DialogActions>
-                                    <Button onClick={""}>Disagree</Button>
-                                    <Button onClick={""} autoFocus>
-                                        Agree
-                                    </Button>
-                                </DialogActions>
-                            </Dialog> */}
-                            {/* 
-                            {
-                                Alert.alert(
-                                    "Alert Title",
-                                    "My Alert Msg",
-                                    [
-                                        {
-                                            text: "Cancel",
-                                            onPress: () => Alert.alert("Cancel Pressed"),
-                                            style: "cancel",
-                                        },
-                                    ],
-                                    {
-                                        cancelable: true,
-                                        onDismiss: () =>
-                                            Alert.alert(
-                                                "This alert was dismissed by tapping outside of the alert dialog."
-                                            ),
-                                    }
-                                )
-                            } */}
-                        </>
-
                         var xhr, formData;
-
                         xhr = new XMLHttpRequest();
                         xhr.withCredentials = false;
                         xhr.open('POST', uploadURL);
@@ -164,6 +118,8 @@ const DescriptionFunction = (props) => {
                                 return;
                             }
 
+                            console.log("blobInfo", blobInfo)
+                            console.log("blobInfo1", xhr)
                             if (xhr.status < 200 || xhr.status >= 300) {
                                 failure('HTTP Error: ' + xhr.status);
                                 return;
@@ -182,12 +138,12 @@ const DescriptionFunction = (props) => {
                         formData.append("imageFile", blobInfo.blob());
                         formData.append("imageName", imagename);
                         xhr.send(formData);
-
-                        // alert("HIHI")
+                    
                     }
 
                 }}
             />
+
         </>
     )
 

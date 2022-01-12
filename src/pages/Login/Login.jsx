@@ -70,7 +70,7 @@ class Dashboard extends Component {
                     this.props.logonUser,
                     this.props.sidebars,
                     "myemporia",
-                    "myemporia.my",
+                    "my",
                     "CMS.myemporia.my"
                 )
             }

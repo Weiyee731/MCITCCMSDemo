@@ -3375,7 +3375,8 @@ class ProductDetailsComponent extends Component {
                 brand: encodeURIComponent(this.state.brand),
                 model: encodeURIComponent(this.state.model),
                 tags: encodeURIComponent(this.state.tags),
-                UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+                UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+                ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
             }
 
             this.props.CallUpdateProduct(object)

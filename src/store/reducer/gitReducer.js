@@ -222,6 +222,12 @@ export function counterReducer(state = INITIAL_STATE, action) {
         addResult: action.payload,
       });
 
+    case GitAction.ResetProductReturnVal:
+      return Object.assign({}, state, {
+        loading: false,
+        addResult: [],
+      });
+
     case GitAction.UpdateProduct:
       return Object.assign({}, state, { loading: true });
     case GitAction.UpdatedProduct:

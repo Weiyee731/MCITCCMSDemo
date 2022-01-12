@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from "react-redux";
 import { GitAction } from "../../store/action/gitAction";
-import { withRouter } from 'react-router'
+import { withRouter } from 'react-router-dom'
 import { Link } from 'react-router-dom';
 import {
   ProSidebar,

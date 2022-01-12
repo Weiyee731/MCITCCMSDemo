@@ -1,16 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from "react-redux";
 import { GitAction } from "../../../store/action/gitAction";
-import {
-    Card,
-    CardContent,
-    Table,
-    TableRow,
-    TableCell,
-    CardHeader,
-    TableBody,
-    Tooltip,
-} from "@material-ui/core";
+
 import Button from "@material-ui/core/Button";
 import { toast } from "react-toastify";
 
@@ -20,10 +11,11 @@ import "./ProductInfo.css";
 import { isStringNullOrEmpty } from "../../../tools/Helpers";
 import Logo from "../../../assets/logos/logo.png";
 import IconButton from '@material-ui/core/IconButton';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { ArrowRoundedLeft8x13Svg, ArrowRoundedRight8x13Svg } from '../../../assets/svg';
 
+
+import createHistory from 'history/createBrowserHistory'
+const history = createHistory()
 
 function mapStateToProps(state) {
     return {
@@ -114,7 +106,11 @@ class ProductEndorsementInfo extends Component {
                 // it will return to table 
                 toast.success("This product endorsed successfully.", {
                     autoClose: 3000,
-                    onClose: () => { this.props.backToList(false) }
+                    onClose: () => { 
+                        history.push("/viewProductEndorsement")
+                        window.location.reload(false)
+                        // this.props.backToList(false) 
+                    }
                 })
             }
             else {

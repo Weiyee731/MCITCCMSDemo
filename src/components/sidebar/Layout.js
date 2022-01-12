@@ -76,7 +76,7 @@ function Layout() {
               handleToggleSidebar={handleToggleSidebar}
               handleRtlChange={handleRtlChange}
             />
-            <Route path="/viewProduct" component={ViewProductComponent} />
+            {/* <Route path="/viewProduct" component={ViewProductComponent} />
             <Route path="/addProductsAllIn" component={AddProductAllInOne} />
             <Route
               exact
@@ -91,7 +91,6 @@ function Layout() {
                 </>
               )}
             />
-
             <Route
               exact
               path="/viewProductDetailList/:productId"
@@ -121,7 +120,7 @@ function Layout() {
               component={TransactionDetailsComponent}
             />
 
-            <Route path="/viewShopProfile" component={EditShopProfile} />
+            <Route path="/viewShopProfile" component={EditShopProfile} /> */}
 
           </>
           :

@@ -31,7 +31,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Modal, ModalBody, ModalHeader } from "reactstrap"
 import { ModalPopOut } from "../../../components/ModalComponent/ModalComponent";
-
+// import { browserHistory } from "react-router";
 
 // import NestedMenuItem from "material-ui-nested-menu-item";
 
@@ -2056,6 +2056,7 @@ class AddProductComponent extends Component {
         // console.log("resize", this.resizeFile(uploadingMedia[i], fileExt))
         let filename = productID + "_" + i + "_" + convertDateTimeToString(new Date())
         let image = uploadingMedia[i]
+        
         if (this.state.isCompresss === true) {
           image = this.resizeFile(uploadingMedia[i], fileExt);
           console.log("resize", image);
@@ -3284,26 +3285,37 @@ class AddProductComponent extends Component {
         if (this.state.file !== [] || this.state.file2 !== [] || this.state.file3 !== []) {
           this.setState({ OnCheckMedia: true })
         }
-
-        let object = {
-          name: encodeURIComponent(this.state.name),
-          description: encodeURIComponent(this.state.description),
-          productCategory: this.state.productCategory,
-          productSupplier: this.state.productSupplier,
-          height: this.state.height,
-          width: this.state.width,
-          depth: this.state.depth,
-          weight: this.state.weight,
-          sku: encodeURIComponent(this.state.sku),
-          brand: encodeURIComponent(this.state.brand),
-          model: encodeURIComponent(this.state.model),
-          tags: encodeURIComponent(this.state.tags),
+        else {
+          this.CallUpdateAPI(false)
         }
-        this.props.callAddProduct(object)
 
-        this.setState({ isSubmit: true })
       }
     }
+  }
+
+  CallUpdateAPI = (value) => {
+
+    this.setState({ isCompresss: value, OnCheckMedia: false })
+
+    let object = {
+      name: this.state.name,
+      description: this.state.description,
+      productCategory: this.state.productCategory,
+      productSupplier: this.state.productSupplier,
+      height: this.state.height,
+      width: this.state.width,
+      depth: this.state.depth,
+      weight: this.state.weight,
+      sku: this.state.sku,
+      brand: this.state.brand,
+      model: this.state.model,
+      tags: this.state.tags,
+      ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+      UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+    }
+    this.props.callAddProduct(object)
+
+    this.setState({ isSubmit: true })
   }
 
   bindProductInfoToState = () => {
@@ -3847,8 +3859,10 @@ class AddProductComponent extends Component {
     };
 
     return (
-      <div style={{ display: "flex", width: "100%" }}>
-        <div className="MainTab">
+      <div style={{ display: "flex", width: "100%", margin: '30px' }}>
+        <div
+        // className="MainTab"
+        >
           <div>
             <div>
               {
@@ -4237,6 +4251,7 @@ class AddProductComponent extends Component {
                   handleChange={this.handleChangeEditor}
                   content={this.state.description}
                   imageFileUrl="products"
+                  editorState={true}
                 />
                 {/* <DescriptionFunction
                   post_content=""
@@ -5275,7 +5290,9 @@ class AddProductComponent extends Component {
         </div>
 
         <div className="StepContainer">
-          <div className="ProgressTab">
+          <div
+          // className="ProgressTab"
+          >
             <Card>
               <CardContent>
                 <div className="HorizontalContainer">
@@ -5429,20 +5446,20 @@ class AddProductComponent extends Component {
                   <p className="text-danger"><i>Disclaimer: Image resolution will be reduced </i></p>
 
                   <div style={{ textAlign: "right" }}>
-                    <Button variant="contained" color="primary" onClick={() =>
+                    <Button variant="contained" color="primary" onClick={() => this.CallUpdateAPI(true)
 
-                      <>
-                        {/* {this.uploadFile(1)} */}
-                        {this.setState({ isCompresss: true, OnCheckMedia: false })}
-                      </>
+                      // <>
+                      //   {/* {this.uploadFile(1)} */}
+                      //   {this.setState({ isCompresss: true, OnCheckMedia: false })}
+                      // </>
                     }>
                       Yes
                     </Button>
-                    <Button variant="contained" color="secondary" onClick={() =>
-                      <>
-                        {/* {this.uploadFile(1)} */}
-                        {this.setState({ isCompresss: false, OnCheckMedia: false })}
-                      </>
+                    <Button variant="contained" color="secondary" onClick={() => this.CallUpdateAPI(false)
+                      // <>
+                      //   {/* {this.uploadFile(1)} */}
+                      //   {this.setState({ isCompresss: false, OnCheckMedia: false })}
+                      // </>
                     }>
                       No
                     </Button>

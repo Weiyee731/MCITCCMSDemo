@@ -631,6 +631,8 @@ export class GitEpic {
   Product_Add = (action$) =>
     action$.ofType(GitAction.AddProduct).switchMap(async ({ payload }) => {
 
+      console.log("CHECK THIS IS PAYLOAD", payload)
+      console.log("CHECK THIS IS PAYLOAD", payload.ProjectID)
       return fetch(
         url + project + "/Product_AddProductByPost"
         , {
@@ -653,13 +655,15 @@ export class GitEpic {
             PRODUCTBRAND: payload.brand,
 
             PRODUCTMODEL: payload.model,
-            PRODUCTTAG: payload.tags
+            PRODUCTTAG: payload.tags,
+            USERID: payload.UserID
           })
         }
       )
         .then(response => response.json())
         .then(json => {
           json = json;
+          console.log("json")
           // if (json !== "fail") {
           //   json = json;
           //   // toast.success("Successfully update stock. Fetching the latest data..", { autoClose: 3000 })
@@ -701,7 +705,8 @@ export class GitEpic {
             PRODUCTBRAND: payload.brand,
 
             PRODUCTMODEL: payload.model,
-            PRODUCTTAG: payload.tags
+            PRODUCTTAG: payload.tags,
+            USERID: payload.UserID
           })
         }
       )
