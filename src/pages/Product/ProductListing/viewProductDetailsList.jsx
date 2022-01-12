@@ -50,6 +50,7 @@ import { convertDateTimeToString, getFileExtension, getFileTypeByExtension, isSt
 import LoadingPanel from "../../../tools/LoadingPanel";
 import { url } from "../../../tools/Helpers"
 import "./viewProductDetailsList.css";
+import { ModalPopOut } from "../../../components/ModalComponent/ModalComponent";
 
 
 const history = createHistory()
@@ -472,7 +473,8 @@ const INITIAL_STATE = {
     isSubmissionVariationChecking: false,
     isSubmissionSpecChecking: false,
     isCheckingError: false,
-    isMediaFileSend: false
+    isMediaFileSend: false,
+    isOverFileSize: false,
 }
 
 class ProductDetailsComponent extends Component {
@@ -1497,7 +1499,11 @@ class ProductDetailsComponent extends Component {
                     })
                     toast.error("Only 3 images are allowed.");
                 } else {
+                    if (acceptedFiles.length === 0) {
+                        this.setState({ isOverFileSize: true })
+                    }
                     this.setState((state) => {
+
                         const file = (state.file !== null && state.file !== undefined) ? state.file.concat(acceptedFiles.map((file) => file)) : [];
                         const fileInfo = state.fileInfo.concat(
                             acceptedFiles.map((file) => file.name)
@@ -3626,8 +3632,8 @@ class ProductDetailsComponent extends Component {
 
                 setTimeout(() => {
                     // toast.success("Product details successfully updated")
-                    // history.push("/viewProduct");
-                    window.location.href = "/viewProduct"
+                    history.push("/viewProduct");
+                    // window.location.href = "/viewProduct"
                     window.location.reload(false);
                 }, 1000);
             }
@@ -4635,7 +4641,7 @@ class ProductDetailsComponent extends Component {
                                 <CardContent>
                                     <p className="Heading">Product Description</p>
                                     <DescriptionFunction
-                                        post_content={this.state.description}
+                                        post_content={this.props.productInfo.length > 0 ? this.props.productInfo[0].ProductDescription : ""}
                                         handleChange={this.handleChangeEditor}
                                         content={this.state.description}
                                         imageFileUrl="products"
@@ -5499,7 +5505,7 @@ class ProductDetailsComponent extends Component {
                                                 <Dropzone
                                                     onDrop={this.handleDrop.bind(this, "512x512")}
                                                     accept="image/*"
-                                                    maxSize="10000"
+                                                    maxSize="100000"
                                                     onFocus={this.setHint.bind(this, "ProductImages")}
                                                     onBlur={() =>
                                                         this.setState({
@@ -5572,7 +5578,7 @@ class ProductDetailsComponent extends Component {
                                                 <Dropzone
                                                     onDrop={this.handleDrop.bind(this, "512x512")}
                                                     accept="image/*"
-                                                    maxSize="10000"
+                                                    maxSize="100000"
                                                     onFocus={this.setHint.bind(this, "ProductImages")}
                                                     onBlur={() =>
                                                         this.setState({
@@ -5646,7 +5652,7 @@ class ProductDetailsComponent extends Component {
                                                 <Dropzone
                                                     onDrop={this.handleDrop.bind(this, "512x512")}
                                                     accept="image/*"
-                                                    maxSize="10000"
+                                                    maxSize="100000"
                                                     onFocus={this.setHint.bind(this, "ProductImages")}
                                                     onBlur={() =>
                                                         this.setState({
@@ -6042,6 +6048,22 @@ class ProductDetailsComponent extends Component {
                             </Fade>
                         </div>
                     </div>
+
+                    <ModalPopOut open={this.state.isOverFileSize} title="File Size Error" showAction={false}>
+                        <div className="container-fluid">
+                            <div className="container">
+                                <h3>Media Error</h3>
+                                <label>Image choose has over the size permitted. Please try a smaller size image</label>
+                                <p className="text-danger"><i>*** Only image with 100KB is allow</i></p>
+                                <div style={{ textAlign: "right" }}>
+                                    <Button variant="contained" color="primary" onClick={() => this.setState({isOverFileSize: false})
+                                    }>
+                                        Cancel
+                                    </Button> 
+                                </div>
+                            </div>
+                        </div>
+                    </ModalPopOut>
                 </div >
                 : <LoadingPanel />
         );

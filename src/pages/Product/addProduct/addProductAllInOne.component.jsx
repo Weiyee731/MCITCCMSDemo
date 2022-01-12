@@ -466,7 +466,8 @@ const INITIAL_STATE = {
   isProductIntoBind: false,
 
   OnCheckMedia: false,
-  isCompresss: false
+  isCompresss: false,
+  isOverFileSize: false,
 }
 
 class AddProductComponent extends Component {
@@ -1461,6 +1462,10 @@ class AddProductComponent extends Component {
         if (this.state.fileInfo.length + acceptedFiles.length > 3) {
           toast.error("Only 3 images are allowed.");
         } else {
+          if (acceptedFiles.length === 0) {
+            this.setState({ isOverFileSize: true })
+        }
+
           this.setState((state) => {
             const file = state.file.concat(acceptedFiles.map((file) => file));
             const fileInfo = state.fileInfo.concat(
@@ -3281,42 +3286,52 @@ class AddProductComponent extends Component {
         || this.state.brand === "" || this.state.model === "" || this.state.tags === "")
         toast.error("Please fill in all required information")
       else {
-
-        if (this.state.file !== [] || this.state.file2 !== [] || this.state.file3 !== []) {
-          this.setState({ OnCheckMedia: true })
+        let object = {
+          name: this.state.name,
+          description: this.state.description,
+          productCategory: this.state.productCategory,
+          productSupplier: this.state.productSupplier,
+          height: this.state.height,
+          width: this.state.width,
+          depth: this.state.depth,
+          weight: this.state.weight,
+          sku: this.state.sku,
+          brand: this.state.brand,
+          model: this.state.model,
+          tags: this.state.tags,
+          ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+          UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
         }
-        else {
-          this.CallUpdateAPI(false)
-        }
-
+        this.props.callAddProduct(object)
+        this.setState({ isSubmit: true })
       }
     }
   }
 
-  CallUpdateAPI = (value) => {
+  // CallUpdateAPI = (value) => {
 
-    this.setState({ isCompresss: value, OnCheckMedia: false })
+  //   this.setState({ isCompresss: value, OnCheckMedia: false })
 
-    let object = {
-      name: this.state.name,
-      description: this.state.description,
-      productCategory: this.state.productCategory,
-      productSupplier: this.state.productSupplier,
-      height: this.state.height,
-      width: this.state.width,
-      depth: this.state.depth,
-      weight: this.state.weight,
-      sku: this.state.sku,
-      brand: this.state.brand,
-      model: this.state.model,
-      tags: this.state.tags,
-      ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
-      UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
-    }
-    this.props.callAddProduct(object)
+  //   let object = {
+  //     name: this.state.name,
+  //     description: this.state.description,
+  //     productCategory: this.state.productCategory,
+  //     productSupplier: this.state.productSupplier,
+  //     height: this.state.height,
+  //     width: this.state.width,
+  //     depth: this.state.depth,
+  //     weight: this.state.weight,
+  //     sku: this.state.sku,
+  //     brand: this.state.brand,
+  //     model: this.state.model,
+  //     tags: this.state.tags,
+  //     ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+  //     UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+  //   }
+  //   this.props.callAddProduct(object)
 
-    this.setState({ isSubmit: true })
-  }
+  //   this.setState({ isSubmit: true })
+  // }
 
   bindProductInfoToState = () => {
     //do something here yomna, and then bind the values to the state at the function below
@@ -4917,7 +4932,7 @@ class AddProductComponent extends Component {
                       <Dropzone
                         onDrop={this.handleDrop.bind(this, "512x512")}
                         accept="image/*"
-                        maxSize="10000"
+                        maxSize="100000"
                         onFocus={this.setHint.bind(this, "ProductImages")}
                         onBlur={() =>
                           this.setState({
@@ -4985,7 +5000,7 @@ class AddProductComponent extends Component {
                     {!this.state.file2Added && (
                       <Dropzone
                         onDrop={this.handleDrop.bind(this, "512x512")}
-                        maxSize="10000"
+                        maxSize="100000"
                         accept="image/*"
                         onFocus={this.setHint.bind(this, "ProductImages")}
                         onBlur={() =>
@@ -5055,7 +5070,7 @@ class AddProductComponent extends Component {
                     {!this.state.file3Added && (
                       <Dropzone
                         onDrop={this.handleDrop.bind(this, "512x512")}
-                        maxSize="10000"
+                        maxSize="100000"
                         accept="image/*"
                         onFocus={this.setHint.bind(this, "ProductImages")}
                         onBlur={() =>
@@ -5439,8 +5454,23 @@ class AddProductComponent extends Component {
                 </CardContent>
               </Card>
             </Fade>
+            <ModalPopOut open={this.state.isOverFileSize} title="File Size Error" showAction={false}>
+              <div className="container-fluid">
+                <div className="container">
+                  <h3>Media Error</h3>
+                  <label>Image choose has over the size permitted. Please try a smaller size image</label>
+                  <p className="text-danger"><i>*** Only image with 100KB is allow</i></p>
+                  <div style={{ textAlign: "right" }}>
+                    <Button variant="contained" color="primary" onClick={() => this.setState({ isOverFileSize: false })
+                    }>
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </ModalPopOut>
 
-{/* 
+            {/* 
             <ModalPopOut open={this.state.OnCheckMedia} title="Error Report" showAction={false}>
               <div className="container-fluid">
                 <div className="container">
