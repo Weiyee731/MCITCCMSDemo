@@ -2056,7 +2056,7 @@ class AddProductComponent extends Component {
         // console.log("resize", this.resizeFile(uploadingMedia[i], fileExt))
         let filename = productID + "_" + i + "_" + convertDateTimeToString(new Date())
         let image = uploadingMedia[i]
-        
+
         if (this.state.isCompresss === true) {
           image = this.resizeFile(uploadingMedia[i], fileExt);
           console.log("resize", image);
@@ -3393,8 +3393,8 @@ class AddProductComponent extends Component {
           toast.success("Product is successfully submitted to Admin for endorsement. Estimated 3 - 5 days for admin to revise your added product.")
           this.setState({ isSubmit: false })
           setTimeout(() => {
-            // browserHistory.push("/viewProduct");
-            // window.location.reload(false);
+            window.location.href = "/viewProduct"
+            window.location.reload(false);
           }, 3000);
 
         }
@@ -4917,6 +4917,7 @@ class AddProductComponent extends Component {
                       <Dropzone
                         onDrop={this.handleDrop.bind(this, "512x512")}
                         accept="image/*"
+                        maxSize="10000"
                         onFocus={this.setHint.bind(this, "ProductImages")}
                         onBlur={() =>
                           this.setState({
@@ -4984,6 +4985,7 @@ class AddProductComponent extends Component {
                     {!this.state.file2Added && (
                       <Dropzone
                         onDrop={this.handleDrop.bind(this, "512x512")}
+                        maxSize="10000"
                         accept="image/*"
                         onFocus={this.setHint.bind(this, "ProductImages")}
                         onBlur={() =>
@@ -5053,6 +5055,7 @@ class AddProductComponent extends Component {
                     {!this.state.file3Added && (
                       <Dropzone
                         onDrop={this.handleDrop.bind(this, "512x512")}
+                        maxSize="10000"
                         accept="image/*"
                         onFocus={this.setHint.bind(this, "ProductImages")}
                         onBlur={() =>
@@ -5437,7 +5440,7 @@ class AddProductComponent extends Component {
               </Card>
             </Fade>
 
-
+{/* 
             <ModalPopOut open={this.state.OnCheckMedia} title="Error Report" showAction={false}>
               <div className="container-fluid">
                 <div className="container">
@@ -5447,19 +5450,10 @@ class AddProductComponent extends Component {
 
                   <div style={{ textAlign: "right" }}>
                     <Button variant="contained" color="primary" onClick={() => this.CallUpdateAPI(true)
-
-                      // <>
-                      //   {/* {this.uploadFile(1)} */}
-                      //   {this.setState({ isCompresss: true, OnCheckMedia: false })}
-                      // </>
                     }>
                       Yes
                     </Button>
                     <Button variant="contained" color="secondary" onClick={() => this.CallUpdateAPI(false)
-                      // <>
-                      //   {/* {this.uploadFile(1)} */}
-                      //   {this.setState({ isCompresss: false, OnCheckMedia: false })}
-                      // </>
                     }>
                       No
                     </Button>
@@ -5467,7 +5461,7 @@ class AddProductComponent extends Component {
 
                 </div>
               </div>
-            </ModalPopOut>
+            </ModalPopOut> */}
           </div>
         </div>
       </div>

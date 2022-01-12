@@ -488,13 +488,14 @@ class ViewProductGeneralInfo extends Component {
                         <h6 style={{ textAlign: "left" }} >Product Information</h6>
                       </div>
                       <div className="col-lg-2" style={{ textAlign: "right" }}>
-                        <Button variant="primary" ><Link to={{
-                          pathname: url.inventoryProductDetails(this.props.match.params.productId),
-                          query: {
-                            categoryDetails: this.state.CategoryHierachyListing,
-                          }
-                        }} className="cart-table__product-name">
-                          View Details </Link></Button>
+                        <Button style={{ backgroundColor: "white" }}>
+                          <Link className="nav-link" to={{
+                            pathname: url.inventoryProductDetails(this.props.match.params.productId),
+                            query: {
+                              categoryDetails: this.state.CategoryHierachyListing,
+                            }
+                          }}>
+                            View Details </Link></Button>
                       </div>
                     </div>
 
@@ -640,7 +641,6 @@ class ViewProductGeneralInfo extends Component {
                                                             onChange={(x) => this.handleStockLevel(details.ProductVariationDetailID, index, x)}
                                                           />
                                                       }
-
                                                     </div>
                                                   </div>
                                                 </CardText>
@@ -685,11 +685,11 @@ class ViewProductGeneralInfo extends Component {
                             <h6 style={{ textAlign: "left" }} >Product Review</h6>
                           </div>
                           <div className="col-lg-3" style={{ textAlign: "right" }}>
-                            <Button variant="primary" >
-                              <Link to={url.inventoryProductDetails(this.props.match.params.productId)} className="cart-table__product-name">
+                            {/* <Button variant="primary" >
+                              <Link to={url.inventoryProductDetails(this.props.match.params.productId)} className="nav-link">
                                 View All
                               </Link>
-                            </Button>
+                            </Button> */}
                           </div>
                         </div>
 

@@ -211,7 +211,7 @@ class ViewMerchantsComponent extends Component {
             dense: true,                // optional, default is false
             tableOrderBy: 'asc',        // optional, default is asc
             sortingIndex: "UserID",        // require, it must the same as the desired table header
-            stickyTableHeader: false,    // optional, default is true
+            stickyTableHeader: true,    // optional, default is true
           }}
 
           paginationOptions={[5, 10, 25, { label: 'All', value: -1 }]} // optional, by default it will hide the table pagination. You should set settings for pagination options as in array, eg.: [5, 100, 250, { label: 'All', value: -1 }]
@@ -238,7 +238,6 @@ class ViewMerchantsComponent extends Component {
 
     return (
       <div style={{ width: "100%" }}>
-
         <div style={{ margin: "2%" }}>
           {
             this.state.isdetailsShown === true ?

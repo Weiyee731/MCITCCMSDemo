@@ -683,7 +683,7 @@ export class GitEpic {
     action$.ofType(GitAction.UpdateProduct).switchMap(async ({ payload }) => {
 
       return fetch(
-        url + project + "/Product_UpdateProduct"
+        url + project + "/Product_UpdateProductByPost"
         , {
           method: 'POST',
           headers: {

@@ -48,21 +48,12 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        // CallUpdateUserProfile: (propsData) =>
-        //   dispatch(GitAction.CallUpdateUserProfile(propsData)),
-
         CallCountry: () => dispatch(GitAction.CallCountry()),
-
-        CallUpdateProfileImage: (propsData) =>
-            dispatch(GitAction.CallUpdateProfileImage(propsData)),
-
+        CallUpdateProfileImage: (propsData) =>  dispatch(GitAction.CallUpdateProfileImage(propsData)),
         CallMerchants: (propData) => dispatch(GitAction.CallMerchants(propData)),
-
         CallUpdateShopDetail: (propData) => dispatch(GitAction.CallUpdateShopDetail(propData)),
-
         CallClearCurrentUser: () => dispatch(GitAction.CallClearCurrentUser()),
         CallClearShopUpdate: () => dispatch(GitAction.CallClearShopUpdate()),
-
         CallAllProductsListing: (propData) => dispatch(GitAction.CallAllProductsListing(propData)),
     };
 }
@@ -322,19 +313,17 @@ class EditShopProfile extends Component {
     }
 
     updateShop() {
-        let data = []
-        this.props.merchant.map((row) => {
-            data.push(row)
-        })
+        let data = this.props.merchant
+    
         this.props.CallUpdateShopDetail({
 
-            USERID: this.state.USERID === "" ? data.UserID : this.state.USERID,
-            SHOPNAME: this.state.SHOPNAME === "" ? data.ShopName : this.state.SHOPNAME,
-            SHOPDESC: this.state.SHOPDESC === "" ? data.ShopDescription : this.state.SHOPDESC,
-            SHOPPOSCODE: this.state.SHOPPOSCODE === "" ? data.ShopPoscode : this.state.SHOPPOSCODE,
-            SHOPCITY: this.state.SHOPCITY === "" ? data.ShopCity : this.state.SHOPCITY,
-            SHOPSTATE: this.state.SHOPSTATE === "" ? data.ShopState : this.state.SHOPSTATE,
-            SHOPCOUNTRYID: this.state.SHOPCOUNTRYID === "" ? data.ShopCountryID : this.state.SHOPCOUNTRYID
+            USERID: this.state.USERID === "" || this.state.USERID === undefined? data[0].UserID : this.state.USERID,
+            SHOPNAME: this.state.SHOPNAME === "" || this.state.SHOPNAME === undefined? data[0].ShopName : this.state.SHOPNAME,
+            SHOPDESC: this.state.SHOPDESC === "" || this.state.SHOPDESC === undefined? data[0].ShopDescription : this.state.SHOPDESC,
+            SHOPPOSCODE: this.state.SHOPPOSCODE === "" || this.state.SHOPPOSCODE === undefined? data[0].ShopPoscode : this.state.SHOPPOSCODE,
+            SHOPCITY: this.state.SHOPCITY === "" || this.state.SHOPCITY === undefined? data[0].ShopCity : this.state.SHOPCITY,
+            SHOPSTATE: this.state.SHOPSTATE === "" || this.state.SHOPSTATE === undefined? data[0].ShopState : this.state.SHOPSTATE,
+            SHOPCOUNTRYID: this.state.SHOPCOUNTRYID === "" || this.state.SHOPCOUNTRYID === undefined ? data[0].ShopCountryID : this.state.SHOPCOUNTRYID
         });
     }
 

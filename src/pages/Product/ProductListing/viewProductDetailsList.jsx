@@ -1,29 +1,26 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { GitAction } from "../../../store/action/gitAction";
+import createHistory from 'history/createBrowserHistory'
+
+// UI Components
+import Dropzone from "react-dropzone";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { HashLink } from "react-router-hash-link";
 import {
     Card,
     CardContent,
-    Table,
-    TableRow,
-    TableCell,
-    CardHeader,
-    TableBody,
     Tooltip,
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Select from "@material-ui/core/Select";
 import MaterialTable from "material-table";
-import Dropzone from "react-dropzone";
-import axios from "axios";
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@material-ui/core/IconButton";
 import MenuItem from "@material-ui/core/MenuItem";
-// import NestedMenuItem from "material-ui-nested-menu-item";
-import { toast } from "react-toastify";
-import { HashLink } from "react-router-hash-link";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import PropTypes from "prop-types";
 import Typography from "@material-ui/core/Typography";
@@ -39,19 +36,23 @@ import {
     InputGroupAddon,
     FormInput,
 } from "shards-react";
-import "./viewProductDetailsList.css";
+
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import StepContent from "@material-ui/core/StepContent";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { Fade } from "shards-react";
-// import { CKEditor } from "@ckeditor/ckeditor5-react";
-// import Editor from "ckeditor5-custom-build/build/ckeditor";
+
+// Share Compoonents
 import DescriptionFunction from "../../../tools/editor";
 import { convertDateTimeToString, getFileExtension, getFileTypeByExtension, isStringNullOrEmpty } from "../../../tools/Helpers"
 import LoadingPanel from "../../../tools/LoadingPanel";
 import { url } from "../../../tools/Helpers"
+import "./viewProductDetailsList.css";
+
+
+const history = createHistory()
 
 function mapStateToProps(state) {
     return {
@@ -3363,18 +3364,18 @@ class ProductDetailsComponent extends Component {
             let object = {
                 ProductID: this.state.ProductID,
                 productSupplier: this.state.productSupplier,
-                name: encodeURIComponent(this.state.name),
-                description: encodeURIComponent(this.state.description),
+                name: this.state.name,
+                description: this.state.description,
                 productCategory: this.state.productCategory,
                 // productSupplier: this.state.productSupplier,
                 height: this.state.height,
                 width: this.state.width,
                 depth: this.state.depth,
                 weight: this.state.weight,
-                sku: encodeURIComponent(this.state.sku),
-                brand: encodeURIComponent(this.state.brand),
-                model: encodeURIComponent(this.state.model),
-                tags: encodeURIComponent(this.state.tags),
+                sku: this.state.sku,
+                brand: this.state.brand,
+                model: this.state.model,
+                tags: this.state.tags,
                 UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
                 ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
             }
@@ -3623,12 +3624,12 @@ class ProductDetailsComponent extends Component {
                 typeof this.props.variationResult !== "undefined" && this.props.variationResult.length === 0 &&
                 typeof this.props.productMediaResult !== "undefined" && this.props.productMediaResult.length === 0) {
 
-                // setTimeout(() => {
-                //     toast.success("Product details successfully updated")
-                //     //   browserHistory.push("/viewProduct");
-                //     // window.location.href = "/viewProduct"
-                //     // window.location.reload(false);
-                // }, 1000);
+                setTimeout(() => {
+                    // toast.success("Product details successfully updated")
+                    // history.push("/viewProduct");
+                    window.location.href = "/viewProduct"
+                    window.location.reload(false);
+                }, 1000);
             }
         }
 
@@ -5498,6 +5499,7 @@ class ProductDetailsComponent extends Component {
                                                 <Dropzone
                                                     onDrop={this.handleDrop.bind(this, "512x512")}
                                                     accept="image/*"
+                                                    maxSize="10000"
                                                     onFocus={this.setHint.bind(this, "ProductImages")}
                                                     onBlur={() =>
                                                         this.setState({
@@ -5570,6 +5572,7 @@ class ProductDetailsComponent extends Component {
                                                 <Dropzone
                                                     onDrop={this.handleDrop.bind(this, "512x512")}
                                                     accept="image/*"
+                                                    maxSize="10000"
                                                     onFocus={this.setHint.bind(this, "ProductImages")}
                                                     onBlur={() =>
                                                         this.setState({
@@ -5643,6 +5646,7 @@ class ProductDetailsComponent extends Component {
                                                 <Dropzone
                                                     onDrop={this.handleDrop.bind(this, "512x512")}
                                                     accept="image/*"
+                                                    maxSize="10000"
                                                     onFocus={this.setHint.bind(this, "ProductImages")}
                                                     onBlur={() =>
                                                         this.setState({

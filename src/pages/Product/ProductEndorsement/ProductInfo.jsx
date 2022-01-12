@@ -106,10 +106,10 @@ class ProductEndorsementInfo extends Component {
                 // it will return to table 
                 toast.success("This product endorsed successfully.", {
                     autoClose: 3000,
-                    onClose: () => { 
-                        history.push("/viewProductEndorsement")
-                        window.location.reload(false)
-                        // this.props.backToList(false) 
+                    onClose: () => {
+                        // history.push("/viewProductEndorsement")
+                        // window.location.reload(false)
+                        this.props.backToList(false)
                     }
                 })
             }

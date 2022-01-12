@@ -19,7 +19,6 @@ import Tooltip from "@material-ui/core/Tooltip";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Select, TableCell, } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 const history = createHistory()
 
@@ -106,7 +105,8 @@ class ViewProductComponent extends Component {
               e.target.onerror = null;
               e.target.src = Logo;
             }}
-          /></TableCell>
+          />
+        </TableCell>
         <TableCell align="left"> {data.ProductName} </TableCell>
         <TableCell align="left">{data.ProductPrice}</TableCell>
       </>
@@ -115,18 +115,11 @@ class ViewProductComponent extends Component {
 
   onTableRowClick = (event, row) => {
     return (
-      //   window.location = url.inventoryProduct(row.ProductID)
-      //   < Link className = "nav-link" to = { "/addProductsAllIn"} >
-      //     <GroupAddIcon />
-      // </ >
-      <>
-      {/* {
-        Router.push(url.inventoryProduct(row.ProductID))
-      } */}
-        {history.push(url.inventoryProduct(row.ProductID))}
-        {window.location.reload(false)}
-      </>
-
+      window.location = url.inventoryProduct(row.ProductID)
+      // <>
+      //   {history.push(url.inventoryProduct(row.ProductID))}
+      //   {window.location.reload(false)}
+      // </>
     )
   }
 
@@ -160,7 +153,6 @@ class ViewProductComponent extends Component {
 
   filterMerchantListing = (e) => {
     this.setState({ selectedMerchant: e.target.value })
-    console.log("THIS IS VALUE", e.target.value)
   }
 
   componentDidUpdate(prevProps) {
@@ -201,21 +193,11 @@ class ViewProductComponent extends Component {
       return (
         <div className="d-flex">
           <Tooltip title="Add New Product">
-
-
-            {/* <IconButton size="medium" sx={{ border: "2px solid #0074ea", color: "#0074ea", marginRight: 1 }} onClick={() => window.location.href = "/addProductsAllIn"}> */}
             <IconButton size="medium" sx={{ border: "2px solid #0074ea", color: "#0074ea", marginRight: 1 }}>
-              {/* <GroupAddIcon /> */}
               <Link className="nav-link" to={"/addProductsAllIn"}>
                 <GroupAddIcon />
               </Link>
             </IconButton>
-            {/* <Button>
-              <i class="fa fa-plus" aria-hidden="true"></i>
-              <Link className="nav-link" to={"/addProductsAllIn"}>
-                Create new Product
-              </Link>
-            </Button> */}
           </Tooltip>
         </div>
       )
@@ -224,7 +206,7 @@ class ViewProductComponent extends Component {
     return (
       <div style={{ width: "100%" }}>
         <div style={{ margin: "2%" }}>
-          <div className="row" style={{ marginBottom: "10px" }}>
+          <div className="row" style={{ marginBottom: "10px", flex: "1" }}>
             <div className="col-md-10 col-10 m-auto" >
               <SearchBar
                 id=""
@@ -238,9 +220,9 @@ class ViewProductComponent extends Component {
               />
             </div>
 
-            <div className="col-md-2 col-2 m-auto" style={{ paddingTop: "10px" }}>
+            <div className="col-md-2 col-2 m-auto" style={{ paddingTop: "10px", flex: "1" }}>
               <div className="selectContainer">
-                <FormControl variant="outlined" size="small">
+                <FormControl variant="outlined" size="small" fullWidth="true">
                   <Select
                     native
                     value={this.state.selectedMerchant}
@@ -283,7 +265,6 @@ class ViewProductComponent extends Component {
             onSelectRow={(e) => this.setState({ selectedListID: e })}
             onSelectAllRows={(e) => this.setState({ selectedListID: e })}
             onTableRowClick={this.onTableRowClick}       // optional, onTableRowClick = (event, row) => { }. The function should follow the one shown, as it will return the data from the selected row
-            // onTableRowClick={(event, row) => window.location = url.inventoryProduct(row.ProductID)}
             SelectionActionButtons={
               <Tooltip title="Delete">
                 <IconButton aria-label="delete" onClick={() => { this.onDelete() }}   >

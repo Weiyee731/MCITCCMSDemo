@@ -443,34 +443,42 @@ class DisplayTable extends Component {
     const UserDetailListing = (leftTitle, leftValue, rightTitle, rightValue) => {
       return (
         <div className="row" style={{ display: "flex", paddingTop: "10px" }}>
-          <div className="subContainer col-6">
-            <div className="col-3" style={{ textAlign: "left", paddingLeft: "0px" }}>
-              <p className="subTextLeft">{leftTitle}</p>
-            </div>
-            <div className="col-9">
-              <TextField
-                id="outlined-size-small" size="small"
-                width="100%"
-                className="font"
-                variant="outlined"
-                value={leftValue}
-                disabled={true}
-              />
+          <div className=" col-6">
+            <div className="row">
+              <div className="col-3" >
+                <p className="subTextLeft">{leftTitle}</p>
+              </div>
+              <div className="col-9">
+                <TextField
+                  id="outlined-size-small" size="small"
+                  style={{
+                    width: '100%'
+                  }}
+                  className="font"
+                  variant="outlined"
+                  value={leftValue}
+                  disabled={true}
+                />
+              </div>
             </div>
           </div>
-          <div className="subContainer col-6">
-            <div className="col-3" style={{ textAlign: "left" }}>
-              <p className="subTextLeft">{rightTitle}</p>
-            </div>
-            <div className="col-9">
-              <TextField
-                id="outlined-size-small" size="small"
-                width="100%"
-                className="font"
-                variant="outlined"
-                value={rightValue}
-                disabled={true}
-              />
+          <div className=" col-6">
+            <div className="row">
+              <div className="col-3" style={{ textAlign: "left" }}>
+                <p className="subTextLeft">{rightTitle}</p>
+              </div>
+              <div className="col-9">
+                <TextField
+                  id="outlined-size-small" size="small"
+                  style={{
+                    width: '100%'
+                  }}
+                  className="font"
+                  variant="outlined"
+                  value={rightValue}
+                  disabled={true}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -479,19 +487,21 @@ class DisplayTable extends Component {
 
     const UserSmallColListing = (Title, Value) => {
       return (
-        <div className="subContainer col-3">
-          <div className="col-2" style={{ textAlign: "left", paddingLeft: "0px" }}>
-            <p className="subTextLeft">{Title}</p>
-          </div>
-          <div className="col-10">
-            <TextField
-              id="outlined-size-small" size="small"
-              width="100%"
-              className="font"
-              variant="outlined"
-              value={Value}
-              disabled={true}
-            />
+        <div className="col-3">
+          <div className="row">
+            <div className="col-3">
+              <p className="subTextLeft">{Title}</p>
+            </div>
+            <div className="col-9">
+              <TextField
+                id="outlined-size-small" size="small"
+                width="100%"
+                className="font"
+                variant="outlined"
+                value={Value}
+                disabled={true}
+              />
+            </div>
           </div>
         </div>
       )
@@ -501,7 +511,7 @@ class DisplayTable extends Component {
       return (
         <div className="col-8" style={{ paddingTop: "10px" }}>
           <div className="row">
-            <div className="col-3" style={{ width: "10%" }}>
+            <div className="col-3" style={{ width: "20%" }}>
               <img
                 height={60}
                 src={product.ProductImage !== null ? JSON.parse(product.ProductImages)[0] : Logo}

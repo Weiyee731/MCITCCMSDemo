@@ -1681,7 +1681,8 @@ class ViewTransactionsComponent extends Component {
                     <div>
                         <p className="heading">Orders List</p>
                         <div className="selectContainer">
-                            <div className="row" style={{ marginBottom: "10px" }}>
+                            <div style={{ marginBottom: "10px", margin: "2%" }}></div>
+                            <div className="row" style={{ marginBottom: "10px", margin: "2%" }}>
                                 <div className="col-md-10 col-10 m-auto" >
                                     <SearchBar
                                         id=""
