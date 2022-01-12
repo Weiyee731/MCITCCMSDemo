@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import {
-  TableCell,
-} from "@material-ui/core";
+import { TableCell } from "@material-ui/core";
 import { GitAction } from "../../../store/action/gitAction";
 import { toast } from "react-toastify";
 

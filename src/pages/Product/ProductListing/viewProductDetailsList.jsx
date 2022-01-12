@@ -5505,7 +5505,7 @@ class ProductDetailsComponent extends Component {
                                                 <Dropzone
                                                     onDrop={this.handleDrop.bind(this, "512x512")}
                                                     accept="image/*"
-                                                    maxSize="100000"
+                                                    maxSize="30000"
                                                     onFocus={this.setHint.bind(this, "ProductImages")}
                                                     onBlur={() =>
                                                         this.setState({
@@ -5578,7 +5578,7 @@ class ProductDetailsComponent extends Component {
                                                 <Dropzone
                                                     onDrop={this.handleDrop.bind(this, "512x512")}
                                                     accept="image/*"
-                                                    maxSize="100000"
+                                                    maxSize="30000"
                                                     onFocus={this.setHint.bind(this, "ProductImages")}
                                                     onBlur={() =>
                                                         this.setState({
@@ -5652,7 +5652,7 @@ class ProductDetailsComponent extends Component {
                                                 <Dropzone
                                                     onDrop={this.handleDrop.bind(this, "512x512")}
                                                     accept="image/*"
-                                                    maxSize="100000"
+                                                    maxSize="30000"
                                                     onFocus={this.setHint.bind(this, "ProductImages")}
                                                     onBlur={() =>
                                                         this.setState({
@@ -6054,7 +6054,7 @@ class ProductDetailsComponent extends Component {
                             <div className="container">
                                 <h3>Media Error</h3>
                                 <label>Image choose has over the size permitted. Please try a smaller size image</label>
-                                <p className="text-danger"><i>*** Only image with 100KB is allow</i></p>
+                                <p className="text-danger"><i>*** Only image with 30KB is allow</i></p>
                                 <div style={{ textAlign: "right" }}>
                                     <Button variant="contained" color="primary" onClick={() => this.setState({isOverFileSize: false})
                                     }>

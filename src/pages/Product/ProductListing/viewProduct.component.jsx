@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-
 import { GitAction } from "../../../store/action/gitAction";
-import { toast } from "react-toastify";
 import TableComponents from "../../../components/TableComponents/TableComponents";
 import createHistory from 'history/createBrowserHistory'
 
@@ -246,7 +244,7 @@ class ViewProductComponent extends Component {
               sortingIndex: "ProductName",        // require, it must the same as the desired table header
               stickyTableHeader: false,    // optional, default is true
             }}
-            paginationOptions={[5, 10, 25, { label: 'All', value: -1 }]} // optional, by default it will hide the table pagination. You should set settings for pagination options as in array, eg.: [5, 100, 250, { label: 'All', value: -1 }]
+            paginationOptions={[8, 15, 20, { label: 'All', value: -1 }]} // optional, by default it will hide the table pagination. You should set settings for pagination options as in array, eg.: [5, 100, 250, { label: 'All', value: -1 }]
             tableHeaders={tableHeadCells}        //required
             tableRows={{
               renderTableRows: this.renderTableRows,   // required, it is a function, please refer to the example I have done in Table Components

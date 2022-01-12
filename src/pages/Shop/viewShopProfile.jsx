@@ -220,7 +220,8 @@ class EditShopProfile extends Component {
         };
         axios
             .post(
-                "https://" + localStorage.getItem("projectDomain") + " /emporiaimage/uploaduserprofilepicture.php",
+                "https://" + localStorage.getItem("projectDomain") + "/emporiaimage/uploaduserprofilepicture.php",
+                //  "https://" + localStorage.getItem("projectDomain") + "/images/uploadproductImages.php"
                 formData,
                 {}
             )
@@ -418,9 +419,6 @@ class EditShopProfile extends Component {
                             <div className="col-4 col-md-4 col-lg-4 border-line-right">
                                 <div className="row">
                                     <div onClick={() => this.modalOpen()} className="imagecontainer">
-                                        {
-                                            console.log("CHECK SHOP", merchantDetails)
-                                        }
                                         <img
                                             className="profilePic"
                                             src={merchantDetails.ShopImage && merchantDetails.ShopImage.length ? imgurl + merchantDetails.ShopImage : Logo}
