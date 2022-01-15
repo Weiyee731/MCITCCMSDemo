@@ -594,40 +594,6 @@ export class GitEpic {
 
   ///////////////////////////////////////////////////  Products  ///////////////////////////////////////////////////
 
-  // Product_Add = (action$) =>
-  //   action$.ofType(GitAction.AddProduct).switchMap(async ({ payload }) => {
-  //     try {
-  //       const response = await fetch(
-  //         url + project + "/" +
-  //         "Product_AddProduct?PRODUCTNAME=" + payload.name +
-  //         "&PRODUCTDESC=" + payload.description +
-  //         "&PRODUCTCATEGORYID=" + payload.productCategory +
-  //         "&MERCHANTID=" + payload.productSupplier +
-  //         "&PRODUCTHEIGHT=" + payload.height +
-  //         "&PRODUCTWIDTH=" + payload.width +
-  //         "&PRODUCTDEPTH=" + payload.depth +
-  //         "&PRODUCTWEIGHT=" + payload.weight +
-  //         "&PRODUCTSKU=" + payload.sku +
-  //         "&PRODUCTBRAND=" + payload.brand +
-  //         "&PRODUCTMODEL=" + payload.model +
-  //         "&PRODUCTTAG=" + payload.tags +
-  //         "&ProjectID=" + payload.ProjectID
-  //       );
-  //       let json = await response.json();
-  //       json = JSON.parse(json);
-  //       return {
-  //         type: GitAction.AddedProduct,
-  //         payload: json,
-  //       };
-  //     } catch (error) {
-  //       alert('addProduct: ' + error);
-  //       return {
-  //         type: GitAction.AddedProduct,
-  //         payload: [],
-  //       };
-  //     }
-  //   });
-
   Product_Add = (action$) =>
     action$.ofType(GitAction.AddProduct).switchMap(async ({ payload }) => {
 
@@ -727,63 +693,6 @@ export class GitEpic {
         .catch(error => alert('UpdateProduct: ' + error));
     });
 
-
-
-  // Product_Update = (action$) =>
-  //   action$.ofType(GitAction.UpdateProduct).switchMap(async ({ payload }) => {
-  //     console.log(
-  //       url + project + "/" +
-  //       "Product_UpdateProduct?PRODUCTID=" + payload.ProductID +
-  //       "&name=" + payload.name +
-  //       "&manufacturer=1" +
-  //       "&description=" + payload.description +
-  //       "&productCategory=" + payload.productCategory +
-  //       "&productSupplier=" +
-  //       payload.productSupplier + "&productShoplot=1&productGrid=1&height=" + payload.height +
-  //       "&width=" + payload.width +
-  //       "&depth=" + payload.depth +
-  //       "&weight=" + payload.weight +
-  //       "&sku=" + payload.sku +
-  //       "&brand=" + payload.brand +
-  //       "&model=" + payload.model +
-  //       "&tags=" + payload.tags +
-  //       "&USERID=" + payload.UserID
-  //     )
-  //     try {
-  //       const response = await fetch(
-  //         url + project + "/" +
-  //         "Product_UpdateProduct?PRODUCTID=" + payload.ProductID +
-  //         "&name=" + payload.name +
-  //         "&manufacturer=1" +
-  //         "&description=" + payload.description +
-  //         "&productCategory=" + payload.productCategory +
-  //         "&productSupplier=" +
-  //         payload.productSupplier + "&productShoplot=1&productGrid=1&height=" + payload.height +
-  //         "&width=" + payload.width +
-  //         "&depth=" + payload.depth +
-  //         "&weight=" + payload.weight +
-  //         "&sku=" + payload.sku +
-  //         "&brand=" + payload.brand +
-  //         "&model=" + payload.model +
-  //         "&tags=" + payload.tags +
-  //         "&USERID=" + payload.UserID
-  //       );
-  //       let json = await response.json();
-  //       json = JSON.parse(json);
-
-  //       return {
-  //         type: GitAction.UpdatedProduct,
-  //         payload: json,
-  //       };
-  //     } catch (error) {
-  //       alert('updateProduct: ' + error);
-  //       return {
-  //         type: GitAction.UpdatedProduct,
-  //         payload: [],
-  //       };
-  //     }
-  //   });
-
   Product_Delete = (action$) =>
     action$.ofType(GitAction.DeleteProduct).switchMap(async ({ payload }) => {
       console.log(
@@ -850,7 +759,7 @@ export class GitEpic {
       }
     });
 
-  getProductsListing = (action$) =>
+  Product_ViewListing = (action$) =>
     action$.ofType(GitAction.GetProductListing).switchMap(async ({ payload }) => {
       console.log(url + project + "/" +
         "Product_ItemListByType?Type=" + payload.type +
@@ -870,7 +779,9 @@ export class GitEpic {
           "&PAGE=" + payload.page +
           "&ProjectID=" + payload.ProjectID
         );
-        const json = await response.json();
+        let json = await response.json();
+        json = JSON.parse(json);
+        // console.log("json", json)
         return {
           type: GitAction.GotProductListing,
           payload: json,
@@ -1658,6 +1569,151 @@ export class GitEpic {
         };
       }
     });
+
+  ///////////////////////////////////////////////////  Promotion  ///////////////////////////////////////////////////
+
+  Promotion_ViewAll = (action$) =>
+    action$.ofType(GitAction.GetPromotion).switchMap(async () => {
+      console.log(
+        url + project + "/" +
+        "Promo_ViewPromotion?ACTIVEIND")
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Promo_ViewPromotion?ACTIVEIND"
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+
+        console.log("JSON", json)
+        return {
+          type: GitAction.GotPromotion,
+          payload: json,
+        };
+      } catch (error) {
+        alert('getAllPromotion: ' + error);
+        return {
+          type: GitAction.GotPromotion,
+          payload: [],
+        };
+      }
+    });
+
+  Promotion_Add = (action$) =>
+    action$.ofType(GitAction.AddPromotion).switchMap(async ({ payload }) => {
+      console.log(url + project + "/" +
+        "Promo_AddPromotion?PROMOTIONTITLE=" +
+        payload.PromotionTitle +
+        "&PROMOTIONDESC=" +
+        payload.PromotionDesc +
+        "&PROMOTIONSTARTDATE=" +
+        payload.PromotionStartDate +
+        "&PROMOTIONDISCOUNTPERCENTAGE=" +
+        payload.DiscountPercentage +
+        "&BANNERIMAGE=" +
+        payload.BannerImage +
+        "&SLIDEORDER=" +
+        payload.SlideOrder +
+        "&PROMOTIONENDDATE=" +
+        payload.PromotionEndDate +
+        "&PRODUCTID=" +
+        payload.ProductID +
+        "&ProjectID=" + payload.ProjectID)
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Promo_AddPromotion?PROMOTIONTITLE=" + payload.PromotionTitle +
+          "&PROMOTIONDESC=" + payload.PromotionDesc +
+          "&PROMOTIONSTARTDATE=" + payload.PromotionStartDate +
+          "&PROMOTIONDISCOUNTPERCENTAGE=" + payload.DiscountPercentage +
+          "&BANNERIMAGE=" + payload.BannerImage +
+          "&SLIDEORDER=" + payload.SlideOrder +
+          "&PROMOTIONENDDATE=" + payload.PromotionEndDate +
+          "&PRODUCTID=" + payload.ProductID +
+          "&ProjectID=" + payload.ProjectID
+        );
+
+        let json = await response.json();
+        json = JSON.parse(json);
+
+        console.log("json", json)
+        return {
+          type: GitAction.AddedPromotion,
+          payload: json,
+        };
+      } catch (error) {
+        alert('AddPromotion: ' + error);
+        return {
+          type: GitAction.AddedPromotion,
+          payload: []
+        };
+      }
+    });
+
+  Promotion_Update = (action$) =>
+    action$.ofType(GitAction.UpdatePromotion).switchMap(async ({ payload }) => {
+      console.log(url + project + "/" +
+        "Promo_UpdatePromotion?PROMOTIONID=" + payload.PromotionID +
+        "&PROMOTIONTITLE=" + payload.PromotionTitle +
+        "&PROMOTIONDESC=" + payload.PromotionDesc +
+        "&BANNERIMAGE=" + payload.BannerImage +
+        "&SLIDEORDER=" + payload.SlideOrder +
+        "&PROMOTIONSTARTDATE=" + payload.promoStart +
+        "&PROMOTIONENDDATE=" + payload.promoEnd +
+        "&PROMOTIONITEMID=" + payload.ProductID +
+        "&PROMOTIONDISCOUNTPERCENTAGE=" + payload.DiscountPercentage)
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Promo_UpdatePromotion?PROMOTIONID=" + payload.PromotionID +
+          "&PROMOTIONTITLE=" + payload.PromotionTitle +
+          "&PROMOTIONDESC=" + payload.PromotionDesc +
+          "&BANNERIMAGE=" + payload.BannerImage +
+          "&SLIDEORDER=" + payload.SlideOrder +
+          "&PROMOTIONSTARTDATE=" + payload.promoStart +
+          "&PROMOTIONENDDATE=" + payload.promoEnd +
+          "&PROMOTIONITEMID=" + payload.ProductID +
+          "&PROMOTIONDISCOUNTPERCENTAGE=" + payload.DiscountPercentage // {98,99,100}
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        return {
+          type: GitAction.UpdatedPromotion,
+          payload: json,
+        };
+      } catch (error) {
+        alert('UpdatePromotion: ' + error);
+        return {
+          type: GitAction.UpdatedPromotion,
+          payload: []
+        };
+      }
+    });
+
+  Promotion_Delete = (action$) =>
+    action$.ofType(GitAction.DeletePromotion).switchMap(async ({ payload }) => {
+      console.log(url + project + "/" +
+        "Promo_DeletePromotion?PROMOTIONID=" +  payload.PromotionID)
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Promo_DeletePromotion?PROMOTIONID=" + payload.PromotionID
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        return {
+          type: GitAction.DeletedPromotion,
+          payload: json,
+        };
+      } catch (error) {
+        alert('DeletePromotion: ' + error);
+        return {
+          type: GitAction.DeletedPromotion,
+          payload: []
+        };
+      }
+    });
+
 
   ///////////////////////////////////////////////////  General   ///////////////////////////////////////////////////
 

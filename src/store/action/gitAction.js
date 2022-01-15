@@ -541,6 +541,82 @@ export class GitAction {
     };
   }
 
+
+  ///////////////////////////////////////////////////  Quotation  ///////////////////////////////////////////////////
+
+  static AddProductQuotation = "ADD-QUOTATION";
+  static AddedProductQuotation = "ADDED-QUOTATION";
+  static CallAddProductQuotation(prodData) {
+    return {
+      type: GitAction.AddProductQuotation,
+      payload: prodData,
+    };
+  }
+
+  static GetProductQuotation = "GET-QUOTATION";
+  static GotProductQuotation = "GOT-QUOTATION";
+  static CallViewProductQuotation(prodData) {
+    return {
+      type: GitAction.GetProductQuotation,
+      payload: prodData,
+    };
+  }
+
+  static DeleteQuotation = "DELETE-QUOTATION";
+  static DeletedQuotation = "DELETED-QUOTATION";
+  static CallDeleteQuotation(orderData) {
+    return {
+      type: GitAction.DeleteQuotation,
+      payload: orderData,
+    };
+  }
+
+  ///////////////////////////////////////////////////  Promotion  ///////////////////////////////////////////////////
+
+  static GetPromotion = "GET-PROMOTION";
+  static GotPromotion = "GOT-PROMOTION";
+  static CallViewPromotion(promoData) {
+    return {
+      type: GitAction.GetPromotion,
+      payload: promoData,
+    };
+  }
+
+  static AddPromotion = "ADD-PROMOTION";
+  static AddedPromotion = "ADDED-PROMOTION";
+  static ClearAddPromo = "CLEAR-ADD-PROMOTION";
+  static CallAddPromotion(promoData) {
+    return {
+      type: GitAction.AddPromotion,
+      payload: promoData,
+    };
+  }
+  static CallClearPromotion() {
+    return {
+      type: GitAction.ClearAddPromo
+    };
+  }
+  
+  static UpdatePromotion = "UPDATE-PROMOTION";
+  static UpdatedPromotion = "UPDATED-PROMOTION";
+  static CallUpdatePromotion(promoData) {
+    return {
+      type: GitAction.UpdatePromotion,
+      payload: promoData,
+    };
+  }
+
+
+  static DeletePromotion = "DELETE-PROMOTION";
+  static DeletedPromotion = "DELETED-PROMOTION";
+  static CallDeletePromotion(promoData) {
+    return {
+      type: GitAction.DeletePromotion,
+      payload: promoData,
+    };
+  }
+
+
   ///////////////////////////////////////////////////  General  ///////////////////////////////////////////////////
 
   static GetCourierService = "GET-COURIER-SERVICE";

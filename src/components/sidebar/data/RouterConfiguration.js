@@ -51,6 +51,9 @@ import ViewMerchantsComponent from "../../../pages/UserManagement/Merchant/viewM
 import ViewUserComponent from "../../../pages/UserManagement/User/viewUser.component";
 import EditShopProfile from "../../../pages/Shop/viewShopProfile";
 
+// Promotion
+import ViewProductPromotionComponent from "../../../pages/Promotion/viewProductPromotion.component";
+import AddPromotionBannerComponent from "../../../pages/Promotion/addPromotion.component";
 
 
 const routes = [
@@ -138,7 +141,7 @@ const routes = [
     {
         path: "/viewProductEndorsement",
         exact: true,
-        element: <ViewProductEndorsementComponent/>,
+        element: <ViewProductEndorsementComponent />,
     },
     {
         path: "/viewProductDetail/:productId",
@@ -191,6 +194,21 @@ const routes = [
         path: "/viewShopProfile",
         exact: true,
         element: <EditShopProfile />,
+    },
+    {
+        path: "/viewShopProfile",
+        exact: true,
+        element: <EditShopProfile />,
+    },
+    {
+        path: "/promotionList",
+        exact: true,
+        element: <ViewProductPromotionComponent />,
+    },
+    {
+        path: "/addPromotion",
+        exact: true,
+        element: <AddPromotionBannerComponent />,
     },
 
 

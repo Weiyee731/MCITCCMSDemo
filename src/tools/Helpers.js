@@ -45,6 +45,31 @@ export const convertDateTimeToString112Format = (date, fetchTime) => {
     }
 }
 
+export const convertDateTimeToDDMMYY = (date, fetchTime) => {
+    try {
+        let date112 = typeof date !== "undefined" && date !== "" ? new Date(date) : new Date();
+        let dd = (date112.getDate().toString().length <= 1) ? "0" + date112.getDate() : date112.getDate().toString()
+        let mm = ((date112.getMonth() + 1).toString().length <= 1) ? "0" + (date112.getMonth() + 1) : (date112.getMonth() + 1).toString()
+        let yyyy = date112.getFullYear();
+        let HH = (date112.getHours().toString().length <= 1) ? "0" + date112.getHours() : date112.getHours().toString()
+        let MM = (date112.getMinutes().toString().length <= 1) ? "0" + date112.getMinutes() : date112.getMinutes().toString()
+        let ss = (date112.getSeconds().toString().length <= 1) ? "0" + date112.getSeconds() : date112.getSeconds().toString()
+
+        return (fetchTime === true) ? (dd + "/" + mm + "/" + yyyy.toString() + " " + HH + ":" + MM + ":" + ss) : (dd + "/" + mm + "/" + yyyy.toString())
+    }
+    catch (e) {
+        let date112 = new Date();
+        let dd = (date112.getDate().toString().length <= 1) ? "0" + date112.getDate() : date112.getDate().toString()
+        let mm = ((date112.getMonth() + 1).toString().length <= 1) ? "0" + (date112.getMonth() + 1) : (date112.getMonth() + 1).toString()
+        let yyyy = date112.getFullYear();
+        let HH = (date112.getHours().toString().length <= 1) ? "0" + date112.getHours() : date112.getHours().toString()
+        let MM = (date112.getMinutes().toString().length <= 1) ? "0" + date112.getMinutes() : date112.getMinutes().toString()
+        let ss = (date112.getSeconds().toString().length <= 1) ? "0" + date112.getSeconds() : date112.getSeconds().toString()
+
+        return (fetchTime === true) ? (dd + "/" + mm + "/" + yyyy.toString() + " " + HH + ":" + MM + ":" + ss) : (dd + "/" + mm + "/" + yyyy.toString())
+    }
+}
+
 export const convertDateTimeToString = (date) => {
     try {
         let date112 = typeof date !== "undefined" && date !== "" ? new Date(date) : new Date();

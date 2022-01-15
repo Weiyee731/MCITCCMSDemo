@@ -72,6 +72,13 @@ const rootEpic = combineEpics(
   gitEpic.ProductReview_ViewByID,
   gitEpic.ProductReview_Add,
 
+  //Promotion
+  gitEpic.Promotion_ViewAll,
+  gitEpic.Promotion_Add,
+  gitEpic.Promotion_Update,
+  gitEpic.Promotion_Delete,
+  gitEpic.Product_ViewListing,
+
   // General
   gitEpic.Country_ViewAll,
   gitEpic.CourierService_ViewAll,

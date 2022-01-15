@@ -2098,12 +2098,6 @@ class AddProductComponent extends Component {
         imageWidth: imageWidth,
         imageHeight: imageHeight,
       }
-
-      // console.log("OBJECT",object)
-      // console.log("OBJECT",formData)
-
-
-
       let imageURL = "https://" + localStorage.getItem("projectDomain") + "/images/uploadproductImages.php"
       // axios.post("https://tourism.denoo.my/MCITCApi/php/uploadproductImages.php", formData, config).then((res) => {
       // axios.post("https://myemporia.my/emporiaimage/uploadproductImages.php", formData, config).then((res) => {

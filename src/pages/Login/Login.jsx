@@ -106,6 +106,7 @@ class Dashboard extends Component {
         let project = ""
         // project = window.location.pathname !== "" && window.location.pathname.split(".")[1];
         project = "myemporia"
+        console.log("HRE")
 
         if (project !== "") {
             if (this.isInputsVerified()) {
@@ -127,66 +128,70 @@ class Dashboard extends Component {
 
     render() {
         return (
-            <div style={{ display: 'flex', width: '100%', height: '100vh', }}>
-                <div className="container login-container m-auto">
-                    <div className="logo-container w-100">
-                        <img src="" alt="System Logo" width='100%' height='100%' onError={event => { event.target.src = GetDefaultImage(); event.onerror = null }} />
-                    </div>
-                    <div className="login-inputs-group">
-                        <FormControl sx={{ m: 1, width: '100%' }} variant="standard">
-                            <InputLabel htmlFor="login-username">Username</InputLabel>
-                            <Input
-                                id="login-username"
-                                value={this.state.username}
-                                onChange={(e) => this.handleInputChange(e)}
-                                size="small"
-                                startAdornment={
-                                    <InputAdornment position="start">
-                                        <AccountCircle />
-                                    </InputAdornment>
-                                }
-                            />
-                        </FormControl>
-                        <FormControl sx={{ m: 1, width: '100%' }} variant="standard">
-                            <InputLabel htmlFor="login-password">Password</InputLabel>
-                            <Input
-                                id="login-password"
-                                type={this.state.showPassword ? 'text' : 'password'}
-                                value={this.state.password}
-                                onChange={(e) => this.handleInputChange(e)}
-                                size="small"
-                                startAdornment={
-                                    <InputAdornment position="start">
-                                        <VpnKeyIcon />
-                                    </InputAdornment>
-                                }
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onMouseUp={() => this.setState({ showPassword: false })}
-                                            onMouseDown={() => this.setState({ showPassword: true })}
-                                        >
-                                            {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                }
-                            />
-                        </FormControl>
-                        <Button
-                            sx={{ m: 1 }}
-                            className="w-100"
-                            variant="contained"
-                            onClick={() => this.OnSubmitLogin()}
-                        >
-                            Login
-                        </Button>
+            // <form onSubmit={() => this.OnSubmitLogin()} className="container block block--margin-top" style={{ alignItems: "center", display: "flex" }} >
+                <div style={{ display: 'flex', width: '100%', height: '100vh', }}>
+                    <div className="container login-container m-auto">
 
-                        <a href="#" title="Forget Password?" style={{ marginLeft: '0.5em', fontSize: '11pt' }}>Problem on login?</a>
-                    </div>
-                </div>
-            </div >
+                        <div className="logo-container w-100">
+                            <img src="" alt="System Logo" width='100%' height='100%' onError={event => { event.target.src = GetDefaultImage(); event.onerror = null }} />
+                        </div>
+                        <div className="login-inputs-group">
+                            <FormControl sx={{ m: 1, width: '100%' }} variant="standard">
+                                <InputLabel htmlFor="login-username">Username</InputLabel>
+                                <Input
+                                    id="login-username"
+                                    value={this.state.username}
+                                    onChange={(e) => this.handleInputChange(e)}
+                                    size="small"
+                                    startAdornment={
+                                        <InputAdornment position="start">
+                                            <AccountCircle />
+                                        </InputAdornment>
+                                    }
+                                />
+                            </FormControl>
+                            <FormControl sx={{ m: 1, width: '100%' }} variant="standard">
+                                <InputLabel htmlFor="login-password">Password</InputLabel>
+                                <Input
+                                    id="login-password"
+                                    type={this.state.showPassword ? 'text' : 'password'}
+                                    value={this.state.password}
+                                    onChange={(e) => this.handleInputChange(e)}
+                                    size="small"
+                                    startAdornment={
+                                        <InputAdornment position="start">
+                                            <VpnKeyIcon />
+                                        </InputAdornment>
+                                    }
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                aria-label="toggle password visibility"
+                                                onMouseUp={() => this.setState({ showPassword: false })}
+                                                onMouseDown={() => this.setState({ showPassword: true })}
+                                            >
+                                                {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    }
+                                />
+                            </FormControl>
+                            <Button
+                                sx={{ m: 1 }}
+                                className="w-100"
+                                variant="contained"
+                                type="submit"
+                                onClick={() => this.OnSubmitLogin()}
+                                disabled={this.state.username !== '' && this.state.password !== '' ? false : true}
 
+                            >
+                                Login
+                            </Button>
+
+                            <a href="#" title="Forget Password?" style={{ marginLeft: '0.5em', fontSize: '11pt' }}>Problem on login?</a>
+                        </div>
+                    </div>
+                </div >
         )
     }
 }

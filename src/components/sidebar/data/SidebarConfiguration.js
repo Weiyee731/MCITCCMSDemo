@@ -28,7 +28,7 @@
         ]
     }
  */
-
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 
 const sidebar_items = [
 
@@ -47,11 +47,11 @@ const sidebar_items = [
                 title: "Product Endorsement",
                 icon: "assignment_turned_in",
             },
-            // {
-            //     to: "",
-            //     title: "Product Promotion",
-            //     icon: "assignment_turned_in",
-            // },
+            {
+                to: "/promotionList",
+                title: "Product Promotion",
+                icon: "assignment_turned_in",
+            },
         ]
     },
     {
@@ -62,17 +62,17 @@ const sidebar_items = [
     {
         to: "",
         title: "UserManagement",
-        icon: "inventory",
+        icon: <AssignmentIndIcon />,
         submenus: [
             {
                 to: "/viewMerchants",
                 title: "Merchant",
-                icon: "inventory",
+                icon: <AssignmentIndIcon />,
             },
             {
                 to: "/viewUser",
                 title: "User",
-                icon: "inventory",
+                icon: <AssignmentIndIcon />,
             },
         ]
     },
@@ -81,6 +81,11 @@ const sidebar_items = [
         title: "Shop Profile",
         icon: "shop",
     },
+    // {
+    //     to: "/quotationList",
+    //     title: "Quotation",
+    //     icon: "shop",
+    // },
     // {
     //     to: "",
     //     title: "Stock Management",
