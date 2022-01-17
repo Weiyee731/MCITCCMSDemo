@@ -11,13 +11,14 @@ import { HashLink } from "react-router-hash-link";
 import {
     Card,
     CardContent,
-    Tooltip,
+    // Tooltip,
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Select from "@material-ui/core/Select";
 import MaterialTable from "material-table";
 import AddIcon from '@mui/icons-material/Add';
+import InfoIcon from '@mui/icons-material/Info';
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@material-ui/core/IconButton";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -51,6 +52,11 @@ import LoadingPanel from "../../../tools/LoadingPanel";
 import { url } from "../../../tools/Helpers"
 import "./viewProductDetailsList.css";
 import { ModalPopOut } from "../../../components/ModalComponent/ModalComponent";
+
+import { styled } from '@mui/material/styles';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+
 
 
 const history = createHistory()
@@ -475,6 +481,8 @@ const INITIAL_STATE = {
     isCheckingError: false,
     isMediaFileSend: false,
     isOverFileSize: false,
+
+    OptionClick: ""
 }
 
 class ProductDetailsComponent extends Component {
@@ -4178,6 +4186,29 @@ class ProductDetailsComponent extends Component {
             this.checkProgress();
         };
 
+        const dummyStandard =
+            [
+                { Height: "15", Width: "15", Depth: "20", },
+                { Height: "15", Width: "15", Depth: "25", },
+                { Height: "40", Width: "30", Depth: "15", },
+            ]
+
+        const handleShipping = (data, index) => {
+            this.setState({ OptionClick: index, height: data.Height, width: data.Width, depth: data.Depth })
+        }
+
+        const HtmlTooltip = styled(({ className, ...props }) => (
+            <Tooltip {...props} classes={{ popper: className }} />
+        ))(({ theme }) => ({
+            [`& .${tooltipClasses.tooltip}`]: {
+                backgroundColor: '#f5f5f9',
+                color: 'rgba(0, 0, 0, 0.87)',
+                width: "800px",
+                fontSize: theme.typography.pxToRem(12),
+                border: '1px solid #dadde9',
+            },
+        }));
+
         return (
 
             this.props.productInfo.length !== 0 ?
@@ -4637,6 +4668,258 @@ class ProductDetailsComponent extends Component {
                                 </CardContent>
                             </Card>
                             <br />
+                            <Card className="SubContainer" id="productMedia">
+                                <CardContent>
+                                    <p className="Heading">Product Media</p>
+                                    <p className="FontType1">Product Images</p>
+                                    <p className="FontType1">
+                                        {/* Main product images of size 512x512: */}
+                                        Main product images
+                                    </p>
+                                    <div className="DropZoneMain">
+                                        <div className="DropZoneGrid">
+                                            {!this.state.file1Added && (
+                                                <Dropzone
+                                                    onDrop={this.handleDrop.bind(this, "512x512")}
+                                                    accept="image/*"
+                                                    maxSize="30000"
+                                                    onFocus={this.setHint.bind(this, "ProductImages")}
+                                                    onBlur={() =>
+                                                        this.setState({
+                                                            FocusOn: false,
+                                                        })
+                                                    }
+                                                >
+                                                    {({
+                                                        getRootProps,
+                                                        getInputProps,
+                                                        isDragActive,
+                                                        isDragAccept,
+                                                        isDragReject,
+                                                    }) => (
+                                                        <div
+                                                            {...getRootProps({
+                                                                className: "dropzone",
+                                                            })}
+                                                            style={{
+                                                                borderColor: isDragActive
+                                                                    ? isDragReject
+                                                                        ? "#fc5447"
+                                                                        : "#a0d100"
+                                                                    : "#b8b8b8",
+                                                                color: isDragActive
+                                                                    ? isDragReject
+                                                                        ? "#a31702"
+                                                                        : "#507500"
+                                                                    : "#828282",
+                                                            }}
+                                                        >
+                                                            {this.state.toBeEdited ? <input {...getInputProps()} /> : ""}
+                                                            <AddIcon className="DropZoneAddIcon" />
+                                                        </div>
+                                                    )}
+                                                </Dropzone>
+                                            )}
+                                            {this.state.file1Added && (
+                                                <div
+                                                    onMouseLeave={this.mouseOut.bind(this, 1)}
+                                                    onMouseEnter={this.mouseIn.bind(this, 1)}
+                                                    className="DropZoneImageMain"
+                                                >
+                                                    {this.state.onImage && this.state.url[0] !== undefined &&
+                                                        this.state.currentlyHovered === 1 && this.state.toBeEdited && (
+                                                            <div className="DropZoneImageDeleteButtonDiv">
+                                                                <IconButton
+                                                                    className="DropZoneImageDeleteButtonIconLocation"
+                                                                    onClick={() => this.onDelete(0, "512x512", this.state.url[0])}
+                                                                >
+                                                                    <CloseIcon
+                                                                        className="DropZoneImageDeleteButtonIcon"
+                                                                        color="secondary"
+                                                                    />
+                                                                </IconButton>
+                                                            </div>
+                                                        )}
+                                                    {
+                                                        this.state.url[0] !== undefined &&
+                                                        <img
+                                                            className="DropZoneImage"
+                                                            src={this.state.url[0]}
+                                                            alt=""
+                                                        />
+                                                    }
+
+                                                </div>
+                                            )}
+                                            {!this.state.file2Added && (
+                                                <Dropzone
+                                                    onDrop={this.handleDrop.bind(this, "512x512")}
+                                                    accept="image/*"
+                                                    maxSize="30000"
+                                                    onFocus={this.setHint.bind(this, "ProductImages")}
+                                                    onBlur={() =>
+                                                        this.setState({
+                                                            FocusOn: false,
+                                                        })
+                                                    }
+                                                >
+                                                    {({
+                                                        getRootProps,
+                                                        getInputProps,
+                                                        isDragActive,
+                                                        isDragAccept,
+                                                        isDragReject,
+                                                    }) => (
+                                                        <div
+                                                            {...getRootProps({
+                                                                className: "dropzone",
+                                                            })}
+                                                            style={{
+                                                                borderColor: isDragActive
+                                                                    ? isDragReject
+                                                                        ? "#fc5447"
+                                                                        : "#a0d100"
+                                                                    : "#b8b8b8",
+                                                                color: isDragActive
+                                                                    ? isDragReject
+                                                                        ? "#a31702"
+                                                                        : "#507500"
+                                                                    : "#828282",
+                                                            }}
+                                                        >
+                                                            {this.state.toBeEdited ? <input {...getInputProps()} /> : ""}
+
+                                                            <AddIcon className="DropZoneAddIcon" />
+                                                        </div>
+                                                    )}
+                                                </Dropzone>
+                                            )}
+                                            {this.state.file2Added && (
+                                                <div
+                                                    onMouseLeave={this.mouseOut.bind(this, 2)}
+                                                    onMouseEnter={this.mouseIn.bind(this, 2)}
+                                                    className="DropZoneImageMain"
+                                                >
+                                                    {this.state.onImage && this.state.url[1] !== undefined &&
+                                                        this.state.currentlyHovered === 2 && this.state.toBeEdited && (
+                                                            <div className="DropZoneImageDeleteButtonDiv">
+                                                                <IconButton
+                                                                    className="DropZoneImageDeleteButtonIconLocation"
+                                                                    onClick={() => this.onDelete(1, "512x512", this.state.url[1])}
+                                                                >
+                                                                    <CloseIcon
+                                                                        className="DropZoneImageDeleteButtonIcon"
+                                                                        color="secondary"
+                                                                    />
+                                                                </IconButton>
+                                                            </div>
+                                                        )}
+                                                    {
+                                                        this.state.url[1] !== undefined &&
+                                                        <img
+                                                            className="DropZoneImage"
+                                                            src={this.state.url[1]}
+                                                            alt=""
+                                                        />
+                                                    }
+
+                                                </div>
+                                            )}
+                                            {!this.state.file3Added && (
+                                                <Dropzone
+                                                    onDrop={this.handleDrop.bind(this, "512x512")}
+                                                    accept="image/*"
+                                                    maxSize="30000"
+                                                    onFocus={this.setHint.bind(this, "ProductImages")}
+                                                    onBlur={() =>
+                                                        this.setState({
+                                                            FocusOn: false,
+                                                        })
+                                                    }
+                                                >
+                                                    {({
+                                                        getRootProps,
+                                                        getInputProps,
+                                                        isDragActive,
+                                                        isDragAccept,
+                                                        isDragReject,
+                                                    }) => (
+                                                        <div
+                                                            {...getRootProps({
+                                                                className: "dropzone",
+                                                            })}
+                                                            style={{
+                                                                borderColor: isDragActive
+                                                                    ? isDragReject
+                                                                        ? "#fc5447"
+                                                                        : "#a0d100"
+                                                                    : "#b8b8b8",
+                                                                color: isDragActive
+                                                                    ? isDragReject
+                                                                        ? "#a31702"
+                                                                        : "#507500"
+                                                                    : "#828282",
+                                                            }}
+                                                        >
+                                                            {this.state.toBeEdited ? <input {...getInputProps()} /> : ""}
+                                                            <AddIcon className="DropZoneAddIcon" />
+                                                        </div>
+                                                    )}
+                                                </Dropzone>
+                                            )}
+                                            {this.state.file3Added && (
+                                                <div
+                                                    onMouseLeave={this.mouseOut.bind(this, 3)}
+                                                    onMouseEnter={this.mouseIn.bind(this, 3)}
+                                                    className="DropZoneImageMain"
+                                                >
+                                                    {this.state.onImage && this.state.url[2] !== undefined &&
+                                                        this.state.currentlyHovered === 3 && this.state.toBeEdited && (
+                                                            <div className="DropZoneImageDeleteButtonDiv">
+                                                                <IconButton
+                                                                    className="DropZoneImageDeleteButtonIconLocation"
+                                                                    onClick={() => this.onDelete(2, "512x512", this.state.url[2])}
+                                                                >
+                                                                    <CloseIcon
+                                                                        className="DropZoneImageDeleteButtonIcon"
+                                                                        color="secondary"
+                                                                    />
+                                                                </IconButton>
+                                                            </div>
+                                                        )}
+                                                    {
+                                                        this.state.url[2] !== undefined &&
+                                                        <img
+                                                            className="DropZoneImage"
+                                                            src={this.state.url[2]}
+                                                            alt=""
+                                                        />
+                                                    }
+
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        {this.state.url.map((imageName, i) => (
+                                            <img
+                                                src={imageName}
+                                                data-key={i}
+                                                onLoad={this.onLoad.bind(this, "512x512")}
+                                                className="DropZoneImageForMeasurment"
+                                                alt=""
+                                            />
+                                        ))}
+                                    </div>
+                                    {this.state.notEnoughFiles512x512 && this.state.toBeEdited && (
+                                        <p className="error">
+                                            There has to be at least 1 images of the size 512x512 added.
+                                        </p>
+                                    )}
+
+                                </CardContent>
+                            </Card>
+                            <br />
                             <Card id="descriptionCard" className="SubContainer">
                                 <CardContent>
                                     <p className="Heading">Product Description</p>
@@ -4733,7 +5016,7 @@ class ProductDetailsComponent extends Component {
                             <br />
                             <Card className="SubContainer" id="productVariation">
                                 <CardContent>
-                                    <p className="Heading">Product Pricing</p>
+                                    <p className="Heading">Product Variation</p>
                                     {!this.state.variation1On && !this.state.variation2On ? (
                                         <div>
                                             <InputGroup className="InputField">
@@ -4901,8 +5184,36 @@ class ProductDetailsComponent extends Component {
                         : null} */}
                                         </div>
                                     )}
-                                    {this.state.variation1On ? <br /> : null}
+                                    {this.state.toBeEdited === false ?
+                                        <>
+                                            {[...Array(this.state.variation1Options)].map((e, i) => (
+                                                <div>
+                                                    <div className="VariantOption align-items-center">
+                                                        <FormInput
+                                                            variant="outlined"
+                                                            disabled="true"
+                                                            size="small"
+                                                            value={this.state.variation1.options[i].optionName}
+                                                        />
+                                                    </div>
+                                                    {this.state.variation1.options[i].errorOption && this.state.toBeEdited && (
+                                                        <p className="error">
+                                                            Variation option name has to be filled.
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            ))
+                                            }
+                                        </>
+                                        : null}
 
+                                    {/* {this.state.variation1On ? (
+                                        <table className="TableMain">
+                                            <tr className="trHeading">
+                                                <td className="tdHeading">
+                                                    {this.state.variation1Name ? this.state.variation1Name : "Variation 1 Name"}
+                                                </td>
+                                                 */}
                                     <hr />
                                     {!this.state.variation1On && this.state.toBeEdited && (
                                         <div className="ItemContainer">
@@ -4916,8 +5227,154 @@ class ProductDetailsComponent extends Component {
                                         </div>
                                     )}
 
+
+                                    {/* <hr />
+                <p className="FontType1">Wholesale Prices</p> */}
+                                    {/* {!this.state.wholeSaleOn ? (
+                  <div className="ItemContainer">
+                    <Button
+                      variant="outlined"
+                      className="AddButton"
+                      onClick={this.addProductVariant.bind(this, "priceTier")}
+                    >
+                      Add Price Tiers
+                    </Button>
+                  </div>
+                ) : null} */}
+                                    {/* {this.state.wholeSaleOn ? (
+                  <div className="wholeSale">
+                    <div>
+                      {[...Array(this.state.wholeSaleOptions)].map((e, i) => (
+                        <div className="wholeSaleRows  align-items-center">
+                          <RemoveCircleOutlineIcon
+                            className="deleteButtonWholeSale"
+                            color="secondary"
+                            className="deleteButtonWholeSale"
+                            onClick={this.onDeleteVariant.bind(
+                              this,
+                              i,
+                              "wholeSaleOption"
+                            )}
+                          />
+                          <span className="VariantText deleteButtonWholeSale">
+                            {"Price Tier " + (i + 1)}
+                          </span>
+                          <div className="PriceList">
+                            <div className="MiddleDiv">
+                              <TextField
+                                label="Min"
+                                variant="outlined"
+                                className="MiddleText"
+                                onFocus={this.setHint.bind(
+                                  this,
+                                  "WholeSaleMin"
+                                )}
+                                onBlur={() =>
+                                  this.setState({
+                                    FocusOn: false,
+                                  })
+                                }
+                                InputLabelProps={{
+                                  shrink: "true",
+                                }}
+                                type="number"
+                                onChange={this.handleChangeOptions.bind(
+                                  this,
+                                  "wholeSaleMin",
+                                  i
+                                )}
+                                value={this.state.priceTierList[i].min}
+                                error={this.state.priceTierList[i].errorMin}
+                                size="small"
+                              />
+                            </div>
+                            <div className="MiddleDiv">
+                              <TextField
+                                InputLabelProps={{
+                                  shrink: "true",
+                                }}
+                                className="MiddleText"
+                                variant="outlined"
+                                label="Max"
+                                type="number"
+                                onFocus={this.setHint.bind(
+                                  this,
+                                  "WholeSaleMax"
+                                )}
+                                onBlur={() =>
+                                  this.setState({
+                                    FocusOn: false,
+                                  })
+                                }
+                                onChange={this.handleChangeOptions.bind(
+                                  this,
+                                  "wholeSaleMax",
+                                  i
+                                )}
+                                value={this.state.priceTierList[i].max}
+                                error={this.state.priceTierList[i].errorMax}
+                                size="small"
+                              />
+                            </div>
+                            <InputGroup className="mb-2 MiddleText">
+                              <InputGroupAddon type="prepend">
+                                <InputGroupText className="groupText">
+                                  RM
+                                </InputGroupText>
+                              </InputGroupAddon>
+                              <FormInput
+                                type="number"
+                                step=".10"
+                                placeholder="Price"
+                                onFocus={this.setHint.bind(
+                                  this,
+                                  "WholeSalePrice"
+                                )}
+                                onBlur={() =>
+                                  this.setState({
+                                    FocusOn: false,
+                                  })
+                                }
+                                onChange={this.handleChangeOptions.bind(
+                                  this,
+                                  "wholeSalePrice",
+                                  i
+                                )}
+                                value={this.state.priceTierList[i].price}
+                                invalid={this.state.priceTierList[i].errorPrice}
+                              />
+                            </InputGroup>
+                          </div>
+                        </div>
+                      ))}
+                      <div className="AddButtonContainer">
+                        <Button
+                          variant="outlined"
+                          className="AddButton"
+                          onClick={this.addOptions.bind(this, "priceTier")}
+                        >
+                          Add Price Tier
+                        </Button>
+                      </div>
+                    </div>
+
+                    <br />
+                    <CloseIcon
+                      className="CloseButton"
+                      color="secondary"
+                      onClick={this.onDeleteVariant.bind(this, -1, "wholeSale")}
+                    />
+                  </div>
+                ) : null} */}
+                                </CardContent>
+                            </Card>
+                            <br />
+
+                            <Card className="SubContainer" id="variation">
+                                <CardContent>
                                     {this.state.variation1On ? (
-                                        <p className="FontType1">Variations Information</p>
+                                        <p className="Heading">Product Variations Pricing</p>
+                                        // <p className="FontType1">Product Variations Pricing</p>
                                     ) : null}
                                     {this.state.variation1On ? (
                                         <div className="VariantMain">
@@ -5005,7 +5462,7 @@ class ProductDetailsComponent extends Component {
                                     ) : null}
 
                                     {this.state.variation1On ? (
-                                        <p className="FontType1">Variations List</p>
+                                        <p className="FontType1">Variation Pricing Details</p>
                                     ) : null}
                                     {this.state.variation1On ? (
                                         <table className="TableMain">
@@ -5349,403 +5806,63 @@ class ProductDetailsComponent extends Component {
                                             )}
                                         </table>
                                     ) : null}
-
-                                    {/* <hr />
-                <p className="FontType1">Wholesale Prices</p> */}
-                                    {/* {!this.state.wholeSaleOn ? (
-                  <div className="ItemContainer">
-                    <Button
-                      variant="outlined"
-                      className="AddButton"
-                      onClick={this.addProductVariant.bind(this, "priceTier")}
-                    >
-                      Add Price Tiers
-                    </Button>
-                  </div>
-                ) : null} */}
-                                    {/* {this.state.wholeSaleOn ? (
-                  <div className="wholeSale">
-                    <div>
-                      {[...Array(this.state.wholeSaleOptions)].map((e, i) => (
-                        <div className="wholeSaleRows  align-items-center">
-                          <RemoveCircleOutlineIcon
-                            className="deleteButtonWholeSale"
-                            color="secondary"
-                            className="deleteButtonWholeSale"
-                            onClick={this.onDeleteVariant.bind(
-                              this,
-                              i,
-                              "wholeSaleOption"
-                            )}
-                          />
-                          <span className="VariantText deleteButtonWholeSale">
-                            {"Price Tier " + (i + 1)}
-                          </span>
-                          <div className="PriceList">
-                            <div className="MiddleDiv">
-                              <TextField
-                                label="Min"
-                                variant="outlined"
-                                className="MiddleText"
-                                onFocus={this.setHint.bind(
-                                  this,
-                                  "WholeSaleMin"
-                                )}
-                                onBlur={() =>
-                                  this.setState({
-                                    FocusOn: false,
-                                  })
-                                }
-                                InputLabelProps={{
-                                  shrink: "true",
-                                }}
-                                type="number"
-                                onChange={this.handleChangeOptions.bind(
-                                  this,
-                                  "wholeSaleMin",
-                                  i
-                                )}
-                                value={this.state.priceTierList[i].min}
-                                error={this.state.priceTierList[i].errorMin}
-                                size="small"
-                              />
-                            </div>
-                            <div className="MiddleDiv">
-                              <TextField
-                                InputLabelProps={{
-                                  shrink: "true",
-                                }}
-                                className="MiddleText"
-                                variant="outlined"
-                                label="Max"
-                                type="number"
-                                onFocus={this.setHint.bind(
-                                  this,
-                                  "WholeSaleMax"
-                                )}
-                                onBlur={() =>
-                                  this.setState({
-                                    FocusOn: false,
-                                  })
-                                }
-                                onChange={this.handleChangeOptions.bind(
-                                  this,
-                                  "wholeSaleMax",
-                                  i
-                                )}
-                                value={this.state.priceTierList[i].max}
-                                error={this.state.priceTierList[i].errorMax}
-                                size="small"
-                              />
-                            </div>
-                            <InputGroup className="mb-2 MiddleText">
-                              <InputGroupAddon type="prepend">
-                                <InputGroupText className="groupText">
-                                  RM
-                                </InputGroupText>
-                              </InputGroupAddon>
-                              <FormInput
-                                type="number"
-                                step=".10"
-                                placeholder="Price"
-                                onFocus={this.setHint.bind(
-                                  this,
-                                  "WholeSalePrice"
-                                )}
-                                onBlur={() =>
-                                  this.setState({
-                                    FocusOn: false,
-                                  })
-                                }
-                                onChange={this.handleChangeOptions.bind(
-                                  this,
-                                  "wholeSalePrice",
-                                  i
-                                )}
-                                value={this.state.priceTierList[i].price}
-                                invalid={this.state.priceTierList[i].errorPrice}
-                              />
-                            </InputGroup>
-                          </div>
-                        </div>
-                      ))}
-                      <div className="AddButtonContainer">
-                        <Button
-                          variant="outlined"
-                          className="AddButton"
-                          onClick={this.addOptions.bind(this, "priceTier")}
-                        >
-                          Add Price Tier
-                        </Button>
-                      </div>
-                    </div>
-
-                    <br />
-                    <CloseIcon
-                      className="CloseButton"
-                      color="secondary"
-                      onClick={this.onDeleteVariant.bind(this, -1, "wholeSale")}
-                    />
-                  </div>
-                ) : null} */}
                                 </CardContent>
                             </Card>
+
                             <br />
-                            <Card className="SubContainer" id="productMedia">
-                                <CardContent>
-                                    <p className="Heading">Product Media</p>
-                                    <p className="FontType1">Product Images</p>
-                                    <p className="FontType1">
-                                        {/* Main product images of size 512x512: */}
-                                        Main product images
-                                    </p>
-                                    <div className="DropZoneMain">
-                                        <div className="DropZoneGrid">
-                                            {!this.state.file1Added && (
-                                                <Dropzone
-                                                    onDrop={this.handleDrop.bind(this, "512x512")}
-                                                    accept="image/*"
-                                                    maxSize="30000"
-                                                    onFocus={this.setHint.bind(this, "ProductImages")}
-                                                    onBlur={() =>
-                                                        this.setState({
-                                                            FocusOn: false,
-                                                        })
-                                                    }
-                                                >
-                                                    {({
-                                                        getRootProps,
-                                                        getInputProps,
-                                                        isDragActive,
-                                                        isDragAccept,
-                                                        isDragReject,
-                                                    }) => (
-                                                        <div
-                                                            {...getRootProps({
-                                                                className: "dropzone",
-                                                            })}
-                                                            style={{
-                                                                borderColor: isDragActive
-                                                                    ? isDragReject
-                                                                        ? "#fc5447"
-                                                                        : "#a0d100"
-                                                                    : "#b8b8b8",
-                                                                color: isDragActive
-                                                                    ? isDragReject
-                                                                        ? "#a31702"
-                                                                        : "#507500"
-                                                                    : "#828282",
-                                                            }}
-                                                        >
-                                                            {this.state.toBeEdited ? <input {...getInputProps()} /> : ""}
-                                                            <AddIcon className="DropZoneAddIcon" />
-                                                        </div>
-                                                    )}
-                                                </Dropzone>
-                                            )}
-                                            {this.state.file1Added && (
-                                                <div
-                                                    onMouseLeave={this.mouseOut.bind(this, 1)}
-                                                    onMouseEnter={this.mouseIn.bind(this, 1)}
-                                                    className="DropZoneImageMain"
-                                                >
-                                                    {this.state.onImage && this.state.url[0] !== undefined &&
-                                                        this.state.currentlyHovered === 1 && this.state.toBeEdited && (
-                                                            <div className="DropZoneImageDeleteButtonDiv">
-                                                                <IconButton
-                                                                    className="DropZoneImageDeleteButtonIconLocation"
-                                                                    onClick={() => this.onDelete(0, "512x512", this.state.url[0])}
-                                                                >
-                                                                    <CloseIcon
-                                                                        className="DropZoneImageDeleteButtonIcon"
-                                                                        color="secondary"
-                                                                    />
-                                                                </IconButton>
-                                                            </div>
-                                                        )}
-                                                    {
-                                                        this.state.url[0] !== undefined &&
-                                                        <img
-                                                            className="DropZoneImage"
-                                                            src={this.state.url[0]}
-                                                            alt=""
-                                                        />
-                                                    }
 
-                                                </div>
-                                            )}
-                                            {!this.state.file2Added && (
-                                                <Dropzone
-                                                    onDrop={this.handleDrop.bind(this, "512x512")}
-                                                    accept="image/*"
-                                                    maxSize="30000"
-                                                    onFocus={this.setHint.bind(this, "ProductImages")}
-                                                    onBlur={() =>
-                                                        this.setState({
-                                                            FocusOn: false,
-                                                        })
-                                                    }
-                                                >
-                                                    {({
-                                                        getRootProps,
-                                                        getInputProps,
-                                                        isDragActive,
-                                                        isDragAccept,
-                                                        isDragReject,
-                                                    }) => (
-                                                        <div
-                                                            {...getRootProps({
-                                                                className: "dropzone",
-                                                            })}
-                                                            style={{
-                                                                borderColor: isDragActive
-                                                                    ? isDragReject
-                                                                        ? "#fc5447"
-                                                                        : "#a0d100"
-                                                                    : "#b8b8b8",
-                                                                color: isDragActive
-                                                                    ? isDragReject
-                                                                        ? "#a31702"
-                                                                        : "#507500"
-                                                                    : "#828282",
-                                                            }}
-                                                        >
-                                                            {this.state.toBeEdited ? <input {...getInputProps()} /> : ""}
 
-                                                            <AddIcon className="DropZoneAddIcon" />
-                                                        </div>
-                                                    )}
-                                                </Dropzone>
-                                            )}
-                                            {this.state.file2Added && (
-                                                <div
-                                                    onMouseLeave={this.mouseOut.bind(this, 2)}
-                                                    onMouseEnter={this.mouseIn.bind(this, 2)}
-                                                    className="DropZoneImageMain"
-                                                >
-                                                    {this.state.onImage && this.state.url[1] !== undefined &&
-                                                        this.state.currentlyHovered === 2 && this.state.toBeEdited && (
-                                                            <div className="DropZoneImageDeleteButtonDiv">
-                                                                <IconButton
-                                                                    className="DropZoneImageDeleteButtonIconLocation"
-                                                                    onClick={() => this.onDelete(1, "512x512", this.state.url[1])}
-                                                                >
-                                                                    <CloseIcon
-                                                                        className="DropZoneImageDeleteButtonIcon"
-                                                                        color="secondary"
-                                                                    />
-                                                                </IconButton>
-                                                            </div>
-                                                        )}
-                                                    {
-                                                        this.state.url[1] !== undefined &&
-                                                        <img
-                                                            className="DropZoneImage"
-                                                            src={this.state.url[1]}
-                                                            alt=""
-                                                        />
-                                                    }
 
-                                                </div>
-                                            )}
-                                            {!this.state.file3Added && (
-                                                <Dropzone
-                                                    onDrop={this.handleDrop.bind(this, "512x512")}
-                                                    accept="image/*"
-                                                    maxSize="30000"
-                                                    onFocus={this.setHint.bind(this, "ProductImages")}
-                                                    onBlur={() =>
-                                                        this.setState({
-                                                            FocusOn: false,
-                                                        })
-                                                    }
-                                                >
-                                                    {({
-                                                        getRootProps,
-                                                        getInputProps,
-                                                        isDragActive,
-                                                        isDragAccept,
-                                                        isDragReject,
-                                                    }) => (
-                                                        <div
-                                                            {...getRootProps({
-                                                                className: "dropzone",
-                                                            })}
-                                                            style={{
-                                                                borderColor: isDragActive
-                                                                    ? isDragReject
-                                                                        ? "#fc5447"
-                                                                        : "#a0d100"
-                                                                    : "#b8b8b8",
-                                                                color: isDragActive
-                                                                    ? isDragReject
-                                                                        ? "#a31702"
-                                                                        : "#507500"
-                                                                    : "#828282",
-                                                            }}
-                                                        >
-                                                            {this.state.toBeEdited ? <input {...getInputProps()} /> : ""}
-                                                            <AddIcon className="DropZoneAddIcon" />
-                                                        </div>
-                                                    )}
-                                                </Dropzone>
-                                            )}
-                                            {this.state.file3Added && (
-                                                <div
-                                                    onMouseLeave={this.mouseOut.bind(this, 3)}
-                                                    onMouseEnter={this.mouseIn.bind(this, 3)}
-                                                    className="DropZoneImageMain"
-                                                >
-                                                    {this.state.onImage && this.state.url[2] !== undefined &&
-                                                        this.state.currentlyHovered === 3 && this.state.toBeEdited && (
-                                                            <div className="DropZoneImageDeleteButtonDiv">
-                                                                <IconButton
-                                                                    className="DropZoneImageDeleteButtonIconLocation"
-                                                                    onClick={() => this.onDelete(2, "512x512", this.state.url[2])}
-                                                                >
-                                                                    <CloseIcon
-                                                                        className="DropZoneImageDeleteButtonIcon"
-                                                                        color="secondary"
-                                                                    />
-                                                                </IconButton>
-                                                            </div>
-                                                        )}
-                                                    {
-                                                        this.state.url[2] !== undefined &&
-                                                        <img
-                                                            className="DropZoneImage"
-                                                            src={this.state.url[2]}
-                                                            alt=""
-                                                        />
-                                                    }
-
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        {this.state.url.map((imageName, i) => (
-                                            <img
-                                                src={imageName}
-                                                data-key={i}
-                                                onLoad={this.onLoad.bind(this, "512x512")}
-                                                className="DropZoneImageForMeasurment"
-                                                alt=""
-                                            />
-                                        ))}
-                                    </div>
-                                    {this.state.notEnoughFiles512x512 && this.state.toBeEdited && (
-                                        <p className="error">
-                                            There has to be at least 1 images of the size 512x512 added.
-                                        </p>
-                                    )}
-
-                                </CardContent>
-                            </Card>
-                            <br />
                             <Card className="SubContainer" id="shippingInfo">
                                 <CardContent>
-                                    <p className="Heading">Shipping Information</p>
+                                    <div className="row" style={{ display: "flex" }}>
+                                        <div className="col-6">
+                                            <p className="Heading">Shipping Information</p>
+                                        </div>
+                                        <div className="col-6" style={{ textAlign: "right" }}>
+                                            <HtmlTooltip
+                                                title={
+                                                    <React.Fragment>
+                                                        <div style={{ padding: "10px" }}>
+                                                            <Typography color="inherit"><label style={{ fontWeight: "bold" }}>Standard Shipping Packaging (m)</label></Typography>
+                                                            {
+                                                                dummyStandard.length > 0 && dummyStandard.map((data, index) => {
+                                                                    return (
+                                                                        <div className="row" style={{ paddingTop: "5px", flex:"1" }}>
+                                                                            <div className="col-2">
+                                                                                <label style={{ fontWeight: "bold" }}>Option{index + 1}</label>
+                                                                            </div>
+                                                                            <div className="col-3">
+                                                                                <label>Width:</label> {data.Width}
+                                                                            </div>
+                                                                            <div className="col-3">
+                                                                                <label>Height:</label>{data.Height}
+                                                                            </div>
+                                                                            <div className="col-2">
+                                                                                <label>Depth:</label>{data.Depth}
+                                                                            </div>
+                                                                            <div className="col-1" style={{ paddingBottom: "5px" }}>
+                                                                                <IconButton onClick={() => handleShipping(data, index)}
+                                                                                    disabled={this.state.toBeEdited ? false : true}
+                                                                                >
+                                                                                    <CheckBoxIcon style={{ color: this.state.OptionClick === index ? "blue" : "grey" }} />
+                                                                                </IconButton>
+                                                                            </div>
+                                                                        </div>
+                                                                    )
+                                                                })
+                                                            }
+                                                        </div>
+                                                    </React.Fragment>
+                                                }
+                                            >
+                                                <IconButton size="medium">
+                                                    <InfoIcon />
+                                                </IconButton>
+                                            </HtmlTooltip>
+                                        </div>
+                                    </div>
+
 
                                     <div className="HorizontalContainer">
                                         <p className="FontType3">Dimension: </p>
@@ -5888,7 +6005,7 @@ class ProductDetailsComponent extends Component {
                                     )}
                                 </CardContent>
                             </Card>
-                        </div>
+                        </div >
                         <br />
                         <div className="SubmitButtonContainer w-100">
                             {this.state.toBeEdited ?
@@ -5896,7 +6013,7 @@ class ProductDetailsComponent extends Component {
                                     Update Product Details
                                 </Button> : null}
                         </div>
-                    </div>
+                    </div >
 
                     <div className="StepContainer">
                         <div className="ProgressTab">
@@ -6056,10 +6173,10 @@ class ProductDetailsComponent extends Component {
                                 <label>Image choose has over the size permitted. Please try a smaller size image</label>
                                 <p className="text-danger"><i>*** Only image with 30KB is allow</i></p>
                                 <div style={{ textAlign: "right" }}>
-                                    <Button variant="contained" color="primary" onClick={() => this.setState({isOverFileSize: false})
+                                    <Button variant="contained" color="primary" onClick={() => this.setState({ isOverFileSize: false })
                                     }>
                                         Cancel
-                                    </Button> 
+                                    </Button>
                                 </div>
                             </div>
                         </div>

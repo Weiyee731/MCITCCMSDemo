@@ -3,15 +3,12 @@ import { connect } from "react-redux";
 import {
   Card,
   CardContent,
-  Tooltip,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import TextField from '@mui/material/TextField';
 import Select from "@material-ui/core/Select";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import { GitAction } from "../../../store/action/gitAction";
-import SwipeableViews from "react-swipeable-views";
 import MaterialTable from "material-table";
 import Dropzone from "react-dropzone";
 import axios from "axios";
@@ -63,9 +60,12 @@ import StepLabel from "@material-ui/core/StepLabel";
 import StepContent from "@material-ui/core/StepContent";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { Fade } from "shards-react";
-// import { CKEditor } from "@ckeditor/ckeditor5-react";
-// import Editor from "ckeditor5-custom-build/build/ckeditor";
 import { convertDateTimeToString, getFileExtension, getFileTypeByExtension, isStringNullOrEmpty } from "../../../tools/Helpers"
+
+import InfoIcon from '@mui/icons-material/Info';
+import { styled } from '@mui/material/styles';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
 function mapStateToProps(state) {
   return {
@@ -468,6 +468,8 @@ const INITIAL_STATE = {
   OnCheckMedia: false,
   isCompresss: false,
   isOverFileSize: false,
+
+  OptionClick: "",
 }
 
 class AddProductComponent extends Component {
@@ -1464,7 +1466,7 @@ class AddProductComponent extends Component {
         } else {
           if (acceptedFiles.length === 0) {
             this.setState({ isOverFileSize: true })
-        }
+          }
 
           this.setState((state) => {
             const file = state.file.concat(acceptedFiles.map((file) => file));
@@ -3867,6 +3869,29 @@ class AddProductComponent extends Component {
       this.checkProgress();
     };
 
+    const dummyStandard =
+      [
+        { Height: "15", Width: "15", Depth: "20", },
+        { Height: "15", Width: "15", Depth: "25", },
+        { Height: "40", Width: "30", Depth: "15", },
+      ]
+
+    const handleShipping = (data, index) => {
+      this.setState({ OptionClick: index, height: data.Height, width: data.Width, depth: data.Depth })
+    }
+
+    const HtmlTooltip = styled(({ className, ...props }) => (
+      <Tooltip {...props} classes={{ popper: className }} />
+    ))(({ theme }) => ({
+      [`& .${tooltipClasses.tooltip}`]: {
+        backgroundColor: '#f5f5f9',
+        color: 'rgba(0, 0, 0, 0.87)',
+        width: "800px",
+        fontSize: theme.typography.pxToRem(12),
+        border: '1px solid #dadde9',
+      },
+    }));
+
     return (
       <div style={{ display: "flex", width: "100%", margin: '30px' }}>
         <div
@@ -4251,667 +4276,6 @@ class AddProductComponent extends Component {
               </CardContent>
             </Card>
             <br />
-            <Card id="descriptionCard" className="SubContainer">
-              <CardContent>
-                <p className="Heading">Product Description</p>
-                <DescriptionFunction
-                  post_content=""
-                  // postId="1333"
-                  handleChange={this.handleChangeEditor}
-                  content={this.state.description}
-                  imageFileUrl="products"
-                  editorState={true}
-                />
-                {/* <DescriptionFunction
-                  post_content=""
-                  // postId="1333"
-                  handleChange={this.handleChange}
-                  content={this.state.description}
-                  imageFileUrl="products"
-                /> */}
-
-                {this.state.productDesciptionEmpty && (
-                  <p className="error">Product description cannot be empty.</p>
-                )}
-              </CardContent>
-            </Card>
-            <br />
-            <Card id="specification" className="SubContainer">
-              <CardContent>
-                <p className="Heading">Product Specification</p>
-                <Button
-                  variant="outlined"
-                  className="AddButton"
-                  onClick={this.handleAddProductSpecification.bind(this, "add", '')}
-                >
-                  Add Product Specification
-                </Button>
-                {
-                  this.state.productSpecificationOptions.length > 0 && this.state.productSpecificationOptions.map((el, idx) => {
-                    return (
-                      <div>
-                        <div className="d-flex align-items-center" >
-                          <RemoveCircleOutlineIcon
-                            className="DeleteOptionButton mr-2"
-                            style={{ cursor: 'pointer' }}
-                            color="secondary"
-                            onClick={this.handleAddProductSpecification.bind(this, "remove", idx)}
-                          />
-                          <FormControl variant="outlined" className="mr-2 w-50" size="small">
-                            <InputLabel id="specifications-dropdown">Specifications</InputLabel>
-                            <Select
-                              labelId="specifications-dropdown"
-                              id="specifications-dropdown-label"
-                              defaultValue={this.state.productSpecificationOptions[idx].categoryId}
-                              value={this.state.productSpecificationOptions[idx].categoryId}
-                              onChange={e => this.handleProductSpecificationInput(idx, "select", e)}
-                            >
-                              <MenuItem value="0">
-                                <em>None</em>
-                              </MenuItem>
-                              {
-                                this.props.variations.length > 0 && typeof this.props.variations[0].ReturnVal === "undefined" &&
-                                this.props.variations.map((el, idx) => {
-                                  return (<MenuItem key={idx} value={el.ProductVariationID}>{el.ProductVariation}</MenuItem>)
-                                })
-                              }
-                            </Select>
-                          </FormControl>
-                          <TextField
-                            className="InputField"
-                            InputLabelProps={{ shrink: "true", }}
-                            label={"Specification " + (idx + 1)}
-                            id="standard-start-adornment"
-                            size="small"
-                            variant="outlined"
-                            key={idx}
-                            onChange={e => this.handleProductSpecificationInput(idx, "input", e)}
-                            error={false}
-                            defaultValue={this.state.productSpecificationOptions[idx].value}
-                            value={this.state.productSpecificationOptions[idx].value}
-                          />
-                        </div>
-
-                      </div>
-                    )
-                  })
-                }
-              </CardContent>
-            </Card>
-            <br />
-            <Card className="SubContainer" id="productVariation">
-              <CardContent>
-                <p className="Heading">Product Pricing</p>
-                {!this.state.variation1On && !this.state.variation2On ? (
-                  <div>
-                    <InputGroup className="InputField">
-                      <InputGroupAddon type="prepend">
-                        <InputGroupText className="groupText">
-                          RM
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <FormInput
-                        value={this.state.price}
-                        invalid={this.state.priceEmpty}
-                        onChange={this.handleChange.bind(this, "Price")}
-                        placeholder="Price"
-                        type="number"
-                        step=".10"
-                        onFocus={this.setHint.bind(this, "ProductPrice")}
-                        onBlur={() =>
-                          this.setState({
-                            FocusOn: false,
-                          })
-                        }
-                      />
-                    </InputGroup>
-                    {this.state.priceEmpty ? (
-                      <p className="error">
-                        Price has to be filled and not less than 0.
-                      </p>
-                    ) : null}
-                    <div className="Margin ItemContainer">
-                      <TextField
-                        id="standard-start-adornment"
-                        label="Stock"
-                        variant="outlined"
-                        className="InputField"
-                        InputLabelProps={{
-                          shrink: "true",
-                        }}
-                        size="small"
-                        value={this.state.stock}
-                        error={this.state.stockEmpty}
-                        type="number"
-                        onChange={this.handleChange.bind(this, "stock")}
-                        onFocus={this.setHint.bind(this, "ProductStock")}
-                        onBlur={() =>
-                          this.setState({
-                            FocusOn: false,
-                          })
-                        }
-                      />
-                      {this.state.stockEmpty ? (
-                        <p className="error">
-                          Stock has to be filled and not less than 0.
-                        </p>
-                      ) : null}
-                    </div>
-                  </div>
-                ) : null}
-
-                {this.state.variation1On ? (
-                  <div className="VariantMain">
-                    <div className="VariantText">
-                      <p>Product Variation</p>
-                    </div>
-                    <div className="VariantOptionsSection">
-                      <FormControl variant="outlined" className="w-100" size="small">
-                        <InputLabel id="demo-simple-select-outlined-label">Product Variation</InputLabel>
-                        <Select
-                          labelId="Product_Variation"
-                          id="Product_Variation"
-                          value={this.state.selectedVariationID}
-                          defaultValue={this.state.selectedVariationID}
-                          onChange={(e) => { this.handleProductVariantInput("select", e) }}
-                          label="Product Variation"
-                        >
-                          <MenuItem value=""><em>None</em></MenuItem>
-                          {
-                            this.props.variations.length > 0 && typeof this.props.variations[0].ReturnVal === "undefined" &&
-                            this.props.variations.map((el, idx) => {
-                              return (<MenuItem key={idx} value={el.ProductVariationID}>{el.ProductVariation}</MenuItem>)
-                            })
-                          }
-                        </Select>
-
-                      </FormControl>
-                      {this.state.variation1NameEmpty ? (
-                        <p className="error">
-                          Variation name has to be filled.
-                        </p>
-                      ) : null}
-
-                      {[...Array(this.state.variation1Options)].map((e, i) => (
-                        <div>
-                          <div className="VariantOption align-items-center">
-                            <RemoveCircleOutlineIcon
-                              className="DeleteOptionButton"
-                              color="secondary"
-                              onClick={this.onDeleteVariant.bind(this, i, "variant1Option")}
-                            />
-                            <TextField
-                              className="InputField"
-                              InputLabelProps={{ shrink: "true", }}
-                              label={"Option " + (i + 1)}
-                              id="standard-start-adornment"
-                              size="small"
-                              variant="outlined"
-                              key={i}
-                              onChange={this.handleChangeOptions.bind(this, "variant1Options", i)}
-                              error={this.state.variation1.options[i].errorOption}
-                              onFocus={this.setHint.bind(this, "VariantOption")}
-                              onBlur={() => this.setState({ FocusOn: false, })}
-                              value={this.state.variation1.options[i].optionName}
-                            />
-                          </div>
-                          {this.state.variation1.options[i].errorOption ? (
-                            <p className="error">
-                              Variation option name has to be filled.
-                            </p>
-                          ) : null}
-                        </div>
-                      ))
-                      }
-
-                      <Button
-                        variant="outlined"
-                        className="AddButton"
-                        onClick={this.addOptions.bind(this, "1")}
-                      >
-                        Add Option
-                      </Button>
-                    </div>
-                    <br />
-                    <CloseIcon
-                      className="DeleteVariantButton"
-                      color="secondary"
-                      onClick={this.onDeleteVariant.bind(this, -1, "variant1")}
-                    />
-                  </div>
-                ) : null}
-                {this.state.variation1On ? <br /> : null}
-
-                <hr />
-                {!this.state.variation1On ? (
-                  <div className="ItemContainer">
-                    <Button
-                      variant="outlined"
-                      className="AddButton"
-                      onClick={this.addProductVariant.bind(this, "variation")}
-                    >
-                      Add Variant
-                    </Button>
-                  </div>
-                ) : null}
-
-                {this.state.variation1On ? (
-                  <p className="FontType1">Variations Information</p>
-                ) : null}
-                {this.state.variation1On ? (
-                  <div className="VariantMain">
-                    <div className="ItemContainer">
-                      <div className="VariantContainer">
-
-                        <InputGroup className="ItemContainer">
-                          <InputGroupAddon type="prepend">
-                            <InputGroupText className="groupText">
-                              RM
-                            </InputGroupText>
-                          </InputGroupAddon>
-                          <FormInput
-                            onChange={this.handleChange.bind(this, "Price")}
-                            value={this.state.price}
-                            // invalid={this.state.priceEmpty}
-                            placeholder="Price"
-                            type="number"
-                            step=".10"
-                            onFocus={this.setHint.bind(this, "VariationPrice")}
-                            onBlur={() =>
-                              this.setState({
-                                FocusOn: false,
-                              })
-                            }
-                          />
-                        </InputGroup>
-                      </div>
-                    </div>
-                    <div className="StockField">
-                      <TextField
-                        id="standard-start-adornment"
-                        label="Stock"
-                        variant="outlined"
-                        className="InputField2"
-                        InputLabelProps={{
-                          shrink: "true",
-                        }}
-                        type="number"
-                        onChange={this.handleChange.bind(this, "stock")}
-                        // error={this.state.stockEmpty}
-                        onFocus={this.setHint.bind(this, "VariationStock")}
-                        onBlur={() =>
-                          this.setState({
-                            FocusOn: false,
-                          })
-                        }
-                        value={this.state.stock}
-                        size="small"
-                      />
-                    </div>
-                    <div className="StockField">
-                      <TextField
-                        id="standard-start-adornment"
-                        label="Parent SKU"
-                        variant="outlined"
-                        className="InputField2"
-                        InputLabelProps={{
-                          shrink: "true",
-                        }}
-                        onChange={this.handleChange.bind(this, "SKU")}
-                        onFocus={this.setHint.bind(this, "VariationSKU")}
-                        onBlur={() =>
-                          this.setState({
-                            FocusOn: false,
-                          })
-                        }
-                        value={this.state.sku}
-                        // error={this.state.skuEmpty}
-                        size="small"
-                      />
-                    </div>
-
-                    <Button variant="outlined" className="ApplyAllButton" onClick={() => this.applyToAllVariant()}>
-                      Apply to All
-                    </Button>
-                  </div>
-                ) : null}
-
-                {this.state.variation1On ? (
-                  <p className="FontType1">Variations List</p>
-                ) : null}
-                {this.state.variation1On ? (
-                  <table className="TableMain">
-                    <tr className="trHeading">
-                      <td className="tdHeading">
-                        {this.state.variation1Name ? this.state.variation1Name : "Variation 1 Name"}
-                      </td>
-                      <td className="tdHeading"> Price </td>
-                      <td className="tdHeading"> Stock </td>
-                      <td className="tdHeading">SKU</td>
-                    </tr>
-
-                    {[...Array(this.state.variation1Options)].map((a, x) =>
-                      this.state.variation2On ? (
-                        <tr className="trBody">
-                          <td className="tdNestedText">
-                            {this.state.variation1.options[x].optionName
-                              ? this.state.variation1.options[x].optionName
-                              : "Option " + (x + 1) + " Variant 1"}
-                          </td>
-                          <td colSpan="4">
-                            <table>
-                              {[...Array(this.state.variation2Options)].map(
-                                (e, i) => (
-                                  <tr className="trBody">
-                                    <td className="tdNestedNew">
-                                      {this.state.variation1.options[x]
-                                        .variation2Options.options[i].optionName
-                                        ? this.state.variation1.options[x]
-                                          .variation2Options.options[i]
-                                          .optionName
-                                        : "Option " + (i + 1) + " Variant 2"}
-                                    </td>
-                                    <td className="tdNestedNew">
-                                      <div className="StepContainer">
-                                        <InputGroup className="TextFieldsTables">
-                                          <InputGroupAddon type="prepend">
-                                            <InputGroupText className="groupText">
-                                              RM
-                                            </InputGroupText>
-                                          </InputGroupAddon>
-
-                                          <FormInput
-                                            type="number"
-                                            step=".10"
-                                            key={"price " + i}
-                                            onChange={this.handleChangeOptionsVariant2.bind(
-                                              this,
-                                              "variation2Price",
-                                              x,
-                                              i
-                                            )}
-                                            onFocus={this.setHint.bind(
-                                              this,
-                                              "VariationPrice"
-                                            )}
-                                            onBlur={() =>
-                                              this.setState({
-                                                FocusOn: false,
-                                              })
-                                            }
-                                            value={
-                                              this.state.variation1.options[x]
-                                                .variation2Options.options[i]
-                                                .price
-                                            }
-                                            invalid={
-                                              this.state.variation1.options[x]
-                                                .variation2Options.options[i]
-                                                .errorPrice
-                                            }
-                                          />
-                                        </InputGroup>
-                                        {this.state.variation1.options[x]
-                                          .variation2Options.options[i]
-                                          .errorPrice ? (
-                                          <Tooltip
-                                            placement="top-end"
-                                            title="Price has to be filled and greater than 0."
-                                            interactive="true"
-                                          >
-                                            <p className="error">*</p>
-                                          </Tooltip>
-                                        ) : null}
-                                      </div>
-                                    </td>
-                                    <td className="tdNestedNew">
-                                      <div className="StepContainer">
-                                        <TextField
-                                          id="productStock1"
-                                          size="small"
-                                          onChange={this.handleChangeOptionsVariant2.bind(
-                                            this,
-                                            "variation2Stock",
-                                            x,
-                                            i
-                                          )}
-                                          onFocus={this.setHint.bind(
-                                            this,
-                                            "VariationStock"
-                                          )}
-                                          onBlur={() =>
-                                            this.setState({
-                                              FocusOn: false,
-                                            })
-                                          }
-                                          value={
-                                            this.state.variation1.options[x]
-                                              .variation2Options.options[i]
-                                              .stock
-                                          }
-                                          error={
-                                            this.state.variation1.options[x]
-                                              .variation2Options.options[i]
-                                              .errorStock
-                                          }
-                                          type="number"
-                                          InputLabelProps={{
-                                            shrink: "true",
-                                          }}
-                                          variant="outlined"
-                                          className="InputField2"
-                                        // error={this.state.stock || this.state.skuNotLongEnough}
-                                        />
-                                        {this.state.variation1.options[x]
-                                          .variation2Options.options[i]
-                                          .errorStock ? (
-                                          <Tooltip
-                                            placement="top-end"
-                                            title="Stock has to be filled and greater than 0."
-                                            interactive="true"
-                                          >
-                                            <p className="error">*</p>
-                                          </Tooltip>
-                                        ) : null}
-                                      </div>
-                                    </td>
-                                    <td className="tdNestedNew">
-                                      <div className="StepContainer">
-                                        <TextField
-                                          id="productStock1"
-                                          size="small"
-                                          onChange={this.handleChangeOptionsVariant2.bind(
-                                            this,
-                                            "variation2SKU",
-                                            x,
-                                            i
-                                          )}
-                                          onFocus={this.setHint.bind(
-                                            this,
-                                            "VariationSKU"
-                                          )}
-                                          onBlur={() =>
-                                            this.setState({
-                                              FocusOn: false,
-                                            })
-                                          }
-                                          value={
-                                            this.state.variation1.options[x]
-                                              .variation2Options.options[i].sku
-                                          }
-                                          error={
-                                            this.state.variation1.options[x]
-                                              .variation2Options.options[i]
-                                              .errorSKU
-                                          }
-                                          type="number"
-                                          InputLabelProps={{
-                                            shrink: "true",
-                                          }}
-                                          variant="outlined"
-                                          className="InputField2"
-                                        // error={this.state.stock || this.state.skuNotLongEnough}
-                                        />
-                                        {this.state.variation1.options[x]
-                                          .variation2Options.options[i]
-                                          .errorSKU ? (
-                                          <Tooltip
-                                            placement="top-end"
-                                            title="SKU has to be filled and at least 8 characters long."
-                                            interactive="true"
-                                          >
-                                            <p className="error">*</p>
-                                          </Tooltip>
-                                        ) : null}
-                                      </div>
-                                    </td>
-                                  </tr>
-                                )
-                              )}
-                            </table>
-                          </td>
-                        </tr>
-                      ) : (
-                        <tr>
-                          <td className="tdNestedText">
-                            {this.state.variation1.options[x].optionName
-                              ? this.state.variation1.options[x].optionName
-                              : "Option " + (x + 1) + " Variant 1"}
-                          </td>
-                          <td className="tdNestedText">
-                            <div className="StepContainer">
-                              <InputGroup className="ItemContainer">
-                                <InputGroupAddon type="prepend">
-                                  <InputGroupText className="groupText">
-                                    RM
-                                  </InputGroupText>
-                                </InputGroupAddon>
-                                <FormInput
-                                  type="number"
-                                  step=".10"
-                                  onFocus={this.setHint.bind(
-                                    this,
-                                    "VariationPrice"
-                                  )}
-                                  onBlur={() =>
-                                    this.setState({
-                                      FocusOn: false,
-                                    })
-                                  }
-                                  onChange={this.handleChangeOptions.bind(
-                                    this,
-                                    "variation1Price",
-                                    x
-                                  )}
-                                  value={this.state.variation1.options[x].price}
-                                  invalid={
-                                    this.state.variation1.options[x].errorPrice
-                                  }
-                                />
-                              </InputGroup>
-                              {this.state.variation1.options[x].errorPrice ? (
-                                <Tooltip
-                                  placement="top-end"
-                                  title="Price has to be filled and greater than 0."
-                                  interactive="true"
-                                >
-                                  <p className="error">*</p>
-                                </Tooltip>
-                              ) : null}
-                            </div>
-                          </td>
-                          <td className="tdNestedText">
-                            <div className="StepContainer">
-                              <TextField
-                                id="productStock1"
-                                value={this.state.variation1.options[x].stock}
-                                error={
-                                  this.state.variation1.options[x].errorStock
-                                }
-                                size="small"
-                                onFocus={this.setHint.bind(
-                                  this,
-                                  "VariationStock"
-                                )}
-                                onBlur={() =>
-                                  this.setState({
-                                    FocusOn: false,
-                                  })
-                                }
-                                onChange={this.handleChangeOptions.bind(
-                                  this,
-                                  "variation1Stock",
-                                  x
-                                )}
-                                type="number"
-                                InputLabelProps={{
-                                  shrink: "true",
-                                }}
-                                variant="outlined"
-                                className="InputField2"
-                              // error={this.state.stock || this.state.skuNotLongEnough}
-                              />
-                              {this.state.variation1.options[x].errorStock ? (
-                                <Tooltip
-                                  placement="top-end"
-                                  title="Stock has to be filled and greater than 0."
-                                  interactive="true"
-                                >
-                                  <p className="error">*</p>
-                                </Tooltip>
-                              ) : null}
-                            </div>
-                          </td>
-                          <td className="tdNestedText">
-                            <div className="StepContainer">
-                              <TextField
-                                id="productSku"
-                                size="small"
-                                value={this.state.variation1.options[x].sku}
-                                onFocus={this.setHint.bind(
-                                  this,
-                                  "VariationSKU"
-                                )}
-                                onBlur={() =>
-                                  this.setState({
-                                    FocusOn: false,
-                                  })
-                                }
-                                onChange={this.handleChangeOptions.bind(
-                                  this,
-                                  "variation1SKU",
-                                  x
-                                )}
-                                InputLabelProps={{
-                                  shrink: "true",
-                                }}
-                                variant="outlined"
-                                className="InputField2"
-                                error={
-                                  this.state.variation1.options[x].errorSKU
-                                }
-                              />
-                              {this.state.variation1.options[x].errorSKU ? (
-                                <Tooltip
-                                  placement="top-end"
-                                  title="SKU has to be filled and be at least 8 characters long."
-                                  interactive="true"
-                                >
-                                  <p className="error">*</p>
-                                </Tooltip>
-                              ) : null}
-                            </div>
-                          </td>
-                        </tr>
-                      )
-                    )}
-                  </table>
-                ) : null}
-
-              </CardContent>
-            </Card>
-            <br />
-
             <Card className="SubContainer" id="productMedia">
               <CardContent>
                 <p className="Heading">Product Media</p>
@@ -5151,9 +4515,720 @@ class AddProductComponent extends Component {
               </CardContent>
             </Card>
             <br />
+
+            <Card id="descriptionCard" className="SubContainer">
+              <CardContent>
+                <p className="Heading">Product Description</p>
+                <DescriptionFunction
+                  post_content=""
+                  // postId="1333"
+                  handleChange={this.handleChangeEditor}
+                  content={this.state.description}
+                  imageFileUrl="products"
+                  editorState={true}
+                />
+                {/* <DescriptionFunction
+                  post_content=""
+                  // postId="1333"
+                  handleChange={this.handleChange}
+                  content={this.state.description}
+                  imageFileUrl="products"
+                /> */}
+
+                {this.state.productDesciptionEmpty && (
+                  <p className="error">Product description cannot be empty.</p>
+                )}
+              </CardContent>
+            </Card>
+            <br />
+            <Card id="specification" className="SubContainer">
+              <CardContent>
+                <p className="Heading">Product Specification</p>
+                <Button
+                  variant="outlined"
+                  className="AddButton"
+                  onClick={this.handleAddProductSpecification.bind(this, "add", '')}
+                >
+                  Add Product Specification
+                </Button>
+                {
+                  this.state.productSpecificationOptions.length > 0 && this.state.productSpecificationOptions.map((el, idx) => {
+                    return (
+                      <div>
+                        <div className="d-flex align-items-center" >
+                          <RemoveCircleOutlineIcon
+                            className="DeleteOptionButton mr-2"
+                            style={{ cursor: 'pointer' }}
+                            color="secondary"
+                            onClick={this.handleAddProductSpecification.bind(this, "remove", idx)}
+                          />
+                          <FormControl variant="outlined" className="mr-2 w-50" size="small">
+                            <InputLabel id="specifications-dropdown">Specifications</InputLabel>
+                            <Select
+                              labelId="specifications-dropdown"
+                              id="specifications-dropdown-label"
+                              defaultValue={this.state.productSpecificationOptions[idx].categoryId}
+                              value={this.state.productSpecificationOptions[idx].categoryId}
+                              onChange={e => this.handleProductSpecificationInput(idx, "select", e)}
+                            >
+                              <MenuItem value="0">
+                                <em>None</em>
+                              </MenuItem>
+                              {
+                                this.props.variations.length > 0 && typeof this.props.variations[0].ReturnVal === "undefined" &&
+                                this.props.variations.map((el, idx) => {
+                                  return (<MenuItem key={idx} value={el.ProductVariationID}>{el.ProductVariation}</MenuItem>)
+                                })
+                              }
+                            </Select>
+                          </FormControl>
+                          <TextField
+                            className="InputField"
+                            InputLabelProps={{ shrink: "true", }}
+                            label={"Specification " + (idx + 1)}
+                            id="standard-start-adornment"
+                            size="small"
+                            variant="outlined"
+                            key={idx}
+                            onChange={e => this.handleProductSpecificationInput(idx, "input", e)}
+                            error={false}
+                            defaultValue={this.state.productSpecificationOptions[idx].value}
+                            value={this.state.productSpecificationOptions[idx].value}
+                          />
+                        </div>
+
+                      </div>
+                    )
+                  })
+                }
+              </CardContent>
+            </Card>
+            <br />
+            <Card className="SubContainer" id="productVariation">
+              <CardContent>
+                <p className="Heading">Product Variation</p>
+                {!this.state.variation1On && !this.state.variation2On ? (
+                  <div>
+                    <InputGroup className="InputField">
+                      <InputGroupAddon type="prepend">
+                        <InputGroupText className="groupText">
+                          RM
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <FormInput
+                        value={this.state.price}
+                        invalid={this.state.priceEmpty}
+                        onChange={this.handleChange.bind(this, "Price")}
+                        placeholder="Price"
+                        type="number"
+                        step=".10"
+                        onFocus={this.setHint.bind(this, "ProductPrice")}
+                        onBlur={() =>
+                          this.setState({
+                            FocusOn: false,
+                          })
+                        }
+                      />
+                    </InputGroup>
+                    {this.state.priceEmpty ? (
+                      <p className="error">
+                        Price has to be filled and not less than 0.
+                      </p>
+                    ) : null}
+                    <div className="Margin ItemContainer">
+                      <TextField
+                        id="standard-start-adornment"
+                        label="Stock"
+                        variant="outlined"
+                        className="InputField"
+                        InputLabelProps={{
+                          shrink: "true",
+                        }}
+                        size="small"
+                        value={this.state.stock}
+                        error={this.state.stockEmpty}
+                        type="number"
+                        onChange={this.handleChange.bind(this, "stock")}
+                        onFocus={this.setHint.bind(this, "ProductStock")}
+                        onBlur={() =>
+                          this.setState({
+                            FocusOn: false,
+                          })
+                        }
+                      />
+                      {this.state.stockEmpty ? (
+                        <p className="error">
+                          Stock has to be filled and not less than 0.
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+                ) : null}
+
+                {this.state.variation1On ? (
+                  <div className="VariantMain">
+                    <div className="VariantText">
+                      <p>Product Variation</p>
+                    </div>
+                    <div className="VariantOptionsSection">
+                      <FormControl variant="outlined" className="w-100" size="small">
+                        <InputLabel id="demo-simple-select-outlined-label">Product Variation</InputLabel>
+                        <Select
+                          labelId="Product_Variation"
+                          id="Product_Variation"
+                          value={this.state.selectedVariationID}
+                          defaultValue={this.state.selectedVariationID}
+                          onChange={(e) => { this.handleProductVariantInput("select", e) }}
+                          label="Product Variation"
+                        >
+                          <MenuItem value=""><em>None</em></MenuItem>
+                          {
+                            this.props.variations.length > 0 && typeof this.props.variations[0].ReturnVal === "undefined" &&
+                            this.props.variations.map((el, idx) => {
+                              return (<MenuItem key={idx} value={el.ProductVariationID}>{el.ProductVariation}</MenuItem>)
+                            })
+                          }
+                        </Select>
+
+                      </FormControl>
+                      {this.state.variation1NameEmpty ? (
+                        <p className="error">
+                          Variation name has to be filled.
+                        </p>
+                      ) : null}
+
+                      {[...Array(this.state.variation1Options)].map((e, i) => (
+                        <div>
+                          <div className="VariantOption align-items-center">
+                            <RemoveCircleOutlineIcon
+                              className="DeleteOptionButton"
+                              color="secondary"
+                              onClick={this.onDeleteVariant.bind(this, i, "variant1Option")}
+                            />
+                            <TextField
+                              className="InputField"
+                              InputLabelProps={{ shrink: "true", }}
+                              label={"Option " + (i + 1)}
+                              id="standard-start-adornment"
+                              size="small"
+                              variant="outlined"
+                              key={i}
+                              onChange={this.handleChangeOptions.bind(this, "variant1Options", i)}
+                              error={this.state.variation1.options[i].errorOption}
+                              onFocus={this.setHint.bind(this, "VariantOption")}
+                              onBlur={() => this.setState({ FocusOn: false, })}
+                              value={this.state.variation1.options[i].optionName}
+                            />
+                          </div>
+                          {this.state.variation1.options[i].errorOption ? (
+                            <p className="error">
+                              Variation option name has to be filled.
+                            </p>
+                          ) : null}
+                        </div>
+                      ))
+                      }
+
+                      <Button
+                        variant="outlined"
+                        className="AddButton"
+                        onClick={this.addOptions.bind(this, "1")}
+                      >
+                        Add Option
+                      </Button>
+                    </div>
+                    <br />
+                    <CloseIcon
+                      className="DeleteVariantButton"
+                      color="secondary"
+                      onClick={this.onDeleteVariant.bind(this, -1, "variant1")}
+                    />
+                  </div>
+                ) : null}
+                {this.state.variation1On ? <br /> : null}
+
+                <hr />
+                {!this.state.variation1On ? (
+                  <div className="ItemContainer">
+                    <Button
+                      variant="outlined"
+                      className="AddButton"
+                      onClick={this.addProductVariant.bind(this, "variation")}
+                    >
+                      Add Variant
+                    </Button>
+                  </div>
+                ) : null}
+              </CardContent>
+            </Card>
+            <br />
+            <Card className="SubContainer" id="Product Pricing">
+              <CardContent>
+                <div className="row" style={{ display: "flex" }}>
+                  {this.state.variation1On ? (
+                    <p className="Heading">Product Variations Pricing</p>
+                    // <p className="FontType1">Variations Information</p>
+                  ) : null}
+                  {this.state.variation1On ? (
+                    <div className="VariantMain">
+                      <div className="ItemContainer">
+                        <div className="VariantContainer">
+
+                          <InputGroup className="ItemContainer">
+                            <InputGroupAddon type="prepend">
+                              <InputGroupText className="groupText">
+                                RM
+                              </InputGroupText>
+                            </InputGroupAddon>
+                            <FormInput
+                              onChange={this.handleChange.bind(this, "Price")}
+                              value={this.state.price}
+                              // invalid={this.state.priceEmpty}
+                              placeholder="Price"
+                              type="number"
+                              step=".10"
+                              onFocus={this.setHint.bind(this, "VariationPrice")}
+                              onBlur={() =>
+                                this.setState({
+                                  FocusOn: false,
+                                })
+                              }
+                            />
+                          </InputGroup>
+                        </div>
+                      </div>
+                      <div className="StockField">
+                        <TextField
+                          // id="standard-start-adornment"
+                          label="Stock"
+                          size="small"
+                          variant="outlined"
+                          className="InputField2"
+                          InputLabelProps={{
+                            shrink: "true",
+                          }}
+                          type="number"
+                          onChange={this.handleChange.bind(this, "stock")}
+                          // error={this.state.stockEmpty}
+                          onFocus={this.setHint.bind(this, "VariationStock")}
+                          onBlur={() =>
+                            this.setState({
+                              FocusOn: false,
+                            })
+                          }
+                          value={this.state.stock}
+                        />
+                      </div>
+                      <div className="StockField">
+                        <TextField
+                          id="standard-start-adornment"
+                          label="Parent SKU"
+                          variant="outlined"
+                          className="InputField2"
+                          InputLabelProps={{
+                            shrink: "true",
+                          }}
+                          onChange={this.handleChange.bind(this, "SKU")}
+                          onFocus={this.setHint.bind(this, "VariationSKU")}
+                          onBlur={() =>
+                            this.setState({
+                              FocusOn: false,
+                            })
+                          }
+                          value={this.state.sku}
+                          // error={this.state.skuEmpty}
+                          size="small"
+                        />
+                      </div>
+
+                      <Button variant="outlined" className="ApplyAllButton" onClick={() => this.applyToAllVariant()}>
+                        Apply to All
+                      </Button>
+                    </div>
+                  ) : null}
+
+                  {this.state.variation1On ? (
+                    <p className="FontType1">Variation Pricing Details</p>
+                  ) : null}
+                  {this.state.variation1On ? (
+                    <table className="TableMain">
+                      <tr className="trHeading">
+                        <td className="tdHeading">
+                          {this.state.variation1Name ? this.state.variation1Name : "Variation 1 Name"}
+                        </td>
+                        <td className="tdHeading"> Price </td>
+                        <td className="tdHeading"> Stock </td>
+                        <td className="tdHeading">SKU</td>
+                      </tr>
+
+                      {[...Array(this.state.variation1Options)].map((a, x) =>
+                        this.state.variation2On ? (
+                          <tr className="trBody">
+                            <td className="tdNestedText">
+                              {this.state.variation1.options[x].optionName
+                                ? this.state.variation1.options[x].optionName
+                                : "Option " + (x + 1) + " Variant 1"}
+                            </td>
+                            <td colSpan="4">
+                              <table>
+                                {[...Array(this.state.variation2Options)].map(
+                                  (e, i) => (
+                                    <tr className="trBody">
+                                      <td className="tdNestedNew">
+                                        {this.state.variation1.options[x]
+                                          .variation2Options.options[i].optionName
+                                          ? this.state.variation1.options[x]
+                                            .variation2Options.options[i]
+                                            .optionName
+                                          : "Option " + (i + 1) + " Variant 2"}
+                                      </td>
+                                      <td className="tdNestedNew">
+                                        <div className="StepContainer">
+                                          <InputGroup className="TextFieldsTables">
+                                            <InputGroupAddon type="prepend">
+                                              <InputGroupText className="groupText">
+                                                RM
+                                              </InputGroupText>
+                                            </InputGroupAddon>
+
+                                            <FormInput
+                                              type="number"
+                                              step=".10"
+                                              key={"price " + i}
+                                              onChange={this.handleChangeOptionsVariant2.bind(
+                                                this,
+                                                "variation2Price",
+                                                x,
+                                                i
+                                              )}
+                                              onFocus={this.setHint.bind(
+                                                this,
+                                                "VariationPrice"
+                                              )}
+                                              onBlur={() =>
+                                                this.setState({
+                                                  FocusOn: false,
+                                                })
+                                              }
+                                              value={
+                                                this.state.variation1.options[x]
+                                                  .variation2Options.options[i]
+                                                  .price
+                                              }
+                                              invalid={
+                                                this.state.variation1.options[x]
+                                                  .variation2Options.options[i]
+                                                  .errorPrice
+                                              }
+                                            />
+                                          </InputGroup>
+                                          {this.state.variation1.options[x]
+                                            .variation2Options.options[i]
+                                            .errorPrice ? (
+                                            <Tooltip
+                                              placement="top-end"
+                                              title="Price has to be filled and greater than 0."
+                                              interactive="true"
+                                            >
+                                              <p className="error">*</p>
+                                            </Tooltip>
+                                          ) : null}
+                                        </div>
+                                      </td>
+                                      <td className="tdNestedNew">
+                                        <div className="StepContainer">
+                                          <TextField
+                                            id="productStock1"
+                                            size="small"
+                                            onChange={this.handleChangeOptionsVariant2.bind(
+                                              this,
+                                              "variation2Stock",
+                                              x,
+                                              i
+                                            )}
+                                            onFocus={this.setHint.bind(
+                                              this,
+                                              "VariationStock"
+                                            )}
+                                            onBlur={() =>
+                                              this.setState({
+                                                FocusOn: false,
+                                              })
+                                            }
+                                            value={
+                                              this.state.variation1.options[x]
+                                                .variation2Options.options[i]
+                                                .stock
+                                            }
+                                            error={
+                                              this.state.variation1.options[x]
+                                                .variation2Options.options[i]
+                                                .errorStock
+                                            }
+                                            type="number"
+                                            InputLabelProps={{
+                                              shrink: "true",
+                                            }}
+                                            variant="outlined"
+                                            className="InputField2"
+                                          // error={this.state.stock || this.state.skuNotLongEnough}
+                                          />
+                                          {this.state.variation1.options[x]
+                                            .variation2Options.options[i]
+                                            .errorStock ? (
+                                            <Tooltip
+                                              placement="top-end"
+                                              title="Stock has to be filled and greater than 0."
+                                              interactive="true"
+                                            >
+                                              <p className="error">*</p>
+                                            </Tooltip>
+                                          ) : null}
+                                        </div>
+                                      </td>
+                                      <td className="tdNestedNew">
+                                        <div className="StepContainer">
+                                          <TextField
+                                            id="productStock1"
+                                            size="small"
+                                            onChange={this.handleChangeOptionsVariant2.bind(
+                                              this,
+                                              "variation2SKU",
+                                              x,
+                                              i
+                                            )}
+                                            onFocus={this.setHint.bind(
+                                              this,
+                                              "VariationSKU"
+                                            )}
+                                            onBlur={() =>
+                                              this.setState({
+                                                FocusOn: false,
+                                              })
+                                            }
+                                            value={
+                                              this.state.variation1.options[x]
+                                                .variation2Options.options[i].sku
+                                            }
+                                            error={
+                                              this.state.variation1.options[x]
+                                                .variation2Options.options[i]
+                                                .errorSKU
+                                            }
+                                            type="number"
+                                            InputLabelProps={{
+                                              shrink: "true",
+                                            }}
+                                            variant="outlined"
+                                            className="InputField2"
+                                          // error={this.state.stock || this.state.skuNotLongEnough}
+                                          />
+                                          {this.state.variation1.options[x]
+                                            .variation2Options.options[i]
+                                            .errorSKU ? (
+                                            <Tooltip
+                                              placement="top-end"
+                                              title="SKU has to be filled and at least 8 characters long."
+                                              interactive="true"
+                                            >
+                                              <p className="error">*</p>
+                                            </Tooltip>
+                                          ) : null}
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  )
+                                )}
+                              </table>
+                            </td>
+                          </tr>
+                        ) : (
+                          <tr>
+                            <td className="tdNestedText">
+                              {this.state.variation1.options[x].optionName
+                                ? this.state.variation1.options[x].optionName
+                                : "Option " + (x + 1) + " Variant 1"}
+                            </td>
+                            <td className="tdNestedText">
+                              <div className="StepContainer">
+                                <InputGroup className="ItemContainer">
+                                  <InputGroupAddon type="prepend">
+                                    <InputGroupText className="groupText">
+                                      RM
+                                    </InputGroupText>
+                                  </InputGroupAddon>
+                                  <FormInput
+                                    type="number"
+                                    step=".10"
+                                    onFocus={this.setHint.bind(
+                                      this,
+                                      "VariationPrice"
+                                    )}
+                                    onBlur={() =>
+                                      this.setState({
+                                        FocusOn: false,
+                                      })
+                                    }
+                                    onChange={this.handleChangeOptions.bind(
+                                      this,
+                                      "variation1Price",
+                                      x
+                                    )}
+                                    value={this.state.variation1.options[x].price}
+                                    invalid={
+                                      this.state.variation1.options[x].errorPrice
+                                    }
+                                  />
+                                </InputGroup>
+                                {this.state.variation1.options[x].errorPrice ? (
+                                  <Tooltip
+                                    placement="top-end"
+                                    title="Price has to be filled and greater than 0."
+                                    interactive="true"
+                                  >
+                                    <p className="error">*</p>
+                                  </Tooltip>
+                                ) : null}
+                              </div>
+                            </td>
+                            <td className="tdNestedText">
+                              <div className="StepContainer">
+                                <TextField
+                                  id="productStock1"
+                                  value={this.state.variation1.options[x].stock}
+                                  error={
+                                    this.state.variation1.options[x].errorStock
+                                  }
+                                  size="small"
+                                  onFocus={this.setHint.bind(
+                                    this,
+                                    "VariationStock"
+                                  )}
+                                  onBlur={() =>
+                                    this.setState({
+                                      FocusOn: false,
+                                    })
+                                  }
+                                  onChange={this.handleChangeOptions.bind(
+                                    this,
+                                    "variation1Stock",
+                                    x
+                                  )}
+                                  type="number"
+                                  InputLabelProps={{
+                                    shrink: "true",
+                                  }}
+                                  variant="outlined"
+                                  className="InputField2"
+                                // error={this.state.stock || this.state.skuNotLongEnough}
+                                />
+                                {this.state.variation1.options[x].errorStock ? (
+                                  <Tooltip
+                                    placement="top-end"
+                                    title="Stock has to be filled and greater than 0."
+                                    interactive="true"
+                                  >
+                                    <p className="error">*</p>
+                                  </Tooltip>
+                                ) : null}
+                              </div>
+                            </td>
+                            <td className="tdNestedText">
+                              <div className="StepContainer">
+                                <TextField
+                                  id="productSku"
+                                  size="small"
+                                  value={this.state.variation1.options[x].sku}
+                                  onFocus={this.setHint.bind(
+                                    this,
+                                    "VariationSKU"
+                                  )}
+                                  onBlur={() =>
+                                    this.setState({
+                                      FocusOn: false,
+                                    })
+                                  }
+                                  onChange={this.handleChangeOptions.bind(
+                                    this,
+                                    "variation1SKU",
+                                    x
+                                  )}
+                                  InputLabelProps={{
+                                    shrink: "true",
+                                  }}
+                                  variant="outlined"
+                                  className="InputField2"
+                                  error={
+                                    this.state.variation1.options[x].errorSKU
+                                  }
+                                />
+                                {this.state.variation1.options[x].errorSKU ? (
+                                  <Tooltip
+                                    placement="top-end"
+                                    title="SKU has to be filled and be at least 8 characters long."
+                                    interactive="true"
+                                  >
+                                    <p className="error">*</p>
+                                  </Tooltip>
+                                ) : null}
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      )}
+                    </table>
+                  ) : null}
+                </div>
+              </CardContent>
+            </Card>
+            <br />
             <Card className="SubContainer" id="shippingInfo">
               <CardContent>
-                <p className="Heading">Shipping Information</p>
+                <div className="row" style={{ display: "flex" }}>
+                  <div className="col-6">
+                    <p className="Heading">Shipping Information</p>
+                  </div>
+                  <div className="col-6" style={{ textAlign: "right" }}>
+                    <HtmlTooltip
+                      title={
+                        <React.Fragment>
+                          <div style={{ padding: "10px" }}>
+                            <Typography color="inherit"><label style={{ fontWeight: "bold" }}>Standard Shipping Packaging (m)</label></Typography>
+                            {
+                              dummyStandard.length > 0 && dummyStandard.map((data, index) => {
+                                return (
+                                  <div className="row" style={{ paddingTop: "5px", flex: "1" }}>
+                                    <div className="col-2">
+                                      <label style={{ fontWeight: "bold" }}>Option{index + 1}</label>
+                                    </div>
+                                    <div className="col-3">
+                                      <label>Width:</label> {data.Width}
+                                    </div>
+                                    <div className="col-3">
+                                      <label>Height:</label>{data.Height}
+                                    </div>
+                                    <div className="col-2">
+                                      <label>Depth:</label>{data.Depth}
+                                    </div>
+                                    <div className="col-1" style={{ paddingBottom: "5px" }}>
+                                      <IconButton onClick={() => handleShipping(data, index)} >
+                                        <CheckBoxIcon style={{ color: this.state.OptionClick === index ? "blue" : "grey" }} />
+                                      </IconButton>
+                                    </div>
+                                  </div>
+                                )
+                              })
+                            }
+                          </div>
+                        </React.Fragment>
+                      }
+                    >
+                      <IconButton size="medium">
+                        <InfoIcon />
+                      </IconButton>
+                    </HtmlTooltip>
+                  </div>
+                </div>
 
                 <div className="HorizontalContainer">
                   <p className="FontType3">Dimension: </p>

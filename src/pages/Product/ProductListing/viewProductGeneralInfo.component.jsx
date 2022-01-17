@@ -12,10 +12,13 @@ import 'react-bootstrap-accordion/dist/index.css'
 // Share components
 import Pagination from "../../../tools/Pagination";
 import { url } from "../../../tools/Helpers";
+import PageHeader from "../../../tools/breadcrumb/breadcrumb";
 import LoadingPanel from "../../../tools/LoadingPanel";
 import USER from "../../../assets/user.jpg";
 import Logo from "../../../assets/logos/logo.png";
 import ViewReviewDetails from '../ProductReview/viewReviewDetails'
+import { ArrowRoundedLeft8x13Svg } from '../../../assets/svg';
+
 
 // UI Purpose
 import CancelIcon from '@mui/icons-material/HighlightOffTwoTone';
@@ -84,7 +87,13 @@ class ViewProductGeneralInfo extends Component {
       selectedCommentReply: [],
       replyComment: "",
       isReplySubmit: false,
-      productName: ""
+      productName: "",
+      isCategorySet: false,
+
+      breadcrumb: [
+        // { title: "All Product", url: "" },
+        // { title: "Main Category", url: "/shop/AllProductCategory/" },
+      ]
     };
     this.handleBack = this.handleBack.bind(this)
     this.getTagList = this.getTagList.bind(this)
@@ -260,6 +269,29 @@ class ViewProductGeneralInfo extends Component {
             })
         })
       }
+    }
+
+
+    if (this.state.isCategorySet === false) {
+      this.setState({ isCategorySet: true, })
+      let breadcrumb = this.state.breadcrumb
+
+      this.state.CategoryHierachyListing.length > 0 && this.state.CategoryHierachyListing.map((category, i) => {
+        breadcrumb = [...breadcrumb, ...[
+          { title: category, url: "" },
+        ]]
+
+      })
+
+      this.setState({ breadcrumb: breadcrumb })
+
+      // console.log("this.breadcrumb 2", breadcrumb)
+      // console.log("this.breadcrumb 3", this.state.CategoryHierachyListing)
+      // this.setState({
+      //   breadcrumb: [...breadcrumb, ...[
+      //     { title: [category[i]], url: "" },
+      //   ]]
+      // })
     }
   }
 
@@ -463,20 +495,24 @@ class ViewProductGeneralInfo extends Component {
     }
     const rating = [5, 4, 3, 2, 1]
 
+
     return (
       this.props.productInfo.length > 0 ?
         <div style={{ width: "100%" }}>
           <div >
             <div style={{ margin: "1%" }}>
-              <h3>{typeof this.props.productInfo !== "undefined" ? this.props.productInfo[0].ProductName : "Product Information"}</h3>
             </div>
             <div style={{ display: "flex", marginLeft: "1%" }}>
               <Button onClick={() => typeof this.props.backToList === "function" && this.handleBack()}>
-                <i className="fas fa-chevron-left"></i>
-                <Link className="nav-link" to={"/viewProduct"}>
+                <ArrowRoundedLeft8x13Svg fontSize="inherit" />
+                <Link style={{ paddingLeft: "10px", paddingRight: "10px", textDecoration: "none", color: "black" }} to={"/viewProduct"}>
                   Back
                 </Link>
               </Button>
+              <h3>{typeof this.props.productInfo !== "undefined" ? this.props.productInfo[0].ProductName : "Product Information"}</h3>
+            </div>
+            <div style={{ display: "flex", marginLeft: "2%", paddingTop: "10px" }}>
+              <PageHeader header="Category" breadcrumb={this.state.breadcrumb} />
             </div>
 
             <div style={{ marginLeft: "2%", marginRight: "2%", marginBottom: "2%" }}>
@@ -538,7 +574,7 @@ class ViewProductGeneralInfo extends Component {
                           </div>
                         </div>
 
-                        <div key="Tags" className="row">
+                        {/* <div key="Tags" className="row">
                           <div className="col-lg-2">
                             <label style={productInfoLabelStyle}>Product Category :</label>
                           </div>
@@ -547,7 +583,7 @@ class ViewProductGeneralInfo extends Component {
                               return (<label>{"  >  " + category}</label>)
                             })}
                           </div>
-                        </div>
+                        </div> */}
 
                         <div key="Description" className="row">
                           <div className="col-lg-2">
