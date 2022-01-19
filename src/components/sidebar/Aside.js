@@ -23,6 +23,7 @@ import Dashboard from '@mui/icons-material/Dashboard';
 import { resetLogonUser } from "../../components/auth/AuthManagement"
 import LogoutIcon from '@mui/icons-material/Logout';
 import Button from '@mui/material/Button';
+import AlertDialog from "../ModalComponent/ModalComponent";
 
 // "user manual": set your default icon styles here
 const MaterialIconStyles = {
@@ -50,6 +51,7 @@ const Aside = ({ rtl, toggled, handleToggleSidebar, sidebarItems }) => {
   const [isCollapsed, setIsCollapsed] = useState(false) // check the sidebar is actually collapsed 
   const [collapsed, setCollapsed] = useState(false)
   const [MaterialIconStyle, setMaterialIconStyle] = useState(MaterialIconStyles.OutlinedMaterialIcon) // "user manual": set your default icon styles here
+  const [isLogoutDialogOpen, setLogoutDialog] = useState(false)
 
   const handleCollapseSidebar = (value) => {
     setIsCollapsed(typeof value !== "undefined" && value !== null ? value : !isCollapsed);
@@ -114,9 +116,40 @@ const Aside = ({ rtl, toggled, handleToggleSidebar, sidebarItems }) => {
           </a>
         </div> */}
         <div className="sidebar-btn-wrapper" style={{ padding: '20px 24px', }}>
-          <Button onClick={(e) => { resetLogonUser() }}>Logout <LogoutIcon /></Button>
+          <Button onClick={(e) => {
+            setLogoutDialog(true)
+            // resetLogonUser()
+          }}>Logout <LogoutIcon /></Button>
         </div>
       </SidebarFooter>
+
+      <AlertDialog
+        open={isLogoutDialogOpen}
+        fullWidth
+        maxWidth="sm"
+        handleToggleDialog={() => setLogoutDialog(false)}
+        title="Reminder"
+        showAction={false}
+      >
+        <div className="container-fluid">
+          <div className="container">
+            <label style={{ fontSize: "18px" }}>Are you sure to logout? There are some unsaved stock data</label>
+            {/* <br /> */}
+            <div style={{ paddingTop: "10px" }}>
+              <p className="text-danger" style={{ fontSize: "16px" }}><i>Disclaimer: All Draft will be discard on user logout</i></p>
+            </div>
+            <br />
+            <div style={{ textAlign: "right" }}>
+              <Button variant="contained" color="primary" style={{ margin: "10px" }} onClick={() => resetLogonUser()}>
+                Yes
+              </Button>
+              <Button variant="contained" color="secondary" onClick={() => setLogoutDialog(false)}>
+                No
+              </Button>
+            </div>
+          </div>
+        </div>
+      </AlertDialog >
     </ProSidebar >
   );
 };

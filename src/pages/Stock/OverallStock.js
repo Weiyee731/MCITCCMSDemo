@@ -9,22 +9,35 @@ import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
+import DraftsIcon from '@mui/icons-material/Drafts';
 
-import { Button } from "@mui/material";
-import ResponsiveDatePickers from "../../tools/datePicker";
-import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
-
+// Share Components
 import SearchBar from "../../components/SearchBar/SearchBar"
 import { isArrayNotEmpty } from "../../tools/Helpers";
 import TableComponents from "../../components/TableComponents/TableComponents";
-
-
+import AlertDialog from "../../components/ModalComponent/ModalComponent";
+import { convertDateTimeToDDMMYY, isStringNullOrEmpty } from "../../tools/Helpers";
+import Logo from "../../assets/logos/logo.png";
+import ResponsiveDatePickers from "../../tools/datePicker";
 import "./OverallStock.css";
+
+// UI Components
 import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import Select from 'react-select';
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
 import GroupAddIcon from '@mui/icons-material/Add';
 import Badge from '@mui/material/Badge';
+import { toast } from "react-toastify";
+import TextField from '@mui/material/TextField';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Box from '@mui/material/Box';
+import FormHelperText from '@mui/material/FormHelperText';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Button } from "@mui/material";
+// import ResponsiveDatePickers from "../../tools/datePicker";
+import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
 
 
 
@@ -79,14 +92,14 @@ const headCells = [
     },
 ];
 
-function createData(pid, name, calories, fat, carbs, protein) {
+function createData(StockInDate, ProductSKU, ProductName, Store, StockInAmount, StockPrice) {
     return {
-        pid,
-        name,
-        calories,
-        fat,
-        carbs,
-        protein,
+        StockInDate,
+        ProductSKU,
+        ProductName,
+        Store,
+        StockInAmount,
+        StockPrice
     };
 }
 
@@ -109,22 +122,59 @@ const rows = [
 
 const INITIAL_STATE = {
 
+    // DraftListing Details
+    isOpenDraftModal: false,
+    isDataEdit: false,
+
+    OrderDate: new Date(),
+    ReceiveDate: new Date(),
+    StockInDate: new Date(),
+
+    ProductData: [],
+    Remarks: "",
+    StockPrice: "",
+    StockInAmount: "",
+    Store: [],
+    InvoiceNo: "",
+    rowIndex: "",
+    DraftNo: "",
+    selectedListID: [],
+    isDiscountClick: false,
+
+    isInvoiceError: false,
+    isStoreError: false,
+    isStockInAmountError: false,
+    isStockPriceError: false,
+    ReceiveValidated: true,
+    OrderValidated: true,
+    StockInValidated: true,
+
+    isSet: false,
 }
+
+const DraftListing_State = [{
+    isDraftListingShown: false,
+    storageListing: [],
+}]
 
 class Stock extends Component {
     constructor(props) {
         super(props);
         this.state = INITIAL_STATE
+        this.DraftListing = DraftListing_State
     }
 
     componentDidMount() {
-
+        if (localStorage.getItem("DataSetDraft") !== null &&
+            JSON.parse(localStorage.getItem("DataSetDraft")).length > 0) {
+            this.DraftListing[0].storageListing = JSON.parse(localStorage.getItem("DataSetDraft"))
+            // this.setState({ storageListing: JSON.parse(localStorage.getItem("DataSetDraft")) })
+        }
     }
 
     componentDidUpdate(prevProps, prevState) {
 
     }
-
     renderTableRows = (data, index) => {
         return (
             <>
@@ -134,14 +184,57 @@ class Stock extends Component {
                     scope="row"
                     padding="normal"
                 >
-                    {data.name}
+                    {data.StockInDate}
                 </TableCell>
-                <TableCell align="center">{data.calories}</TableCell>
-                <TableCell align="center">{data.fat}</TableCell>
-                <TableCell align="center">{data.carbs}</TableCell>
-                <TableCell align="center">{data.protein}</TableCell>
+                <TableCell align="center">{data.ProductSKU}</TableCell>
+                <TableCell align="center">{data.ProductName}</TableCell>
+                <TableCell align="center">{data.Store}</TableCell>
+                <TableCell align="center">{data.StockInAmount}</TableCell>
+                <TableCell align="center">{data.StockPrice}</TableCell>
             </>
         )
+    }
+
+    renderDraftTableRows = (data, index) => {
+        return (
+            <>
+                <TableCell
+                    component="th"
+                    id={`enhanced-table-checkbox-${index}`}
+                    scope="row"
+                    padding="normal"
+                >
+                    {data.StockInDate !== undefined && convertDateTimeToDDMMYY(data.StockInDate)}
+                </TableCell>
+                <TableCell align="center">{data.ProductSKU}</TableCell>
+                <TableCell align="center">{data.ProductName}</TableCell>
+                <TableCell align="center">{data.Store[0].value}</TableCell>
+                <TableCell align="center">{data.StockInAmount}</TableCell>
+                <TableCell align="center">{data.StockPrice}</TableCell>
+
+            </>
+        )
+    }
+
+    onDraftTableRowClick = (event, row) => {
+        console.log("row", row)
+        this.setState({
+            DraftNo: row.DraftNo,
+            rowIndex: row.rowIndex,
+            ProductData: row.filteredProduct,
+            OrderDate: row.OrderDate,
+            StockInDate: row.StockInDate,
+            ReceiveDate: row.ReceiveDate,
+            InvoiceNo: row.InvoiceNo,
+            Store: row.Store,
+
+            StockInAmount: row.StockInAmount,
+            StockPrice: row.StockPrice,
+            isDiscountClick: row.isDiscountClick,
+            Remarks: row.Remarks,
+
+            isOpenDraftModal: true,
+        })
     }
 
     renderTableActionButton = () => {
@@ -162,19 +255,325 @@ class Stock extends Component {
     }
 
     onTableRowClick = (event, row) => {
-        console.log(row)
     }
 
     onAddButtonClick = (item) => {
         console.log('add button')
     }
 
-    onDeleteButtonClick = (items) => {
-        console.log('delete button')
-        console.log(items)
+    // Remove selected state listing and localStorage listing data
+    onDelete = () => {
+        // let statelisting = this.DataState
+        let localListing = localStorage.getItem("DataSetDraft") !== null ? JSON.parse(localStorage.getItem("DataSetDraft")) : []
+        let selectedList = this.state.selectedListID
+
+        if (localListing.length > 0 && selectedList.length > 0) {
+            selectedList.map((datalist) => {
+                localListing = localListing.filter((data) => data.DraftNo !== datalist.DraftNo)
+            })
+        }
+        localStorage.setItem("DataSetDraft", JSON.stringify(localListing))
+        this.DraftListing[0].storageListing = localListing
+        this.setState({ selectedListID: [] })
+    }
+
+    OnSubmitUpdateCache = (data, DraftNo) => {
+        if (!this.errorChecking()) {
+            let localListing = localStorage.getItem("DataSetDraft") !== null ? JSON.parse(localStorage.getItem("DataSetDraft")) : []
+            localListing.length > 0 && localListing.map((list, index) => {
+                if (list.DraftNo === DraftNo) {
+                    localListing[index] = {
+                        rowIndex: index,
+                        DraftNo: DraftNo,
+                        filteredProduct: this.state.ProductData,
+                        ProductID: this.state.ProductData[0].ProductID,
+                        ProductName: this.state.ProductData[0].ProductName,
+                        ProductSKU: this.state.ProductData[0].SKU,
+
+                        InvoiceNo: this.state.InvoiceNo,
+                        Store: this.state.Store,
+                        StoreID: this.state.Store.id,
+                        OrderDate: this.state.OrderDate,
+                        StockInDate: this.state.StockInDate,
+                        ReceiveDate: this.state.ReceiveDate,
+
+                        StockPrice: this.state.StockPrice,
+                        StockInAmount: this.state.StockInAmount,
+                        isDiscountClick: this.state.isDiscountClick,
+                        Remarks: isStringNullOrEmpty(this.state.Remarks) ? "-" : this.state.Remarks
+                    }
+                }
+            })
+            localStorage.setItem("DataSetDraft", JSON.stringify(localListing))
+            this.DraftListing[0].storageListing = localListing
+            this.setState(INITIAL_STATE)
+        }
+        else {
+            toast.warning("Input Error: Please cross check on All Stock Details Input")
+        }
+    }
+
+    OnSubmitAdd = () => {
+        if (!this.errorChecking()) {
+
+            let localListing = localStorage.getItem("DataSetDraft") !== null ? JSON.parse(localStorage.getItem("DataSetDraft")) : []
+            if (localListing.length > 0) {
+                localListing = localListing.filter((data) => data.DraftNo !== this.state.DraftNo)
+            }
+
+            localStorage.setItem("DataSetDraft", JSON.stringify(localListing))
+            this.DraftListing[0].storageListing = localListing
+            this.setState(INITIAL_STATE)
+            toast.success("New Stock Data has been added")
+
+        } else {
+            toast.warning("Input Error: Please cross check on All Stock Details Input")
+        }
+    }
+
+    // Check whether all input has been filled
+    errorChecking = () => {
+        let error = false
+        if (!this.state.isInvoiceError && !this.state.isStoreError && !this.state.isStockInAmountError && !this.state.isStockPriceError
+            && this.state.ReceiveValidated && this.state.OrderValidated && this.state.StockInValidated) {
+            if (isStringNullOrEmpty(this.state.StockPrice) || isStringNullOrEmpty(this.state.StockInAmount) || isStringNullOrEmpty(this.state.Store) || isStringNullOrEmpty(this.state.InvoiceNo)) {
+                error = true
+            } else if ((convertDateTimeToDDMMYY(this.state.OrderDate) > convertDateTimeToDDMMYY(this.state.StockInDate))) {
+                this.setState({ OrderValidated: false, StockInValidated: false })
+                error = true
+            } else if ((convertDateTimeToDDMMYY(this.state.ReceiveDate) < convertDateTimeToDDMMYY(this.state.OrderDate))) {
+                this.setState({ OrderValidated: false, ReceiveValidated: false })
+                error = true
+            }
+            else if ((convertDateTimeToDDMMYY(this.state.ReceiveDate) > convertDateTimeToDDMMYY(this.state.StockInDate))) {
+                this.setState({ ReceiveValidated: false, StockInValidated: false })
+                error = true
+            }
+            else {
+                error = false
+            }
+        } else {
+            error = true
+        }
+        return error
+    }
+
+    onDateChange = (e, name) => {
+
+        console.log("e", e)
+        switch (name) {
+            case "StockInDate":
+                this.setState({ StockInDate: isStringNullOrEmpty(e) ? "Invalid Date" : e, StockInValidated: (!isStringNullOrEmpty(e) && e !== "Invalid Date") })
+                break;
+
+            case "OrderDate":
+                this.setState({ OrderDate: isStringNullOrEmpty(e) ? "Invalid Date" : e, OrderValidated: (!isStringNullOrEmpty(e) && e !== "Invalid Date") })
+                break;
+
+            case "ReceiveDate":
+                this.setState({ ReceiveDate: isStringNullOrEmpty(e) ? "Invalid Date" : e, ReceiveValidated: (!isStringNullOrEmpty(e) && e !== "Invalid Date") })
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    handleFormInput = (e, name) => {
+        switch (name) {
+            case "Invoice":
+                if (isStringNullOrEmpty(e.target.value))
+                    this.setState({ InvoiceNo: e.target.value, isInvoiceError: true })
+                else
+                    this.setState({ InvoiceNo: e.target.value, isInvoiceError: false })
+
+                break;
+
+            case "Store":
+                console.log("eeee", e)
+                if (isStringNullOrEmpty(e))
+                    this.setState({
+                        Store: [{
+                            id: e.id,
+                            value: e.value,
+                            label: e.label
+                        }], isStoreError: true
+                    })
+                else
+                    this.setState({
+                        Store: [{
+                            id: e.id,
+                            value: e.value,
+                            label: e.label
+                        }], isStoreError: false
+                    })
+                break;
+
+            case "StockIn":
+                if (isStringNullOrEmpty(e.target.value))
+                    this.setState({ StockInAmount: e.target.value, isStockInAmountError: true })
+                else
+                    this.setState({ StockInAmount: e.target.value, isStockInAmountError: false })
+                break;
+
+            case "StockPrice":
+                if (isStringNullOrEmpty(e.target.value))
+                    this.setState({ StockPrice: e.target.value, isStockPriceError: true })
+                else
+                    this.setState({ StockPrice: e.target.value, isStockPriceError: false })
+                break;
+
+            case "Remark":
+                this.setState({ Remarks: e.target.value })
+                break;
+
+            default:
+                break;
+        }
     }
 
     render() {
+        const dummyStore =
+            [
+                { id: "1", Store: "Store A" },
+                { id: "2", Store: "Store B" },
+                { id: "3", Store: "Store C" },
+            ]
+        const TextFieldData = (type, variant, title, name, stateValue, error) => {
+            return (
+                <div className="col-12 col-md-6">
+                    <TextField variant={variant} type={type} size="small" fullWidth label={title} value={stateValue} name={name} onChange={(e) => this.handleFormInput(e, name)} required />
+                    {error && <FormHelperText sx={{ color: 'red' }} id={error}>Invalid {title} </FormHelperText>}
+                </div>
+            )
+        }
+
+        const DateData = (title, name, stateValue, error) => {
+            return (
+                <div className="col-12 col-md-6">
+                    <ResponsiveDatePickers variant="standard" title={title} value={stateValue} onChange={(e) => this.onDateChange(e, name)} required />
+                    {error === false && <FormHelperText sx={{ color: 'red' }} id={error}>Invalid {title} </FormHelperText>}
+                </div>
+            )
+        }
+
+        const ModalListing = (filteredProduct) => {
+            return (
+                <>
+                    <div className="col-12 col-md-2" style={{ float: "right" }}>
+                        <ResponsiveDatePickers variant="standard" title="Stock In Date" value={this.state.StockInDate} onChange={(e) => this.onDateChange(e, "StockInDate")} required />
+                        {this.state.StockInValidated === false && <FormHelperText sx={{ color: 'red' }} id={this.state.StockInValidated}>Invalid Stock In Date </FormHelperText>}
+                    </div>
+                    <div className="row" style={{ paddingTop: "5px", paddingBottom: "5px" }}>
+                        <div className="col-2" style={{ textAlign: "left" }}>
+                            <img height="100px" width="100px" alt="Image"
+                                src={filteredProduct.length > 0 && filteredProduct[0].ProductImage !== null ? filteredProduct[0].ProductImage : Logo}
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = Logo;
+                                }}
+                            />
+                        </div>
+                        <div className="col-8">
+                            <div><label style={{ fontWeight: "bold" }}>Product Name: {filteredProduct.length > 0 && filteredProduct[0].ProductName !== null ? filteredProduct[0].ProductName : ""}</label></div>
+                            <div><label style={{ fontSize: "13px", color: "lightslategrey" }}>Variation: {filteredProduct.length > 0 && filteredProduct[0].Variation !== null ? filteredProduct[0].Variation : ""}</label></div>
+                            <div><label style={{ fontSize: "13px", color: "lightslategrey" }}>Brand: {filteredProduct.length > 0 && filteredProduct[0].Brand !== null ? filteredProduct[0].Brand : "No Brand"}</label></div>
+                            <div><label style={{ fontSize: "13px", color: "lightslategrey" }}>Model:  {filteredProduct.length > 0 && filteredProduct[0].Model !== null ? filteredProduct[0].Model : "No Model"}</label></div>
+                            <div><label style={{ fontSize: "13px", color: "lightslategrey" }}>SKU: {filteredProduct.length > 0 && filteredProduct[0].SKU !== null ? filteredProduct[0].SKU : ""}</label></div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div className="row" style={{ paddingTop: "5px", paddingBottom: "5px" }}>
+                        {TextFieldData("text", "standard", "Purchase Order Number", "Invoice", this.state.InvoiceNo, this.state.isInvoiceError)}
+                        {DateData("Order Date", "OrderDate", this.state.OrderDate, this.state.OrderValidated)}
+                        <br />
+                        <div className="col-12 col-md-6">
+                            <FormControl variant="standard" size="small" fullWidth>
+                                <InputLabel id="Store-label">Store</InputLabel>
+                                <Select
+                                    labelId="Store"
+                                    id="Store"
+                                    name="Store"
+                                    value={this.state.Store[0]}
+                                    onChange={(e) => this.handleFormInput(e, "Store")}
+                                    label="Store"
+                                    options={
+                                        isArrayNotEmpty(dummyStore) && dummyStore.map((el, idx) => {
+                                            return { id: el.id, value: el.Store, label: el.Store }
+                                        })
+                                    }
+                                >
+                                </Select>
+                            </FormControl>
+                        </div>
+                        {DateData("Receive Date", "ReceiveDate", this.state.ReceiveDate, this.state.ReceiveValidated)}
+                    </div>
+                    <hr />
+                    {
+                        this.state.Store.length > 0 ?
+                            <>
+                                <div className="row" style={{ paddingTop: "5px", paddingBottom: "5px" }}>
+                                    <div className="col-12 col-md-6">
+                                        <label style={{ color: "grey" }}>Current Stock : 75</label>
+                                    </div>
+                                    <div className="col-12 col-md-6" style={{ textAlign: "right" }}>
+                                        <CheckBoxIcon style={{ color: this.state.isDiscountClick === true ? "blue" : "grey" }} onClick={() => this.setState({ isDiscountClick: !this.state.isDiscountClick })} /> <label style={{ color: "grey" }}>Discount</label>
+                                    </div>
+                                    {TextFieldData("number", "standard", "Stock In Amount", "StockIn", this.state.StockInAmount, this.state.isStockInAmountError)}
+                                    {TextFieldData("number", "standard", "Stock Price", "StockPrice", this.state.StockPrice, this.state.isStockPriceError)}
+                                    <div className="col-12 mt-3">
+                                        <Box sx={{ width: '100%' }}>
+                                            <TextField
+                                                variant="outlined"
+                                                size="large"
+                                                name="Remark"
+                                                label="Remark"
+                                                value={this.state.Remarks}
+                                                onChange={(e) => this.handleFormInput(e, "Remark")}
+                                                fullWidth
+                                            />
+                                        </Box>
+                                    </div>
+                                </div>
+                                <br />
+
+                                <div className="col-12 col-md-12" style={{ textAlign: "right" }}>
+                                    {
+                                        this.state.isDataEdit ?
+                                            <Button variant="contained"
+                                                // onClick={() =>   { this.OnSubmitUpdateCache(this.state.rowIndex, this.state.DraftNo) }} 
+                                                color="primary"  >
+                                                Update
+                                            </Button>
+                                            :
+                                            <>
+                                                <Button variant="contained"
+                                                    onClick={() => { this.OnSubmitUpdateCache(this.state.rowIndex, this.state.DraftNo) }}
+                                                    color="secondary" style={{ margin: "10px" }}>
+                                                    Update Draft
+                                                </Button>
+                                                <Button variant="contained"
+                                                    onClick={() => { this.OnSubmitAdd() }}
+                                                    color="primary"  >
+                                                    Add Stock
+                                                </Button>
+                                            </>
+
+                                    }
+                                </div>
+                            </>
+                            :
+                            <div style={{ paddingBottom: "50px" }}>
+                            </div>
+                    }
+                </>
+            )
+        }
+
+        console.log(localStorage.getItem("DataSetDraft") !== null &&
+            JSON.parse(localStorage.getItem("DataSetDraft")).length > 0 &&
+            JSON.parse(localStorage.getItem("DataSetDraft")))
+
         return (
             <div className="container-fluid my-2">
                 <div className="row">
@@ -210,7 +609,6 @@ class Stock extends Component {
                                     <Select
                                         labelId="search-filter-category"
                                         id="search-filter-category"
-                                        // value={searchCategory}
                                         label="Search By"
                                         onChange={this.handleSearchCategory}
                                         size="small"
@@ -241,21 +639,34 @@ class Stock extends Component {
                             </div>
                         </div>
                     </div>
+
                     <h1>Stock List</h1>
                     <div className="w-100 container-fluid">
                         <TableComponents
-                            // detailed documentations is in this component js file. Please refer.
-                            // tableTopLeft={<h3 style={{ fontWeight: 600 }}>Table Name</h3>}
                             tableTopRight={
-                                <Tooltip title="Add Stock">
-                                    <IconButton size="small" sx={{ color: "#0074ea", marginRight: 2 }}>
-                                        <Badge badgeContent={4} color="primary">
+                                <div className="d-flex">
+                                    <Tooltip title="Add Stock">
+                                        <IconButton size="small" sx={{ color: "#0074ea", marginRight: 1 }}>
                                             <Link className="nav-link" to={"/addStock"}>
                                                 <GroupAddIcon />
                                             </Link>
-                                        </Badge>
-                                    </IconButton>
-                                </Tooltip>
+                                        </IconButton>
+                                    </Tooltip>
+                                    {
+                                        localStorage.getItem("DataSetDraft") !== null && JSON.parse(localStorage.getItem("DataSetDraft")).length > 0 &&
+                                        <Tooltip title="Draft Listing">
+                                            <IconButton size="small" sx={{ color: "#0074ea", marginRight: 2 }} onClick={() => <>{this.DraftListing[0].isDraftListingShown = true}
+                                                {this.setState({ isSet: true })}
+                                            </>}>
+                                                <Badge badgeContent={JSON.parse(localStorage.getItem("DataSetDraft")).length} color="primary">
+                                                    <DraftsIcon />
+                                                </Badge>
+                                            </IconButton>
+                                        </Tooltip>
+                                    }
+
+                                </div>
+
                             }
                             tableOptions={{
                                 dense: true,
@@ -281,7 +692,58 @@ class Stock extends Component {
                         />
                     </div>
                 </div>
-            </div>
+                <AlertDialog
+                    open={this.DraftListing[0].isDraftListingShown}
+                    fullWidth={true}
+                    maxWidth="xl"
+                    handleToggleDialog={() => <>{this.DraftListing[0].isDraftListingShown = false}
+                        {this.setState({ isSet: false })}
+                    </>}
+                >
+                    <TableComponents
+                        tableTopLeft={<h3>Unsaved Stock Listing</h3>}
+                        tableOptions={{
+                            dense: true,
+                            tableOrderBy: 'asc',
+                            sortingIndex: "DraftNo",
+                            stickyTableHeader: false,
+                            stickyTableHeight: 300,
+                            elevation: 1
+                        }}
+                        paginationOptions={[10, 15, 20, { label: 'All', value: -1 }]}
+                        tableHeaders={headCells}
+                        tableRows={{
+                            renderTableRows: this.renderDraftTableRows,
+                            checkbox: true,
+                            checkboxColor: "primary",
+                            onRowClickSelect: false
+                        }}
+                        Data={this.DraftListing[0].storageListing}
+                        onSelectRow={(e) => this.setState({ selectedListID: e })}
+                        onSelectAllRows={(e) => this.setState({ selectedListID: e })}
+                        onTableRowClick={this.onDraftTableRowClick}
+                        SelectionActionButtons={<Tooltip title="Delete">
+                            <IconButton aria-label="delete" onClick={() => { this.onDelete() }}   >
+                                <DeleteIcon />
+                            </IconButton>
+                        </Tooltip>}
+                    />
+                </AlertDialog >
+                <AlertDialog
+                    open={this.state.isOpenDraftModal}
+                    fullWidth
+                    maxWidth="md"
+                    handleToggleDialog={() => this.setState(INITIAL_STATE)}
+                    title="Draft Stock"
+                    showAction={false}
+                >
+                    <div className="container-fluid">
+                        <div className="container" style={{ padding: "10px" }}>
+                            {ModalListing(this.state.ProductData)}
+                        </div>
+                    </div>
+                </AlertDialog >
+            </div >
         )
     }
 }

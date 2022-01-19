@@ -9,7 +9,6 @@ import SearchBar from "../../components/SearchBar/SearchBar"
 import { isStringNullOrEmpty, convertDateTimeToDDMMYY, isArrayNotEmpty, convertDateTimeToString112Format } from "../../tools/Helpers";
 import TableComponents from "../../components/TableComponents/TableComponents";
 import AlertDialog from "../../components/ModalComponent/ModalComponent";
-import ModalPopOut from "../../components/ModalComponent/ModalComponent";
 import Logo from "../../assets/logos/logo.png";
 import { ArrowRoundedLeft8x13Svg } from '../../assets/svg';
 import "./OverallStock.css";
@@ -112,9 +111,7 @@ const INITIAL_STATE = {
     isDataEdit: false,
     rowIndex: "",
     DraftNo: "",
-    selectedListID: "",
-
-    testing: []
+    selectedListID: [],
 }
 
 const StockInData = []
@@ -124,7 +121,6 @@ class AddStock extends Component {
         super(props);
         this.state = INITIAL_STATE
         this.DataState = StockInData
-        this.DataStorageNum = 0
 
         this.props.CallAllProducts({
             type: 'Merchant',
@@ -137,19 +133,9 @@ class AddStock extends Component {
     }
 
     componentDidMount() {
-        if (localStorage.getItem("DataSetDraft") === null) {
-            console.log("FIRST ONE")
-        }
-        else {
-            this.DataStorageNum = localStorage.getItem("DataSetDraft").length
-        }
-
-        this.state.testing.push("hello")
-        console.log(this.state.testing)
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log(prevState.testing)
     }
 
     renderTableRows = (data, index) => {
@@ -173,7 +159,6 @@ class AddStock extends Component {
     }
 
     onTableRowClick = (event, row) => {
-        console.log("CHECKING row", row)
         this.setState({
             searchKeywords: row.SKU,
             DraftNo: row.DraftNo,
@@ -252,9 +237,21 @@ class AddStock extends Component {
 
             case "Store":
                 if (isStringNullOrEmpty(e))
-                    this.setState({ Store: e, isStoreError: true })
+                    this.setState({
+                        Store: [{
+                            id: e.id,
+                            value: e.value,
+                            label: e.label
+                        }], isStoreError: true
+                    })
                 else
-                    this.setState({ Store: e, isStoreError: false })
+                    this.setState({
+                        Store: [{
+                            id: e.id,
+                            value: e.value,
+                            label: e.label
+                        }], isStoreError: false
+                    })
                 break;
 
             case "StockIn":
@@ -290,6 +287,7 @@ class AddStock extends Component {
             this.setState({ searchKeywords: value })
             if (this.state.filteredProduct !== undefined) {
                 this.state.filteredProduct.splice(0, this.state.filteredProduct.length)
+                let filteredListing = []
 
                 let DataSet = JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? this.props.allstocks :
                     JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 && this.props.allstocks !== undefined ? this.props.allstocks.filter((x) => parseInt(x.MerchantID) === parseInt(localStorage.getItem("loginUser")[0].UserID)) : []
@@ -299,8 +297,11 @@ class AddStock extends Component {
                         value.toLowerCase()
                     )
                 ).map((filteredItem) => {
-                    this.state.filteredProduct.push(filteredItem);
+                    filteredListing.push(filteredItem);
                 })
+
+                if (filteredListing.length > 0)
+                    this.state.filteredProduct.push(filteredListing[0])
             }
         }
     }
@@ -313,7 +314,7 @@ class AddStock extends Component {
         if (listing.length > 0) {
             if (listing.filter((data) => data.ProductSKU == product.SKU).length > 0) {
                 checkSimilar = true
-                toast.warning("Product with SKU is already added in the list")
+                toast.warning("Duplicate Error : Product with SKU is already added in the list")
             }
         }
 
@@ -328,9 +329,21 @@ class AddStock extends Component {
             && this.state.ReceiveValidated && this.state.OrderValidated && this.state.StockInValidated) {
             if (isStringNullOrEmpty(this.state.StockPrice) || isStringNullOrEmpty(this.state.StockInAmount) || isStringNullOrEmpty(this.state.Store) || isStringNullOrEmpty(this.state.InvoiceNo)) {
                 error = true
-            } else if ((this.state.ReceiveDate < this.state.OrderDate) || (this.state.OrderDate > this.state.StockInDate) || (this.state.ReceiveDate > this.state.StockInDate)) {
-                toast.warning("Please cross check on date input")
+                // } else if ((this.state.ReceiveDate < this.state.OrderDate) || (this.state.OrderDate > this.state.StockInDate) || (this.state.ReceiveDate > this.state.StockInDate)) {
+                // toast.warning("Please cross check on date input")
+                // error = true
+            }
+            else if ((convertDateTimeToDDMMYY(this.state.OrderDate) > convertDateTimeToDDMMYY(this.state.StockInDate))) {
+                this.setState({ OrderValidated: false, StockInValidated: false })
                 error = true
+            } else if ((convertDateTimeToDDMMYY(this.state.ReceiveDate) < convertDateTimeToDDMMYY(this.state.OrderDate))) {
+                this.setState({ OrderValidated: false, ReceiveValidated: false })
+                error = true
+            }
+            else if ((convertDateTimeToDDMMYY(this.state.ReceiveDate) > convertDateTimeToDDMMYY(this.state.StockInDate))) {
+                this.setState({ ReceiveValidated: false, StockInValidated: false })
+                error = true
+
             } else {
                 error = false
             }
@@ -345,7 +358,7 @@ class AddStock extends Component {
         if (!this.errorChecking()) {
             let rowSize = this.DataState.length
             let index = localStorage.getItem("DataSetDraft") !== null && JSON.parse(localStorage.getItem("DataSetDraft")).length
-            let DraftNo = localStorage.getItem("DataSetDraft") === null ? 0 : JSON.parse(localStorage.getItem("DataSetDraft"))[index - 1].DraftNo + 1
+            let DraftNo = localStorage.getItem("DataSetDraft") === null || localStorage.getItem("DataSetDraft") === "[]" ? 0 : JSON.parse(localStorage.getItem("DataSetDraft"))[index - 1].DraftNo + 1
             let Listing = []
 
             var DraftListing = {
@@ -360,7 +373,7 @@ class AddStock extends Component {
                 Store: this.state.Store,
                 StoreID: this.state.Store.id,
                 OrderDate: this.state.OrderDate,
-                ReceiveDate: this.state.OrderDate,
+                ReceiveDate: this.state.ReceiveDate,
                 StockInDate: this.state.StockInDate,
 
                 StockPrice: this.state.StockPrice,
@@ -379,7 +392,9 @@ class AddStock extends Component {
             this.setState(INITIAL_STATE)
         }
         else {
-            toast.warning("Please fill in All require information")
+            // toast.warning("Please fill in All require information")
+            toast.warning("Input Error: Please cross check on All Stock Details Input")
+
         }
     }
     // Update data in a temporary listing without upload to database
@@ -401,7 +416,7 @@ class AddStock extends Component {
                         Store: this.state.Store,
                         StoreID: this.state.Store.id,
                         OrderDate: this.state.OrderDate,
-                        ReceiveDate: this.state.OrderDate,
+                        ReceiveDate: this.state.ReceiveDate,
 
                         StockPrice: this.state.StockPrice,
                         StockInAmount: this.state.StockInAmount,
@@ -425,8 +440,9 @@ class AddStock extends Component {
                         InvoiceNo: this.state.InvoiceNo,
                         Store: this.state.Store,
                         StoreID: this.state.Store.id,
+                        StockInDate: this.state.StockInDate,
                         OrderDate: this.state.OrderDate,
-                        ReceiveDate: this.state.OrderDate,
+                        ReceiveDate: this.state.ReceiveDate,
 
                         StockPrice: this.state.StockPrice,
                         StockInAmount: this.state.StockInAmount,
@@ -439,12 +455,11 @@ class AddStock extends Component {
             this.setState(INITIAL_STATE)
         }
         else {
-            toast.warning("Please fill in All require information")
+            toast.warning("Input Error: Please cross check on All Stock Details Input")
         }
     }
 
     OnHandleSubmitStock = () => {
-        console.log("OnHandleSubmitStock", this.DataState)
         localStorage.setItem("DataSetDraft", JSON.stringify(this.DataState))
         localStorage.setItem("DataSetDraft2", [this.DataState])
         localStorage.setItem("DataSetDraft3", JSON.stringify([this.DataState]))
@@ -509,7 +524,7 @@ class AddStock extends Component {
                                     labelId="Store"
                                     id="Store"
                                     name="Store"
-                                    value={this.state.Store}
+                                    value={this.state.Store[0]}
                                     onChange={(e) => this.handleFormInput(e, "Store")}
                                     label="Store"
                                     options={
@@ -525,7 +540,7 @@ class AddStock extends Component {
                     </div>
                     <hr />
                     {
-                        this.state.Store.length === undefined ?
+                        this.state.Store.length > 0 ?
                             <>
                                 <div className="row" style={{ paddingTop: "5px", paddingBottom: "5px" }}>
                                     <div className="col-12 col-md-6">
@@ -563,7 +578,6 @@ class AddStock extends Component {
                                                 Submit
                                             </Button>
                                     }
-
                                 </div>
                             </>
                             :
@@ -587,15 +601,9 @@ class AddStock extends Component {
                 <div className="row">
                     <div className="d-flex px-3">
                         <Button style={{ paddingLeft: "10px", paddingRight: "10px", textDecoration: "none", color: "black" }} onClick={() => goBack()}>
-                            <ArrowRoundedLeft8x13Svg fontSize="inherit" />
+                            <ArrowRoundedLeft8x13Svg fontSize="inherit" style={{ margin: "10px" }} />
                             Back
                         </Button>
-                        {
-                            localStorage.getItem("DataSetDraft") !== null &&
-                            JSON.parse(localStorage.getItem("DataSetDraft")).map((X) => {
-                                console.log("LISITING", X)
-                            })
-                        }
                         <h2 style={{ paddingTop: "5px" }}>Stock List</h2>
                         <div className="d-md-flex my-2" style={{ marginLeft: 'auto' }}>
                             <div style={{ width: '200px', marginLeft: 5 }}>
@@ -687,23 +695,23 @@ class AddStock extends Component {
                         </div>
                     </div>
                 </AlertDialog >
-
                 <AlertDialog
                     open={this.state.isBackClick}
                     fullWidth
-                    maxWidth="xs"
+                    maxWidth="sm"
                     handleToggleDialog={() => this.setState({ isBackClick: false })}
                     title="Reminder"
                     showAction={false}
                 >
                     <div className="container-fluid">
                         <div className="container">
-                            <label>Are you sure to leave this page?</label>
-                            <label>All changes will be save into draft</label>
-                            <p className="text-danger"><i>Disclaimer: Draft will be remove on user logout</i></p>
+                            <label style={{ fontSize: "18px" }}>Are you sure to leave this page? All changes will temporary save into draft</label>
+                            <div style={{ paddingTop: "10px" }}>
+                                <p className="text-danger" style={{ fontSize: "16px" }}><i>Disclaimer: Draft will be remove on user logout</i></p>
+                            </div>
                             <br />
                             <div style={{ textAlign: "right" }}>
-                                <Button variant="contained" color="primary" >
+                                <Button variant="contained" color="primary" style={{ margin: "10px" }}>
                                     <Link to={"/stockList"} style={{ textDecoration: "none", color: "white" }} >
                                         Yes
                                     </Link>
@@ -713,7 +721,6 @@ class AddStock extends Component {
                                     No
                                 </Button>
                             </div>
-
                         </div>
                     </div>
                 </AlertDialog >

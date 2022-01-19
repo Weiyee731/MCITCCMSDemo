@@ -52,8 +52,9 @@ export const resetLogonUser = () => {
     localStorage.removeItem("userToken")
     localStorage.removeItem("loginUser")
     localStorage.removeItem("sidebarItem");
-    window.location.href = "/"
-    // window.location.href = "/" + projectURL + "/"
+    localStorage.removeItem("DataSetDraft");
+    // window.location.href = "/"
+    window.location.href = "/" + projectURL + "/"
 }
 
 export const updateLogonUser = (key, value) => {

@@ -102,13 +102,12 @@ class Dashboard extends Component {
     }
 
     OnSubmitLogin = () => {
-
+       
         let project = ""
-        // project = window.location.pathname !== "" && window.location.pathname.split(".")[1];
-        project = "myemporia"
-        console.log("HRE")
+        project = window.location.pathname !== "/" && window.location.pathname.split(".")[1];
+        // project = "myemporia"
 
-        if (project !== "") {
+        if (window.location.pathname !== "/") {
             if (this.isInputsVerified()) {
                 let object = {
                     username: this.state.username,
@@ -151,6 +150,7 @@ class Dashboard extends Component {
                                     </InputAdornment>
                                 }
                             />
+                            {console.log("window.location.pathname", window.location)}
                         </FormControl>
                         <FormControl sx={{ m: 1, width: '100%' }} variant="standard">
                             <InputLabel htmlFor="login-password">Password</InputLabel>
