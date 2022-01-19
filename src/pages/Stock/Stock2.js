@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { GitAction } from "../../../store/action/gitAction";
+import { GitAction } from "../../store/action/gitAction";
 import { browserHistory } from "react-router";
 
-import FullWidthTabs from '../../../components/TabsComponent/Tabs';
+import FullWidthTabs from '../../components/TabsComponent/Tabs';
 
 function mapStateToProps(state) {
     return {

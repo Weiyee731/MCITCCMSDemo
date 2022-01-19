@@ -2137,8 +2137,10 @@ class ProductDetailsComponent extends Component {
                 imageHeight: imageHeight,
                 UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID
             }
+            let imageURL = "https://" + localStorage.getItem("projectDomain") + "/images/uploadproductImages.php"
             // axios.post("https://tourism.denoo.my/MCITCApi/php/uploadproductImages.php", formData, config).then((res) => {
-            axios.post("https://myemporia.my/emporiaimage/uploadproductImages.php", formData, config).then((res) => {
+            // axios.post("https://myemporia.my/emporiaimage/uploadproductImages.php", formData, config).then((res) => {
+            axios.post("https://" + localStorage.getItem("projectDomain") + "/emporiaimage/uploadproductImages.php", formData, config).then((res) => {
                 console.log("res", res)
                 if (res.status === 200 && res.data === 1) {
                     this.props.CallAddProductMedia(object)
@@ -5828,7 +5830,7 @@ class ProductDetailsComponent extends Component {
                                                             {
                                                                 dummyStandard.length > 0 && dummyStandard.map((data, index) => {
                                                                     return (
-                                                                        <div className="row" style={{ paddingTop: "5px", flex:"1" }}>
+                                                                        <div className="row" style={{ paddingTop: "5px", flex: "1" }}>
                                                                             <div className="col-2">
                                                                                 <label style={{ fontWeight: "bold" }}>Option{index + 1}</label>
                                                                             </div>

@@ -81,6 +81,11 @@ const sidebar_items = [
         title: "Shop Profile",
         icon: "shop",
     },
+    {
+        to: "/stockList",
+        title: "Stock Management",
+        icon: "inventory",
+    },
     // {
     //     to: "/quotationList",
     //     title: "Quotation",

@@ -55,6 +55,9 @@ import EditShopProfile from "../../../pages/Shop/viewShopProfile";
 import ViewProductPromotionComponent from "../../../pages/Promotion/viewProductPromotion.component";
 import AddPromotionBannerComponent from "../../../pages/Promotion/addPromotion.component";
 
+// Stock Management
+import StockManagement from "../../../pages/Stock/OverallStock";
+import NewStock from "../../../pages/Stock/addStock";
 
 const routes = [
     // {
@@ -209,6 +212,17 @@ const routes = [
         path: "/addPromotion",
         exact: true,
         element: <AddPromotionBannerComponent />,
+    },
+
+    {
+        path: "/stockList",
+        exact: true,
+        element: <StockManagement />,
+    },
+    {
+        path: "/addStock",
+        exact: true,
+        element: <NewStock />,
     },
 
 

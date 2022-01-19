@@ -66,6 +66,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import { styled } from '@mui/material/styles';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import InputAdornment from '@mui/material/InputAdornment';
 
 function mapStateToProps(state) {
   return {
@@ -5051,10 +5052,10 @@ class AddProductComponent extends Component {
                             </td>
                             <td className="tdNestedText">
                               <div className="StepContainer">
-                                <InputGroup className="ItemContainer">
+                                {/* <InputGroup className="ItemContainer">
                                   <InputGroupAddon type="prepend">
                                     <InputGroupText className="groupText">
-                                      RM
+                                      RM1
                                     </InputGroupText>
                                   </InputGroupAddon>
                                   <FormInput
@@ -5079,7 +5080,32 @@ class AddProductComponent extends Component {
                                       this.state.variation1.options[x].errorPrice
                                     }
                                   />
-                                </InputGroup>
+                                </InputGroup> */}
+                                
+                                <TextField
+                                  label="With normal TextField"
+                                  id="outlined-start-adornment"
+                                  sx={{ m: 1, width: '25ch' }}
+                                  InputProps={{
+                                    startAdornment: <InputAdornment position="start">kg</InputAdornment>,
+                                  }}
+                                  onFocus={this.setHint.bind(
+                                    this,
+                                    "VariationPrice"
+                                  )}
+                                  onBlur={() =>
+                                    this.setState({
+                                      FocusOn: false,
+                                    })
+                                  }
+                                  onChange={this.handleChangeOptions.bind(
+                                    this,
+                                    "variation1Price",
+                                    x
+                                  )}
+                                  value={this.state.variation1.options[x].price}
+                                  className="InputField2"
+                                />
                                 {this.state.variation1.options[x].errorPrice ? (
                                   <Tooltip
                                     placement="top-end"

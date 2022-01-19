@@ -17,8 +17,10 @@ import { ServerConfiguration } from "../serverConf";
 //   1. testing server url    //
 //   2. live server url       // 
 const url = ServerConfiguration.ServerUrl;
-// const project = window.localStorage.getItem("project")
-const project = "myemporia"
+const loginUrl = ServerConfiguration.LoginUrl;
+
+const project = window.localStorage.getItem("project")
+// const project = "myemporia"
 // const project = window.location.pathname.split(".")[1]
 
 export class GitEpic {
@@ -27,7 +29,7 @@ export class GitEpic {
   User_Login = action$ =>
     action$.ofType(GitAction.Login).switchMap(async ({ payload }) => {
       console.log(
-        url + payload.ProjectDomainName + "/" +
+        loginUrl + payload.ProjectDomainName + "/" +
         "User_Login?username=" +
         payload.username +
         "&password=" +
@@ -37,7 +39,7 @@ export class GitEpic {
       )
       try {
         const response = await fetch(
-          url + payload.ProjectDomainName + "/" +
+          loginUrl + payload.ProjectDomainName + "/" +
           "User_Login?username=" +
           payload.username +
           "&password=" +

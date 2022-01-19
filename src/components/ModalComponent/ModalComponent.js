@@ -109,8 +109,23 @@ export function ModalPopOut(props) {
       style={{ zIndex: (props.fullScreen ? 1350 : 1300) }}
     >
       {
-        props.fullScreen &&
-        <AppBar sx={{ position: 'relative', bgcolor: (!isStringNullOrEmpty(props.fullScreenHeaderbgColor) ? props.fullScreenHeaderbgColor : "#252525") }}>
+        props.fullScreen ?
+          <AppBar sx={{ position: 'relative', bgcolor: (!isStringNullOrEmpty(props.fullScreenHeaderbgColor) ? props.fullScreenHeaderbgColor : "#252525") }}>
+            <Toolbar>
+              <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                {props.title}
+              </Typography>
+              <IconButton
+                edge="end"
+                color="inherit"
+                onClick={() => { props.handleToggleDialog() }}
+                aria-label="close"
+              >
+                <CloseIcon />
+              </IconButton>
+            </Toolbar>
+          </AppBar>
+          :
           <Toolbar>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
               {props.title}
@@ -124,7 +139,6 @@ export function ModalPopOut(props) {
               <CloseIcon />
             </IconButton>
           </Toolbar>
-        </AppBar>
       }
 
       <DialogContent>
