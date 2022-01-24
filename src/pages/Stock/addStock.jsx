@@ -350,9 +350,8 @@ class AddStock extends Component {
                 let DataSet = this.props.variationStock
 
                 DataSet.length > 0 && DataSet !== undefined && DataSet.filter((searchedItem) =>
-                    searchedItem.ProductVariationSKU !== null && searchedItem.ProductVariationSKU.toLowerCase().includes(
-                        value.toLowerCase()
-                    )
+                    searchedItem.ProductVariationSKU !== null && searchedItem.ProductVariationSKU.toLowerCase() ===
+                    value.toLowerCase()
                 ).map((filteredItem) => {
                     filteredListing.push(filteredItem);
                 })
@@ -369,10 +368,8 @@ class AddStock extends Component {
                             value: GridValue.GridStorage,
                             StockInAmount: filteredListing[0].ProductStockAmount,
                             VariationCost: filteredListing[0].ProductVariationCost,
-                            // VariationPrice: filteredListing[0].ProductVariationPrice,
                             isStockInAmountError: false,
                             isVariationCostError: false,
-                            // isVariationPriceError: false
                         }]
                     })
                 }
@@ -497,7 +494,6 @@ class AddStock extends Component {
         if (!this.errorChecking()) {
             let ProductVariationDetailID = []
             let ProductStock = []
-            // let ProductVariationPrice = []
             let ProductVariationCost = []
             let GridStorageID = []
 
@@ -522,7 +518,6 @@ class AddStock extends Component {
                 UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
                 ProductVariationDetailsID: ProductVariationDetailID,
                 ProductStock: ProductStock,
-                // ProductVariationPrice: ProductVariationPrice,
                 ProductVariationCost: ProductVariationCost,
                 GridStorageID: GridStorageID
             })
@@ -553,13 +548,6 @@ class AddStock extends Component {
     }
 
     render() {
-        const dummyStore =
-            [
-                { id: "0", Store: "Store A" },
-                { id: "1", Store: "Store B" },
-                { id: "2", Store: "Store C" },
-            ]
-
 
         const TextFieldData = (type, variant, title, name, stateValue, error, index) => {
             return (
@@ -578,7 +566,6 @@ class AddStock extends Component {
                 </div>
             )
         }
-
 
         const ModalListing = () => {
             return (
@@ -661,8 +648,7 @@ class AddStock extends Component {
                                                     <div className="col-12 col-md-6">
                                                         {TextFieldData("number", "outlined", "Stock In Amount", "StockInAmount", data.StockInAmount, data.isStockInAmountError, index)}
                                                         {TextFieldData("number", "outlined", "Variation Cost", "VariationCost", data.VariationCost, data.isVariationCostError, index)}
-                                                        {/* {TextFieldData("number", "outlined", "Variation Selling Price", "VariationSellingPrice", data.VariationPrice, data.isVariationPriceError, index)} */}
-                                                    </div>
+                                                     </div>
                                                     <br />
                                                 </>
                                                 :

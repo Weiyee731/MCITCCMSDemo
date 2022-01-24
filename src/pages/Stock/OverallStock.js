@@ -58,7 +58,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        CallTesting: () => dispatch(GitAction.CallTesting()),
+        // CallTesting: () => dispatch(GitAction.CallTesting()),
         CallAddProductVariationStock: (prodData) => dispatch(GitAction.CallAddProductVariationStock(prodData)),
         CallGridList: (prodData) => dispatch(GitAction.CallGridList(prodData)),
         CallResetProductVariationStock: () => dispatch(GitAction.CallResetProductVariationStock()),
@@ -212,7 +212,10 @@ class Stock extends Component {
         this.state = INITIAL_STATE
         this.DraftListing = DraftListing_State
         this.DatabaseListing = OverallListing_State
-        this.PagingListing = []
+        this.PagingListing = [{
+            isOpenOverallDetails: [],
+            Listing: []
+        }]
 
         this.props.CallGridList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
         this.props.CallViewAllProductVariationStock({
@@ -236,9 +239,9 @@ class Stock extends Component {
         if (this.props.variationStock !== null && this.props.variationStock.length > 0 && this.state.isDatabaseSet === false) {
             this.DatabaseListing = this.props.variationStock
 
-            this.props.variationStock.length > 0 && this.props.variationStock.map((data) => {
-                this.state.isOpenOverallDetails.push(false)
-            })
+            // this.props.variationStock.length > 0 && this.props.variationStock.map((data) => {
+            //     this.state.isOpenOverallDetails.push(false)
+            // })
             this.setState({ isDatabaseSet: true })
         }
 
@@ -363,12 +366,11 @@ class Stock extends Component {
 
     onTableRowClick = (event, row) => {
 
-        let listing = this.PagingListing
+        let listing = this.PagingListing[0].Listing
         let selected = ""
-        let OverallCollapseTable = []
+        let OverallCollapseTable = this.PagingListing[0].isOpenOverallDetails
 
         listing.map((data, i) => {
-            OverallCollapseTable.push(false)
             if (data.ProductVariationDetailID === row.ProductVariationDetailID)
                 selected = i
         })
@@ -379,6 +381,8 @@ class Stock extends Component {
             } else
                 OverallCollapseTable[index] = false
         })
+
+        this.PagingListing[0].isOpenOverallDetails = OverallCollapseTable
         this.setState({ isOpenOverallDetails: OverallCollapseTable })
     }
 
@@ -391,7 +395,6 @@ class Stock extends Component {
             value: "",
             StockInAmount: "",
             VariationCost: "",
-            // VariationPrice: ""
         }]
         this.setState({ StoreStockInData: storeListing })
     }
@@ -470,7 +473,6 @@ class Stock extends Component {
             this.DraftListing[0].storageListing = localListing
             this.setState(INITIAL_STATE)
             toast.success("New Stock Data has been added")
-
         } else {
             toast.warning("Input Error: Please cross check on All Stock Details Input")
         }
@@ -486,14 +488,11 @@ class Stock extends Component {
                 error = true
             else if (StockListing.filter((data) => data.isVariationCostError === true || data.isVariationCostError === undefined).length > 0)
                 error = true
-            // else if (StockListing.filter((data) => data.isVariationPriceError === true || data.isVariationPriceError === undefined).length > 0)
-            //     error = true
             else if (this.state.isContainerError === true || this.state.ContainerID === "")
                 error = true
         }
         return error
     }
-
 
     onDateChange = (e, name) => {
 
@@ -531,10 +530,8 @@ class Stock extends Component {
 
                     StockInAmount: storeListing[index].StockInAmount,
                     VariationCost: storeListing[index].VariationCost,
-                    // VariationPrice: storeListing[index].VariationPrice,
                     isStockInAmountError: storeListing[index].isStockInAmountError,
                     isVariationCostError: storeListing[index].isVariationCostError,
-                    // isVariationPriceError: storeListing[index].isVariationPriceError,
                 }
                 this.setState({ StoreStockInData: storeListing })
                 break;
@@ -552,34 +549,12 @@ class Stock extends Component {
 
                     StockInAmount: e.target.value,
                     VariationCost: storeListing[index].VariationCost,
-                    // VariationPrice: storeListing[index].VariationPrice,
                     isStockInAmountError: isStockInAmountError,
                     isVariationCostError: storeListing[index].isVariationCostError,
-                    // isVariationPriceError: storeListing[index].isVariationPriceError,
                 }
                 this.setState({ StoreStockInData: storeListing })
                 break;
 
-            // case "VariationSellingPrice":
-            //     let isVariationPriceError = false
-            //     if (isStringNullOrEmpty(e.target.value))
-            //         isVariationPriceError = true
-
-            //     storeListing[index] = {
-            //         id: storeListing[index].id,
-            //         label: storeListing[index].label,
-            //         value: storeListing[index].value,
-            //         CurrentStock: storeListing[index].CurrentStock,
-
-            //         StockInAmount: storeListing[index].StockInAmount,
-            //         VariationCost: storeListing[index].VariationCost,
-            //         VariationPrice: e.target.value,
-            //         isStockInAmountError: storeListing[index].isStockInAmountError,
-            //         isVariationCostError: storeListing[index].isVariationCostError,
-            //         isVariationPriceError: isVariationPriceError,
-            //     }
-            //     this.setState({StoreStockInData: storeListing })
-            //     break;
             case "Filter":
                 this.setState({ selectedFilter: { id: e.id, value: e.value, label: e.label } })
                 break;
@@ -597,10 +572,8 @@ class Stock extends Component {
 
                     StockInAmount: storeListing[index].StockInAmount,
                     VariationCost: e.target.value,
-                    // VariationPrice: storeListing[index].VariationPrice,
                     isStockInAmountError: storeListing[index].isStockInAmountError,
                     isVariationCostError: isVariationCostError,
-                    // isVariationPriceError: storeListing[index].isVariationPriceError,
                 }
                 this.setState({ StoreStockInData: storeListing })
                 break;
@@ -616,19 +589,31 @@ class Stock extends Component {
     }
 
     carryDataFromChild = (e) => {
-        this.PagingListing = e
+        let checkFiltering = false
+
+        if (this.PagingListing[0] !== null && this.PagingListing[0].Listing.length > 0) {
+            checkFiltering = JSON.stringify(this.PagingListing[0].Listing) === JSON.stringify(e)
+
+            if (checkFiltering === false) {
+                this.PagingListing[0].isOpenOverallDetails = []
+                this.PagingListing[0].Listing = e
+                e.map((x) => {
+                    this.PagingListing[0].isOpenOverallDetails.push(false)
+                })
+            } }
+        else {
+            this.PagingListing[0].Listing = e
+            e.map((x) => {
+                this.PagingListing[0].isOpenOverallDetails.push(false)
+            })
+        }
     }
 
     searchSpace = (value) => {
         var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
         let DatabaseListing = this.DatabaseListing
-        console.log("value", value)
         this.setState({ searchKeywords: value })
         this.state.filteredProduct.splice(0, this.state.filteredProduct.length)
-
-        console.log("DatabaseListing", DatabaseListing)
-        console.log("yes")
-        console.log(this.state.selectedFilter.id)
 
         if (DatabaseListing.length > 0) {
             if (this.state.selectedFilter.id === undefined)
@@ -647,38 +632,10 @@ class Stock extends Component {
                 DatabaseListing = DatabaseListing.filter((data) => data.ProductName !== null && data.ProductName.toLowerCase().includes(value.toLowerCase()));
                 this.setState({ filteredProduct: DatabaseListing, isFiltered: true })
             }
-
         } else toast.warning("No Listing Available for filter")
-
-        console.log("DatabaseListing", DatabaseListing)
-        console.log("DatabaseListing", this.state.filteredProduct)
-
-
-
-        // this.state.filteredProduct.splice(0, this.state.filteredProduct.length)
-
-        // this.props.Data.filter((searchedItem) =>
-        //     searchedItem.OrderName !== null && searchedItem.OrderName.toLowerCase().includes(
-        //         value.toLowerCase()
-        //     )
-        // ).map((filteredItem) => {
-        //     this.state.filteredProduct.push(filteredItem);
-        // })
-
-        // this.props.Data.map((list) => {
-        //     list.OrderProductDetail !== null && JSON.parse(list.OrderProductDetail).filter(x => x.TrackingNumber !== null
-        //         && x.TrackingNumber.toLowerCase().includes(value.toLowerCase())).map(filteredItem => {
-        //             this.state.filteredProduct.push(list);
-        //         });
-        // })
-
-        // let removeDeplicate = this.state.filteredProduct.filter((ele, ind) => ind === this.state.filteredProduct.findIndex(elem => elem.OrderID === ele.OrderID))
-        // this.setState({ isFiltered: true, filteredProduct: removeDeplicate })
     }
 
-
     render() {
-        console.log("this.state.selectedFilter", this.state.selectedFilter)
 
         const filterSelection =
             [
@@ -920,11 +877,10 @@ class Stock extends Component {
 
                                 isExpandable: true,
                                 renderTableCollapseRows: this.renderTableCollapseRows,
-                                isCollapseOpen: this.state.isOpenOverallDetails
+                                isCollapseOpen: this.PagingListing[0].isOpenOverallDetails
+                                // isCollapseOpen: this.state.isOpenOverallDetails
                             }}
                             Data={this.state.isFiltered === true ? this.state.filteredProduct : this.DatabaseListing}
-                            // onSelectRow={(e) => console.log(e)}
-                            // onSelectAllRows={(e) => console.log(e)}
                             onTableRowClick={this.onTableRowClick}
                             SelectionActionButtons={<Button onClick={() => alert('hi')}>SelectionActionButtons</Button>}
                             carryDataFromChild={this.carryDataFromChild}
