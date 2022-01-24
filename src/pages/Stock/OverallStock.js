@@ -24,7 +24,6 @@ import { url } from "../../tools/Helpers";
 import "./OverallStock.css";
 
 // UI Components
-import MenuItem from '@mui/material/MenuItem';
 import Select from 'react-select';
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
 import GroupAddIcon from '@mui/icons-material/Add';
@@ -39,7 +38,7 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button } from "@mui/material";
 // import ResponsiveDatePickers from "../../tools/datePicker";
-import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
+import InputAdornment from '@mui/material/InputAdornment';
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import Collapse from "@material-ui/core/Collapse";
 
@@ -646,7 +645,10 @@ class Stock extends Component {
         const TextFieldData = (type, variant, title, name, stateValue, error, index) => {
             return (
                 <div className="col-12 col-md-12" style={{ paddingBottom: "10px" }}>
-                    <TextField variant={variant} type={type} size="small" inputProps={{ min: "0", step: name === "StockInAmount" ? "1.00" : "0.10" }} fullWidth label={title} value={name === "StockInAmount" ? parseFloat(stateValue).toFixed(0) : stateValue} name={name} onChange={(e) => this.handleFormInput(e, name, index)} required />
+                    <TextField variant={variant} type={type} size="small" inputProps={{ min: "0", step: name === "StockInAmount" ? "1.00" : "0.10" }} fullWidth label={title} value={name === "StockInAmount" ? parseFloat(stateValue).toFixed(0) : stateValue} name={name} onChange={(e) => this.handleFormInput(e, name, index)} 
+                     InputProps={{
+                        startAdornment: <InputAdornment position="start">{name === "StockInAmount" ? "  " : "RM"}</InputAdornment>,
+                    }} required />
                     {error && <FormHelperText sx={{ color: 'red' }} id={error}>Invalid {title} </FormHelperText>}
                 </div>
             )
@@ -810,7 +812,7 @@ class Stock extends Component {
                                 value={this.state.selectedFilter}
                                 IconComponent={FilterListOutlinedIcon}
                                 className="col-11"
-                                placeholder="filter by"
+                                placeholder="Filter By"
                                 options={
                                     isArrayNotEmpty(filterSelection) && filterSelection.map((el, idx) => {
                                         return { id: el.id, value: el.value, label: el.value }

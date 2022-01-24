@@ -397,14 +397,14 @@ export class GitAction {
   ///////////////////////////////////////////////////  Product Stock  ///////////////////////////////////////////////////
 
 
-  static UpdateProductVariationStock = "UPDATE-PRODUCTVARIATIONSTOCK";
-  static UpdatedProductVariationStock = "UPDATED-PRODUCTVARIATIONSTOCK";
-  static CallUpdateProductVariationStock(prodData) {
-    return {
-      type: GitAction.UpdateProductVariationStock,
-      payload: prodData,
-    };
-  }
+  // static UpdateProductVariationStock = "UPDATE-PRODUCTVARIATIONSTOCK";
+  // static UpdatedProductVariationStock = "UPDATED-PRODUCTVARIATIONSTOCK";
+  // static CallUpdateProductVariationStock(prodData) {
+  //   return {
+  //     type: GitAction.UpdateProductVariationStock,
+  //     payload: prodData,
+  //   };
+  // }
 
   static AddProductVariationStock = "ADD-PRODUCTVARIATIONSTOCK";
   static AddedProductVariationStock = "ADDED-PRODUCTVARIATIONSTOCK";

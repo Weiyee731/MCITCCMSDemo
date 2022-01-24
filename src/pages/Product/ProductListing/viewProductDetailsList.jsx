@@ -14,7 +14,8 @@ import {
     // Tooltip,
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
+// import TextField from "@material-ui/core/TextField";
+import TextField from '@mui/material/TextField';
 import Select from "@material-ui/core/Select";
 import MaterialTable from "material-table";
 import AddIcon from '@mui/icons-material/Add';
@@ -31,6 +32,10 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
+import InputAdornment from '@mui/material/InputAdornment';
+
+import OutlinedInput from '@mui/material/OutlinedInput';
+
 import {
     InputGroup,
     InputGroupText,
@@ -5383,7 +5388,7 @@ class ProductDetailsComponent extends Component {
                                             <div className="ItemContainer">
                                                 <div className="VariantContainer">
 
-                                                    <InputGroup className="ItemContainer">
+                                                    {/* <InputGroup className="ItemContainer">
                                                         <InputGroupAddon type="prepend">
                                                             <InputGroupText className="groupText">
                                                                 RM
@@ -5404,7 +5409,23 @@ class ProductDetailsComponent extends Component {
                                                             }
                                                             disabled={!this.state.toBeEdited}
                                                         />
-                                                    </InputGroup>
+                                                    </InputGroup> */}
+                                                    <TextField type="number" size="small"
+                                                        inputProps={{ min: "0", step: "0.10" }}
+                                                        onFocus={this.setHint.bind(this, "VariationPrice")}
+                                                        onBlur={() =>
+                                                            this.setState({
+                                                                FocusOn: false,
+                                                            })
+                                                        }
+                                                        disabled={!this.state.toBeEdited}
+                                                        onChange={this.handleChange.bind(this, "Price")}
+                                                        fullWidth label="Price"
+                                                        value={this.state.price}
+                                                        name="Price"
+                                                        InputProps={{
+                                                            startAdornment: <InputAdornment position="start">RM</InputAdornment>,
+                                                        }} required />
                                                 </div>
                                             </div>
                                             <div className="StockField">
@@ -5463,6 +5484,8 @@ class ProductDetailsComponent extends Component {
                                         </div>
                                     ) : null}
 
+
+
                                     {this.state.variation1On ? (
                                         <p className="FontType1">Variation Pricing Details</p>
                                     ) : null}
@@ -5487,6 +5510,7 @@ class ProductDetailsComponent extends Component {
                                                         </td>
                                                         <td colSpan="4">
                                                             <table>
+
                                                                 {[...Array(this.state.variation2Options)].map(
                                                                     (e, i) => (
                                                                         <tr className="trBody">
@@ -5500,7 +5524,56 @@ class ProductDetailsComponent extends Component {
                                                                             </td>
                                                                             <td className="tdNestedNew">
                                                                                 <div className="StepContainer">
-                                                                                    <InputGroup className="TextFieldsTables">
+
+                                                                                    <TextField type="number" size="small" key={"price " + i}
+                                                                                        onChange={this.handleChangeOptionsVariant2.bind(
+                                                                                            this,
+                                                                                            "variation2Price",
+                                                                                            x,
+                                                                                            i
+                                                                                        )}
+                                                                                        onFocus={this.setHint.bind(
+                                                                                            this,
+                                                                                            "VariationPrice"
+                                                                                        )}
+                                                                                        onBlur={() =>
+                                                                                            this.setState({
+                                                                                                FocusOn: false,
+                                                                                            })
+                                                                                        }
+                                                                                        value={
+                                                                                            this.state.variation1.options[x]
+                                                                                                .variation2Options.options[i]
+                                                                                                .price
+                                                                                        }
+                                                                                        invalid={
+                                                                                            this.state.variation1.options[x]
+                                                                                                .variation2Options.options[i]
+                                                                                                .errorPrice && this.state.toBeEdited
+                                                                                        }
+                                                                                        disabled={!this.state.toBeEdited}
+                                                                                        // inputProps={{ min: "0", step: "0.10" }}
+                                                                                        // onFocus={this.setHint.bind(this, "VariationPrice")}
+                                                                                        // onBlur={() =>
+                                                                                        //     this.setState({
+                                                                                        //         FocusOn: false,
+                                                                                        //     })
+                                                                                        // }
+                                                                                        // disabled={!this.state.toBeEdited}
+                                                                                        // onChange={this.handleChangeOptionsVariant2.bind(
+                                                                                        //     this,
+                                                                                        //     "variation2Price",
+                                                                                        //     x,
+                                                                                        //     i
+                                                                                        // )}
+                                                                                        // fullWidth label="Price"
+
+                                                                                        // value={this.state.price}
+                                                                                        // name="Price"
+                                                                                        InputProps={{
+                                                                                            startAdornment: <InputAdornment position="start">RM</InputAdornment>,
+                                                                                        }} required />
+                                                                                    {/* <InputGroup className="TextFieldsTables">
                                                                                         <InputGroupAddon type="prepend">
                                                                                             <InputGroupText className="groupText">
                                                                                                 RM
@@ -5538,7 +5611,7 @@ class ProductDetailsComponent extends Component {
                                                                                             }
                                                                                             disabled={!this.state.toBeEdited}
                                                                                         />
-                                                                                    </InputGroup>
+                                                                                    </InputGroup> */}
                                                                                     {this.state.variation1.options[x]
                                                                                         .variation2Options.options[i]
                                                                                         .errorPrice && this.state.toBeEdited ? (
@@ -5666,6 +5739,7 @@ class ProductDetailsComponent extends Component {
                                                         </td>
                                                     </tr>
                                                 ) : (
+
                                                     <tr>
                                                         <td className="tdNestedText">
                                                             {this.state.variation1.options[x].optionName
@@ -5674,7 +5748,58 @@ class ProductDetailsComponent extends Component {
                                                         </td>
                                                         <td className="tdNestedText">
                                                             <div className="StepContainer">
-                                                                <InputGroup className="ItemContainer">
+                                                                <TextField type="number" size="small"
+                                                                    inputProps={{ min: "0", step: "0.10" }}
+                                                                    onFocus={this.setHint.bind(this, "VariationPrice")}
+                                                                    onBlur={() =>
+                                                                        this.setState({
+                                                                            FocusOn: false,
+                                                                        })
+                                                                    }
+                                                                    disabled={!this.state.toBeEdited}
+                                                                    onChange={this.handleChangeOptions.bind(
+                                                                        this,
+                                                                        "variation1Price",
+                                                                        x
+                                                                    )}
+                                                                    fullWidth label="Price"
+                                                                    value={this.state.variation1.options[x].price}
+                                                                    invalid={
+                                                                        this.state.variation1.options[x].errorPrice && this.state.toBeEdited
+                                                                    }
+                                                                    // name="Price"
+                                                                    InputProps={{
+                                                                        startAdornment: <InputAdornment position="start">RM</InputAdornment>,
+                                                                    }} required />
+
+                                                                {/* <TextField type="number" size="small"
+                                                                    step=".10"
+                                                                    onFocus={this.setHint.bind(
+                                                                        this,
+                                                                        "VariationPrice"
+                                                                    )}
+                                                                    onBlur={() =>
+                                                                        this.setState({
+                                                                            FocusOn: false,
+                                                                        })
+                                                                    }
+                                                                    onChange={this.handleChangeOptions.bind(
+                                                                        this,
+                                                                        "variation1Price",
+                                                                        x
+                                                                    )}
+                                                                    value={this.state.variation1.options[x].price}
+                                                                    invalid={
+                                                                        this.state.variation1.options[x].errorPrice && this.state.toBeEdited
+                                                                    }
+                                                                    disabled={!this.state.toBeEdited}
+
+                                                                    InputProps={{
+                                                                        startAdornment: <InputAdornment position="start">RM</InputAdornment>,
+                                                                    }}
+                                                                    required /> */}
+
+                                                                {/* <InputGroup className="ItemContainer">
                                                                     <InputGroupAddon type="prepend">
                                                                         <InputGroupText className="groupText">
                                                                             RM
@@ -5703,7 +5828,7 @@ class ProductDetailsComponent extends Component {
                                                                         }
                                                                         disabled={!this.state.toBeEdited}
                                                                     />
-                                                                </InputGroup>
+                                                                </InputGroup> */}
                                                                 {this.state.variation1.options[x].errorPrice && this.state.toBeEdited ? (
                                                                     <Tooltip
                                                                         placement="top-end"
@@ -5733,6 +5858,7 @@ class ProductDetailsComponent extends Component {
                                                                             FocusOn: false,
                                                                         })
                                                                     }
+                                                                    label="Stock"
                                                                     InputProps={{
                                                                         readOnly: !this.state.toBeEdited,
                                                                     }}
@@ -5747,6 +5873,7 @@ class ProductDetailsComponent extends Component {
                                                                     }}
                                                                     variant="outlined"
                                                                     className="InputField2"
+                                                                    disabled={!this.state.toBeEdited}
                                                                 // error={this.state.stock || this.state.skuNotLongEnough}
                                                                 />
                                                                 {this.state.variation1.options[x].errorStock && this.state.toBeEdited ? (
@@ -5775,6 +5902,7 @@ class ProductDetailsComponent extends Component {
                                                                             FocusOn: false,
                                                                         })
                                                                     }
+                                                                    label="SKU"
                                                                     onChange={this.handleChangeOptions.bind(
                                                                         this,
                                                                         "variation1SKU",
@@ -5791,6 +5919,7 @@ class ProductDetailsComponent extends Component {
                                                                     error={
                                                                         this.state.variation1.options[x].errorSKU && this.state.toBeEdited
                                                                     }
+                                                                    disabled={!this.state.toBeEdited}
                                                                 />
                                                                 {this.state.variation1.options[x].errorSKU && this.state.toBeEdited ? (
                                                                     <Tooltip
@@ -5870,7 +5999,7 @@ class ProductDetailsComponent extends Component {
                                         <p className="FontType3">Dimension: </p>
                                         <div className="InputFieldMiddleElementNested">
                                             <p className="FontTypeInputLabel">Height</p>
-                                            <InputGroup className="InputFieldMiddleElementNested">
+                                            {/* <InputGroup className="InputFieldMiddleElementNested">
                                                 <FormInput
                                                     step=".10"
                                                     type="number"
@@ -5890,12 +6019,30 @@ class ProductDetailsComponent extends Component {
                                                 <InputGroupAddon type="append">
                                                     <InputGroupText className="groupText">m</InputGroupText>
                                                 </InputGroupAddon>
-                                            </InputGroup>
+                                            </InputGroup> */}
+                                            <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
+                                                <OutlinedInput
+                                                    endAdornment={<InputAdornment position="end">m</InputAdornment>}
+                                                    size="small"
+                                                    value={this.state.height}
+                                                    invalid={
+                                                        this.state.heightEmpty || this.state.heightNotDecimal
+                                                    }
+                                                    onChange={this.handleChange.bind(this, "height")}
+                                                    onFocus={this.setHint.bind(this, "ProductHeight")}
+                                                    onBlur={() =>
+                                                        this.setState({
+                                                            FocusOn: false,
+                                                        })
+                                                    }
+                                                    label="" required
+                                                    disabled={!this.state.toBeEdited}
+                                                />
+                                            </FormControl>
                                         </div>
-                                        {/* {this.state.heightEmpty && <br />} */}
                                         <div className="InputFieldMiddleElementNested">
                                             <p className="FontTypeInputLabel">Width</p>
-                                            <InputGroup className="InputFieldMiddleElementNested">
+                                            {/* <InputGroup className="InputFieldMiddleElementNested">
                                                 <FormInput
                                                     type="number"
                                                     step=".10"
@@ -5915,11 +6062,50 @@ class ProductDetailsComponent extends Component {
                                                 <InputGroupAddon type="append">
                                                     <InputGroupText className="groupText">m</InputGroupText>
                                                 </InputGroupAddon>
-                                            </InputGroup>
+                                            </InputGroup> */}
+                                            <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
+                                                <OutlinedInput
+                                                    endAdornment={<InputAdornment position="end">m</InputAdornment>}
+                                                    size="small"
+                                                    value={this.state.width}
+                                                    invalid={
+                                                        this.state.widthEmpty || this.state.widthNotDecimal
+                                                    }
+                                                    onChange={this.handleChange.bind(this, "width")}
+                                                    onFocus={this.setHint.bind(this, "ProductWidth")}
+                                                    onBlur={() =>
+                                                        this.setState({
+                                                            FocusOn: false,
+                                                        })
+                                                    }
+                                                    label="" required
+                                                    disabled={!this.state.toBeEdited}
+
+                                                />
+                                            </FormControl>
                                         </div>
                                         <div className="InputFieldMiddleElementNested">
                                             <p className="FontTypeInputLabel">Depth</p>
-                                            <InputGroup className="InputFieldSecondElement">
+                                            <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
+                                                <OutlinedInput
+                                                    endAdornment={<InputAdornment position="end">m</InputAdornment>}
+                                                    size="small"
+                                                    value={this.state.depth}
+                                                    invalid={
+                                                        this.state.depthEmpty || this.state.depthNotDecimal
+                                                    }
+                                                    onChange={this.handleChange.bind(this, "depth")}
+                                                    onFocus={this.setHint.bind(this, "ProductDepth")}
+                                                    onBlur={() =>
+                                                        this.setState({
+                                                            FocusOn: false,
+                                                        })
+                                                    }
+                                                    disabled={!this.state.toBeEdited}
+                                                    label="" required
+                                                />
+                                            </FormControl>
+                                            {/* <InputGroup className="InputFieldSecondElement">
                                                 <FormInput
                                                     type="number"
                                                     step=".10"
@@ -5939,7 +6125,7 @@ class ProductDetailsComponent extends Component {
                                                 <InputGroupAddon type="append">
                                                     <InputGroupText className="groupText">m</InputGroupText>
                                                 </InputGroupAddon>
-                                            </InputGroup>
+                                            </InputGroup> */}
                                         </div>
                                     </div>
 
@@ -5970,7 +6156,7 @@ class ProductDetailsComponent extends Component {
                                     <div className="HorizontalContainer">
                                         <div className="InputFieldMiddleElement">
                                             <p className="FontTypeInputLabel">Weight</p>
-                                            <InputGroup className="InputField">
+                                            {/* <InputGroup className="InputField">
                                                 <FormInput
                                                     type="number"
                                                     step=".10"
@@ -5992,7 +6178,26 @@ class ProductDetailsComponent extends Component {
                                                         kg
                                                     </InputGroupText>
                                                 </InputGroupAddon>
-                                            </InputGroup>
+                                            </InputGroup> */}
+                                            <FormControl className="InputField" variant="outlined">
+                                                <OutlinedInput
+                                                    endAdornment={<InputAdornment position="end">kg</InputAdornment>}
+                                                    size="small"
+                                                    value={this.state.weight}
+                                                    onChange={this.handleChange.bind(this, "weight")}
+                                                    onFocus={this.setHint.bind(this, "ProductWeight")}
+                                                    onBlur={() =>
+                                                        this.setState({
+                                                            FocusOn: false,
+                                                        })
+                                                    }
+                                                    invalid={
+                                                        this.state.weightEmpty || this.state.weightNotDecimal
+                                                    }
+                                                    disabled={!this.state.toBeEdited}
+                                                    label="" required
+                                                />
+                                            </FormControl>
                                         </div>
                                     </div>
 

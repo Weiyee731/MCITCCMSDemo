@@ -814,11 +814,12 @@ class ViewProductGeneralInfo extends Component {
                             renderTableCollapseRows: this.renderTableCollapseRows,
                             isCollapseOpen: this.PagingListing[0].isOpenOverallDetails
                           }}
-                          Data={this.DatabaseListing}
+                          Data={this.DatabaseListing.length > 0 && this.DatabaseListing[0].ReturnVal === "0" ? [] : this.DatabaseListing}
                           onTableRowClick={this.onTableRowClick}
                           SelectionActionButtons={<Button onClick={() => alert('hi')}>SelectionActionButtons</Button>}
                           carryDataFromChild={this.carryDataFromChild}
                         />
+                        {console.log("DatabaseListing",this.DatabaseListing)}
                       </CardText>
                     </CardBody>
                   </Card>

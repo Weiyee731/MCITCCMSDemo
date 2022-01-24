@@ -375,14 +375,14 @@ export function counterReducer(state = INITIAL_STATE, action) {
 
     ///////////////////////////////////////////////////  Product Stock  ///////////////////////////////////////////////////
 
-    case GitAction.UpdateProductVariationStock:
-      return Object.assign({}, state, { loading: true });
-    case GitAction.UpdatedProductVariationStock:
-      return Object.assign({}, state, {
-        loading: false,
-        variationStock: action.payload,
-        productsByID: action.payloadProduct
-      });
+    // case GitAction.UpdateProductVariationStock:
+    //   return Object.assign({}, state, { loading: true });
+    // case GitAction.UpdatedProductVariationStock:
+    //   return Object.assign({}, state, {
+    //     loading: false,
+    //     variationStock: action.payload,
+    //     productsByID: action.payloadProduct
+    //   });
 
     case GitAction.AddProductVariationStock:
       return Object.assign({}, state, { loading: true });

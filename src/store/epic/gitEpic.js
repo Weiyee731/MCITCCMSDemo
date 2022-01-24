@@ -1128,49 +1128,49 @@ export class GitEpic {
 
   ///////////////////////////////////////////////////  Product Stock  ///////////////////////////////////////////////////
 
-  ProductVariationStock_Update = (action$) =>
-    action$.ofType(GitAction.UpdateProductVariationStock).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_UpdateProductStockVariation?PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailID +
-          "&PRODUCTSTOCK=" + payload.stock
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        if (json[0].ReturnVal === 1)
-          toast.success("Variation stock updated successfully")
+  // ProductVariationStock_Update = (action$) =>
+  //   action$.ofType(GitAction.UpdateProductVariationStock).switchMap(async ({ payload }) => {
+  //     try {
+  //       const response = await fetch(
+  //         url + project + "/" +
+  //         "Product_UpdateProductStockVariation?PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailID +
+  //         "&PRODUCTSTOCK=" + payload.stock
+  //       );
+  //       let json = await response.json();
+  //       json = JSON.parse(json);
+  //       if (json[0].ReturnVal === 1)
+  //         toast.success("Variation stock updated successfully")
 
-        try {
-          const response = await fetch(
-            url + project + "/" +
-            "Product_ItemDetailByProductID?ProductID=" + payload.productId +
-            "&USERID=" + payload.userId +
-            "&ProjectID=" + payload.ProjectID
-          );
-          let json2 = await response.json();
-          json2 = JSON.parse(json2);
-          return {
-            type: GitAction.UpdatedProductVariationStock,
-            payloadProduct: json2,
-            payload: json,
-          };
-        } catch (error) {
-          alert('UpdatedProductVariationStock: ' + error);
-          return {
-            type: GitAction.UpdatedProductVariationStock,
-            payload: [],
-          };
-        }
+  //       try {
+  //         const response = await fetch(
+  //           url + project + "/" +
+  //           "Product_ItemDetailByProductID?ProductID=" + payload.productId +
+  //           "&USERID=" + payload.userId +
+  //           "&ProjectID=" + payload.ProjectID
+  //         );
+  //         let json2 = await response.json();
+  //         json2 = JSON.parse(json2);
+  //         return {
+  //           type: GitAction.UpdatedProductVariationStock,
+  //           payloadProduct: json2,
+  //           payload: json,
+  //         };
+  //       } catch (error) {
+  //         alert('UpdatedProductVariationStock: ' + error);
+  //         return {
+  //           type: GitAction.UpdatedProductVariationStock,
+  //           payload: [],
+  //         };
+  //       }
 
-      } catch (error) {
-        alert('updateProductVariationStock: ' + error);
-        return {
-          type: GitAction.UpdatedProductVariationStock,
-          payload: [],
-        };
-      }
-    });
+  //     } catch (error) {
+  //       alert('updateProductVariationStock: ' + error);
+  //       return {
+  //         type: GitAction.UpdatedProductVariationStock,
+  //         payload: [],
+  //       };
+  //     }
+  //   });
 
   ProductVariationStock_Add = (action$) =>
     action$.ofType(GitAction.AddProductVariationStock).switchMap(async ({ payload }) => {

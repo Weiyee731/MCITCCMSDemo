@@ -50,7 +50,7 @@ const rootEpic = combineEpics(
   gitEpic.ProductVariationDetail_ViewAllByCategoryID,
 
   // Product Stock
-  gitEpic.ProductVariationStock_Update,
+  // gitEpic.ProductVariationStock_Update,
   gitEpic.ProductVariationStock_Add,
   gitEpic.ProductVariationStock_View,
   gitEpic.ProductVariationStock_ViewAll,

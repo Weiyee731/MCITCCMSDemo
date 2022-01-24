@@ -16,13 +16,12 @@ import "./OverallStock.css";
 // UI Components
 import { Button } from "@mui/material";
 import Select from 'react-select';
-import SubmitIcon from '@mui/icons-material/Backup';
 import GroupAddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
-import Box from '@mui/material/Box';
+import InputAdornment from '@mui/material/InputAdornment';
 import FormHelperText from '@mui/material/FormHelperText';
 import { toast } from "react-toastify";
 import TableCell from '@mui/material/TableCell';
@@ -328,7 +327,11 @@ class StockDetail extends Component {
         const TextFieldData = (type, variant, title, name, stateValue, error, index) => {
             return (
                 <div className="col-12 col-md-12" style={{ paddingBottom: "10px" }}>
-                    <TextField variant={variant} type={type} size="small" inputProps={{ min: "0", step: name === "StockInAmount" ? "1.00" : "0.10" }} fullWidth label={title} value={name === "StockInAmount" ? parseFloat(stateValue).toFixed(0) : stateValue} name={name} onChange={(e) => this.handleFormInput(e, name, index)} required />
+                    <TextField variant={variant} type={type} size="small" inputProps={{ min: "0", step: name === "StockInAmount" ? "1.00" : "0.10" }} fullWidth label={title} value={name === "StockInAmount" ? parseFloat(stateValue).toFixed(0) : stateValue} name={name} onChange={(e) => this.handleFormInput(e, name, index)}
+                        InputProps={{
+                            startAdornment: <InputAdornment position="start">{name === "StockInAmount" ? "  " : "RM"}</InputAdornment>,
+                        }}
+                        required />
                     {error && <FormHelperText sx={{ color: 'red' }} id={error}>Invalid {title} </FormHelperText>}
                 </div>
             )
