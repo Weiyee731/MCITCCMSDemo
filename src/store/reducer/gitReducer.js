@@ -49,6 +49,7 @@ const INITIAL_STATE = {
   //General
   countries: [],
   logistic: [],
+  grid: [],
 
   // Quotation
   quotations: [],
@@ -56,6 +57,11 @@ const INITIAL_STATE = {
   // Promotion
   promotions: [],
   addPromo: [],
+
+  // Stock
+  variationStock: [],
+  variationAction: [],
+  variationStockDetails: []
 };
 
 export function counterReducer(state = INITIAL_STATE, action) {
@@ -378,6 +384,57 @@ export function counterReducer(state = INITIAL_STATE, action) {
         productsByID: action.payloadProduct
       });
 
+    case GitAction.AddProductVariationStock:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.AddedProductVariationStock:
+      return Object.assign({}, state, {
+        loading: false,
+        variationAction: action.payload,
+      });
+
+    case GitAction.ResetProductVariationStock:
+      return Object.assign({}, state, { variationAction: [] });
+
+    case GitAction.ViewProductVariationStock:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.ViewedProductVariationStock:
+      return Object.assign({}, state, {
+        loading: false,
+        variationStock: action.payload,
+      });
+
+    case GitAction.ViewProductVariationStockWithID:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.ViewedProductVariationStockWithID:
+      return Object.assign({}, state, {
+        loading: false,
+        variationStock: action.payload,
+      });
+
+    case GitAction.ViewProductVariationStockWithVariationDetailsID:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.ViewedProductVariationStockWithVariationDetailsID:
+      return Object.assign({}, state, {
+        loading: false,
+        variationStockDetails: action.payload,
+      });
+
+    case GitAction.UpdateProductVariationStockDetails:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.UpdatedProductVariationStockDetails:
+      return Object.assign({}, state, {
+        loading: false,
+        variationAction: action.payload,
+      });
+
+    case GitAction.DeleteProductVariationStock:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.DeletedProductVariationStock:
+      return Object.assign({}, state, {
+        loading: false,
+        variationAction: action.payload,
+      });
+
     ///////////////////////////////////////////////////  Product Specification  ///////////////////////////////////////////////////
 
     case GitAction.AddProductSpecsDetail:
@@ -580,6 +637,14 @@ export function counterReducer(state = INITIAL_STATE, action) {
       return Object.assign({}, state, {
         loading: false,
         logistic: action.payload,
+      });
+
+    case GitAction.GetStorage:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotStorage:
+      return Object.assign({}, state, {
+        loading: false,
+        grid: action.payload,
       });
 
     /////////////////////////////////////////////////// Default ///////////////////////////////////////////////////

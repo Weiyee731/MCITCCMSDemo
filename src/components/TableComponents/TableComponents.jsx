@@ -13,6 +13,8 @@
  * ** @param {boolean} tableRows.checkbox |=> render checkbox at every row
  * ** @param {string} tableRows.checkboxColor |=> checkbox color, "primary | secondary"
  * ** @param {boolean} tableRows.onRowClickSelect |=> allow on row click
+ * ** @param {boolean} tableRows.isCollapseOpen |=> 
+ * ** @required @param {component} tableRows.renderTableCollapseRows 
  * 
  * @required @param {object} tableOptions |=> The options for table
  * ** @required @param {string} tableOptions.sortingIndex |=> This is the sorting index that used in table column, it is based on id. Read the example below
@@ -133,6 +135,7 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
+import Collapse from "@material-ui/core/Collapse";
 import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { visuallyHidden } from '@mui/utils';
@@ -415,32 +418,93 @@ export default function TableComponents(props) {
                         />
                         <TableBody>
                             {
+                                !isObjectUndefinedOrNull(props.tableRows.isExpandable) && props.tableRows.isExpandable === true && props.carryDataFromChild(TableData)
+                            }
+                            {
                                 isArrayNotEmpty(TableData) && TableData.map((row, index) => {
                                     const isItemSelected = isSelected(row);
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
-                                        <TableRow
-                                            hover
-                                            onClick={(event) => handleRowClick(event, row)}
-                                            aria-checked={isItemSelected}
-                                            tabIndex={-1}
-                                            key={"table_row__" + index}
-                                            selected={isItemSelected}
-                                        >
+                                        <>
                                             {
-                                                renderCheckbox &&
-                                                <TableCell padding="checkbox">
-                                                    <Checkbox
-                                                        color={checkboxColor}
-                                                        checked={isItemSelected}
-                                                        inputProps={{ 'aria-labelledby': labelId, }}
-                                                        onClick={(event) => handleSelectItem(event, row)}
-                                                    />
-                                                </TableCell>
+                                                !isObjectUndefinedOrNull(props.tableRows.isExpandable) && props.tableRows.isExpandable === true ?
+                                                    <>
+                                                        <TableRow
+                                                            hover
+                                                            onClick={(event) => handleRowClick(event, row)}
+                                                            aria-checked={isItemSelected}
+                                                            tabIndex={-1}
+                                                            key={"table_row__" + index}
+                                                            selected={isItemSelected}
+                                                        >
+                                                            {
+                                                                renderCheckbox &&
+                                                                <TableCell padding="checkbox">
+                                                                    <Checkbox
+                                                                        color={checkboxColor}
+                                                                        checked={isItemSelected}
+                                                                        inputProps={{ 'aria-labelledby': labelId, }}
+                                                                        onClick={(event) => handleSelectItem(event, row)}
+                                                                    />
+                                                                </TableCell>
+                                                            }
+                                                            {!isObjectUndefinedOrNull(props.tableRows.renderTableRows) && props.tableRows.renderTableRows(row, index)}
+                                                        </TableRow>
+                                                        <TableRow style={{ border: "none" }}>
+                                                            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
+                                                                <Collapse in={props.tableRows.isCollapseOpen[index]} timeout="auto" unmountOnExit>
+                                                                    {!isObjectUndefinedOrNull(props.tableRows.renderTableCollapseRows) && props.tableRows.renderTableCollapseRows(row, index)}
+                                                                </Collapse>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    </>
+                                                    :
+                                                    <TableRow
+                                                        hover
+                                                        onClick={(event) => handleRowClick(event, row)}
+                                                        aria-checked={isItemSelected}
+                                                        tabIndex={-1}
+                                                        key={"table_row__" + index}
+                                                        selected={isItemSelected}
+                                                    >
+                                                        {
+                                                            renderCheckbox &&
+                                                            <TableCell padding="checkbox">
+                                                                <Checkbox
+                                                                    color={checkboxColor}
+                                                                    checked={isItemSelected}
+                                                                    inputProps={{ 'aria-labelledby': labelId, }}
+                                                                    onClick={(event) => handleSelectItem(event, row)}
+                                                                />
+                                                            </TableCell>
+                                                        }
+                                                        {!isObjectUndefinedOrNull(props.tableRows.renderTableRows) && props.tableRows.renderTableRows(row, index)}
+                                                    </TableRow>
                                             }
-                                            {!isObjectUndefinedOrNull(props.tableRows.renderTableRows) && props.tableRows.renderTableRows(row, index)}
-                                        </TableRow>
+                                        </>
+
+                                        // <TableRow
+                                        //     hover
+                                        //     onClick={(event) => handleRowClick(event, row)}
+                                        //     aria-checked={isItemSelected}
+                                        //     tabIndex={-1}
+                                        //     key={"table_row__" + index}
+                                        //     selected={isItemSelected}
+                                        // >
+                                        //     {
+                                        //         renderCheckbox &&
+                                        //         <TableCell padding="checkbox">
+                                        //             <Checkbox
+                                        //                 color={checkboxColor}
+                                        //                 checked={isItemSelected}
+                                        //                 inputProps={{ 'aria-labelledby': labelId, }}
+                                        //                 onClick={(event) => handleSelectItem(event, row)}
+                                        //             />
+                                        //         </TableCell>
+                                        //     }
+                                        //     {!isObjectUndefinedOrNull(props.tableRows.renderTableRows) && props.tableRows.renderTableRows(row, index)}
+                                        // </TableRow>
                                     );
                                 })
                             }

@@ -1172,6 +1172,203 @@ export class GitEpic {
       }
     });
 
+  ProductVariationStock_Add = (action$) =>
+    action$.ofType(GitAction.AddProductVariationStock).switchMap(async ({ payload }) => {
+      console.log(url + project + "/" +
+        "Product_AddProductVariationStock?COINTAINERID=" + payload.ContainerID +
+        "&USERID=" + payload.UserID +
+        "&PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailsID +
+        "&PRODUCTSTOCK=" + payload.ProductStock +
+        "&PRODUCTVARIATIONCOST=" + payload.ProductVariationCost +
+        "&GRIDSTORAGEID=" + payload.GridStorageID)
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Product_AddProductVariationStock?COINTAINERID=" + payload.ContainerID +
+          "&USERID=" + payload.UserID +
+          "&PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailsID +
+          "&PRODUCTSTOCK=" + payload.ProductStock +
+          "&PRODUCTVARIATIONCOST=" + payload.ProductVariationCost +
+          "&GRIDSTORAGEID=" + payload.GridStorageID
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        if (json[0].ReturnVal === 1)
+          toast.success("Variation stock added successfully")
+
+        return {
+          type: GitAction.AddedProductVariationStock,
+          payload: json,
+        };
+      } catch (error) {
+        alert('AddProductVariationStock: ' + error);
+        return {
+          type: GitAction.AddedProductVariationStock,
+          payload: [],
+        };
+      }
+    });
+
+  ProductVariationStock_View = (action$) =>
+    action$.ofType(GitAction.ViewProductVariationStock).switchMap(async ({ payload }) => {
+      console.log(url + project + "/" +
+        "Product_ItemListWithVariation?PROJECTID=" + payload.ProjectID +
+        "&PRODUCTPERPAGE=" + payload.ProductPerPage +
+        "&PAGE=" + payload.Page)
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Product_ItemListWithVariation?PROJECTID=" + payload.ProjectID +
+          "&PRODUCTPERPAGE=" + payload.ProductPerPage +
+          "&PAGE=" + payload.Page
+        );
+        let json = await response.json();
+        console.log("json", json)
+        json = JSON.parse(json);
+        return {
+          type: GitAction.ViewedProductVariationStock,
+          payload: json,
+        };
+      } catch (error) {
+        alert('ViewProductVariationStock: ' + error);
+        return {
+          type: GitAction.ViewedProductVariationStock,
+          payload: [],
+        };
+      }
+    });
+
+  ProductVariationStock_ViewAll = (action$) =>
+    action$.ofType(GitAction.ViewProductVariationStockWithID).switchMap(async ({ payload }) => {
+      try {
+        console.log(
+          url + project + "/" +
+          "Product_ItemListWithProductVariationStock?PROJECTID=" + payload.ProjectID +
+          "&PRODUCTID=" + payload.ProductID +
+          "&PRODUCTPERPAGE=" + payload.ProductPerPage +
+          "&PAGE=" + payload.Page
+        )
+        const response = await fetch(
+          url + project + "/" +
+          "Product_ItemListWithProductVariationStock?PROJECTID=" + payload.ProjectID +
+          "&PRODUCTID=" + payload.ProductID +
+          "&PRODUCTPERPAGE=" + payload.ProductPerPage +
+          "&PAGE=" + payload.Page
+        );
+        let json = await response.json();
+        console.log("json", json)
+        json = JSON.parse(json);
+        return {
+          type: GitAction.ViewedProductVariationStockWithID,
+          payload: json,
+        };
+      } catch (error) {
+        alert('ViewProductVariationStockWithID: ' + error);
+        return {
+          type: GitAction.ViewedProductVariationStockWithID,
+          payload: [],
+        };
+      }
+    });
+
+  // List All added Variation Stock
+  ProductVariationStock_ViewWithVariationDetailsID = (action$) =>
+    action$.ofType(GitAction.ViewProductVariationStockWithVariationDetailsID).switchMap(async ({ payload }) => {
+      try {
+        console.log(
+          url + project + "/" +
+          "Product_ItemListWithProductVariationStockDetailList?PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailID
+        )
+        const response = await fetch(
+          url + project + "/" +
+          "Product_ItemListWithProductVariationStockDetailList?PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailID
+        );
+        let json = await response.json();
+        console.log("json", json)
+        json = JSON.parse(json);
+        return {
+          type: GitAction.ViewedProductVariationStockWithVariationDetailsID,
+          payload: json,
+        };
+      } catch (error) {
+        alert('ViewProductVariationStockWithVariationDetailsID: ' + error);
+        return {
+          type: GitAction.ViewedProductVariationStockWithVariationDetailsID,
+          payload: [],
+        };
+      }
+    });
+
+  ProductVariationStock_UpdateDetails = (action$) =>
+    action$.ofType(GitAction.UpdateProductVariationStockDetails).switchMap(async ({ payload }) => {
+      try {
+        console.log(
+          url + project + "/" +
+          "Product_UpdateProductVariationStock?PRODUCTVARIATIONSTOCKID=" + payload.ProductVariationStockID +
+          "&USERID=" + payload.UserID +
+          "&APPROVEDBY=" + payload.ApprovedBy +
+          "&PRODUCTSTOCK=" + payload.ProductStock +
+          "&PRODUCTVARIATIONCOST=" + payload.ProductVariationCost +
+          "&GRIDSTORAGEID=" + payload.GridStorage
+        )
+        const response = await fetch(
+          url + project + "/" +
+          "Product_UpdateProductVariationStock?PRODUCTVARIATIONSTOCKID=" + payload.ProductVariationStockID +
+          "&USERID=" + payload.UserID +
+          "&APPROVEDBY=" + payload.ApprovedBy +
+          "&PRODUCTSTOCK=" + payload.ProductStock +
+          "&PRODUCTVARIATIONCOST=" + payload.ProductVariationCost +
+          "&GRIDSTORAGEID=" + payload.GridStorage
+        );
+        let json = await response.json();
+        console.log("json", json)
+        json = JSON.parse(json);
+        return {
+          type: GitAction.UpdatedProductVariationStockDetails,
+          payload: json,
+        };
+      } catch (error) {
+        alert('UpdateProductVariationStockDetails: ' + error);
+        return {
+          type: GitAction.UpdatedProductVariationStockDetails,
+          payload: [],
+        };
+      }
+    });
+
+  ProductVariationStock_Delete = (action$) =>
+    action$.ofType(GitAction.DeleteProductVariationStock).switchMap(async ({ payload }) => {
+      try {
+        console.log(
+          url + project + "/" +
+          "Product_DeleteProductVariationStock?PRODUCTVARIATIONSTOCKID=" + payload.ProductVariationStockID +
+          "&USERID=" + payload.UserID +
+          "&APPROVEDBY=" + payload.ApprovedBy
+        )
+        const response = await fetch(
+          url + project + "/" +
+          "Product_DeleteProductVariationStock?PRODUCTVARIATIONSTOCKID=" + payload.ProductVariationStockID +
+          "&USERID=" + payload.UserID +
+          "&APPROVEDBY=" + payload.ApprovedBy
+        );
+
+        let json = await response.json();
+        console.log("json", json)
+        json = JSON.parse(json);
+        return {
+          type: GitAction.DeletedProductVariationStock,
+          payload: json,
+        };
+      } catch (error) {
+        alert('DeletedProductVariationStock: ' + error);
+        return {
+          type: GitAction.DeletedProductVariationStock,
+          payload: [],
+        };
+      }
+    });
+
+
   ///////////////////////////////////////////////////  Product Specification Details  ///////////////////////////////////////////////////
 
   ProductSpecsDetail_Add = (action$) =>
@@ -1695,7 +1892,7 @@ export class GitEpic {
   Promotion_Delete = (action$) =>
     action$.ofType(GitAction.DeletePromotion).switchMap(async ({ payload }) => {
       console.log(url + project + "/" +
-        "Promo_DeletePromotion?PROMOTIONID=" +  payload.PromotionID)
+        "Promo_DeletePromotion?PROMOTIONID=" + payload.PromotionID)
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1759,6 +1956,32 @@ export class GitEpic {
         alert('getCountry: ' + error);
         return {
           type: GitAction.GotCountry,
+          payload: [],
+        };
+      }
+    });
+
+  Storage_GridStorageList = (action$) =>
+    action$.ofType(GitAction.GetStorage).switchMap(async ({ payload }) => {
+      console.log(url + project + "/" +
+        "Storage_GridStorageList?PROJECTID=" + payload)
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Storage_GridStorageList?PROJECTID=" + payload.ProjectID
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        console.log("GetStorage", json)
+
+        return {
+          type: GitAction.GotStorage,
+          payload: json,
+        };
+      } catch (error) {
+        alert('GetStorage: ' + error);
+        return {
+          type: GitAction.GotStorage,
           payload: [],
         };
       }

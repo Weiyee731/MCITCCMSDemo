@@ -15,7 +15,6 @@ import "./OverallStock.css";
 
 // UI Components
 import { Button } from "@mui/material";
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import Select from 'react-select';
 import SubmitIcon from '@mui/icons-material/Backup';
 import GroupAddIcon from '@mui/icons-material/Add';
@@ -30,21 +29,32 @@ import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+
 import createHistory from 'history/createBrowserHistory'
 const history = createHistory()
 
 
 function mapStateToProps(state) {
     return {
-        foods: state.counterReducer["foods"],
+        // foods: state.counterReducer["foods"],
         allstocks: state.counterReducer["products"],
+        variationStock: state.counterReducer["variationStock"],
+        variationAction: state.counterReducer["variationAction"],
+        grid: state.counterReducer["grid"],
+
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        CallTesting: () => dispatch(GitAction.CallTesting()),
+        // CallTesting: () => dispatch(GitAction.CallTesting()),
         CallAllProducts: (prodData) => dispatch(GitAction.CallAllProducts(prodData)),
+        CallViewProductVariationStock: (prodData) => dispatch(GitAction.CallViewProductVariationStock(prodData)),
+        CallAddProductVariationStock: (prodData) => dispatch(GitAction.CallAddProductVariationStock(prodData)),
+        CallGridList: (prodData) => dispatch(GitAction.CallGridList(prodData)),
+        CallResetProductVariationStock: () => dispatch(GitAction.CallResetProductVariationStock()),
+
     };
 }
 
@@ -62,48 +72,46 @@ const headCells = [
         label: 'Product Name',
     },
     {
-        id: 'Total Stock',
-        align: 'center',
-        disablePadding: false,
-        label: 'Stock',
-    },
-    {
-        id: 'TotalPrice',
-        align: 'center',
-        disablePadding: false,
-        label: 'Total Price (RM)',
-    },
-    {
         id: 'Store',
         align: 'center',
         disablePadding: false,
         label: 'Store',
     },
+    {
+        id: 'StockInAmount',
+        align: 'center',
+        disablePadding: false,
+        label: 'Stock In Amount',
+    },
+    {
+        id: 'VariationCost',
+        align: 'center',
+        disablePadding: false,
+        label: 'Variation Cost (RM)',
+    },
 ];
 
 const INITIAL_STATE = {
-    OrderDate: new Date(),
-    ReceiveDate: new Date(),
     StockInDate: new Date(),
+    ContainerID: 0,
+    ContainerName: "",
+    isContainerError: false,
 
-    isOpenStockModal: false,
-    isDiscountClick: false,
     isBackClick: false,
 
-    Remarks: "",
-    StockPrice: "",
-    StockInAmount: "",
-    Store: [],
     InvoiceNo: "",
-
-    isInvoiceError: false,
-    isStoreError: false,
-    isStockInAmountError: false,
-    isStockPriceError: false,
-    // isRemarkError: false,
-    ReceiveValidated: true,
-    OrderValidated: true,
-    StockInValidated: true,
+    StoreStockInData: [{
+        id: "",
+        label: "",
+        value: "",
+        StockInAmount: "",
+        VariationCost: "",
+        // VariationPrice: "",
+        CurrentStock: "",
+        isStockInAmountError: false,
+        isVariationCostError: false,
+        // isVariationPriceError: false
+    }],
     searchKeywords: "",
 
     filteredProduct: [],
@@ -112,6 +120,8 @@ const INITIAL_STATE = {
     rowIndex: "",
     DraftNo: "",
     selectedListID: [],
+
+    isOpenStockModal: true,
 }
 
 const StockInData = []
@@ -121,6 +131,8 @@ class AddStock extends Component {
         super(props);
         this.state = INITIAL_STATE
         this.DataState = StockInData
+
+        this.props.CallGridList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
 
         this.props.CallAllProducts({
             type: 'Merchant',
@@ -133,9 +145,37 @@ class AddStock extends Component {
     }
 
     componentDidMount() {
+        this.props.CallViewProductVariationStock({
+            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+            ProductPerPage: 999,
+            Page: 1
+        })
     }
 
     componentDidUpdate(prevProps, prevState) {
+
+        if (this.props.variationAction.length > 0 && this.props.variationAction[0].ReturnVal === "1") {
+            this.props.CallResetProductVariationStock()
+            toast.success("Stock is update")
+
+            let statelisting = this.DataState
+            let localListing = localStorage.getItem("DataSetDraft") !== null ? JSON.parse(localStorage.getItem("DataSetDraft")) : []
+            let stateDraftNo = []
+
+            statelisting.length > 0 && statelisting.map((data) => {
+                stateDraftNo.push(data.DraftNo)
+            })
+
+            // to remove localstorage data
+            if (localListing.length > 0 && stateDraftNo.length > 0) {
+                stateDraftNo.map((DraftID) => {
+                    localListing = localListing.filter((data) => data.DraftNo !== DraftID)
+                })
+            }
+            this.DataState = []
+            localStorage.setItem("DataSetDraft", JSON.stringify(localListing))
+            this.setState({ selectedListID: [] })
+        }
     }
 
     renderTableRows = (data, index) => {
@@ -151,28 +191,30 @@ class AddStock extends Component {
                     {data.ProductSKU}
                 </TableCell>
                 <TableCell align="center" style={{ width: "35%" }}>{data.ProductName}</TableCell>
-                <TableCell align="center" style={{ width: "15%" }}>{data.StockInAmount}</TableCell>
-                <TableCell align="center" style={{ width: "15%" }}>{data.StockPrice}</TableCell>
-                <TableCell align="center" style={{ width: "20%" }}>{data.Store.value}</TableCell>
+                <TableCell align="center" style={{ width: "15%" }}>{data.StoreStockInData.length > 0 && data.StoreStockInData.map((details) => {
+                    return (<> <label >{details.value}</label> <br /> </>)
+                })}</TableCell>
+                <TableCell align="center" style={{ width: "15%" }}>{data.StoreStockInData.length > 0 && data.StoreStockInData.map((details) => {
+                    return (<> <label >{details.StockInAmount}</label> <br />  </>)
+                })}</TableCell>
+                <TableCell align="center" style={{ width: "15%" }}>{data.StoreStockInData.length > 0 && data.StoreStockInData.map((details) => {
+                    return (<>  <label >{parseFloat(details.VariationCost).toFixed(2)}</label> <br /> </>)
+                })}</TableCell>
             </>
         )
     }
 
     onTableRowClick = (event, row) => {
         this.setState({
-            searchKeywords: row.SKU,
+            searchKeywords: row.ProductSKU,
             DraftNo: row.DraftNo,
             rowIndex: row.rowIndex,
             filteredProduct: row.filteredProduct,
-            OrderDate: row.OrderDate,
-            ReceiveDate: row.ReceiveDate,
-            InvoiceNo: row.InvoiceNo,
-            Store: row.Store,
-
-            StockInAmount: row.StockInAmount,
-            StockPrice: row.StockPrice,
-            isDiscountClick: row.isDiscountClick,
-            Remarks: row.Remarks,
+            StoreStockInData: row.StoreStockInData,
+            CurrentStock: row.CurrentStock,
+            ContainerID: row.ContainerID,
+            ContainerName: row.ContainerName,
+            StockInDate: row.StockInDate,
 
             isOpenStockModal: true,
             isDataEdit: true
@@ -189,15 +231,16 @@ class AddStock extends Component {
         // to remove state data
         if (statelisting.length > 0 && selectedList.length > 0) {
             selectedList.map((datalist) => {
-                statelisting.filter((data) => data.ProductSKU !== datalist.ProductSKU).map((details) => {
-                    stateDraftNo.push(details.DraftNo)
+                statelisting.filter((data) => data.ProductSKU === datalist.ProductSKU).map((list) => {
+                    stateDraftNo.push(list)
                 })
+                statelisting = statelisting.filter((data) => data.ProductSKU !== datalist.ProductSKU)
             })
         }
         // to remove localstorage data
         if (localListing.length > 0 && stateDraftNo.length > 0) {
             stateDraftNo.map((DraftID) => {
-                localListing = localListing.filter((data) => data.DraftNo !== DraftID)
+                localListing = localListing.filter((data) => data.DraftNo !== DraftID.DraftNo)
             })
         }
 
@@ -225,51 +268,66 @@ class AddStock extends Component {
         }
     }
 
-    handleFormInput = (e, name) => {
+    handleFormInput = (e, name, index) => {
+        let storeListing = this.state.StoreStockInData
         switch (name) {
-            case "Invoice":
-                if (isStringNullOrEmpty(e.target.value))
-                    this.setState({ InvoiceNo: e.target.value, isInvoiceError: true })
-                else
-                    this.setState({ InvoiceNo: e.target.value, isInvoiceError: false })
-
-                break;
-
             case "Store":
-                if (isStringNullOrEmpty(e))
-                    this.setState({
-                        Store: [{
-                            id: e.id,
-                            value: e.value,
-                            label: e.label
-                        }], isStoreError: true
-                    })
-                else
-                    this.setState({
-                        Store: [{
-                            id: e.id,
-                            value: e.value,
-                            label: e.label
-                        }], isStoreError: false
-                    })
+                storeListing[index] = {
+                    id: e.id,
+                    label: e.label,
+                    value: e.value,
+                    CurrentStock: storeListing[index].CurrentStock,
+
+                    StockInAmount: storeListing[index].StockInAmount,
+                    VariationCost: storeListing[index].VariationCost,
+                    isStockInAmountError: storeListing[index].isStockInAmountError,
+                    isVariationCostError: storeListing[index].isVariationCostError,
+                }
+                this.setState({ StoreStockInData: storeListing })
                 break;
 
-            case "StockIn":
+            case "StockInAmount":
+                let isStockInAmountError = false
                 if (isStringNullOrEmpty(e.target.value))
-                    this.setState({ StockInAmount: e.target.value, isStockInAmountError: true })
-                else
-                    this.setState({ StockInAmount: e.target.value, isStockInAmountError: false })
+                    isStockInAmountError = true
+
+                storeListing[index] = {
+                    id: storeListing[index].id,
+                    label: storeListing[index].label,
+                    value: storeListing[index].value,
+                    CurrentStock: storeListing[index].CurrentStock,
+
+                    StockInAmount: e.target.value,
+                    VariationCost: storeListing[index].VariationCost,
+                    isStockInAmountError: isStockInAmountError,
+                    isVariationCostError: storeListing[index].isVariationCostError,
+                }
+                this.setState({ StoreStockInData: storeListing })
                 break;
 
-            case "StockPrice":
+            case "VariationCost":
+                let isVariationCostError = false
                 if (isStringNullOrEmpty(e.target.value))
-                    this.setState({ StockPrice: e.target.value, isStockPriceError: true })
-                else
-                    this.setState({ StockPrice: e.target.value, isStockPriceError: false })
-                break;
+                    isVariationCostError = true
 
-            case "Remark":
-                this.setState({ Remarks: e.target.value })
+                storeListing[index] = {
+                    id: storeListing[index].id,
+                    label: storeListing[index].label,
+                    value: storeListing[index].value,
+                    CurrentStock: storeListing[index].CurrentStock,
+
+                    StockInAmount: storeListing[index].StockInAmount,
+                    VariationCost: e.target.value,
+                    isStockInAmountError: storeListing[index].isStockInAmountError,
+                    isVariationCostError: isVariationCostError,
+                }
+                this.setState({ StoreStockInData: storeListing })
+                break;
+            case "Container":
+                if (isStringNullOrEmpty(e.target.value))
+                    this.setState({ isContainerError: true, ContainerID: e.target.value })
+                else
+                    this.setState({ isContainerError: false, ContainerID: e.target.value })
                 break;
 
             default:
@@ -280,6 +338,7 @@ class AddStock extends Component {
 
     // Search for corresponsing SKU
     searchSpace = (value) => {
+
         if (isStringNullOrEmpty(value)) {
             this.setState({ filteredProduct: [], searchKeywords: value })
         }
@@ -288,20 +347,36 @@ class AddStock extends Component {
             if (this.state.filteredProduct !== undefined) {
                 this.state.filteredProduct.splice(0, this.state.filteredProduct.length)
                 let filteredListing = []
+                let DataSet = this.props.variationStock
 
-                let DataSet = JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? this.props.allstocks :
-                    JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 && this.props.allstocks !== undefined ? this.props.allstocks.filter((x) => parseInt(x.MerchantID) === parseInt(localStorage.getItem("loginUser")[0].UserID)) : []
-
-                DataSet.length > 0 && DataSet.filter((searchedItem) =>
-                    searchedItem.SKU !== null && searchedItem.SKU.toLowerCase().includes(
+                DataSet.length > 0 && DataSet !== undefined && DataSet.filter((searchedItem) =>
+                    searchedItem.ProductVariationSKU !== null && searchedItem.ProductVariationSKU.toLowerCase().includes(
                         value.toLowerCase()
                     )
                 ).map((filteredItem) => {
                     filteredListing.push(filteredItem);
                 })
 
-                if (filteredListing.length > 0)
+                if (filteredListing.length > 0) {
                     this.state.filteredProduct.push(filteredListing[0])
+                    let GridList = this.props.grid
+                    let GridValue = GridList.length > 0 && GridList.filter((x) => parseInt(x.GridStorageID) === parseInt(filteredListing[0].GridStorageID))
+
+                    this.setState({
+                        StoreStockInData: [{
+                            id: filteredListing[0].GridStorageID,
+                            label: GridValue.GridStorage,
+                            value: GridValue.GridStorage,
+                            StockInAmount: filteredListing[0].ProductStockAmount,
+                            VariationCost: filteredListing[0].ProductVariationCost,
+                            // VariationPrice: filteredListing[0].ProductVariationPrice,
+                            isStockInAmountError: false,
+                            isVariationCostError: false,
+                            // isVariationPriceError: false
+                        }]
+                    })
+                }
+
             }
         }
     }
@@ -310,14 +385,12 @@ class AddStock extends Component {
     checkSimilarProduct = (product) => {
         let checkSimilar = false
         let listing = this.DataState
-
         if (listing.length > 0) {
-            if (listing.filter((data) => data.ProductSKU == product.SKU).length > 0) {
+            if (listing.filter((data) => data.ProductSKU == product.ProductVariationSKU).length > 0) {
                 checkSimilar = true
                 toast.warning("Duplicate Error : Product with SKU is already added in the list")
             }
         }
-
         return checkSimilar
 
     }
@@ -325,30 +398,17 @@ class AddStock extends Component {
     // Check whether all input has been filled
     errorChecking = () => {
         let error = false
-        if (!this.state.isInvoiceError && !this.state.isStoreError && !this.state.isStockInAmountError && !this.state.isStockPriceError
-            && this.state.ReceiveValidated && this.state.OrderValidated && this.state.StockInValidated) {
-            if (isStringNullOrEmpty(this.state.StockPrice) || isStringNullOrEmpty(this.state.StockInAmount) || isStringNullOrEmpty(this.state.Store) || isStringNullOrEmpty(this.state.InvoiceNo)) {
-                error = true
-                // } else if ((this.state.ReceiveDate < this.state.OrderDate) || (this.state.OrderDate > this.state.StockInDate) || (this.state.ReceiveDate > this.state.StockInDate)) {
-                // toast.warning("Please cross check on date input")
-                // error = true
-            }
-            else if ((convertDateTimeToDDMMYY(this.state.OrderDate) > convertDateTimeToDDMMYY(this.state.StockInDate))) {
-                this.setState({ OrderValidated: false, StockInValidated: false })
-                error = true
-            } else if ((convertDateTimeToDDMMYY(this.state.ReceiveDate) < convertDateTimeToDDMMYY(this.state.OrderDate))) {
-                this.setState({ OrderValidated: false, ReceiveValidated: false })
-                error = true
-            }
-            else if ((convertDateTimeToDDMMYY(this.state.ReceiveDate) > convertDateTimeToDDMMYY(this.state.StockInDate))) {
-                this.setState({ ReceiveValidated: false, StockInValidated: false })
-                error = true
+        let StockListing = this.state.StoreStockInData
 
-            } else {
-                error = false
-            }
-        } else {
-            error = true
+        if (StockListing.length > 0) {
+            if (StockListing.filter((data) => data.isStockInAmountError === true || data.isStockInAmountError === undefined).length > 0)
+                error = true
+            else if (StockListing.filter((data) => data.isVariationCostError === true || data.isVariationCostError === undefined).length > 0)
+                error = true
+            // else if (StockListing.filter((data) => data.isVariationPriceError === true || data.isVariationPriceError === undefined).length > 0)
+            //     error = true
+            else if (this.state.isContainerError === true || this.state.ContainerID === "")
+                error = true
         }
         return error
     }
@@ -364,22 +424,13 @@ class AddStock extends Component {
             var DraftListing = {
                 DraftNo: DraftNo,
                 rowIndex: rowSize,
+                ContainerID: this.state.ContainerID,
+                StockInDate: this.state.StockInDate,
                 filteredProduct: this.state.filteredProduct,
                 ProductID: this.state.filteredProduct[0].ProductID,
                 ProductName: this.state.filteredProduct[0].ProductName,
-                ProductSKU: this.state.filteredProduct[0].SKU,
-
-                InvoiceNo: this.state.InvoiceNo,
-                Store: this.state.Store,
-                StoreID: this.state.Store.id,
-                OrderDate: this.state.OrderDate,
-                ReceiveDate: this.state.ReceiveDate,
-                StockInDate: this.state.StockInDate,
-
-                StockPrice: this.state.StockPrice,
-                StockInAmount: this.state.StockInAmount,
-                isDiscountClick: this.state.isDiscountClick,
-                Remarks: isStringNullOrEmpty(this.state.Remarks) ? "-" : this.state.Remarks,
+                ProductSKU: this.state.filteredProduct[0].ProductVariationSKU,
+                StoreStockInData: this.state.StoreStockInData,
             }
 
             if (localStorage.getItem("DataSetDraft") !== null) {
@@ -392,11 +443,10 @@ class AddStock extends Component {
             this.setState(INITIAL_STATE)
         }
         else {
-            // toast.warning("Please fill in All require information")
             toast.warning("Input Error: Please cross check on All Stock Details Input")
-
         }
     }
+
     // Update data in a temporary listing without upload to database
     OnSubmitUpdateCache = (data, DraftNo) => {
         if (!this.errorChecking()) {
@@ -407,21 +457,13 @@ class AddStock extends Component {
                     {
                         rowIndex: index,
                         DraftNo: DraftNo,
+                        ContainerID: this.state.ContainerID,
+                        StockInDate: this.state.StockInDate,
                         filteredProduct: this.state.filteredProduct,
                         ProductID: this.state.filteredProduct[0].ProductID,
                         ProductName: this.state.filteredProduct[0].ProductName,
-                        ProductSKU: this.state.filteredProduct[0].SKU,
-
-                        InvoiceNo: this.state.InvoiceNo,
-                        Store: this.state.Store,
-                        StoreID: this.state.Store.id,
-                        OrderDate: this.state.OrderDate,
-                        ReceiveDate: this.state.ReceiveDate,
-
-                        StockPrice: this.state.StockPrice,
-                        StockInAmount: this.state.StockInAmount,
-                        isDiscountClick: this.state.isDiscountClick,
-                        Remarks: isStringNullOrEmpty(this.state.Remarks) ? "-" : this.state.Remarks
+                        ProductSKU: this.state.filteredProduct[0].ProductVariationSKU,
+                        StoreStockInData: this.state.StoreStockInData,
                     }
                 }
             })
@@ -433,21 +475,12 @@ class AddStock extends Component {
                         rowIndex: index,
                         DraftNo: DraftNo,
                         filteredProduct: this.state.filteredProduct,
+                        ContainerID: this.state.ContainerID,
+                        StockInDate: this.state.StockInDate,
                         ProductID: this.state.filteredProduct[0].ProductID,
                         ProductName: this.state.filteredProduct[0].ProductName,
-                        ProductSKU: this.state.filteredProduct[0].SKU,
-
-                        InvoiceNo: this.state.InvoiceNo,
-                        Store: this.state.Store,
-                        StoreID: this.state.Store.id,
-                        StockInDate: this.state.StockInDate,
-                        OrderDate: this.state.OrderDate,
-                        ReceiveDate: this.state.ReceiveDate,
-
-                        StockPrice: this.state.StockPrice,
-                        StockInAmount: this.state.StockInAmount,
-                        isDiscountClick: this.state.isDiscountClick,
-                        Remarks: isStringNullOrEmpty(this.state.Remarks) ? "-" : this.state.Remarks
+                        ProductSKU: this.state.filteredProduct[0].ProductVariationSKU,
+                        StoreStockInData: this.state.StoreStockInData,
                     }
                 }
             })
@@ -460,23 +493,78 @@ class AddStock extends Component {
     }
 
     OnHandleSubmitStock = () => {
-        localStorage.setItem("DataSetDraft", JSON.stringify(this.DataState))
-        localStorage.setItem("DataSetDraft2", [this.DataState])
-        localStorage.setItem("DataSetDraft3", JSON.stringify([this.DataState]))
+
+        if (!this.errorChecking()) {
+            let ProductVariationDetailID = []
+            let ProductStock = []
+            // let ProductVariationPrice = []
+            let ProductVariationCost = []
+            let GridStorageID = []
+
+
+
+            let Listing = this.DataState
+            Listing.length > 0 && Listing.map((data) => {
+                data.StoreStockInData.length > 0 && data.StoreStockInData.map((stockDetails) => {
+
+                    ProductVariationDetailID.push(data.filteredProduct[0].ProductVariationDetailID)
+                    ProductStock.push(stockDetails.StockInAmount)
+                    ProductVariationCost.push(parseFloat(stockDetails.VariationCost).toFixed(2))
+                    GridStorageID.push(stockDetails.id)
+                })
+            })
+
+            console.log("Listing", Listing)
+            console.log("Listing ProductVariationDetailID", ProductVariationDetailID)
+
+            this.props.CallAddProductVariationStock({
+                ContainerID: this.state.ContainerID,
+                UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+                ProductVariationDetailsID: ProductVariationDetailID,
+                ProductStock: ProductStock,
+                // ProductVariationPrice: ProductVariationPrice,
+                ProductVariationCost: ProductVariationCost,
+                GridStorageID: GridStorageID
+            })
+
+        } else {
+            toast.warning("Input Error: Please cross check on All Stock Details Input")
+        }
+    }
+
+    addNewStore = () => {
+        let storeListing = this.state.StoreStockInData
+
+        storeListing = [...storeListing, {
+            id: "",
+            label: "",
+            value: "",
+            StockInAmount: "",
+            VariationCost: "",
+            // VariationPrice: ""
+        }]
+        this.setState({ StoreStockInData: storeListing })
+    }
+
+    removeStoreData = (index) => {
+        let storeListing = this.state.StoreStockInData
+        storeListing = storeListing.filter((x, i) => i !== index)
+        this.setState({ StoreStockInData: storeListing })
     }
 
     render() {
         const dummyStore =
             [
-                { id: "1", Store: "Store A" },
-                { id: "2", Store: "Store B" },
-                { id: "3", Store: "Store C" },
+                { id: "0", Store: "Store A" },
+                { id: "1", Store: "Store B" },
+                { id: "2", Store: "Store C" },
             ]
 
-        const TextFieldData = (type, variant, title, name, stateValue, error) => {
+
+        const TextFieldData = (type, variant, title, name, stateValue, error, index) => {
             return (
-                <div className="col-12 col-md-6">
-                    <TextField variant={variant} type={type} size="small" fullWidth label={title} value={stateValue} name={name} onChange={(e) => this.handleFormInput(e, name)} required />
+                <div className="col-12 col-md-12" style={{ paddingBottom: "10px" }}>
+                    <TextField variant={variant} type={type} size="small" inputProps={{ min: "0", step: name === "StockInAmount" ? "1.00" : "0.10" }} fullWidth label={title} value={name === "StockInAmount" ? parseFloat(stateValue).toFixed(0) : stateValue} name={name} onChange={(e) => this.handleFormInput(e, name, index)} required />
                     {error && <FormHelperText sx={{ color: 'red' }} id={error}>Invalid {title} </FormHelperText>}
                 </div>
             )
@@ -490,6 +578,7 @@ class AddStock extends Component {
                 </div>
             )
         }
+
 
         const ModalListing = () => {
             return (
@@ -506,87 +595,106 @@ class AddStock extends Component {
                         </div>
                         <div className="col-8">
                             <div><label style={{ fontWeight: "bold" }}>Product Name: {this.state.filteredProduct.length > 0 && this.state.filteredProduct[0].ProductName !== null ? this.state.filteredProduct[0].ProductName : ""}</label></div>
-                            <div><label style={{ fontSize: "13px", color: "lightslategrey" }}>Variation: {this.state.filteredProduct.length > 0 && this.state.filteredProduct[0].Variation !== null ? this.state.filteredProduct[0].Variation : ""}</label></div>
-                            <div><label style={{ fontSize: "13px", color: "lightslategrey" }}>Brand: {this.state.filteredProduct.length > 0 && this.state.filteredProduct[0].Brand !== null ? this.state.filteredProduct[0].Brand : "No Brand"}</label></div>
-                            <div><label style={{ fontSize: "13px", color: "lightslategrey" }}>Model:  {this.state.filteredProduct.length > 0 && this.state.filteredProduct[0].Model !== null ? this.state.filteredProduct[0].Model : "No Model"}</label></div>
-                            <div><label style={{ fontSize: "13px", color: "lightslategrey" }}>SKU: {this.state.filteredProduct.length > 0 && this.state.filteredProduct[0].SKU !== null ? this.state.filteredProduct[0].SKU : ""}</label></div>
+                            <div><label style={{ fontSize: "13px", color: "lightslategrey" }}>Variation: {this.state.filteredProduct.length > 0 && this.state.filteredProduct[0].ProductVariationValue !== null ? this.state.filteredProduct[0].ProductVariationValue : ""}</label></div>
+                            <div><label style={{ fontSize: "13px", color: "lightslategrey" }}>SKU: {this.state.filteredProduct.length > 0 && this.state.filteredProduct[0].ProductVariationSKU !== null ? this.state.filteredProduct[0].ProductVariationSKU : ""}</label></div>
                         </div>
                     </div>
-                    <hr />
-                    <div className="row" style={{ paddingTop: "5px", paddingBottom: "5px" }}>
-                        {TextFieldData("text", "standard", "Purchase Order Number", "Invoice", this.state.InvoiceNo, this.state.isInvoiceError)}
-                        {DateData("Order Date", "OrderDate", this.state.OrderDate, this.state.OrderValidated)}
-                        <br />
-                        <div className="col-12 col-md-6">
-                            <FormControl variant="standard" size="small" fullWidth>
-                                <InputLabel id="Store-label">Store</InputLabel>
-                                <Select
-                                    labelId="Store"
-                                    id="Store"
-                                    name="Store"
-                                    value={this.state.Store[0]}
-                                    onChange={(e) => this.handleFormInput(e, "Store")}
-                                    label="Store"
-                                    options={
-                                        isArrayNotEmpty(dummyStore) && dummyStore.map((el, idx) => {
-                                            return { id: el.id, value: el.Store, label: el.Store }
-                                        })
-                                    }
-                                >
-                                </Select>
-                            </FormControl>
+                    <div className="row">
+                        <div className="col-12 col-md-12" style={{ textAlign: "right" }}>
+                            <Tooltip title="Add Store">
+                                <IconButton size="small" sx={{ color: "#0074ea", marginRight: 4 }} onClick={() => this.addNewStore()}>
+                                    <GroupAddIcon /><label style={{ paddingLeft: "5px" }}>Add Store</label>
+                                </IconButton>
+                            </Tooltip>
                         </div>
-                        {DateData("Receive Date", "ReceiveDate", this.state.ReceiveDate, this.state.ReceiveValidated)}
                     </div>
                     <hr />
                     {
-                        this.state.Store.length > 0 ?
-                            <>
-                                <div className="row" style={{ paddingTop: "5px", paddingBottom: "5px" }}>
-                                    <div className="col-12 col-md-6">
-                                        <label style={{ color: "grey" }}>Current Stock : 75</label>
+                        this.state.StoreStockInData.length > 0 && this.state.StoreStockInData.map((data, index) => {
+                            return (
+                                <>
+                                    <div className="row" style={{ paddingTop: "5px", paddingBottom: "5px" }}>
+                                        <div className="col-12 col-md-6">
+                                            <div className="row">
+                                                {
+                                                    this.state.StoreStockInData.length > 1 &&
+                                                    <div className="col-12 col-md-1" >
+                                                        <RemoveCircleOutlineIcon
+                                                            className="DeleteOptionButton mr-2"
+                                                            style={{ cursor: 'pointer' }}
+                                                            color="secondary"
+                                                            onClick={() => this.removeStoreData(index)}
+                                                        />
+                                                    </div>
+                                                }
+                                                <div className="col-12 col-md-10" >
+                                                    <FormControl variant="standard" size="small" fullWidth>
+                                                        <InputLabel id="Store-label">Store</InputLabel>
+                                                        <Select
+                                                            labelId="Store"
+                                                            id="Store"
+                                                            name="Store"
+                                                            value={data}
+                                                            onChange={(e) => this.handleFormInput(e, "Store", index)}
+                                                            label="Store"
+                                                            options={
+                                                                isArrayNotEmpty(this.props.grid) && this.props.grid.map((el, idx) => {
+                                                                    return { id: el.GridStorageID, value: el.GridStorage, label: el.GridStorage }
+                                                                })
+                                                            }
+                                                        >
+                                                        </Select>
+                                                    </FormControl>
+                                                    {
+                                                        data.value !== "" && data.CurrentStock !== undefined &&
+                                                        <div style={{ paddingTop: "15px" }} >
+                                                            <label style={{ color: "grey" }}>Current Stock : {data.CurrentStock}</label>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {
+                                            data.value !== "" && data.value !== undefined ?
+                                                <>
+                                                    <br />
+                                                    <div className="col-12 col-md-6">
+                                                        {TextFieldData("number", "outlined", "Stock In Amount", "StockInAmount", data.StockInAmount, data.isStockInAmountError, index)}
+                                                        {TextFieldData("number", "outlined", "Variation Cost", "VariationCost", data.VariationCost, data.isVariationCostError, index)}
+                                                        {/* {TextFieldData("number", "outlined", "Variation Selling Price", "VariationSellingPrice", data.VariationPrice, data.isVariationPriceError, index)} */}
+                                                    </div>
+                                                    <br />
+                                                </>
+                                                :
+                                                <div style={{ paddingBottom: "50px" }}>
+                                                </div>
+                                        }
+                                        <hr />
                                     </div>
-                                    <div className="col-12 col-md-6" style={{ textAlign: "right" }}>
-                                        <CheckBoxIcon style={{ color: this.state.isDiscountClick === true ? "blue" : "grey" }} onClick={() => this.setState({ isDiscountClick: !this.state.isDiscountClick })} /> <label style={{ color: "grey" }}>Discount</label>
-                                    </div>
-                                    {TextFieldData("number", "standard", "Stock In Amount", "StockIn", this.state.StockInAmount, this.state.isStockInAmountError)}
-                                    {TextFieldData("number", "standard", "Stock Price", "StockPrice", this.state.StockPrice, this.state.isStockPriceError)}
-                                    <div className="col-12 mt-3">
-                                        <Box sx={{ width: '100%' }}>
-                                            <TextField
-                                                variant="outlined"
-                                                size="large"
-                                                name="Remark"
-                                                label="Remark"
-                                                value={this.state.Remarks}
-                                                onChange={(e) => this.handleFormInput(e, "Remark")}
-                                                fullWidth
-                                            />
-                                        </Box>
-                                    </div>
-                                </div>
-                                <br />
-
-                                <div className="col-12 col-md-12" style={{ textAlign: "right" }}>
-                                    {
-                                        this.state.isDataEdit ?
-                                            <Button variant="contained" onClick={() => { this.OnSubmitUpdateCache(this.state.rowIndex, this.state.DraftNo) }} color="primary"  >
-                                                Update
-                                            </Button>
-                                            :
-                                            <Button variant="contained" onClick={() => { this.OnSubmitCache() }} color="primary"  >
-                                                Submit
-                                            </Button>
-                                    }
-                                </div>
-                            </>
-                            :
-                            <div style={{ paddingBottom: "50px" }}>
-                            </div>
+                                </>
+                            )
+                        })
                     }
+
+                    <div className="row">
+                        <div className="col-12 col-md-12" style={{ textAlign: "right" }}>
+                            {
+                                this.state.isDataEdit ?
+                                    <Button variant="contained" onClick={() => { this.OnSubmitUpdateCache(this.state.rowIndex, this.state.DraftNo) }} color="primary"  >
+                                        Update
+                                    </Button>
+                                    :
+                                    <Button variant="contained" onClick={() => { this.OnSubmitCache() }} color="primary"  >
+                                        Submit
+                                    </Button>
+                            }
+                        </div>
+                    </div>
                 </>
             )
         }
+
+
         const goBack = () => {
             if (this.DataState.length > 0)
                 this.setState({ isBackClick: true })
@@ -605,6 +713,11 @@ class AddStock extends Component {
                             Back
                         </Button>
                         <h2 style={{ paddingTop: "5px" }}>Stock List</h2>
+                        <div className="d-md-flex my-2" style={{ marginLeft: 'auto', textAlign: "right" }}>
+                            <div style={{ width: '200px', marginLeft: 5 }}>
+                                <TextField variant="standard" size="small" fullWidth label="Container" value={this.state.ContainerID} onChange={(e) => this.handleFormInput(e, "Container", 0)} required />
+                            </div>
+                        </div>
                         <div className="d-md-flex my-2" style={{ marginLeft: 'auto' }}>
                             <div style={{ width: '200px', marginLeft: 5 }}>
                                 <ResponsiveDatePickers variant="standard" title="Stock In Date" value={this.state.StockInDate} onChange={(e) => this.onDateChange(e, "StockInDate")} />
@@ -627,8 +740,8 @@ class AddStock extends Component {
                             tableTopLeft={
                                 this.DataState.length > 0 &&
                                 <Tooltip title="Submit New Stock">
-                                    <IconButton size="small" sx={{ color: "#0074ea", marginRight: 2 }} onClick={() => this.OnHandleSubmitStock()}>
-                                        <SubmitIcon /> {"  "} Upload Stock
+                                    <IconButton size="small" sx={{ color: "#0074ea", marginRight: 2, }} onClick={() => this.OnHandleSubmitStock()}>
+                                        <SubmitIcon /> <label style={{ paddingLeft: "5px" }}>Upload Stock  </label>
                                     </IconButton>
                                 </Tooltip>
                             }
@@ -665,7 +778,7 @@ class AddStock extends Component {
                     open={this.state.isOpenStockModal}
                     fullWidth
                     maxWidth="md"
-                    handleToggleDialog={() => this.setState(INITIAL_STATE)}
+                    handleToggleDialog={() => <>{this.setState(INITIAL_STATE)}{this.setState({ isOpenStockModal: false })}</>}
                     title="New Stock"
                     showAction={false}
                 >
@@ -690,7 +803,7 @@ class AddStock extends Component {
                                 this.state.isDataEdit ?
                                     this.state.filteredProduct.length > 0 && ModalListing()
                                     :
-                                    this.state.filteredProduct.length > 0 && this.checkSimilarProduct(this.state.filteredProduct[0]) === false && ModalListing()
+                                    this.state.filteredProduct.length > 0 && this.state.searchKeywords.length > 0 && this.checkSimilarProduct(this.state.filteredProduct[0]) === false && ModalListing()
                             }
                         </div>
                     </div>
@@ -711,10 +824,13 @@ class AddStock extends Component {
                             </div>
                             <br />
                             <div style={{ textAlign: "right" }}>
-                                <Button variant="contained" color="primary" style={{ margin: "10px" }}>
-                                    <Link to={"/stockList"} style={{ textDecoration: "none", color: "white" }} >
-                                        Yes
-                                    </Link>
+                                <Button variant="contained" color="primary" style={{ margin: "10px" }} onClick={() => {
+                                    <>
+                                        {history.push("/stockList")}
+                                        {window.location.reload(false)}
+                                    </>
+                                }}>
+                                    Yes
                                 </Button>
                                 <Button variant="contained" color="secondary" onClick={() => this.setState({ isBackClick: false })
                                 }>
@@ -722,7 +838,7 @@ class AddStock extends Component {
                                 </Button>
                             </div>
                         </div>
-                    </div>
+                    </div >
                 </AlertDialog >
             </div >
         )

@@ -929,6 +929,7 @@ function Row(props) {
 
     return (
         <React.Fragment>
+            <>
             <TableRow
                 hover
                 role="checkbox"
@@ -1174,6 +1175,7 @@ function Row(props) {
                     </Collapse>
                 </TableCell>
             </TableRow >
+            </>
         </React.Fragment >
     );
 }

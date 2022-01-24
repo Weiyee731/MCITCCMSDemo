@@ -333,6 +333,8 @@ export const url = {
     // product: (product) => `/shop/products/${product.slug}`,
 
     productcateogory: (category) => category.ProductName !== null ? `/shop/ProductCategory/${category.ProductName}` : `/shop/ProductCategory/`,
+
+    stockDetails: (variationDetailsID) => variationDetailsID !== null ? `/viewStockDetailList/${variationDetailsID}` : `/viewStockDetailList/`,
 };
 
 export function getCategoryParents(category) {

@@ -406,6 +406,70 @@ export class GitAction {
     };
   }
 
+  static AddProductVariationStock = "ADD-PRODUCTVARIATIONSTOCK";
+  static AddedProductVariationStock = "ADDED-PRODUCTVARIATIONSTOCK";
+  static ResetProductVariationStock = "RESET-PRODUCTVARIATIONSTOCK";
+  static CallAddProductVariationStock(prodData) {
+    return {
+      type: GitAction.AddProductVariationStock,
+      payload: prodData,
+    };
+  }
+  static CallResetProductVariationStock() {
+    return {
+      type: GitAction.ResetProductVariationStock,
+    };
+  }
+
+
+  static ViewProductVariationStock = "VIEW-PRODUCTVARIATIONSTOCK";
+  static ViewedProductVariationStock = "VIEWED-PRODUCTVARIATIONSTOCK";
+  static CallViewProductVariationStock(prodData) {
+    return {
+      type: GitAction.ViewProductVariationStock,
+      payload: prodData,
+    };
+  }
+
+  static ViewProductVariationStockWithID = "VIEW-PRODUCTVARIATIONSTOCK-WITHID";
+  static ViewedProductVariationStockWithID = "VIEWED-PRODUCTVARIATIONSTOCK-WITHID";
+  static CallViewAllProductVariationStock(prodData) {
+    return {
+      type: GitAction.ViewProductVariationStockWithID,
+      payload: prodData,
+    };
+  }
+
+  static ViewProductVariationStockWithVariationDetailsID = "VIEW-PRODUCTVARIATIONSTOCK-WITHVARIATIONDETAILSID";
+  static ViewedProductVariationStockWithVariationDetailsID = "VIEWED-PRODUCTVARIATIONSTOCK-WITHVARIATIONDETAILSID";
+  static CallViewProductVariationStockDetails(prodData) {
+    return {
+      type: GitAction.ViewProductVariationStockWithVariationDetailsID,
+      payload: prodData,
+    };
+  }
+
+  static UpdateProductVariationStockDetails = "UPDATE-PRODUCTVARIATIONSTOCKDETAILS";
+  static UpdatedProductVariationStockDetails = "UPDATED-PRODUCTVARIATIONSTOCKDETAILS";
+  static CallUpdateProductVariationStockDetails(prodData) {
+    return {
+      type: GitAction.UpdateProductVariationStockDetails,
+      payload: prodData,
+    };
+  }
+
+  static DeleteProductVariationStock = "DELETE-PRODUCTVARIATIONSTOCK";
+  static DeletedProductVariationStock = "DELETED-PRODUCTVARIATIONSTOCK";
+  static CallDeleteProductVariationStock(prodData) {
+    return {
+      type: GitAction.DeleteProductVariationStock,
+      payload: prodData,
+    };
+  }
+
+  ///////////////////////////////////////////////////  Product Review  ///////////////////////////////////////////////////
+
+
   static addProductReview = "ADD-PRODUCTREVIEW";
   static addedProductReview = "ADDED-PRODUCTREVIEW";
   static CallAddProductReview(suppData) {
@@ -596,7 +660,7 @@ export class GitAction {
       type: GitAction.ClearAddPromo
     };
   }
-  
+
   static UpdatePromotion = "UPDATE-PROMOTION";
   static UpdatedPromotion = "UPDATED-PROMOTION";
   static CallUpdatePromotion(promoData) {
@@ -632,6 +696,15 @@ export class GitAction {
   static CallCountry() {
     return {
       type: GitAction.GetCountry,
+    };
+  }
+
+  static GetStorage = "GET-STORAGE";
+  static GotStorage = "GOT-STORAGE";
+  static CallGridList(prodData) {
+    return {
+      type: GitAction.GetStorage,
+      payload: prodData,
     };
   }
 }

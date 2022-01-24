@@ -51,6 +51,12 @@ const rootEpic = combineEpics(
 
   // Product Stock
   gitEpic.ProductVariationStock_Update,
+  gitEpic.ProductVariationStock_Add,
+  gitEpic.ProductVariationStock_View,
+  gitEpic.ProductVariationStock_ViewAll,
+  gitEpic.ProductVariationStock_ViewWithVariationDetailsID,
+  gitEpic.ProductVariationStock_UpdateDetails,
+  gitEpic.ProductVariationStock_Delete,
 
   // Product Specification
   gitEpic.ProductSpecsDetail_Add,
@@ -82,6 +88,7 @@ const rootEpic = combineEpics(
   // General
   gitEpic.Country_ViewAll,
   gitEpic.CourierService_ViewAll,
+  gitEpic.Storage_GridStorageList,
 );
 
 const rootReducer = combineReducers({ counterReducer });

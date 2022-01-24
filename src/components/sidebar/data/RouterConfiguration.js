@@ -58,6 +58,7 @@ import AddPromotionBannerComponent from "../../../pages/Promotion/addPromotion.c
 // Stock Management
 import StockManagement from "../../../pages/Stock/OverallStock";
 import NewStock from "../../../pages/Stock/addStock";
+import StockDetail from "../../../pages/Stock/StockDetail";
 
 const routes = [
     // {
@@ -223,6 +224,19 @@ const routes = [
         path: "/addStock",
         exact: true,
         element: <NewStock />,
+    },
+    {
+        path: "/viewStockDetailList/:ProductVariationDetailID",
+        exact: true,
+        element: (props) => (
+            <>
+                <StockDetail
+                    {...props}
+                    layout="standard"
+                    productId={props.match.params.ProductVariationDetailID}
+                />
+            </>
+        ),
     },
 
 

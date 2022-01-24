@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 
 import { browserHistory } from "react-router";
 import TableCell from '@mui/material/TableCell';
+import TableRow from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
@@ -19,6 +20,7 @@ import AlertDialog from "../../components/ModalComponent/ModalComponent";
 import { convertDateTimeToDDMMYY, isStringNullOrEmpty } from "../../tools/Helpers";
 import Logo from "../../assets/logos/logo.png";
 import ResponsiveDatePickers from "../../tools/datePicker";
+import { url } from "../../tools/Helpers";
 import "./OverallStock.css";
 
 // UI Components
@@ -38,20 +40,60 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Button } from "@mui/material";
 // import ResponsiveDatePickers from "../../tools/datePicker";
 import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import Collapse from "@material-ui/core/Collapse";
+
+
 
 
 
 function mapStateToProps(state) {
     return {
         foods: state.counterReducer["foods"],
+        grid: state.counterReducer["grid"],
+        variationAction: state.counterReducer["variationAction"],
+        variationStock: state.counterReducer["variationStock"],
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         CallTesting: () => dispatch(GitAction.CallTesting()),
+        CallAddProductVariationStock: (prodData) => dispatch(GitAction.CallAddProductVariationStock(prodData)),
+        CallGridList: (prodData) => dispatch(GitAction.CallGridList(prodData)),
+        CallResetProductVariationStock: () => dispatch(GitAction.CallResetProductVariationStock()),
+
+        CallViewAllProductVariationStock: (prodData) => dispatch(GitAction.CallViewAllProductVariationStock(prodData)),
+
     };
 }
+
+const overallHeadCells = [
+    {
+        id: 'ProductName',
+        align: 'left',
+        disablePadding: false,
+        label: 'Product Name',
+    },
+    {
+        id: 'ProductStockAmount',
+        align: 'center',
+        disablePadding: false,
+        label: 'Product Stock',
+    },
+    {
+        id: 'FirstDate',
+        align: 'center',
+        disablePadding: false,
+        label: 'First Stock Date',
+    },
+    {
+        id: 'LastDate',
+        align: 'center',
+        disablePadding: false,
+        label: 'Last Stock Date',
+    },
+]
 
 const headCells = [
     {
@@ -85,43 +127,25 @@ const headCells = [
         label: 'Stock In Amount',
     },
     {
-        id: 'StockPrice',
+        id: 'StockCost',
         align: 'center',
         disablePadding: false,
-        label: 'Stock Price(RM)',
+        label: 'Stock Cost(RM)',
     },
 ];
 
-function createData(StockInDate, ProductSKU, ProductName, Store, StockInAmount, StockPrice) {
+function createData(StockInDate, ProductSKU, ProductName, Store, StockInAmount, StockID) {
     return {
         StockInDate,
         ProductSKU,
         ProductName,
         Store,
         StockInAmount,
-        StockPrice
+        StockID
     };
 }
 
-const rows = [
-    createData(1, 'Cupcake', 305, 3.7, 67, 4.3, 4.3),
-    createData(2, 'Donut', 452, 25.0, 51, 4.9, 4.3),
-    createData(3, 'Eclair', 262, 16.0, 24, 6.0, 4.3),
-    createData(4, 'Frozen yoghurt', 159, 6.0, 24, 4.0, 4.3),
-    createData(5, 'Gingerbread', 356, 16.0, 49, 3.9, 4.3),
-    createData(6, 'Honeycomb', 408, 3.2, 87, 6.5, 4.3),
-    createData(7, 'Ice cream sandwich', 237, 9.0, 37, 4.3, 4.3),
-    createData(8, 'Jelly Bean', 375, 0.0, 94, 0.0, 4.3),
-    createData(9, 'KitKat', 518, 26.0, 65, 7.0, 4.3),
-    createData(10, 'Lollipop', 392, 0.2, 98, 0.0, 4.3),
-    createData(11, 'Marshmallow', 318, 0, 81, 2.0, 4.3),
-    createData(12, 'Nougat', 360, 19.0, 9, 37.0, 4.3),
-    createData(13, 'Oreo', 437, 18.0, 63, 4.0, 4.3),
-];
-
-
 const INITIAL_STATE = {
-
     // DraftListing Details
     isOpenDraftModal: false,
     isDataEdit: false,
@@ -131,25 +155,48 @@ const INITIAL_STATE = {
     StockInDate: new Date(),
 
     ProductData: [],
-    Remarks: "",
-    StockPrice: "",
-    StockInAmount: "",
-    Store: [],
-    InvoiceNo: "",
     rowIndex: "",
     DraftNo: "",
+    CurrentStock: "",
+    ContainerID: "",
+    ContainerName: "",
+    isContainerError: false,
+
+
+    StoreStockInData: [{
+        id: "",
+        label: "",
+        value: "",
+        StockInAmount: "",
+        VariationCost: "",
+        // VariationPrice: "",
+        CurrentStock: "",
+        isStockInAmountError: false,
+        isVariationCostError: false,
+        // isVariationPriceError: false
+    }],
+
+    filteredProduct: [],
+    selectedFilter: [],
     selectedListID: [],
     isDiscountClick: false,
 
     isInvoiceError: false,
     isStoreError: false,
     isStockInAmountError: false,
-    isStockPriceError: false,
+    // isStockPriceError: false,
     ReceiveValidated: true,
     OrderValidated: true,
     StockInValidated: true,
 
     isSet: false,
+
+    // Database Lisiting
+    DBStockInDate: "",
+    isOpenOverallDetails: [],
+    isDatabaseSet: false,
+    searchKeywords: "",
+    isFiltered: false,
 }
 
 const DraftListing_State = [{
@@ -157,11 +204,23 @@ const DraftListing_State = [{
     storageListing: [],
 }]
 
+const OverallListing_State = []
+
 class Stock extends Component {
     constructor(props) {
         super(props);
         this.state = INITIAL_STATE
         this.DraftListing = DraftListing_State
+        this.DatabaseListing = OverallListing_State
+        this.PagingListing = []
+
+        this.props.CallGridList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
+        this.props.CallViewAllProductVariationStock({
+            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+            ProductID: 0,
+            ProductPerPage: 999,
+            Page: 1
+        })
     }
 
     componentDidMount() {
@@ -174,6 +233,15 @@ class Stock extends Component {
 
     componentDidUpdate(prevProps, prevState) {
 
+        if (this.props.variationStock !== null && this.props.variationStock.length > 0 && this.state.isDatabaseSet === false) {
+            this.DatabaseListing = this.props.variationStock
+
+            this.props.variationStock.length > 0 && this.props.variationStock.map((data) => {
+                this.state.isOpenOverallDetails.push(false)
+            })
+            this.setState({ isDatabaseSet: true })
+        }
+
     }
     renderTableRows = (data, index) => {
         return (
@@ -183,15 +251,54 @@ class Stock extends Component {
                     id={`enhanced-table-checkbox-${index}`}
                     scope="row"
                     padding="normal"
+                    style={{ width: "55%" }}
                 >
-                    {data.StockInDate}
+                    {data.ProductName} - ({data.ProductVariation})
                 </TableCell>
-                <TableCell align="center">{data.ProductSKU}</TableCell>
-                <TableCell align="center">{data.ProductName}</TableCell>
-                <TableCell align="center">{data.Store}</TableCell>
-                <TableCell align="center">{data.StockInAmount}</TableCell>
-                <TableCell align="center">{data.StockPrice}</TableCell>
+                <TableCell align="center" style={{ width: "15%" }}>{data.ProductStockAmount}</TableCell>
+                <TableCell align="center" style={{ width: "15%" }}>{data.FirstDate}</TableCell>
+                <TableCell align="center" style={{ width: "15%" }}>{data.LastDate}</TableCell>
             </>
+        )
+    }
+
+    renderTableCollapseRows = (data, index) => {
+        return (
+            <div className="container-fluid my-2">
+                <div className="row" style={{ paddingLeft: "10px" }}>
+                    {
+                        data.ProductVariationStockDetail !== undefined &&
+                        <div className="row" style={{ backgroundColor: "#f5f5f5", paddingTop: "10px" }}>
+                            <div className="col-12 col-md-3" style={{ paddingBottom: "10px" }}>
+                                <label style={{ fontWeight: "bold" }}>Store</label>
+                            </div>
+                            <div className="col-12 col-md-3" style={{ paddingBottom: "10px" }}>
+                                <label style={{ fontWeight: "bold" }}>Stock Amount</label>
+                            </div>
+                        </div>
+                    }
+                    {
+                        data.ProductVariationStockDetail !== undefined && JSON.parse(data.ProductVariationStockDetail).map((details, index) => {
+                            return (
+                                <>
+                                    {
+                                        <Link className="nav-link" to={{ pathname: url.stockDetails(data.ProductVariationDetailID) }}>
+                                            <div className="row flex-1" style={{ backgroundColor: index % 2 === 1 ? "#f5f5f5" : "#fffff", padding: "15px" }}>
+                                                <div className="col-12 col-md-3">
+                                                    <label>{details.Column1}</label>
+                                                </div>
+                                                <div className="col-12 col-md-3">
+                                                    <label>{details.ProductStockAmount}</label>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    }
+                                </>
+                            )
+                        })
+                    }
+                </div>
+            </div>
         )
     }
 
@@ -208,30 +315,30 @@ class Stock extends Component {
                 </TableCell>
                 <TableCell align="center">{data.ProductSKU}</TableCell>
                 <TableCell align="center">{data.ProductName}</TableCell>
-                <TableCell align="center">{data.Store[0].value}</TableCell>
-                <TableCell align="center">{data.StockInAmount}</TableCell>
-                <TableCell align="center">{data.StockPrice}</TableCell>
-
+                <TableCell align="center" style={{ width: "15%" }}>{data.StoreStockInData.length > 0 && data.StoreStockInData.map((details) => {
+                    return (<> <label >{details.value}</label> <br /> </>)
+                })}</TableCell>
+                <TableCell align="center" style={{ width: "15%" }}>{data.StoreStockInData.length > 0 && data.StoreStockInData.map((details) => {
+                    return (<> <label >{details.StockInAmount}</label> <br />  </>)
+                })}</TableCell>
+                <TableCell align="center" style={{ width: "15%" }}>{data.StoreStockInData.length > 0 && data.StoreStockInData.map((details) => {
+                    return (<>  <label >{parseFloat(details.VariationCost).toFixed(2)}</label> <br /> </>)
+                })}</TableCell>
             </>
         )
     }
 
     onDraftTableRowClick = (event, row) => {
-        console.log("row", row)
         this.setState({
+
             DraftNo: row.DraftNo,
             rowIndex: row.rowIndex,
             ProductData: row.filteredProduct,
-            OrderDate: row.OrderDate,
+            StoreStockInData: row.StoreStockInData,
+            CurrentStock: row.CurrentStock,
+            ContainerID: row.ContainerID,
+            ContainerName: row.ContainerName,
             StockInDate: row.StockInDate,
-            ReceiveDate: row.ReceiveDate,
-            InvoiceNo: row.InvoiceNo,
-            Store: row.Store,
-
-            StockInAmount: row.StockInAmount,
-            StockPrice: row.StockPrice,
-            isDiscountClick: row.isDiscountClick,
-            Remarks: row.Remarks,
 
             isOpenDraftModal: true,
         })
@@ -255,15 +362,42 @@ class Stock extends Component {
     }
 
     onTableRowClick = (event, row) => {
+
+        let listing = this.PagingListing
+        let selected = ""
+        let OverallCollapseTable = []
+
+        listing.map((data, i) => {
+            OverallCollapseTable.push(false)
+            if (data.ProductVariationDetailID === row.ProductVariationDetailID)
+                selected = i
+        })
+
+        OverallCollapseTable.map((data, index) => {
+            if (index === selected) {
+                OverallCollapseTable[index] = !OverallCollapseTable[index]
+            } else
+                OverallCollapseTable[index] = false
+        })
+        this.setState({ isOpenOverallDetails: OverallCollapseTable })
     }
 
-    onAddButtonClick = (item) => {
-        console.log('add button')
+    addNewStore = () => {
+        let storeListing = this.state.StoreStockInData
+
+        storeListing = [...storeListing, {
+            id: "",
+            label: "",
+            value: "",
+            StockInAmount: "",
+            VariationCost: "",
+            // VariationPrice: ""
+        }]
+        this.setState({ StoreStockInData: storeListing })
     }
 
     // Remove selected state listing and localStorage listing data
     onDelete = () => {
-        // let statelisting = this.DataState
         let localListing = localStorage.getItem("DataSetDraft") !== null ? JSON.parse(localStorage.getItem("DataSetDraft")) : []
         let selectedList = this.state.selectedListID
 
@@ -286,21 +420,12 @@ class Stock extends Component {
                         rowIndex: index,
                         DraftNo: DraftNo,
                         filteredProduct: this.state.ProductData,
+                        ContainerID: this.state.ContainerID,
+                        StockInDate: this.state.StockInDate,
                         ProductID: this.state.ProductData[0].ProductID,
                         ProductName: this.state.ProductData[0].ProductName,
-                        ProductSKU: this.state.ProductData[0].SKU,
-
-                        InvoiceNo: this.state.InvoiceNo,
-                        Store: this.state.Store,
-                        StoreID: this.state.Store.id,
-                        OrderDate: this.state.OrderDate,
-                        StockInDate: this.state.StockInDate,
-                        ReceiveDate: this.state.ReceiveDate,
-
-                        StockPrice: this.state.StockPrice,
-                        StockInAmount: this.state.StockInAmount,
-                        isDiscountClick: this.state.isDiscountClick,
-                        Remarks: isStringNullOrEmpty(this.state.Remarks) ? "-" : this.state.Remarks
+                        ProductSKU: this.state.ProductData[0].ProductVariationSKU,
+                        StoreStockInData: this.state.StoreStockInData,
                     }
                 }
             })
@@ -316,10 +441,30 @@ class Stock extends Component {
     OnSubmitAdd = () => {
         if (!this.errorChecking()) {
 
+            let ProductVariationDetailID = []
+            let ProductStock = []
+            let ProductVariationCost = []
+            let GridStorageID = []
+
+            this.state.StoreStockInData.length > 0 && this.state.StoreStockInData.map((stockDetails) => {
+
+                ProductVariationDetailID.push(this.state.ProductData[0].ProductVariationDetailID)
+                ProductStock.push(stockDetails.StockInAmount)
+                ProductVariationCost.push(parseFloat(stockDetails.VariationCost).toFixed(2))
+                GridStorageID.push(stockDetails.id)
+            })
+
+            this.props.CallAddProductVariationStock({
+                ContainerID: this.state.ContainerID,
+                UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+                ProductVariationDetailsID: ProductVariationDetailID,
+                ProductStock: ProductStock,
+                ProductVariationCost: ProductVariationCost,
+                GridStorageID: GridStorageID
+            })
+
             let localListing = localStorage.getItem("DataSetDraft") !== null ? JSON.parse(localStorage.getItem("DataSetDraft")) : []
-            if (localListing.length > 0) {
-                localListing = localListing.filter((data) => data.DraftNo !== this.state.DraftNo)
-            }
+            localListing = localListing.filter((data) => data.DraftNo !== this.state.DraftNo)
 
             localStorage.setItem("DataSetDraft", JSON.stringify(localListing))
             this.DraftListing[0].storageListing = localListing
@@ -334,33 +479,24 @@ class Stock extends Component {
     // Check whether all input has been filled
     errorChecking = () => {
         let error = false
-        if (!this.state.isInvoiceError && !this.state.isStoreError && !this.state.isStockInAmountError && !this.state.isStockPriceError
-            && this.state.ReceiveValidated && this.state.OrderValidated && this.state.StockInValidated) {
-            if (isStringNullOrEmpty(this.state.StockPrice) || isStringNullOrEmpty(this.state.StockInAmount) || isStringNullOrEmpty(this.state.Store) || isStringNullOrEmpty(this.state.InvoiceNo)) {
+        let StockListing = this.state.StoreStockInData
+
+        if (StockListing.length > 0) {
+            if (StockListing.filter((data) => data.isStockInAmountError === true || data.isStockInAmountError === undefined).length > 0)
                 error = true
-            } else if ((convertDateTimeToDDMMYY(this.state.OrderDate) > convertDateTimeToDDMMYY(this.state.StockInDate))) {
-                this.setState({ OrderValidated: false, StockInValidated: false })
+            else if (StockListing.filter((data) => data.isVariationCostError === true || data.isVariationCostError === undefined).length > 0)
                 error = true
-            } else if ((convertDateTimeToDDMMYY(this.state.ReceiveDate) < convertDateTimeToDDMMYY(this.state.OrderDate))) {
-                this.setState({ OrderValidated: false, ReceiveValidated: false })
+            // else if (StockListing.filter((data) => data.isVariationPriceError === true || data.isVariationPriceError === undefined).length > 0)
+            //     error = true
+            else if (this.state.isContainerError === true || this.state.ContainerID === "")
                 error = true
-            }
-            else if ((convertDateTimeToDDMMYY(this.state.ReceiveDate) > convertDateTimeToDDMMYY(this.state.StockInDate))) {
-                this.setState({ ReceiveValidated: false, StockInValidated: false })
-                error = true
-            }
-            else {
-                error = false
-            }
-        } else {
-            error = true
         }
         return error
     }
 
+
     onDateChange = (e, name) => {
 
-        console.log("e", e)
         switch (name) {
             case "StockInDate":
                 this.setState({ StockInDate: isStringNullOrEmpty(e) ? "Invalid Date" : e, StockInValidated: (!isStringNullOrEmpty(e) && e !== "Invalid Date") })
@@ -374,85 +510,187 @@ class Stock extends Component {
                 this.setState({ ReceiveDate: isStringNullOrEmpty(e) ? "Invalid Date" : e, ReceiveValidated: (!isStringNullOrEmpty(e) && e !== "Invalid Date") })
                 break;
 
+            case "DBStockInDate":
+                this.setState({ DBStockInDate: isStringNullOrEmpty(e) ? "Invalid Date" : e, DBStockInDateValidated: (!isStringNullOrEmpty(e) && e !== "Invalid Date") })
+                break;
+
             default:
                 break;
         }
     }
 
-    handleFormInput = (e, name) => {
+    handleFormInput = (e, name, index) => {
+        let storeListing = this.state.StoreStockInData
         switch (name) {
-            case "Invoice":
-                if (isStringNullOrEmpty(e.target.value))
-                    this.setState({ InvoiceNo: e.target.value, isInvoiceError: true })
-                else
-                    this.setState({ InvoiceNo: e.target.value, isInvoiceError: false })
-
-                break;
-
             case "Store":
-                console.log("eeee", e)
-                if (isStringNullOrEmpty(e))
-                    this.setState({
-                        Store: [{
-                            id: e.id,
-                            value: e.value,
-                            label: e.label
-                        }], isStoreError: true
-                    })
-                else
-                    this.setState({
-                        Store: [{
-                            id: e.id,
-                            value: e.value,
-                            label: e.label
-                        }], isStoreError: false
-                    })
+                storeListing[index] = {
+                    id: e.id,
+                    label: e.label,
+                    value: e.value,
+                    CurrentStock: storeListing[index].CurrentStock,
+
+                    StockInAmount: storeListing[index].StockInAmount,
+                    VariationCost: storeListing[index].VariationCost,
+                    // VariationPrice: storeListing[index].VariationPrice,
+                    isStockInAmountError: storeListing[index].isStockInAmountError,
+                    isVariationCostError: storeListing[index].isVariationCostError,
+                    // isVariationPriceError: storeListing[index].isVariationPriceError,
+                }
+                this.setState({ StoreStockInData: storeListing })
                 break;
 
-            case "StockIn":
+            case "StockInAmount":
+                let isStockInAmountError = false
                 if (isStringNullOrEmpty(e.target.value))
-                    this.setState({ StockInAmount: e.target.value, isStockInAmountError: true })
-                else
-                    this.setState({ StockInAmount: e.target.value, isStockInAmountError: false })
+                    isStockInAmountError = true
+
+                storeListing[index] = {
+                    id: storeListing[index].id,
+                    label: storeListing[index].label,
+                    value: storeListing[index].value,
+                    CurrentStock: storeListing[index].CurrentStock,
+
+                    StockInAmount: e.target.value,
+                    VariationCost: storeListing[index].VariationCost,
+                    // VariationPrice: storeListing[index].VariationPrice,
+                    isStockInAmountError: isStockInAmountError,
+                    isVariationCostError: storeListing[index].isVariationCostError,
+                    // isVariationPriceError: storeListing[index].isVariationPriceError,
+                }
+                this.setState({ StoreStockInData: storeListing })
                 break;
 
-            case "StockPrice":
+            // case "VariationSellingPrice":
+            //     let isVariationPriceError = false
+            //     if (isStringNullOrEmpty(e.target.value))
+            //         isVariationPriceError = true
+
+            //     storeListing[index] = {
+            //         id: storeListing[index].id,
+            //         label: storeListing[index].label,
+            //         value: storeListing[index].value,
+            //         CurrentStock: storeListing[index].CurrentStock,
+
+            //         StockInAmount: storeListing[index].StockInAmount,
+            //         VariationCost: storeListing[index].VariationCost,
+            //         VariationPrice: e.target.value,
+            //         isStockInAmountError: storeListing[index].isStockInAmountError,
+            //         isVariationCostError: storeListing[index].isVariationCostError,
+            //         isVariationPriceError: isVariationPriceError,
+            //     }
+            //     this.setState({StoreStockInData: storeListing })
+            //     break;
+            case "Filter":
+                this.setState({ selectedFilter: { id: e.id, value: e.value, label: e.label } })
+                break;
+
+            case "VariationCost":
+                let isVariationCostError = false
                 if (isStringNullOrEmpty(e.target.value))
-                    this.setState({ StockPrice: e.target.value, isStockPriceError: true })
+                    isVariationCostError = true
+
+                storeListing[index] = {
+                    id: storeListing[index].id,
+                    label: storeListing[index].label,
+                    value: storeListing[index].value,
+                    CurrentStock: storeListing[index].CurrentStock,
+
+                    StockInAmount: storeListing[index].StockInAmount,
+                    VariationCost: e.target.value,
+                    // VariationPrice: storeListing[index].VariationPrice,
+                    isStockInAmountError: storeListing[index].isStockInAmountError,
+                    isVariationCostError: isVariationCostError,
+                    // isVariationPriceError: storeListing[index].isVariationPriceError,
+                }
+                this.setState({ StoreStockInData: storeListing })
+                break;
+            case "Container":
+                if (isStringNullOrEmpty(e.target.value))
+                    this.setState({ isContainerError: true, ContainerID: e.target.value })
                 else
-                    this.setState({ StockPrice: e.target.value, isStockPriceError: false })
+                    this.setState({ isContainerError: false, ContainerID: e.target.value })
                 break;
-
-            case "Remark":
-                this.setState({ Remarks: e.target.value })
-                break;
-
             default:
                 break;
         }
     }
+
+    carryDataFromChild = (e) => {
+        this.PagingListing = e
+    }
+
+    searchSpace = (value) => {
+        var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+        let DatabaseListing = this.DatabaseListing
+        console.log("value", value)
+        this.setState({ searchKeywords: value })
+        this.state.filteredProduct.splice(0, this.state.filteredProduct.length)
+
+        console.log("DatabaseListing", DatabaseListing)
+        console.log("yes")
+        console.log(this.state.selectedFilter.id)
+
+        if (DatabaseListing.length > 0) {
+            if (this.state.selectedFilter.id === undefined)
+                toast.warning("Input Error: A filter range is required")
+
+            else if (parseInt(this.state.selectedFilter.id) === 1) {
+                DatabaseListing.map((list) => {
+                    list.ProductVariationStockDetail !== null && JSON.parse(list.ProductVariationStockDetail).filter((x) =>
+                        x.Column1 !== null && x.Column1.toLowerCase().includes(value.toLowerCase())).map(filteredItem => {
+                            this.state.filteredProduct.push(list);
+                        });
+                })
+                this.setState({ isFiltered: true })
+            }
+            else if (parseInt(this.state.selectedFilter.id) === 2) {
+                DatabaseListing = DatabaseListing.filter((data) => data.ProductName !== null && data.ProductName.toLowerCase().includes(value.toLowerCase()));
+                this.setState({ filteredProduct: DatabaseListing, isFiltered: true })
+            }
+
+        } else toast.warning("No Listing Available for filter")
+
+        console.log("DatabaseListing", DatabaseListing)
+        console.log("DatabaseListing", this.state.filteredProduct)
+
+
+
+        // this.state.filteredProduct.splice(0, this.state.filteredProduct.length)
+
+        // this.props.Data.filter((searchedItem) =>
+        //     searchedItem.OrderName !== null && searchedItem.OrderName.toLowerCase().includes(
+        //         value.toLowerCase()
+        //     )
+        // ).map((filteredItem) => {
+        //     this.state.filteredProduct.push(filteredItem);
+        // })
+
+        // this.props.Data.map((list) => {
+        //     list.OrderProductDetail !== null && JSON.parse(list.OrderProductDetail).filter(x => x.TrackingNumber !== null
+        //         && x.TrackingNumber.toLowerCase().includes(value.toLowerCase())).map(filteredItem => {
+        //             this.state.filteredProduct.push(list);
+        //         });
+        // })
+
+        // let removeDeplicate = this.state.filteredProduct.filter((ele, ind) => ind === this.state.filteredProduct.findIndex(elem => elem.OrderID === ele.OrderID))
+        // this.setState({ isFiltered: true, filteredProduct: removeDeplicate })
+    }
+
 
     render() {
-        const dummyStore =
-            [
-                { id: "1", Store: "Store A" },
-                { id: "2", Store: "Store B" },
-                { id: "3", Store: "Store C" },
-            ]
-        const TextFieldData = (type, variant, title, name, stateValue, error) => {
-            return (
-                <div className="col-12 col-md-6">
-                    <TextField variant={variant} type={type} size="small" fullWidth label={title} value={stateValue} name={name} onChange={(e) => this.handleFormInput(e, name)} required />
-                    {error && <FormHelperText sx={{ color: 'red' }} id={error}>Invalid {title} </FormHelperText>}
-                </div>
-            )
-        }
+        console.log("this.state.selectedFilter", this.state.selectedFilter)
 
-        const DateData = (title, name, stateValue, error) => {
+        const filterSelection =
+            [
+                { id: "1", value: "Store" },
+                { id: "2", value: "Product Name" }
+            ]
+
+        const TextFieldData = (type, variant, title, name, stateValue, error, index) => {
             return (
-                <div className="col-12 col-md-6">
-                    <ResponsiveDatePickers variant="standard" title={title} value={stateValue} onChange={(e) => this.onDateChange(e, name)} required />
-                    {error === false && <FormHelperText sx={{ color: 'red' }} id={error}>Invalid {title} </FormHelperText>}
+                <div className="col-12 col-md-12" style={{ paddingBottom: "10px" }}>
+                    <TextField variant={variant} type={type} size="small" inputProps={{ min: "0", step: name === "StockInAmount" ? "1.00" : "0.10" }} fullWidth label={title} value={name === "StockInAmount" ? parseFloat(stateValue).toFixed(0) : stateValue} name={name} onChange={(e) => this.handleFormInput(e, name, index)} required />
+                    {error && <FormHelperText sx={{ color: 'red' }} id={error}>Invalid {title} </FormHelperText>}
                 </div>
             )
         }
@@ -477,166 +715,164 @@ class Stock extends Component {
                         <div className="col-8">
                             <div><label style={{ fontWeight: "bold" }}>Product Name: {filteredProduct.length > 0 && filteredProduct[0].ProductName !== null ? filteredProduct[0].ProductName : ""}</label></div>
                             <div><label style={{ fontSize: "13px", color: "lightslategrey" }}>Variation: {filteredProduct.length > 0 && filteredProduct[0].Variation !== null ? filteredProduct[0].Variation : ""}</label></div>
-                            <div><label style={{ fontSize: "13px", color: "lightslategrey" }}>Brand: {filteredProduct.length > 0 && filteredProduct[0].Brand !== null ? filteredProduct[0].Brand : "No Brand"}</label></div>
-                            <div><label style={{ fontSize: "13px", color: "lightslategrey" }}>Model:  {filteredProduct.length > 0 && filteredProduct[0].Model !== null ? filteredProduct[0].Model : "No Model"}</label></div>
                             <div><label style={{ fontSize: "13px", color: "lightslategrey" }}>SKU: {filteredProduct.length > 0 && filteredProduct[0].SKU !== null ? filteredProduct[0].SKU : ""}</label></div>
                         </div>
                     </div>
-                    <hr />
-                    <div className="row" style={{ paddingTop: "5px", paddingBottom: "5px" }}>
-                        {TextFieldData("text", "standard", "Purchase Order Number", "Invoice", this.state.InvoiceNo, this.state.isInvoiceError)}
-                        {DateData("Order Date", "OrderDate", this.state.OrderDate, this.state.OrderValidated)}
-                        <br />
-                        <div className="col-12 col-md-6">
-                            <FormControl variant="standard" size="small" fullWidth>
-                                <InputLabel id="Store-label">Store</InputLabel>
-                                <Select
-                                    labelId="Store"
-                                    id="Store"
-                                    name="Store"
-                                    value={this.state.Store[0]}
-                                    onChange={(e) => this.handleFormInput(e, "Store")}
-                                    label="Store"
-                                    options={
-                                        isArrayNotEmpty(dummyStore) && dummyStore.map((el, idx) => {
-                                            return { id: el.id, value: el.Store, label: el.Store }
-                                        })
-                                    }
-                                >
-                                </Select>
-                            </FormControl>
+                    <div className="row">
+                        <div className="col-12 col-md-12" style={{ textAlign: "right" }}>
+                            <Tooltip title="Add Store">
+                                <IconButton size="small" sx={{ color: "#0074ea", marginRight: 4 }} onClick={() => this.addNewStore()}>
+                                    <GroupAddIcon /><label style={{ paddingLeft: "5px" }}>Add Store</label>
+                                </IconButton>
+                            </Tooltip>
                         </div>
-                        {DateData("Receive Date", "ReceiveDate", this.state.ReceiveDate, this.state.ReceiveValidated)}
                     </div>
                     <hr />
                     {
-                        this.state.Store.length > 0 ?
-                            <>
-                                <div className="row" style={{ paddingTop: "5px", paddingBottom: "5px" }}>
-                                    <div className="col-12 col-md-6">
-                                        <label style={{ color: "grey" }}>Current Stock : 75</label>
+                        this.state.StoreStockInData.length > 0 && this.state.StoreStockInData.map((data, index) => {
+                            return (
+                                <>
+                                    <div className="row" style={{ paddingTop: "5px", paddingBottom: "5px" }}>
+                                        <div className="col-12 col-md-6">
+                                            <div className="row">
+                                                {
+                                                    this.state.StoreStockInData.length > 1 &&
+                                                    <div className="col-12 col-md-1" >
+                                                        <RemoveCircleOutlineIcon
+                                                            className="DeleteOptionButton mr-2"
+                                                            style={{ cursor: 'pointer' }}
+                                                            color="secondary"
+                                                            onClick={() => this.removeStoreData(index)}
+                                                        />
+                                                    </div>
+                                                }
+                                                <div className="col-12 col-md-10" >
+                                                    <FormControl variant="standard" size="small" fullWidth>
+                                                        <InputLabel id="Store-label">Store</InputLabel>
+                                                        <Select
+                                                            labelId="Store"
+                                                            id="Store"
+                                                            name="Store"
+                                                            value={data}
+                                                            onChange={(e) => this.handleFormInput(e, "Store", index)}
+                                                            label="Store"
+                                                            options={
+                                                                isArrayNotEmpty(this.props.grid) && this.props.grid.map((el, idx) => {
+                                                                    return { id: el.GridStorageID, value: el.GridStorage, label: el.GridStorage }
+                                                                })
+                                                            }
+                                                        >
+                                                        </Select>
+                                                    </FormControl>
+                                                    {
+                                                        data.value !== "" && data.CurrentStock !== undefined &&
+                                                        <div style={{ paddingTop: "15px" }} >
+                                                            <label style={{ color: "grey" }}>Current Stock : {data.CurrentStock}</label>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {
+                                            data.value !== "" && data.value !== undefined ?
+                                                <>
+                                                    <br />
+                                                    <div className="col-12 col-md-6">
+                                                        {TextFieldData("number", "outlined", "Stock In Amount", "StockInAmount", data.StockInAmount, data.isStockInAmountError, index)}
+                                                        {TextFieldData("number", "outlined", "Variation Cost", "VariationCost", data.VariationCost, data.isVariationCostError, index)}
+                                                        {/* {TextFieldData("number", "outlined", "Variation Selling Price", "VariationSellingPrice", data.VariationPrice, data.isVariationPriceError, index)} */}
+                                                    </div>
+                                                    <br />
+                                                </>
+                                                :
+                                                <div style={{ paddingBottom: "50px" }}>
+                                                </div>
+                                        }
+                                        <hr />
                                     </div>
-                                    <div className="col-12 col-md-6" style={{ textAlign: "right" }}>
-                                        <CheckBoxIcon style={{ color: this.state.isDiscountClick === true ? "blue" : "grey" }} onClick={() => this.setState({ isDiscountClick: !this.state.isDiscountClick })} /> <label style={{ color: "grey" }}>Discount</label>
-                                    </div>
-                                    {TextFieldData("number", "standard", "Stock In Amount", "StockIn", this.state.StockInAmount, this.state.isStockInAmountError)}
-                                    {TextFieldData("number", "standard", "Stock Price", "StockPrice", this.state.StockPrice, this.state.isStockPriceError)}
-                                    <div className="col-12 mt-3">
-                                        <Box sx={{ width: '100%' }}>
-                                            <TextField
-                                                variant="outlined"
-                                                size="large"
-                                                name="Remark"
-                                                label="Remark"
-                                                value={this.state.Remarks}
-                                                onChange={(e) => this.handleFormInput(e, "Remark")}
-                                                fullWidth
-                                            />
-                                        </Box>
-                                    </div>
-                                </div>
-                                <br />
-
-                                <div className="col-12 col-md-12" style={{ textAlign: "right" }}>
-                                    {
-                                        this.state.isDataEdit ?
-                                            <Button variant="contained"
-                                                // onClick={() =>   { this.OnSubmitUpdateCache(this.state.rowIndex, this.state.DraftNo) }} 
-                                                color="primary"  >
-                                                Update
-                                            </Button>
-                                            :
-                                            <>
-                                                <Button variant="contained"
-                                                    onClick={() => { this.OnSubmitUpdateCache(this.state.rowIndex, this.state.DraftNo) }}
-                                                    color="secondary" style={{ margin: "10px" }}>
-                                                    Update Draft
-                                                </Button>
-                                                <Button variant="contained"
-                                                    onClick={() => { this.OnSubmitAdd() }}
-                                                    color="primary"  >
-                                                    Add Stock
-                                                </Button>
-                                            </>
-
-                                    }
-                                </div>
-                            </>
-                            :
-                            <div style={{ paddingBottom: "50px" }}>
-                            </div>
+                                </>
+                            )
+                        })
                     }
+                    <div className="row">
+                        <div className="col-12 col-md-12" style={{ textAlign: "right" }}>
+
+                            {
+                                this.state.isDataEdit ?
+                                    <Button variant="contained"
+                                        // onClick={() =>   { this.OnSubmitUpdateCache(this.state.rowIndex, this.state.DraftNo) }} 
+                                        color="primary"  >
+                                        Update
+                                    </Button>
+                                    :
+                                    <>
+                                        <Button variant="contained"
+                                            onClick={() => { this.OnSubmitUpdateCache(this.state.rowIndex, this.state.DraftNo) }}
+                                            color="secondary" style={{ margin: "10px" }}>
+                                            Update Draft
+                                        </Button>
+                                        <Button variant="contained"
+                                            onClick={() => { this.OnSubmitAdd() }}
+                                            color="primary"  >
+                                            Add Stock
+                                        </Button>
+                                    </>
+                            }
+                        </div>
+                    </div>
                 </>
             )
         }
 
-        console.log(localStorage.getItem("DataSetDraft") !== null &&
-            JSON.parse(localStorage.getItem("DataSetDraft")).length > 0 &&
-            JSON.parse(localStorage.getItem("DataSetDraft")))
-
         return (
             <div className="container-fluid my-2">
                 <div className="row">
-                    <div className="col-md-12 col-12 mb-2 stock-date-range-picker d-flex">
-                        <label className="my-auto" style={{ marginRight: '15px' }}>Packaging Date: </label>
-                        <ResponsiveDatePickers
-                            rangePicker
-                            openTo="day"
-                            title="FromDate"
-                            value={this.state.datevalue ? this.state.datevalue : ""}
-                            onChange={(e) => this.onDateChange(e)}
-                            variant="outlined"
-                            startPickerPropsOptions={{ placeholder: "From", className: "start-date-picker" }}
-                            endPickerPropsOptions={{ placeholder: "To", className: "end-date-picker" }}
-                        />
-                        <Tooltip title="Search Date">
-                            <IconButton
-                                aria-label="Search Date"
-                                size="small"
-                                onClick={() => { this.onDatabaseSearch() }}
-                                sx={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: '5px', border: '1px solid rgba(33, 33, 33, 0.6)' }}
-                                disabled={this.state.isDataFetching}
+                    <div className="col-md-12 col-12 mb-2 d-flex">
+                        <div className="col-2 d-inline-flex">
+                            {/* <Select
+                                labelId="Store"
+                                id="Store"
+                                name="Store"
+                                value={data}
+                                onChange={(e) => this.handleFormInput(e, "Store", index)}
+                                label="Store"
+                                options={
+                                    isArrayNotEmpty(this.props.grid) && this.props.grid.map((el, idx) => {
+                                        return { id: el.GridStorageID, value: el.GridStorage, label: el.GridStorage }
+                                    })
+                                }
                             >
-                                <ManageSearchOutlinedIcon fontSize="medium" />
-                            </IconButton>
-                        </Tooltip>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-4 col-12 mb-2">
-                            <div className="filter-down row">
-                                <div className="d-inline-flex w-100">
-                                    <label className="my-auto col-3">Filter By:</label>
-                                    <Select
-                                        labelId="search-filter-category"
-                                        id="search-filter-category"
-                                        label="Search By"
-                                        onChange={this.handleSearchCategory}
-                                        size="small"
-                                        IconComponent={FilterListOutlinedIcon}
-                                        className="col-9"
-                                        placeholder="filter by"
-                                    >
-                                        <MenuItem key="search_all" value="All">All</MenuItem>
-                                        <MenuItem key="search_tracking" value="Tracking">Product SKU</MenuItem>
-                                        <MenuItem key="search_member" value={"Member"}>Product Name</MenuItem>
-                                        <MenuItem key="search_container" value={"Container"}>Store</MenuItem>
-                                    </Select>
-                                </div>
-                            </div>
+                            </Select> */}
+
+                            <Select
+                                labelId="search-filter-category"
+                                id="search-filter-category"
+                                label="Search By"
+                                onChange={(e) => this.handleFormInput(e, "Filter", 0)}
+                                size="small"
+                                value={this.state.selectedFilter}
+                                IconComponent={FilterListOutlinedIcon}
+                                className="col-11"
+                                placeholder="filter by"
+                                options={
+                                    isArrayNotEmpty(filterSelection) && filterSelection.map((el, idx) => {
+                                        return { id: el.id, value: el.value, label: el.value }
+                                    })
+                                }
+                            >
+                            </Select>
                         </div>
-                        <div className="col-md-6 col-12 d-flex">
-                            <div className="pr-1 w-100">
-                                <SearchBar
-                                    id=""
-                                    placeholder="Enter Product SKU, Product Name or Store to search"
-                                    buttonOnClick={() => this.onSearch("", "")}
-                                    onChange={this.handleSearchInput}
-                                    className="searchbar-input mb-auto"
-                                    disableButton={this.state.isDataFetching}
-                                    tooltipText="Search with current data"
-                                    value={this.state.searchKeywords}
-                                />
-                            </div>
+                        <div className="col-4 d-inline-flex">
+                            <SearchBar
+                                id=""
+                                placeholder="Enter Product SKU, Product Name or Store to search"
+                                buttonOnClick={() => this.onSearch("", "")}
+                                onChange={(e) => this.searchSpace(e.target.value)}
+                                className="searchbar-input mb-auto"
+                                disableButton={this.state.isDataFetching}
+                                tooltipText="Search with current data"
+                                value={this.state.searchKeywords}
+                            />
                         </div>
                     </div>
 
@@ -664,9 +900,7 @@ class Stock extends Component {
                                             </IconButton>
                                         </Tooltip>
                                     }
-
                                 </div>
-
                             }
                             tableOptions={{
                                 dense: true,
@@ -676,19 +910,24 @@ class Stock extends Component {
                                 stickyTableHeight: 300,
                                 elevation: 1
                             }}
-                            paginationOptions={[5, 100, 250, { label: 'All', value: -1 }]}
-                            tableHeaders={headCells}
+                            paginationOptions={[10, 30, 40, { label: 'All', value: -1 }]}
+                            tableHeaders={overallHeadCells}
                             tableRows={{
                                 renderTableRows: this.renderTableRows,
-                                checkbox: true,
+                                checkbox: false,
                                 checkboxColor: "primary",
-                                onRowClickSelect: false
+                                onRowClickSelect: false,
+
+                                isExpandable: true,
+                                renderTableCollapseRows: this.renderTableCollapseRows,
+                                isCollapseOpen: this.state.isOpenOverallDetails
                             }}
-                            Data={rows}
-                            onSelectRow={(e) => console.log(e)}
-                            onSelectAllRows={(e) => console.log(e)}
+                            Data={this.state.isFiltered === true ? this.state.filteredProduct : this.DatabaseListing}
+                            // onSelectRow={(e) => console.log(e)}
+                            // onSelectAllRows={(e) => console.log(e)}
                             onTableRowClick={this.onTableRowClick}
                             SelectionActionButtons={<Button onClick={() => alert('hi')}>SelectionActionButtons</Button>}
+                            carryDataFromChild={this.carryDataFromChild}
                         />
                     </div>
                 </div>
@@ -716,7 +955,8 @@ class Stock extends Component {
                             renderTableRows: this.renderDraftTableRows,
                             checkbox: true,
                             checkboxColor: "primary",
-                            onRowClickSelect: false
+                            onRowClickSelect: false,
+                            isExpandable: false,
                         }}
                         Data={this.DraftListing[0].storageListing}
                         onSelectRow={(e) => this.setState({ selectedListID: e })}
