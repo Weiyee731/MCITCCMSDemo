@@ -75,6 +75,14 @@ export function counterReducer(state = INITIAL_STATE, action) {
         logonUser: action.payload
       });
 
+    case GitAction.LoginServer:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.LoginServerSuccess:
+      return Object.assign({}, state, {
+        loading: false,
+        logonUser: action.payload
+      });
+
     case GitAction.Logout:
       return Object.assign({}, state, { loading: true });
     case GitAction.UserLoggedOut:

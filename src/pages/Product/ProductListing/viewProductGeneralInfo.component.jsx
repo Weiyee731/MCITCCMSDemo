@@ -163,7 +163,9 @@ class ViewProductGeneralInfo extends Component {
       userId: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
       ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
     })
-    this.props.CallAllProductCategoryListing()
+    this.props.CallAllProductCategoryListing({
+      ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+    })
     this.props.CallProductReviewByProductID({
       ProductID: this.props.match.params.productId,
       ParentProductReviewID: 0
@@ -819,7 +821,7 @@ class ViewProductGeneralInfo extends Component {
                           SelectionActionButtons={<Button onClick={() => alert('hi')}>SelectionActionButtons</Button>}
                           carryDataFromChild={this.carryDataFromChild}
                         />
-                        {console.log("DatabaseListing",this.DatabaseListing)}
+                        {console.log("DatabaseListing", this.DatabaseListing)}
                       </CardText>
                     </CardBody>
                   </Card>

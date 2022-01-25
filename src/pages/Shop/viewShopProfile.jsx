@@ -60,7 +60,7 @@ function mapDispatchToProps(dispatch) {
 
 const group = {
 
-    USERID: JSON.parse(localStorage.getItem("loginUser")) !== null ? JSON.parse(localStorage.getItem("loginUser"))[0].UserID : 0,
+    USERID: localStorage.getItem("loginUser") !== null ? JSON.parse(localStorage.getItem("loginUser"))[0].UserID : 0,
     USERFIRSTNAME: "",
     USERLASTNAME: "",
     USERCONTACTNO: "",
@@ -88,11 +88,11 @@ const group = {
     validEmail: false,
 
     type: "MerchantProfile",
-    typeValue: JSON.parse(localStorage.getItem("loginUser")) !== null && JSON.parse(localStorage.getItem("loginUser"))[0].UserID !== undefined ? JSON.parse(localStorage.getItem("loginUser"))[0].UserID : 0,
-    userRoleID: JSON.parse(localStorage.getItem("loginUser")) !== null ? JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID : 0,
+    typeValue: localStorage.getItem("loginUser") !== null && JSON.parse(localStorage.getItem("loginUser"))[0].UserID !== undefined ? JSON.parse(localStorage.getItem("loginUser"))[0].UserID : 0,
+    userRoleID: localStorage.getItem("loginUser") !== null ? JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID : 0,
     productPage: 999,
     page: 1,
-    ProjectID: JSON.parse(localStorage.getItem("loginUser")) !== null ? JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID : 0,
+    ProjectID: localStorage.getItem("loginUser") !== null ? JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID : 0,
 
     SHOPNAME: "",
     SHOPDESC: "",
@@ -131,11 +131,11 @@ class EditShopProfile extends Component {
 
             this.props.CallAllProductsListing({
                 type: "Merchant",
-                typeValue: JSON.parse(localStorage.getItem("loginUser")) !== null ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
-                userId: JSON.parse(localStorage.getItem("loginUser")) !== null ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+                typeValue: localStorage.getItem("loginUser") !== null ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+                userId: localStorage.getItem("loginUser") !== null ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
                 productPage: 999,
                 page: 1,
-                ProjectID: JSON.parse(localStorage.getItem("loginUser")) !== null !== null ? JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID : 0,
+                ProjectID: localStorage.getItem("loginUser") !== null !== null ? JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID : 0,
 
             })
             if (this.props.merchant !== null) {
@@ -148,7 +148,7 @@ class EditShopProfile extends Component {
             console.log("CHECKING PROPS", this.props)
             let ratingCount = []
             if (this.props.productsListing !== null && this.props.productsListing.length > 0) {
-                JSON.parse(this.props.productsListing).map((X) => {
+                this.props.productsListing.map((X) => {
                     console.log("CHECKING PROPS2", X)
                     ratingCount.push(X.ProductRating)
                 })
@@ -214,7 +214,7 @@ class EditShopProfile extends Component {
         formData.append("imageName", imageName);
 
         let file = {
-            USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+            USERID: localStorage.getItem("loginUser") !== null && JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
             USERPROFILEIMAGE: FullImageName,
             TYPE: "SHOPIMAGE",
         };
@@ -340,7 +340,7 @@ class EditShopProfile extends Component {
 
         console.log("THIS.PROPS", this.props)
         console.log("THIS.state", this.state)
-        let userid = JSON.parse(localStorage.getItem("loginUser"))[0].UserID;
+        // let userid = JSON.parse(localStorage.getItem("loginUser"))[0].UserID;
         const merchantDetails = this.props.merchant.length > 0 &&
             this.props.merchant[0].ReturnVal === undefined && this.props.merchant[0];
 

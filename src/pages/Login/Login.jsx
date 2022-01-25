@@ -34,6 +34,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         CallUserLogin: (data) => dispatch(GitAction.CallUserLogin(data)),
+        CallUserLoginServer: (data) => dispatch(GitAction.CallUserLoginServer(data)),
     };
 }
 
@@ -56,27 +57,38 @@ class Dashboard extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log("this.props", this.props)
         if (prevProps.logonUser !== this.props.logonUser && this.state.isSubmit === true) {
-            if (this.props.logonUser[0].ReturnVal !== "0") {
-                // console.log("window.location", window.location.pathname.split("/")[1])
-                setLogonUser(this.props.logonUser,
-                    this.props.sidebars,
-                    window.location.pathname.split(".")[1],
-                    window.location.pathname.split(".")[2],
-                    window.location.pathname.split("/")[1]
-                )
-                // setLogonUser(
-                //     this.props.logonUser,
-                //     this.props.sidebars,
-                //     "myemporia",
-                //     "my",
-                //     "CMS.myemporia.my"
-                // )
+
+            if (this.props.logonUser.length > 0) {
+                if (this.props.logonUser[0].ReturnVal !== "0") {
+                    if (window.location.hostname !== "localhost")
+                        setLogonUser(this.props.logonUser,
+                            this.props.sidebars,
+                            window.location.hostname.split(".")[1],
+                            window.location.hostname.split(".")[2],
+                            window.location.hostname
+                        )
+                    else
+                        setLogonUser(this.props.logonUser,
+                            this.props.sidebars,
+                            window.location.pathname.split(".")[1],
+                            window.location.pathname.split(".")[2],
+                            window.location.pathname.split("/")[1]
+                        )
+
+                    // setLogonUser(
+                    //     this.props.logonUser,
+                    //     this.props.sidebars,
+                    //     "myemporia",
+                    //     "my",
+                    //     "CMS.myemporia.my"
+                    // )
+                }
+                else {
+                    toast.error("The username and password does not match.")
+                }
             }
-            else {
-                toast.error("The username and password does not match.")
-            }
+
         }
     }
 
@@ -102,27 +114,42 @@ class Dashboard extends Component {
     }
 
     OnSubmitLogin = () => {
-       
+
         let project = ""
-        project = window.location.pathname !== "/" && window.location.pathname.split(".")[1];
-        // project = "myemporia"
 
-        if (window.location.pathname !== "/") {
-            if (this.isInputsVerified()) {
-                let object = {
-                    username: this.state.username,
-                    password: this.state.password,
-                    ProjectDomainName: project
+        if (window.location.hostname === "localhost") {
+            project = window.location.pathname !== "/" && window.location.pathname.split(".")[1];
+            if (window.location.pathname !== "/") {
+                if (this.isInputsVerified()) {
+                    let object = {
+                        username: this.state.username,
+                        password: this.state.password,
+                        ProjectDomainName: project
+                    }
+                    this.props.CallUserLogin(object)
                 }
-                this.props.CallUserLogin(object)
+                this.setState({ isSubmit: true })
             }
-            this.setState({ isSubmit: true })
+            else
+                toast.error("Error: 1101.2: Unable to login. Project Error")
         }
-        else
-            toast.error("Error: 1101.2: Unable to login. Project Error")
-
+        else {
+            project = window.location.hostname !== "/" && window.location.hostname.split(".")[1];
+            if (window.location.hostname !== "/") {
+                if (this.isInputsVerified()) {
+                    let object = {
+                        username: this.state.username,
+                        password: this.state.password,
+                        ProjectDomainName: project
+                    }
+                    this.props.CallUserLoginServer(object)
+                }
+                this.setState({ isSubmit: true })
+            }
+            else
+                toast.error("Error: 1101.2: Unable to login. Project Error")
+        }
     }
-
 
 
     render() {
@@ -130,8 +157,6 @@ class Dashboard extends Component {
             // <form onSubmit={() => this.OnSubmitLogin()} className="container block block--margin-top" style={{ alignItems: "center", display: "flex" }} >
             <div style={{ display: 'flex', width: '100%', height: '100vh', }}>
                 <div className="container login-container m-auto">
-
-                    {console.log("window", window.location)}
 
                     <div className="logo-container w-100">
                         <img src="" alt="System Logo" width='100%' height='100%' onError={event => { event.target.src = GetDefaultImage(); event.onerror = null }} />
@@ -150,7 +175,6 @@ class Dashboard extends Component {
                                     </InputAdornment>
                                 }
                             />
-                            {console.log("window.location.pathname", window.location)}
                         </FormControl>
                         <FormControl sx={{ m: 1, width: '100%' }} variant="standard">
                             <InputLabel htmlFor="login-password">Password</InputLabel>

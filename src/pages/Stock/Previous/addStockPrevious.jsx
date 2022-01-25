@@ -1,16 +1,16 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { GitAction } from "../../store/action/gitAction";
+import { GitAction } from "../../../store/action/gitAction";
 import { Link } from "react-router-dom";
 
 // Share Components
-import ResponsiveDatePickers from "../../tools/datePicker";
-import SearchBar from "../../components/SearchBar/SearchBar"
-import { isStringNullOrEmpty, convertDateTimeToDDMMYY, isArrayNotEmpty, convertDateTimeToString112Format } from "../../tools/Helpers";
-import TableComponents from "../../components/TableComponents/TableComponents";
-import AlertDialog from "../../components/ModalComponent/ModalComponent";
+import ResponsiveDatePickers from "../../../tools/datePicker";
+import SearchBar from "../../../components/SearchBar/SearchBar"
+import { isStringNullOrEmpty, convertDateTimeToDDMMYY, isArrayNotEmpty, convertDateTimeToString112Format } from "../../../tools/Helpers";
+import TableComponents from "../../../components/TableComponents/TableComponents";
+import AlertDialog from "../../../components/ModalComponent/ModalComponent";
 import Logo from "../../assets/logos/logo.png";
-import { ArrowRoundedLeft8x13Svg } from '../../assets/svg';
+import { ArrowRoundedLeft8x13Svg } from '../../../assets/svg';
 import "./OverallStock.css";
 
 // UI Components

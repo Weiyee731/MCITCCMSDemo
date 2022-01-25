@@ -11,6 +11,16 @@ export class GitAction {
     };
   }
 
+  static LoginServer = "USER_LOGINSERVER";
+  static LoginServerSuccess = "USER_LOGINSERVER_SUCCESS";
+  static CallUserLoginServer(propsData) {
+    console.log(propsData)
+    return {
+      type: GitAction.LoginServer,
+      payload: propsData
+    };
+  }
+
   static Logout = "USER_LOGOUT";
   static LoggedOutSuccess = "USER_LOGGED_OUT_SUCCESS";
   static CallUserLogout(propsData) {

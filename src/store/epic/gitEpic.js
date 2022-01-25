@@ -18,6 +18,7 @@ import { ServerConfiguration } from "../serverConf";
 //   2. live server url       // 
 const url = ServerConfiguration.ServerUrl;
 const loginUrl = ServerConfiguration.LoginUrl;
+const LiveServerLoginUrl = ServerConfiguration.LiveServerLoginUrl;
 
 const project = window.localStorage.getItem("project")
 // const project = "myemporia"
@@ -26,17 +27,16 @@ const project = window.localStorage.getItem("project")
 export class GitEpic {
   ///////////////////////////////////////////////////  user account credentials ///////////////////////////////////////////////////
 
+
   User_Login = action$ =>
     action$.ofType(GitAction.Login).switchMap(async ({ payload }) => {
-      console.log(
-        loginUrl + payload.ProjectDomainName + "/" +
+      console.log(loginUrl + payload.ProjectDomainName + "/" +
         "User_Login?username=" +
         payload.username +
         "&password=" +
         payload.password +
         "&ProjectDomainName=" +
-        payload.ProjectDomainName
-      )
+        payload.ProjectDomainName)
       try {
         const response = await fetch(
           loginUrl + payload.ProjectDomainName + "/" +
@@ -50,20 +50,143 @@ export class GitEpic {
 
         let json = await response.json();
         json = JSON.parse(json)
-        console.log("json", json)
         return {
           type: GitAction.LoginSuccess,
           payload: json,
         };
       }
       catch (error) {
-        toast.error("Error Code: User_Login")
+        toast.error("Error Code: User_Login. Please check on URL")
         return {
           type: GitAction.LoginSuccess,
           payload: [],
         };
       }
     });
+
+
+
+  User_LoginServer = action$ =>
+    action$.ofType(GitAction.LoginServer).switchMap(async ({ payload }) => {
+      console.log(LiveServerLoginUrl + payload.ProjectDomainName + "/" +
+        "User_Login?username=" +
+        payload.username +
+        "&password=" +
+        payload.password +
+        "&ProjectDomainName=" +
+        payload.ProjectDomainName)
+      try {
+        const response = await fetch(
+          LiveServerLoginUrl + payload.ProjectDomainName + "/" +
+          "User_Login?username=" +
+          payload.username +
+          "&password=" +
+          payload.password +
+          "&ProjectDomainName=" +
+          payload.ProjectDomainName
+        );
+
+        let json = await response.json();
+        json = JSON.parse(json)
+        return {
+          type: GitAction.LoginServerSuccess,
+          payload: json,
+        };
+      }
+      catch (error) {
+        toast.error("Error Code: User_Login. Please check on URL")
+        return {
+          type: GitAction.LoginServerSuccess,
+          payload: [],
+        };
+      }
+    });
+
+  // User_Login = action$ =>
+  //   action$.ofType(GitAction.Login).switchMap(async ({ payload }) => {
+  //     try {
+  //       console.log("CHECK1")
+  //       console.log(
+  //         loginUrl + payload.ProjectDomainName + "/" +
+  //         "User_Login?username=" +
+  //         payload.username +
+  //         "&password=" +
+  //         payload.password +
+  //         "&ProjectDomainName=" +
+  //         payload.ProjectDomainName
+  //       )
+  //       const response = await fetch(
+  //         loginUrl  + payload.ProjectDomainName + "/" +
+  //         "User_Login?username=" +
+  //         payload.username +
+  //         "&password=" +
+  //         payload.password +
+  //         "&ProjectDomainName=" +
+  //         payload.ProjectDomainName
+  //       );
+  //       console.log("json", response.json())
+  //       console.log("json1", response)
+  //       console.log("json2", await response.json())
+  //       let json = await response.json();
+  //       console.log("json")
+
+  //       return {
+  //         type: GitAction.LoginSuccess,
+  //         payload: JSON.parse(json),
+  //       };
+  //     }
+  //     catch (error) {
+  //       toast.error("Error Code: User_Login. Please check on URL")
+  //       return {
+  //         type: GitAction.LoginSuccess,
+  //         payload: [],
+  //       };
+  //     }
+  //   });
+
+  // User_LoginServer = action$ =>
+  //   action$.ofType(GitAction.LoginServer).switchMap(async ({ payload }) => {
+
+  //     try {
+  //       console.log(LiveServerLoginUrl
+  //         + payload.ProjectDomainName + "/" +
+  //         "User_Login?username=" +
+  //         payload.username +
+  //         "&password=" +
+  //         payload.password +
+  //         "&ProjectDomainName=" +
+  //         payload.ProjectDomainName)
+
+  //       const response = await fetch(
+  //         LiveServerLoginUrl
+  //         + payload.ProjectDomainName + "/" +
+  //         "User_Login?username=" +
+  //         payload.username +
+  //         "&password=" +
+  //         payload.password +
+  //         "&ProjectDomainName=" +
+  //         payload.ProjectDomainName
+  //       );
+
+  //       console.log("json", response.json())
+  //       console.log("json1", response)
+  //       console.log("json2", await response.json())
+  //       let json = await response.json();
+  //       console.log("json", json)
+
+  //       return {
+  //         type: GitAction.LoginServerSuccess,
+  //         payload: JSON.parse(json),
+  //       };
+  //     }
+  //     catch (error) {
+  //       toast.error("Error Code: User_Login. Please check on URL")
+  //       return {
+  //         type: GitAction.LoginServerSuccess,
+  //         payload: [],
+  //       };
+  //     }
+  //   });
 
   User_Logout = action$ =>
     action$.ofType(GitAction.Logout).switchMap(async ({ payload }) => {
@@ -631,7 +754,7 @@ export class GitEpic {
         .then(response => response.json())
         .then(json => {
           json = json;
-          console.log("json")
+          console.log("json", json)
           // if (json !== "fail") {
           //   json = json;
           //   // toast.success("Successfully update stock. Fetching the latest data..", { autoClose: 3000 })
@@ -1646,11 +1769,10 @@ export class GitEpic {
           "Product_CategoryListByAll?ProjectID=" + payload.ProjectID
         );
         let json = await response.json();
-        json = JSON.parse(json);
-        console.log("json", json)
+
         return {
           type: GitAction.GotProductCategory,
-          payload: json,
+          payload: JSON.parse(json),
         };
       } catch (error) {
         alert('getAllCategories: ' + error);
@@ -1664,20 +1786,18 @@ export class GitEpic {
 
   ProductCategory_ViewAllWithParent = (action$) =>
     action$.ofType(GitAction.GetProductCategoryListing).switchMap(async (payload) => {
-
       try {
         const response = await fetch(
           url + project + "/" +
           "Product_CategoryListing?ProjectID=" + payload.ProjectID
         );
         let json = await response.json();
-        json = JSON.parse(json);
         return {
           type: GitAction.GotProductCategoryListing,
-          payload: json,
+          payload: JSON.parse(json),
         };
       } catch (error) {
-        alert('getAllCategoriesListing: ' + error);
+        alert('getAllCategoriesListing123: ' + error);
         return {
           type: GitAction.GotProductCategoryListing,
           payload: [],
@@ -1964,7 +2084,7 @@ export class GitEpic {
   Storage_GridStorageList = (action$) =>
     action$.ofType(GitAction.GetStorage).switchMap(async ({ payload }) => {
       console.log(url + project + "/" +
-        "Storage_GridStorageList?PROJECTID=" + payload)
+        "Storage_GridStorageList?PROJECTID=" + payload.ProjectID)
       try {
         const response = await fetch(
           url + project + "/" +

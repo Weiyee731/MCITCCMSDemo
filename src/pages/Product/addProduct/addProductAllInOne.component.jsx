@@ -1,41 +1,38 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import {
-  Card,
-  CardContent,
-} from "@material-ui/core";
 import { Link } from "react-router-dom";
-import Button from "@material-ui/core/Button";
-import TextField from '@mui/material/TextField';
-import Select from "@material-ui/core/Select";
-import { GitAction } from "../../../store/action/gitAction";
-import MaterialTable from "material-table";
 import Dropzone from "react-dropzone";
 import axios from "axios";
+
+// Share Components
+import { GitAction } from "../../../store/action/gitAction";
+import { ModalPopOut } from "../../../components/ModalComponent/ModalComponent";
+import DescriptionFunction from "../../../tools/editor";
+import { convertDateTimeToString, getFileExtension, getFileTypeByExtension, isStringNullOrEmpty } from "../../../tools/Helpers"
+import "./addProduct.component.css";
+
+// UI Components
+import { Card, CardContent } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import TextField from '@mui/material/TextField';
+import Select from '@mui/material/Select';
+import MaterialTable from "material-table";
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@material-ui/core/IconButton";
-import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import DescriptionFunction from "../../../tools/editor";
-import { Editor } from '@tinymce/tinymce-react';
-import Resizer from "react-image-file-resizer";
-
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import { Modal, ModalBody, ModalHeader } from "reactstrap"
-import { ModalPopOut } from "../../../components/ModalComponent/ModalComponent";
-// import { browserHistory } from "react-router";
-
-// import NestedMenuItem from "material-ui-nested-menu-item";
-
-
-
-// import RestoreIcon from "@material-ui/icons/Restore";
-// import queryString from "query-string";
+import OutlinedInput from '@mui/material/OutlinedInput';
+import Stepper from "@material-ui/core/Stepper";
+import Step from "@material-ui/core/Step";
+import StepLabel from "@material-ui/core/StepLabel";
+import StepContent from "@material-ui/core/StepContent";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { Fade } from "shards-react";
+import InfoIcon from '@mui/icons-material/Info';
+import { styled } from '@mui/material/styles';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import InputAdornment from '@mui/material/InputAdornment';
 import { toast } from "react-toastify";
 import { HashLink } from "react-router-hash-link";
 import LinearProgress from "@material-ui/core/LinearProgress";
@@ -45,28 +42,9 @@ import Box from "@material-ui/core/Box";
 import SearchIcon from "@mui/icons-material/Search";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
-import {
-  InputGroup,
-  InputGroupText,
-  InputGroupAddon,
-  FormInput,
-} from "shards-react";
-import "./addProduct.component.css";
-import Stepper from "@material-ui/core/Stepper";
-import Step from "@material-ui/core/Step";
-import StepLabel from "@material-ui/core/StepLabel";
-import StepContent from "@material-ui/core/StepContent";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { Fade } from "shards-react";
-import { convertDateTimeToString, getFileExtension, getFileTypeByExtension, isStringNullOrEmpty } from "../../../tools/Helpers"
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from '@mui/material/FormControl';
 
-import InfoIcon from '@mui/icons-material/Info';
-import { styled } from '@mui/material/styles';
-import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import InputAdornment from '@mui/material/InputAdornment';
 
 function mapStateToProps(state) {
   return {
@@ -440,16 +418,51 @@ const INITIAL_STATE = {
   weightFilled: 0,
   variation1NameFilled: 0,
   variation2NameFilled: 0,
-  variation1On: false,
+  variation1On: true,
   variation2On: false,
-  variation1Options: 0,
+  variation1Options: 1,
   variation2Options: 0,
   wholeSaleOn: false,
   wholeSaleOptions: 1,
   activeStep: 0,
   price: null,
   stock: null,
-  variation1: [],
+  // variation1On: true,
+  // variation1Options: 1,
+  variation1:
+  {
+    name: "",
+    options: [
+      {
+        optionName: "",
+        price: "",
+        stock: "",
+        sku: "",
+        picture: "",
+        pictureURL: "",
+        errorOption: false,
+        errorSKU: false,
+        errorPrice: false,
+        errorStock: false,
+        variation2Options: {
+          name: "",
+          options: [
+            {
+              optionName: "",
+              price: "",
+              stock: "",
+              sku: "",
+              errorOption: false,
+              errorSKU: false,
+              errorPrice: false,
+              errorStock: false,
+            },
+          ],
+        },
+      },
+    ]
+  }
+  ,
   priceTierList: [],
   variantImagesTotal: 0.0,
   Total512x512: 0.0,
@@ -467,7 +480,6 @@ const INITIAL_STATE = {
   isProductIntoBind: false,
 
   OnCheckMedia: false,
-  isCompresss: false,
   isOverFileSize: false,
 
   OptionClick: "",
@@ -2001,21 +2013,21 @@ class AddProductComponent extends Component {
     }
   };
 
-  resizeFile = (file, extension) =>
-    new Promise((resolve) => {
-      Resizer.imageFileResizer(
-        file,
-        300,
-        400,
-        extension,
-        80,
-        0,
-        (uri) => {
-          resolve(uri);
-        },
-        "base64"
-      );
-    });
+  // resizeFile = (file, extension) =>
+  //   new Promise((resolve) => {
+  //     Resizer.imageFileResizer(
+  //       file,
+  //       300,
+  //       400,
+  //       extension,
+  //       80,
+  //       0,
+  //       (uri) => {
+  //         resolve(uri);
+  //       },
+  //       "base64"
+  //     );
+  //   });
 
   uploadFile = (productID) => {
     // combine images and video for upload in an array
@@ -2064,11 +2076,6 @@ class AddProductComponent extends Component {
         // console.log("resize", this.resizeFile(uploadingMedia[i], fileExt))
         let filename = productID + "_" + i + "_" + convertDateTimeToString(new Date())
         let image = uploadingMedia[i]
-
-        if (this.state.isCompresss === true) {
-          image = this.resizeFile(uploadingMedia[i], fileExt);
-          console.log("resize", image);
-        }
 
         filenames += filename + "." + fileExt
         mediaType += getFileTypeByExtension(fileExt)
@@ -2130,7 +2137,8 @@ class AddProductComponent extends Component {
       for (let i = 0; i < variation1.options.length; i++) {
         Customizable += '0'
         Value += variation1.options[i].optionName
-        stock += variation1.options[i].stock
+        // stock += variation1.options[i].stock
+        stock += 1
         price += variation1.options[i].price
         sku += variation1.options[i].sku
 
@@ -2152,14 +2160,12 @@ class AddProductComponent extends Component {
       stock: stock,
       price: price,
       sku: sku,
+      UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
     }
-
-    console.log(object)
-
+    console.log("onSubmitProductVariation", object)
     this.props.CallAddProductVariationDetail(object)
 
   }
-
 
   onSubmitProductSpecification = (ProductID) => {
     const { productSpecificationOptions } = this.state
@@ -2186,7 +2192,6 @@ class AddProductComponent extends Component {
   }
 
   handleChange(data, e) {
-    console.log("HERE")
     if (data === "product") {
       this.setState({
         name: e.target.value,
@@ -2874,7 +2879,6 @@ class AddProductComponent extends Component {
         productCategory: elemId,
       });
 
-      console.log("CHECKING", elemId)
       this.props.CallAllProductVariationByCategoryID(elemId);
       setTimeout(
         function () {
@@ -3134,17 +3138,17 @@ class AddProductComponent extends Component {
     window.addEventListener("scroll", this.handleScroll, true);
 
     // grab the passing ProductID at the front and pull the full information about this product. it will bind all the data at the componentDidUpdate
-    let userId = window.localStorage.getItem("id")
+    let userId = JSON.parse(localStorage.getItem("loginUser"))[0].UserID
     if (this.props.isOnViewState && !isStringNullOrEmpty(userId) && !isStringNullOrEmpty(this.props.ProductID)) {
       this.setState({
         ProductID: this.props.ProductID,
-        userId: window.localStorage.getItem("id"),
+        userId: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
         name: this.props.ProductName
       })
 
       this.props.CallProductDetail({
         productId: this.props.ProductID,
-        userId: window.localStorage.getItem("id"),
+        userId: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
       })
     }
   }
@@ -3234,52 +3238,39 @@ class AddProductComponent extends Component {
 
   checkGeneral = () => {
 
-    if (this.state.brandEmpty ||
-      this.state.depthNotDecimal ||
-      this.state.depthEmpty ||
-      this.state.productDesciptionEmpty ||
-      this.state.productNameEmpty ||
-      this.state.productNameDublicated ||
-      this.state.productCategoryEmpty ||
-      this.state.productSupplierEmpty ||
-      this.state.heightEmpty ||
-      this.state.heightNotDecimal ||
-      this.state.widthNotDecimal ||
-      this.state.widthEmpty ||
-      this.state.weightNotDecimal ||
-      this.state.weightEmpty ||
-      this.state.modelEmpty ||
-      this.state.skuEmpty ||
-      this.state.skuNotLongEnough ||
+    let error = this.state.brandEmpty &&
+      this.state.depthNotDecimal &&
+      this.state.depthEmpty &&
+      this.state.productDesciptionEmpty &&
+      this.state.productNameEmpty &&
+      this.state.productNameDublicated &&
+      this.state.productCategoryEmpty &&
+      this.state.heightEmpty &&
+      this.state.heightNotDecimal &&
+      this.state.widthNotDecimal &&
+      this.state.widthEmpty &&
+      this.state.weightNotDecimal &&
+      this.state.weightEmpty &&
+      this.state.modelEmpty &&
       this.state.productTagsEmpty
-      // ||
-      // this.state.notEnoughFiles1600x900 ||
-      // this.state.notEnoughFiles512x512
-    )
+
+    if (error === true)
       return 1
     else return 0
   }
 
 
-
-
   OnSubmit = () => {
     // this.checkEverything();
     // this.uploadFile(1)
-    console.log("this.check", this.state.file)
-    console.log("this.check", this.state.file2)
-    console.log("this.check", this.state.file3)
-    console.log("this.check", this.state.file !== [] || this.state.file2 !== [] || this.state.file3 !== [])
-
-    console.log("this.state", this.state)
 
     if (this.checkGeneral() === 1) {
       toast.error("Please fill in all required information")
     }
     else {
-
+      // this.onSubmitProductVariation(1)
       if (this.state.name === "" || this.state.description === "" || this.state.productCategory === "" || this.state.productSupplier === "" || this.state.height === ""
-        || this.state.width === "" || this.state.depth === "" || this.state.weight === "" || this.state.sku === ""
+        || this.state.width === "" || this.state.depth === "" || this.state.weight === ""
         || this.state.brand === "" || this.state.model === "" || this.state.tags === "")
         toast.error("Please fill in all required information")
       else {
@@ -3292,7 +3283,7 @@ class AddProductComponent extends Component {
           width: this.state.width,
           depth: this.state.depth,
           weight: this.state.weight,
-          sku: this.state.sku,
+          sku: "-",
           brand: this.state.brand,
           model: this.state.model,
           tags: this.state.tags,
@@ -3307,7 +3298,6 @@ class AddProductComponent extends Component {
 
   // CallUpdateAPI = (value) => {
 
-  //   this.setState({ isCompresss: value, OnCheckMedia: false })
 
   //   let object = {
   //     name: this.state.name,
@@ -3404,11 +3394,10 @@ class AddProductComponent extends Component {
         if (this.state.isSubmit === true) {
           toast.success("Product is successfully submitted to Admin for endorsement. Estimated 3 - 5 days for admin to revise your added product.")
           this.setState({ isSubmit: false })
-          setTimeout(() => {
-            window.location.href = "/viewProduct"
-            window.location.reload(false);
-          }, 3000);
-
+          // setTimeout(() => {
+          //   window.location.href = "/viewProduct"
+          //   window.location.reload(false);
+          // }, 3000);
         }
       }
     }
@@ -3895,11 +3884,9 @@ class AddProductComponent extends Component {
 
     return (
       <div style={{ display: "flex", width: "100%", margin: '30px' }}>
-        <div
-        // className="MainTab"
-        >
+        <div className="MainTab"  >
           <div>
-            <div>
+            <div style={{ margin: "1%" }}>
               {
                 !this.props.isOnViewState ? <h1>Add Product</h1> : <h1>{typeof this.props.ProductName !== "undefined" ? this.props.ProductName : "Product Information"}</h1>
               }
@@ -3920,7 +3907,6 @@ class AddProductComponent extends Component {
                 </Button>
             }
           </div>
-
           <div>
             <Card id="basicInfo" className="SubContainer">
               <CardContent id="basicInfo">
@@ -4111,39 +4097,28 @@ class AddProductComponent extends Component {
                   className="InputField"
                   size="small"
                 >
-                  <InputLabel shrink htmlFor="productSupplier">
+                  {/* <InputLabel shrink htmlFor="productSupplier">
                     Supplier
-                  </InputLabel>
-                  <Select
-                    native
-                    label="Supplier"
-                    value={this.state.productSupplier}
-                    onChange={this.handleChange.bind(this, "Product Supplier")}
-                    inputProps={{
-                      name: "Product Supplier",
-                      id: "productSupplier",
+                  </InputLabel> */}
+                  <TextField
+                    id="productSupplier"
+                    label="Product Supplier"
+                    defaultValue={JSON.parse(localStorage.getItem("loginUser"))[0].UserFullName}
+                    InputProps={{
+                      readOnly: true,
                     }}
-                    error={this.state.productSupplierEmpty}
-                    onFocus={this.setHint.bind(this, "ProductSupplier")}
-                    onBlur={() =>
-                      this.setState({
-                        FocusOn: false,
-                      })
-                    }
-                  >
-                    <option aria-label="None" value="">None Selected</option>
-                    {/* {createSupplierMenu} */}
-                    {/* {createSupplierMenu} */}
-                    <option value={JSON.parse(localStorage.getItem("loginUser"))[0].UserID}>
-                      {/* <option value={JSON.parse(localStorage.getItem("loginUser"))[0].UserID}> */}
-                      {JSON.parse(localStorage.getItem("loginUser"))[0].UserFullName}
-                    </option>
-                  </Select>
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    size="small"
+                    variant="outlined"
+                    className="InputField"
+                  />
                 </FormControl>
                 {this.state.productSupplierEmpty && (
                   <p className="error">Product supplier cannot be empty.</p>
                 )}
-                <div className="HorizontalContainer">
+                {/* <div className="HorizontalContainer">
                   <TextField
                     id="productSku"
                     value={this.state.sku}
@@ -4164,11 +4139,7 @@ class AddProductComponent extends Component {
                       })
                     }
                   />
-
-                  {/* <Link className="nav-link" to={"/productStocksIn"}>
-                    Scan Now
-                  </Link> */}
-                </div>
+                </div> */}
 
                 {this.state.skuEmpty && (
                   <p className="error">Product SKU cannot be empty.</p>
@@ -4564,13 +4535,14 @@ class AddProductComponent extends Component {
                             onClick={this.handleAddProductSpecification.bind(this, "remove", idx)}
                           />
                           <FormControl variant="outlined" className="mr-2 w-50" size="small">
-                            <InputLabel id="specifications-dropdown">Specifications</InputLabel>
+                            <InputLabel id="demo-simple-select-outlined-label">Specifications</InputLabel>
                             <Select
                               labelId="specifications-dropdown"
                               id="specifications-dropdown-label"
                               defaultValue={this.state.productSpecificationOptions[idx].categoryId}
                               value={this.state.productSpecificationOptions[idx].categoryId}
                               onChange={e => this.handleProductSpecificationInput(idx, "select", e)}
+                              label="Specifications"
                             >
                               <MenuItem value="0">
                                 <em>None</em>
@@ -4610,27 +4582,23 @@ class AddProductComponent extends Component {
                 <p className="Heading">Product Variation</p>
                 {!this.state.variation1On && !this.state.variation2On ? (
                   <div>
-                    <InputGroup className="InputField">
-                      <InputGroupAddon type="prepend">
-                        <InputGroupText className="groupText">
-                          RM
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <FormInput
-                        value={this.state.price}
-                        invalid={this.state.priceEmpty}
-                        onChange={this.handleChange.bind(this, "Price")}
-                        placeholder="Price"
-                        type="number"
-                        step=".10"
-                        onFocus={this.setHint.bind(this, "ProductPrice")}
-                        onBlur={() =>
-                          this.setState({
-                            FocusOn: false,
-                          })
-                        }
-                      />
-                    </InputGroup>
+                    <TextField type="number" size="small"
+                      inputProps={{ min: "0", step: "0.10" }}
+                      onFocus={this.setHint.bind(this, "ProductPrice")}
+                      onBlur={() =>
+                        this.setState({
+                          FocusOn: false,
+                        })
+                      }
+                      disabled={!this.state.toBeEdited}
+                      onChange={this.handleChange.bind(this, "Price")}
+                      fullWidth label="Price"
+                      value={this.state.price}
+                      invalid={this.state.priceEmpty}
+                      name="Price"
+                      InputProps={{
+                        startAdornment: <InputAdornment position="start">RM</InputAdornment>,
+                      }} />
                     {this.state.priceEmpty ? (
                       <p className="error">
                         Price has to be filled and not less than 0.
@@ -4690,7 +4658,6 @@ class AddProductComponent extends Component {
                             })
                           }
                         </Select>
-
                       </FormControl>
                       {this.state.variation1NameEmpty ? (
                         <p className="error">
@@ -4701,11 +4668,14 @@ class AddProductComponent extends Component {
                       {[...Array(this.state.variation1Options)].map((e, i) => (
                         <div>
                           <div className="VariantOption align-items-center">
-                            <RemoveCircleOutlineIcon
-                              className="DeleteOptionButton"
-                              color="secondary"
-                              onClick={this.onDeleteVariant.bind(this, i, "variant1Option")}
-                            />
+                            {
+                              this.state.variation1.options.length > 1 &&
+                              <RemoveCircleOutlineIcon
+                                className="DeleteOptionButton"
+                                color="secondary"
+                                onClick={this.onDeleteVariant.bind(this, i, "variant1Option")}
+                              />
+                            }
                             <TextField
                               className="InputField"
                               InputLabelProps={{ shrink: "true", }}
@@ -4739,11 +4709,11 @@ class AddProductComponent extends Component {
                       </Button>
                     </div>
                     <br />
-                    <CloseIcon
+                    {/* <CloseIcon
                       className="DeleteVariantButton"
                       color="secondary"
                       onClick={this.onDeleteVariant.bind(this, -1, "variant1")}
-                    />
+                    /> */}
                   </div>
                 ) : null}
                 {this.state.variation1On ? <br /> : null}
@@ -4775,7 +4745,7 @@ class AddProductComponent extends Component {
                       <div className="ItemContainer">
                         <div className="VariantContainer">
 
-                          <InputGroup className="ItemContainer">
+                          {/* <InputGroup className="ItemContainer">
                             <InputGroupAddon type="prepend">
                               <InputGroupText className="groupText">
                                 RM
@@ -4795,10 +4765,26 @@ class AddProductComponent extends Component {
                                 })
                               }
                             />
-                          </InputGroup>
+                          </InputGroup> */}
+
+                          <TextField type="number" size="small"
+                            inputProps={{ min: "0", step: "0.10" }}
+                            onFocus={this.setHint.bind(this, "VariationPrice")}
+                            onBlur={() =>
+                              this.setState({
+                                FocusOn: false,
+                              })
+                            }
+                            onChange={this.handleChange.bind(this, "Price")}
+                            fullWidth label="Price"
+                            value={this.state.price}
+                            name="Price"
+                            InputProps={{
+                              startAdornment: <InputAdornment position="start">RM</InputAdornment>,
+                            }} required />
                         </div>
                       </div>
-                      <div className="StockField">
+                      {/* <div className="StockField">
                         <TextField
                           // id="standard-start-adornment"
                           label="Stock"
@@ -4819,7 +4805,7 @@ class AddProductComponent extends Component {
                           }
                           value={this.state.stock}
                         />
-                      </div>
+                      </div> */}
                       <div className="StockField">
                         <TextField
                           id="standard-start-adornment"
@@ -4858,7 +4844,7 @@ class AddProductComponent extends Component {
                           {this.state.variation1Name ? this.state.variation1Name : "Variation 1 Name"}
                         </td>
                         <td className="tdHeading"> Price </td>
-                        <td className="tdHeading"> Stock </td>
+                        {/* <td className="tdHeading"> Stock </td> */}
                         <td className="tdHeading">SKU</td>
                       </tr>
 
@@ -4885,7 +4871,7 @@ class AddProductComponent extends Component {
                                       </td>
                                       <td className="tdNestedNew">
                                         <div className="StepContainer">
-                                          <InputGroup className="TextFieldsTables">
+                                          {/* <InputGroup className="TextFieldsTables">
                                             <InputGroupAddon type="prepend">
                                               <InputGroupText className="groupText">
                                                 RM
@@ -4922,7 +4908,41 @@ class AddProductComponent extends Component {
                                                   .errorPrice
                                               }
                                             />
-                                          </InputGroup>
+                                          </InputGroup> */}
+
+                                          <TextField type="number" size="small"
+                                            inputProps={{ min: "0", step: "0.10" }}
+                                            key={"price " + i}
+                                            onChange={this.handleChangeOptionsVariant2.bind(
+                                              this,
+                                              "variation2Price",
+                                              x,
+                                              i
+                                            )}
+                                            onFocus={this.setHint.bind(
+                                              this,
+                                              "VariationPrice"
+                                            )}
+                                            onBlur={() =>
+                                              this.setState({
+                                                FocusOn: false,
+                                              })
+                                            }
+                                            value={
+                                              this.state.variation1.options[x]
+                                                .variation2Options.options[i]
+                                                .price
+                                            }
+                                            invalid={
+                                              this.state.variation1.options[x]
+                                                .variation2Options.options[i]
+                                                .errorPrice
+                                            }
+                                            label=""
+                                            InputProps={{
+                                              startAdornment: <InputAdornment position="start">RM</InputAdornment>,
+                                            }} required />
+
                                           {this.state.variation1.options[x]
                                             .variation2Options.options[i]
                                             .errorPrice ? (
@@ -4936,7 +4956,7 @@ class AddProductComponent extends Component {
                                           ) : null}
                                         </div>
                                       </td>
-                                      <td className="tdNestedNew">
+                                      {/* <td className="tdNestedNew">
                                         <div className="StepContainer">
                                           <TextField
                                             id="productStock1"
@@ -4986,7 +5006,8 @@ class AddProductComponent extends Component {
                                             </Tooltip>
                                           ) : null}
                                         </div>
-                                      </td>
+                                      </td> */}
+
                                       <td className="tdNestedNew">
                                         <div className="StepContainer">
                                           <TextField
@@ -5081,18 +5102,10 @@ class AddProductComponent extends Component {
                                     }
                                   />
                                 </InputGroup> */}
-                                
-                                <TextField
-                                  label="With normal TextField"
-                                  id="outlined-start-adornment"
-                                  sx={{ m: 1, width: '25ch' }}
-                                  InputProps={{
-                                    startAdornment: <InputAdornment position="start">kg</InputAdornment>,
-                                  }}
-                                  onFocus={this.setHint.bind(
-                                    this,
-                                    "VariationPrice"
-                                  )}
+
+                                <TextField type="number" size="small"
+                                  inputProps={{ min: "0", step: "0.10" }}
+                                  onFocus={this.setHint.bind(this, "VariationPrice")}
                                   onBlur={() =>
                                     this.setState({
                                       FocusOn: false,
@@ -5103,9 +5116,17 @@ class AddProductComponent extends Component {
                                     "variation1Price",
                                     x
                                   )}
+                                  fullWidth label="Price"
                                   value={this.state.variation1.options[x].price}
-                                  className="InputField2"
-                                />
+                                  invalid={
+                                    this.state.variation1.options[x].errorPrice && this.state.toBeEdited
+                                  }
+                                  // name="Price"
+                                  InputProps={{
+                                    startAdornment: <InputAdornment position="start">RM</InputAdornment>,
+                                  }} required />
+
+
                                 {this.state.variation1.options[x].errorPrice ? (
                                   <Tooltip
                                     placement="top-end"
@@ -5117,7 +5138,7 @@ class AddProductComponent extends Component {
                                 ) : null}
                               </div>
                             </td>
-                            <td className="tdNestedText">
+                            {/* <td className="tdNestedText">
                               <div className="StepContainer">
                                 <TextField
                                   id="productStock1"
@@ -5126,6 +5147,7 @@ class AddProductComponent extends Component {
                                     this.state.variation1.options[x].errorStock
                                   }
                                   size="small"
+                                  label="Stock"
                                   onFocus={this.setHint.bind(
                                     this,
                                     "VariationStock"
@@ -5145,7 +5167,7 @@ class AddProductComponent extends Component {
                                     shrink: "true",
                                   }}
                                   variant="outlined"
-                                  className="InputField2"
+                                  className="InputField2" required
                                 // error={this.state.stock || this.state.skuNotLongEnough}
                                 />
                                 {this.state.variation1.options[x].errorStock ? (
@@ -5158,12 +5180,13 @@ class AddProductComponent extends Component {
                                   </Tooltip>
                                 ) : null}
                               </div>
-                            </td>
+                            </td> */}
                             <td className="tdNestedText">
                               <div className="StepContainer">
                                 <TextField
                                   id="productSku"
                                   size="small"
+                                  label="Variation SKU"
                                   value={this.state.variation1.options[x].sku}
                                   onFocus={this.setHint.bind(
                                     this,
@@ -5186,7 +5209,7 @@ class AddProductComponent extends Component {
                                   className="InputField2"
                                   error={
                                     this.state.variation1.options[x].errorSKU
-                                  }
+                                  } required
                                 />
                                 {this.state.variation1.options[x].errorSKU ? (
                                   <Tooltip
@@ -5260,10 +5283,11 @@ class AddProductComponent extends Component {
                   <p className="FontType3">Dimension: </p>
                   <div className="InputFieldMiddleElementNested">
                     <p className="FontTypeInputLabel">Height</p>
-                    <InputGroup className="InputFieldMiddleElementNested">
-                      <FormInput
-                        step=".10"
-                        type="number"
+                    <FormControl style={{ width: "100%" }} variant="outlined">
+                      <OutlinedInput
+                        endAdornment={<InputAdornment position="end">m</InputAdornment>}
+                        size="small"
+                        // fullWidth="true"
                         value={this.state.height}
                         invalid={
                           this.state.heightEmpty || this.state.heightNotDecimal
@@ -5275,19 +5299,16 @@ class AddProductComponent extends Component {
                             FocusOn: false,
                           })
                         }
+                        label="" required
                       />
-                      <InputGroupAddon type="append">
-                        <InputGroupText className="groupText">m</InputGroupText>
-                      </InputGroupAddon>
-                    </InputGroup>
+                    </FormControl>
                   </div>
-                  {/* {this.state.heightEmpty && <br />} */}
                   <div className="InputFieldMiddleElementNested">
                     <p className="FontTypeInputLabel">Width</p>
-                    <InputGroup className="InputFieldMiddleElementNested">
-                      <FormInput
-                        type="number"
-                        step=".10"
+                    <FormControl style={{ width: "100%" }} variant="outlined">
+                      <OutlinedInput
+                        endAdornment={<InputAdornment position="end">m</InputAdornment>}
+                        size="small"
                         value={this.state.width}
                         invalid={
                           this.state.widthEmpty || this.state.widthNotDecimal
@@ -5299,18 +5320,16 @@ class AddProductComponent extends Component {
                             FocusOn: false,
                           })
                         }
+                        label="" required
                       />
-                      <InputGroupAddon type="append">
-                        <InputGroupText className="groupText">m</InputGroupText>
-                      </InputGroupAddon>
-                    </InputGroup>
+                    </FormControl>
                   </div>
                   <div className="InputFieldMiddleElementNested">
                     <p className="FontTypeInputLabel">Depth</p>
-                    <InputGroup className="InputFieldSecondElement">
-                      <FormInput
-                        type="number"
-                        step=".10"
+                    <FormControl style={{ width: "100%" }} variant="outlined">
+                      <OutlinedInput
+                        endAdornment={<InputAdornment position="end">m</InputAdornment>}
+                        size="small"
                         value={this.state.depth}
                         invalid={
                           this.state.depthEmpty || this.state.depthNotDecimal
@@ -5322,11 +5341,9 @@ class AddProductComponent extends Component {
                             FocusOn: false,
                           })
                         }
+                        label="" required
                       />
-                      <InputGroupAddon type="append">
-                        <InputGroupText className="groupText">m</InputGroupText>
-                      </InputGroupAddon>
-                    </InputGroup>
+                    </FormControl>
                   </div>
                 </div>
 
@@ -5357,7 +5374,7 @@ class AddProductComponent extends Component {
                 <div className="HorizontalContainer">
                   <div className="InputFieldMiddleElement">
                     <p className="FontTypeInputLabel">Weight</p>
-                    <InputGroup className="InputField">
+                    {/* <InputGroup className="InputField">
                       <FormInput
                         type="number"
                         step=".10"
@@ -5378,7 +5395,26 @@ class AddProductComponent extends Component {
                           kg
                         </InputGroupText>
                       </InputGroupAddon>
-                    </InputGroup>
+                    </InputGroup> */}
+
+                    <FormControl className="InputField" variant="outlined">
+                      <OutlinedInput
+                        endAdornment={<InputAdornment position="end">kg</InputAdornment>}
+                        size="small"
+                        value={this.state.weight}
+                        onChange={this.handleChange.bind(this, "weight")}
+                        onFocus={this.setHint.bind(this, "ProductWeight")}
+                        onBlur={() =>
+                          this.setState({
+                            FocusOn: false,
+                          })
+                        }
+                        invalid={
+                          this.state.weightEmpty || this.state.weightNotDecimal
+                        }
+                        label="" required
+                      />
+                    </FormControl>
                   </div>
                 </div>
 
@@ -5403,9 +5439,7 @@ class AddProductComponent extends Component {
         </div>
 
         <div className="StepContainer">
-          <div
-          // className="ProgressTab"
-          >
+          <div className="ProgressTab"  >
             <Card>
               <CardContent>
                 <div className="HorizontalContainer">

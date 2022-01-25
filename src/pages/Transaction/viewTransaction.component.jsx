@@ -930,251 +930,251 @@ function Row(props) {
     return (
         <React.Fragment>
             <>
-            <TableRow
-                hover
-                role="checkbox"
-                tabIndex={-1}
-                key={row.Username}
-                onClick={() =>
-                    <>
-                        {(setOpen(!open), setOpenId(row.OrderID), handleSetProduct(row))}
-                    </>
-                }
-            >
-                <TableCell>
-                    <IconButton
-                        aria-label="expand row"
-                        size="small"
-                    >
-                        {open ? <ArrowRoundedUp13x8Svg /> : <ArrowRoundedDown12x7Svg />}
-                    </IconButton>
-                </TableCell>
-                <TableCell align="left">{row.OrderName}</TableCell>
-                <TableCell align="left">{row.Username}</TableCell>
-                <TableCell align="left">{row.PaymentMethod}</TableCell>
-                <TableCell align="left">{row.TrackingStatus}</TableCell>
-                <TableCell align="left">
-                    {row.OrderProductDetail ? (
-                        <p>{JSON.parse(row.OrderProductDetail).length}</p>
-                    ) : (
-                        0
-                    )}
-                </TableCell>
-            </TableRow>
-            <TableRow className="subTable">
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box margin={2}>
-                            <div className="row" style={{ display: "flex" }}>
-                                <div className=" col-10"><p className="subHeading">User Details</p></div>
-                                <div className=" col-2" >
-                                    <div classNam="row" style={{ display: "flex", textAlign: "right" }}>
-                                        <div className="col-6">
-                                            {
-                                                checkExistingUserDetails(row) !== 0 &&
-                                                <Button style={{ backgroundColor: checkError(row) === 0 ? "#4d6b53" : "#28a745", color: "white" }}
-                                                    onClick={() => handleSubmitChangeUserDetails(row)}
-                                                    disabled={checkError(row) === 0 ? true : false}
-                                                >UPDATE</Button>
-                                            }
-                                        </div>
-                                        <div className="col-6"><Button style={{ backgroundColor: checkExistingUserDetails(row) !== 0 ? "#808080" : "#0277bd", color: "white" }}
-                                            onClick={() => handleSetAddressDetails(row)}
-                                        >{checkExistingUserDetails(row) !== 0 ? "CANCEL" : "EDIT"}</Button></div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div className="row" style={{ display: "flex", paddingTop: "10px" }}>
-                                <div className="col-6">
-                                    <div className="row">
-                                        <div className="col-3" >
-                                            <p className="subTextLeft">{"Full Name "}</p>
-                                        </div>
-                                        <div className="col-8">
-                                            <TextField
-                                                id="outlined-size-small" size="small"
-                                                width="100%"
-                                                className="font"
-                                                variant="outlined"
-                                                value={checkExistingUserDetails(row) !== 0 ? checkExistingUserDetails(row).map((Data) => { return (Data.UserFullName) }) : row.UserFullName}
-                                                disabled={checkExistingUserDetails(row) !== 0 ? false : true}
-                                                onChange={(x) => handleUserDetailsChange(x.target.value, "Name", row)}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-6">
-                                    <div className="row">
-                                        <div className="col-3" style={{ textAlign: "left" }}>
-                                            <p className="subTextLeft">{"Contact Number"}</p>
-                                        </div>
-                                        <div className="col-8">
-                                            <TextField
-                                                id="outlined-size-small" size="small"
-                                                width="100%"
-                                                className="font"
-                                                variant="outlined"
-                                                value={checkExistingUserDetails(row) !== 0 ? checkExistingUserDetails(row).map((Data) => { return (Data.UserContactNo) }) : row.UserContactNo}
-                                                disabled={checkExistingUserDetails(row) !== 0 ? false : true}
-                                                onChange={(x) => handleUserDetailsChange(x.target.value, "Contact", row)}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="row" style={{ display: "flex" }}>
-                                <div className=" col-6">
-                                    <div className="row">
-                                        <div className="col-3" >
-                                            {/* <div className="col-2" style={{ textAlign: "left", paddingLeft: "0px" }}> */}
-                                            <p className="subTextLeft">{"Email"}</p>
-                                        </div>
-
-                                        <div className="col-8">
-                                            <TextField
-                                                id="outlined-size-small" size="small"
-                                                width="100%"
-                                                className="font"
-                                                variant="outlined"
-                                                value={checkExistingUserDetails(row) !== 0 ? checkExistingUserDetails(row).map((Data) => { return (Data.UserEmailAddress) }) : row.UserEmailAddress}
-                                                disabled={checkExistingUserDetails(row) !== 0 ? false : true}
-                                                onChange={(x) => handleUserDetailsChange(x.target.value, "Email", row)}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-6">
-                                    {
-                                        <>
-                                            <div className="row">
-                                                <div className="col-3" style={{ textAlign: "left" }}>
-                                                    <p className="subTextLeft">{"Method"}</p>
-                                                </div>
-                                                <div className="col-8">
-                                                    <FormControl variant="outlined" size="small" style={{ width: "100%" }}>
-                                                        <Select
-                                                            native
-                                                            id="Logistic"
-                                                            value={checkExistingUserDetails(row) !== 0 ? checkExistingUserDetails(row).map((Data) => { return (Data.Method) }) : row.PickUpInd === 1 ? "Self Pick Up" : "Delivery"}
-                                                            onChange={(x) => handleUserDetailsChange(x.target.value, "Method", row)}
-                                                            className="select"
-                                                            disabled={checkExistingUserDetails(row) !== 0 ? false : true}
-                                                        >
-                                                            <option> Self Pick Up </option>
-                                                            <option> Delivery </option>
-                                                        </Select>
-                                                    </FormControl>
-                                                </div>
+                <TableRow
+                    hover
+                    role="checkbox"
+                    tabIndex={-1}
+                    key={row.Username}
+                    onClick={() =>
+                        <>
+                            {(setOpen(!open), setOpenId(row.OrderID), handleSetProduct(row))}
+                        </>
+                    }
+                >
+                    <TableCell>
+                        <IconButton
+                            aria-label="expand row"
+                            size="small"
+                        >
+                            {open ? <ArrowRoundedUp13x8Svg /> : <ArrowRoundedDown12x7Svg />}
+                        </IconButton>
+                    </TableCell>
+                    <TableCell align="left">{row.OrderName}</TableCell>
+                    <TableCell align="left">{row.Username}</TableCell>
+                    <TableCell align="left">{row.PaymentMethod}</TableCell>
+                    <TableCell align="left">{row.TrackingStatus}</TableCell>
+                    <TableCell align="left">
+                        {row.OrderProductDetail ? (
+                            <p>{JSON.parse(row.OrderProductDetail).length}</p>
+                        ) : (
+                            0
+                        )}
+                    </TableCell>
+                </TableRow>
+                <TableRow className="subTable">
+                    <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                        <Collapse in={open} timeout="auto" unmountOnExit>
+                            <Box margin={2}>
+                                <div className="row" style={{ display: "flex" }}>
+                                    <div className=" col-10"><p className="subHeading">User Details</p></div>
+                                    <div className=" col-2" >
+                                        <div classNam="row" style={{ display: "flex", textAlign: "right" }}>
+                                            <div className="col-6">
+                                                {
+                                                    checkExistingUserDetails(row) !== 0 &&
+                                                    <Button style={{ backgroundColor: checkError(row) === 0 ? "#4d6b53" : "#28a745", color: "white" }}
+                                                        onClick={() => handleSubmitChangeUserDetails(row)}
+                                                        disabled={checkError(row) === 0 ? true : false}
+                                                    >UPDATE</Button>
+                                                }
                                             </div>
-                                        </>
-                                    }
-                                </div>
-                            </div>
-                            {
-                                row.UserAddresID === 0 && row.PickUpInd === 1 && row.UserAddressLine1 === null && checkExistingUserDetails(row) !== 0 && checkExistingUserDetails(row).filter((x) => x.Method === "Delivery").length > 0 &&
-                                addressList(row, row)
-                            }
-
-                            {
-                                row.UserAddressLine1 !== null && row.PickUpInd === 0 && checkExistingUserDetails(row) === 0 &&
-                                addressList(row, row)
-                            }
-                            {
-                                row.UserAddressLine1 !== null && row.PickUpInd === 1 && checkExistingUserDetails(row) !== 0 && checkExistingUserDetails(row).filter((x) => x.Method === "Delivery").length > 0 &&
-                                addressList(row, row)
-                            }
-
-                            {
-                                row.UserAddressLine1 !== null && row.PickUpInd === 0 && checkExistingUserDetails(row) !== 0 && checkExistingUserDetails(row).filter((x) => x.Method === "Delivery").length > 0 &&
-                                addressList(row, row)
-                            }
-
-                            <p className="subHeading">Products Ordered</p>
-                            {row.OrderProductDetail ? (
-                                <>
-                                    <div size="small" aria-label="products">
-                                        {JSON.parse(row.OrderProductDetail).filter((x) => x.LogisticID === null || x.LogisticID === 0)
-                                            .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
-                                            .length > 0 ?
-                                            <TableCell>
-                                                <Checkbox
-                                                    checked={selectedProductDetailsID.length === 0 ? false :
-                                                        selectedRowID.length === selectedProductDetailsID.length ? true : false
-                                                    }
-                                                    onClick={() => handleSelectAllProduct(row, index)}
-                                                />
-                                            </TableCell> : ""}
-                                        <>
-                                            {
-                                                row.OrderProductDetail ?
-                                                    <>
-                                                        {JSON.parse(row.OrderProductDetail)
-                                                            .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
-                                                            .map((product, i) => (
-                                                                <>
-                                                                    {
-
-                                                                        product.LogisticID === null ?
-                                                                            selectedProductDetailsID.length > 0 && selectedProductDetailsID.filter(x => x === product.OrderProductDetailID).length > 0 &&
-                                                                            orderListing(product, i)
-                                                                            :
-                                                                            product.LogisticID === 0 &&
-                                                                            selectedProductDetailsID.length > 0 && selectedProductDetailsID.filter(x => x === product.OrderProductDetailID).length > 0 &&
-                                                                            orderListing(product, i)
-                                                                    }
-                                                                </>
-                                                            ))
-                                                        }
-                                                        {selectedProductDetailsID.length > 0 && trackingView()}
-                                                        {JSON.parse(row.OrderProductDetail)
-                                                            .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
-                                                            .map((product, i) => (
-                                                                <>
-                                                                    {
-                                                                        selectedProductDetailsID.length > 0 && selectedProductDetailsID.filter(x => x === product.OrderProductDetailID).length > 0 ? "" :
-                                                                            product.LogisticID === null ? orderListing(product, i) :
-                                                                                product.LogisticID === 0 && orderListing(product, i)
-                                                                    }
-                                                                </>
-                                                            ))
-                                                        }
-                                                    </>
-                                                    : null
-                                            }
-                                        </>
+                                            <div className="col-6"><Button style={{ backgroundColor: checkExistingUserDetails(row) !== 0 ? "#808080" : "#0277bd", color: "white" }}
+                                                onClick={() => handleSetAddressDetails(row)}
+                                            >{checkExistingUserDetails(row) !== 0 ? "CANCEL" : "EDIT"}</Button></div>
+                                        </div>
                                     </div>
-                                    {getTrackingLength(JSON.parse(row.OrderProductDetail)).length > 0 && getTrackingLength(JSON.parse(row.OrderProductDetail))
-                                        .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
-                                        .map((track, index) => {
-                                            return (
-                                                <div className="row" style={{ borderTop: "4px solid #fff", paddingTop: "5px", paddingBottom: "5px" }}>
-                                                    {row.OrderProductDetail ? JSON.parse(row.OrderProductDetail)
-                                                        .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
-                                                        .map((product, i) => (
-                                                            <>
-                                                                {
-                                                                    product.TrackingNumber === track.TrackingNumber && product.LogisticID === track.LogisticID &&
-                                                                    <>{confirmListing(product, i)}
-                                                                    </>
-                                                                }
-                                                            </>
-                                                        ))
-                                                        : null}
-                                                    {confirmListingTracking(track, index, JSON.parse(row.OrderProductDetail).filter((x) => x.LogisticID !== null && x.LogisticID !== 0))}
-                                                </div>
-                                            )
-                                        })}
-                                </>
+                                </div>
 
-                            ) : (
-                                <p className="fadedText">No Products To Display</p>
-                            )}
-                        </Box>
-                    </Collapse>
-                </TableCell>
-            </TableRow >
+
+                                <div className="row" style={{ display: "flex", paddingTop: "10px" }}>
+                                    <div className="col-6">
+                                        <div className="row">
+                                            <div className="col-3" >
+                                                <p className="subTextLeft">{"Full Name "}</p>
+                                            </div>
+                                            <div className="col-8">
+                                                <TextField
+                                                    id="outlined-size-small" size="small"
+                                                    width="100%"
+                                                    className="font"
+                                                    variant="outlined"
+                                                    value={checkExistingUserDetails(row) !== 0 ? checkExistingUserDetails(row).map((Data) => { return (Data.UserFullName) }) : row.UserFullName}
+                                                    disabled={checkExistingUserDetails(row) !== 0 ? false : true}
+                                                    onChange={(x) => handleUserDetailsChange(x.target.value, "Name", row)}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-6">
+                                        <div className="row">
+                                            <div className="col-3" style={{ textAlign: "left" }}>
+                                                <p className="subTextLeft">{"Contact Number"}</p>
+                                            </div>
+                                            <div className="col-8">
+                                                <TextField
+                                                    id="outlined-size-small" size="small"
+                                                    width="100%"
+                                                    className="font"
+                                                    variant="outlined"
+                                                    value={checkExistingUserDetails(row) !== 0 ? checkExistingUserDetails(row).map((Data) => { return (Data.UserContactNo) }) : row.UserContactNo}
+                                                    disabled={checkExistingUserDetails(row) !== 0 ? false : true}
+                                                    onChange={(x) => handleUserDetailsChange(x.target.value, "Contact", row)}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="row" style={{ display: "flex" }}>
+                                    <div className=" col-6">
+                                        <div className="row">
+                                            <div className="col-3" >
+                                                {/* <div className="col-2" style={{ textAlign: "left", paddingLeft: "0px" }}> */}
+                                                <p className="subTextLeft">{"Email"}</p>
+                                            </div>
+
+                                            <div className="col-8">
+                                                <TextField
+                                                    id="outlined-size-small" size="small"
+                                                    width="100%"
+                                                    className="font"
+                                                    variant="outlined"
+                                                    value={checkExistingUserDetails(row) !== 0 ? checkExistingUserDetails(row).map((Data) => { return (Data.UserEmailAddress) }) : row.UserEmailAddress}
+                                                    disabled={checkExistingUserDetails(row) !== 0 ? false : true}
+                                                    onChange={(x) => handleUserDetailsChange(x.target.value, "Email", row)}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-6">
+                                        {
+                                            <>
+                                                <div className="row">
+                                                    <div className="col-3" style={{ textAlign: "left" }}>
+                                                        <p className="subTextLeft">{"Method"}</p>
+                                                    </div>
+                                                    <div className="col-8">
+                                                        <FormControl variant="outlined" size="small" style={{ width: "100%" }}>
+                                                            <Select
+                                                                native
+                                                                id="Logistic"
+                                                                value={checkExistingUserDetails(row) !== 0 ? checkExistingUserDetails(row).map((Data) => { return (Data.Method) }) : row.PickUpInd === 1 ? "Self Pick Up" : "Delivery"}
+                                                                onChange={(x) => handleUserDetailsChange(x.target.value, "Method", row)}
+                                                                className="select"
+                                                                disabled={checkExistingUserDetails(row) !== 0 ? false : true}
+                                                            >
+                                                                <option> Self Pick Up </option>
+                                                                <option> Delivery </option>
+                                                            </Select>
+                                                        </FormControl>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        }
+                                    </div>
+                                </div>
+                                {
+                                    row.UserAddresID === 0 && row.PickUpInd === 1 && row.UserAddressLine1 === null && checkExistingUserDetails(row) !== 0 && checkExistingUserDetails(row).filter((x) => x.Method === "Delivery").length > 0 &&
+                                    addressList(row, row)
+                                }
+
+                                {
+                                    row.UserAddressLine1 !== null && row.PickUpInd === 0 && checkExistingUserDetails(row) === 0 &&
+                                    addressList(row, row)
+                                }
+                                {
+                                    row.UserAddressLine1 !== null && row.PickUpInd === 1 && checkExistingUserDetails(row) !== 0 && checkExistingUserDetails(row).filter((x) => x.Method === "Delivery").length > 0 &&
+                                    addressList(row, row)
+                                }
+
+                                {
+                                    row.UserAddressLine1 !== null && row.PickUpInd === 0 && checkExistingUserDetails(row) !== 0 && checkExistingUserDetails(row).filter((x) => x.Method === "Delivery").length > 0 &&
+                                    addressList(row, row)
+                                }
+
+                                <p className="subHeading">Products Ordered</p>
+                                {row.OrderProductDetail ? (
+                                    <>
+                                        <div size="small" aria-label="products">
+                                            {JSON.parse(row.OrderProductDetail).filter((x) => x.LogisticID === null || x.LogisticID === 0)
+                                                .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
+                                                .length > 0 ?
+                                                <TableCell>
+                                                    <Checkbox
+                                                        checked={selectedProductDetailsID.length === 0 ? false :
+                                                            selectedRowID.length === selectedProductDetailsID.length ? true : false
+                                                        }
+                                                        onClick={() => handleSelectAllProduct(row, index)}
+                                                    />
+                                                </TableCell> : ""}
+                                            <>
+                                                {
+                                                    row.OrderProductDetail ?
+                                                        <>
+                                                            {JSON.parse(row.OrderProductDetail)
+                                                                .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
+                                                                .map((product, i) => (
+                                                                    <>
+                                                                        {
+
+                                                                            product.LogisticID === null ?
+                                                                                selectedProductDetailsID.length > 0 && selectedProductDetailsID.filter(x => x === product.OrderProductDetailID).length > 0 &&
+                                                                                orderListing(product, i)
+                                                                                :
+                                                                                product.LogisticID === 0 &&
+                                                                                selectedProductDetailsID.length > 0 && selectedProductDetailsID.filter(x => x === product.OrderProductDetailID).length > 0 &&
+                                                                                orderListing(product, i)
+                                                                        }
+                                                                    </>
+                                                                ))
+                                                            }
+                                                            {selectedProductDetailsID.length > 0 && trackingView()}
+                                                            {JSON.parse(row.OrderProductDetail)
+                                                                .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
+                                                                .map((product, i) => (
+                                                                    <>
+                                                                        {
+                                                                            selectedProductDetailsID.length > 0 && selectedProductDetailsID.filter(x => x === product.OrderProductDetailID).length > 0 ? "" :
+                                                                                product.LogisticID === null ? orderListing(product, i) :
+                                                                                    product.LogisticID === 0 && orderListing(product, i)
+                                                                        }
+                                                                    </>
+                                                                ))
+                                                            }
+                                                        </>
+                                                        : null
+                                                }
+                                            </>
+                                        </div>
+                                        {getTrackingLength(JSON.parse(row.OrderProductDetail)).length > 0 && getTrackingLength(JSON.parse(row.OrderProductDetail))
+                                            .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
+                                            .map((track, index) => {
+                                                return (
+                                                    <div className="row" style={{ borderTop: "4px solid #fff", paddingTop: "5px", paddingBottom: "5px" }}>
+                                                        {row.OrderProductDetail ? JSON.parse(row.OrderProductDetail)
+                                                            .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
+                                                            .map((product, i) => (
+                                                                <>
+                                                                    {
+                                                                        product.TrackingNumber === track.TrackingNumber && product.LogisticID === track.LogisticID &&
+                                                                        <>{confirmListing(product, i)}
+                                                                        </>
+                                                                    }
+                                                                </>
+                                                            ))
+                                                            : null}
+                                                        {confirmListingTracking(track, index, JSON.parse(row.OrderProductDetail).filter((x) => x.LogisticID !== null && x.LogisticID !== 0))}
+                                                    </div>
+                                                )
+                                            })}
+                                    </>
+
+                                ) : (
+                                    <p className="fadedText">No Products To Display</p>
+                                )}
+                            </Box>
+                        </Collapse>
+                    </TableCell>
+                </TableRow >
             </>
         </React.Fragment >
     );
@@ -1373,6 +1373,7 @@ class DisplayTable extends Component {
                     <div>
                         <div>
                             <Paper style={divStyle}>
+                                <h3>Orders List</h3>
                                 <TableContainer>
                                     {this.props.Data.length != 0 ? (
                                         <Table
@@ -1678,12 +1679,10 @@ class ViewTransactionsComponent extends Component {
 
         }
         return (
-            <div className="mainContainer">
+            <div style={{ width: "100%" }}>
                 {!this.state.tabsHidden ? (
                     <div>
-                        <p className="heading">Orders List</p>
                         <div className="selectContainer">
-                            <div style={{ marginBottom: "10px", margin: "2%" }}></div>
                             <div className="row" style={{ marginBottom: "10px", margin: "2%" }}>
                                 <div className="col-md-10 col-10 m-auto" >
                                     <SearchBar

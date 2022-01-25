@@ -32,17 +32,12 @@ import { toast } from "react-toastify";
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
-import Box from '@mui/material/Box';
 import FormHelperText from '@mui/material/FormHelperText';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button } from "@mui/material";
-// import ResponsiveDatePickers from "../../tools/datePicker";
 import InputAdornment from '@mui/material/InputAdornment';
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import Collapse from "@material-ui/core/Collapse";
-
-
 
 
 
@@ -133,19 +128,7 @@ const headCells = [
     },
 ];
 
-function createData(StockInDate, ProductSKU, ProductName, Store, StockInAmount, StockID) {
-    return {
-        StockInDate,
-        ProductSKU,
-        ProductName,
-        Store,
-        StockInAmount,
-        StockID
-    };
-}
-
 const INITIAL_STATE = {
-    // DraftListing Details
     isOpenDraftModal: false,
     isDataEdit: false,
 
@@ -161,18 +144,15 @@ const INITIAL_STATE = {
     ContainerName: "",
     isContainerError: false,
 
-
     StoreStockInData: [{
         id: "",
         label: "",
         value: "",
         StockInAmount: "",
         VariationCost: "",
-        // VariationPrice: "",
         CurrentStock: "",
         isStockInAmountError: false,
         isVariationCostError: false,
-        // isVariationPriceError: false
     }],
 
     filteredProduct: [],
@@ -183,11 +163,9 @@ const INITIAL_STATE = {
     isInvoiceError: false,
     isStoreError: false,
     isStockInAmountError: false,
-    // isStockPriceError: false,
     ReceiveValidated: true,
     OrderValidated: true,
     StockInValidated: true,
-
     isSet: false,
 
     // Database Lisiting
@@ -229,18 +207,15 @@ class Stock extends Component {
         if (localStorage.getItem("DataSetDraft") !== null &&
             JSON.parse(localStorage.getItem("DataSetDraft")).length > 0) {
             this.DraftListing[0].storageListing = JSON.parse(localStorage.getItem("DataSetDraft"))
-            // this.setState({ storageListing: JSON.parse(localStorage.getItem("DataSetDraft")) })
         }
     }
 
     componentDidUpdate(prevProps, prevState) {
+        console.log("this.props.variationStock", this.props.variationStock)
+        if (this.props.variationStock !== null && this.props.variationStock.length > 0 && this.state.isDatabaseSet === false && this.props.variationStock[0].ReturnVal !== "0") {
 
-        if (this.props.variationStock !== null && this.props.variationStock.length > 0 && this.state.isDatabaseSet === false) {
+            console.log("this.props.variationStock", this.props.variationStock)
             this.DatabaseListing = this.props.variationStock
-
-            // this.props.variationStock.length > 0 && this.props.variationStock.map((data) => {
-            //     this.state.isOpenOverallDetails.push(false)
-            // })
             this.setState({ isDatabaseSet: true })
         }
 
@@ -599,7 +574,8 @@ class Stock extends Component {
                 e.map((x) => {
                     this.PagingListing[0].isOpenOverallDetails.push(false)
                 })
-            } }
+            }
+        }
         else {
             this.PagingListing[0].Listing = e
             e.map((x) => {
@@ -645,10 +621,10 @@ class Stock extends Component {
         const TextFieldData = (type, variant, title, name, stateValue, error, index) => {
             return (
                 <div className="col-12 col-md-12" style={{ paddingBottom: "10px" }}>
-                    <TextField variant={variant} type={type} size="small" inputProps={{ min: "0", step: name === "StockInAmount" ? "1.00" : "0.10" }} fullWidth label={title} value={name === "StockInAmount" ? parseFloat(stateValue).toFixed(0) : stateValue} name={name} onChange={(e) => this.handleFormInput(e, name, index)} 
-                     InputProps={{
-                        startAdornment: <InputAdornment position="start">{name === "StockInAmount" ? "  " : "RM"}</InputAdornment>,
-                    }} required />
+                    <TextField variant={variant} type={type} size="small" inputProps={{ min: "0", step: name === "StockInAmount" ? "1.00" : "0.10" }} fullWidth label={title} value={name === "StockInAmount" ? parseFloat(stateValue).toFixed(0) : stateValue} name={name} onChange={(e) => this.handleFormInput(e, name, index)}
+                        InputProps={{
+                            startAdornment: <InputAdornment position="start">{name === "StockInAmount" ? "  " : "RM"}</InputAdornment>,
+                        }} required />
                     {error && <FormHelperText sx={{ color: 'red' }} id={error}>Invalid {title} </FormHelperText>}
                 </div>
             )

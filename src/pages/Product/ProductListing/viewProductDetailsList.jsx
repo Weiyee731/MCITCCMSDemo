@@ -2,21 +2,17 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { GitAction } from "../../../store/action/gitAction";
 import createHistory from 'history/createBrowserHistory'
+import { Link } from "react-router-dom";
 
 // UI Components
 import Dropzone from "react-dropzone";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { HashLink } from "react-router-hash-link";
-import {
-    Card,
-    CardContent,
-    // Tooltip,
-} from "@material-ui/core";
+import { Card, CardContent } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-// import TextField from "@material-ui/core/TextField";
 import TextField from '@mui/material/TextField';
-import Select from "@material-ui/core/Select";
+import Select from '@mui/material/Select';
 import MaterialTable from "material-table";
 import AddIcon from '@mui/icons-material/Add';
 import InfoIcon from '@mui/icons-material/Info';
@@ -30,25 +26,20 @@ import Box from "@material-ui/core/Box";
 import SearchIcon from "@mui/icons-material/Search";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
-
 import OutlinedInput from '@mui/material/OutlinedInput';
-
-import {
-    InputGroup,
-    InputGroupText,
-    InputGroupAddon,
-    FormInput,
-} from "shards-react";
-
+import { FormInput } from "shards-react";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import StepContent from "@material-ui/core/StepContent";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { Fade } from "shards-react";
+import { styled } from '@mui/material/styles';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
 // Share Compoonents
 import DescriptionFunction from "../../../tools/editor";
@@ -57,11 +48,7 @@ import LoadingPanel from "../../../tools/LoadingPanel";
 import { url } from "../../../tools/Helpers"
 import "./viewProductDetailsList.css";
 import { ModalPopOut } from "../../../components/ModalComponent/ModalComponent";
-
-import { styled } from '@mui/material/styles';
-import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-
+import { ArrowRoundedLeft8x13Svg } from '../../../assets/svg';
 
 
 const history = createHistory()
@@ -3238,29 +3225,31 @@ class ProductDetailsComponent extends Component {
     };
 
     componentDidMount() {
+
         window.addEventListener("scroll", this.handleScroll, true);
         this.props.CallResetUpdateProduct()
 
         // grab the passing ProductID at the front and pull the full information about this product. it will bind all the data at the componentDidUpdate
         let userId = JSON.parse(localStorage.getItem("loginUser"))[0].UserID
-        if (!isStringNullOrEmpty(userId) && !isStringNullOrEmpty(this.props.ProductID)) {
+        if (!isStringNullOrEmpty(userId) && !isStringNullOrEmpty(this.props.productId)) {
             this.setState({
-                ProductID: this.props.ProductID,
+                ProductID: this.props.productId,
                 userId: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
                 name: this.props.ProductName
             })
-
             this.props.CallProductDetail({
-                productId: this.props.ProductID,
+                productId: this.props.productId,
                 userId: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+                ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
             })
         }
 
         if (this.props.productInfo.length === 0) {
-            if (!isStringNullOrEmpty(userId) && !isStringNullOrEmpty(this.props.ProductID)) {
+            if (!isStringNullOrEmpty(userId) && !isStringNullOrEmpty(this.props.productId)) {
                 this.props.CallProductDetail({
-                    productId: this.props.ProductID,
+                    productId: this.props.productId,
                     userId: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+                    ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
                 })
             }
         }
@@ -3363,8 +3352,8 @@ class ProductDetailsComponent extends Component {
             this.state.weightNotDecimal ||
             this.state.weightEmpty ||
             this.state.modelEmpty ||
-            this.state.skuEmpty ||
-            this.state.skuNotLongEnough ||
+            // this.state.skuEmpty ||
+            // this.state.skuNotLongEnough ||
             this.state.productTagsEmpty
             // ||
             // this.state.notEnoughFiles1600x900 ||
@@ -3393,7 +3382,7 @@ class ProductDetailsComponent extends Component {
                 width: this.state.width,
                 depth: this.state.depth,
                 weight: this.state.weight,
-                sku: this.state.sku,
+                sku: this.state.sku !== "" ? this.state.sku : "-",
                 brand: this.state.brand,
                 model: this.state.model,
                 tags: this.state.tags,
@@ -3636,7 +3625,6 @@ class ProductDetailsComponent extends Component {
             if (typeof this.props.productMediaResult !== "undefined" && this.props.productMediaResult.length > 0 && this.props.productMediaResult[0].ReturnVal === "1") {
                 this.props.CallResetProductMediaResult()
             }
-            console.log("this.props23", this.props)
 
             if (typeof this.props.returnUpdateProduct !== "undefined" && this.props.returnUpdateProduct.length === 0 &&
                 typeof this.props.productSpecsDetail !== "undefined" && this.props.productSpecsDetail.length === 0 &&
@@ -3788,7 +3776,6 @@ class ProductDetailsComponent extends Component {
         const { isOnViewState } = this.props  //this props used to indicate it is on the state of viewing product details or it is adding product
         const { description } = this.state
 
-        console.log("THIS.STATE", this.state)
         const steps = [
             "Basic Information",
             "Product Details",
@@ -4233,10 +4220,13 @@ class ProductDetailsComponent extends Component {
                             <div className="row" style={{ display: "flex" }}>
                                 <div className="col-6">
                                     <Button onClick={() => window.location = url.inventoryProduct(this.props.match.params.productId)}>
-                                        <i className="fas fa-chevron-left"></i>
+                                        {/* <i className="fas fa-chevron-left"></i> */}
+                                        <ArrowRoundedLeft8x13Svg fontSize="inherit" />
                                         {/* <Link className="nav-link" to={"/viewProduct"}> */}
-                                        Back
-                                        {/* </Link> */}
+
+                                        <Link style={{ paddingLeft: "10px", paddingRight: "10px", textDecoration: "none", color: "black" }}>
+                                            Back
+                                        </Link>
                                     </Button>
                                 </div>
                                 <div className="col-6" style={{ textAlign: "right" }}>
@@ -4486,7 +4476,7 @@ class ProductDetailsComponent extends Component {
                                             <InputLabel shrink htmlFor="productSupplier">
                                                 Supplier
                                             </InputLabel>
-                                            <Select
+                                            {/* <Select
                                                 native
                                                 label="Supplier"
                                                 value={this.state.productSupplier}
@@ -4504,12 +4494,24 @@ class ProductDetailsComponent extends Component {
                                                 }
                                             >
                                                 <option aria-label="None" value="">None Selected</option>
-                                                {/* {createSupplierMenu} */}
-                                                {/* {createSupplierMenu} */}
                                                 <option value={JSON.parse(localStorage.getItem("loginUser"))[0].UserID}>
                                                     {JSON.parse(localStorage.getItem("loginUser"))[0].UserFullName}
                                                 </option>
-                                            </Select>
+                                            </Select> */}
+                                            <TextField
+                                                id="productSupplier"
+                                                label="Product Supplier"
+                                                defaultValue={JSON.parse(localStorage.getItem("loginUser"))[0].UserFullName}
+                                                InputProps={{
+                                                    readOnly: true,
+                                                }}
+                                                InputLabelProps={{
+                                                    shrink: true,
+                                                }}
+                                                size="small"
+                                                variant="outlined"
+                                                className="InputField"
+                                            />
                                         </FormControl> :
                                         <TextField
                                             id="productSupplier"
@@ -4528,7 +4530,7 @@ class ProductDetailsComponent extends Component {
                                     {this.state.productSupplierEmpty && this.state.toBeEdited && (
                                         <p className="error">Product supplier cannot be empty.</p>
                                     )}
-                                    <div className="HorizontalContainer">
+                                    {/* <div className="HorizontalContainer">
                                         <TextField
                                             id="productSku"
                                             value={this.state.sku}
@@ -4551,13 +4553,8 @@ class ProductDetailsComponent extends Component {
                                                     FocusOn: false,
                                                 })
                                             }
-
                                         />
-
-                                        {/* <Link className="nav-link" to={"/productStocksIn"}>
-                    Scan Now
-                  </Link> */}
-                                    </div>
+                                    </div> */}
 
                                     {this.state.skuEmpty && this.state.toBeEdited && (
                                         <p className="error">Product SKU cannot be empty.</p>
@@ -5026,7 +5023,7 @@ class ProductDetailsComponent extends Component {
                                     <p className="Heading">Product Variation</p>
                                     {!this.state.variation1On && !this.state.variation2On ? (
                                         <div>
-                                            <InputGroup className="InputField">
+                                            {/* <InputGroup className="InputField">
                                                 <InputGroupAddon type="prepend">
                                                     <InputGroupText className="groupText">
                                                         RM
@@ -5047,7 +5044,26 @@ class ProductDetailsComponent extends Component {
                                                         })
                                                     }
                                                 />
-                                            </InputGroup>
+                                            </InputGroup> */}
+
+                                            <TextField type="number" size="small"
+                                                inputProps={{ min: "0", step: "0.10" }}
+                                                onFocus={this.setHint.bind(this, "ProductPrice")}
+                                                onBlur={() =>
+                                                    this.setState({
+                                                        FocusOn: false,
+                                                    })
+                                                }
+                                                disabled={!this.state.toBeEdited}
+                                                onChange={this.handleChange.bind(this, "Price")}
+                                                fullWidth label="Price"
+                                                value={this.state.price}
+                                                invalid={this.state.priceEmpty}
+                                                name="Price"
+                                                InputProps={{
+                                                    startAdornment: <InputAdornment position="start">RM</InputAdornment>,
+                                                }} required />
+
                                             {this.state.priceEmpty && this.state.toBeEdited ? (
                                                 <p className="error">
                                                     Price has to be filled and not less than 0.
@@ -5094,7 +5110,7 @@ class ProductDetailsComponent extends Component {
                                             <div className="VariantOptionsSection">
 
                                                 <FormControl variant="outlined" className="w-100" size="small">
-                                                    <InputLabel id="demo-simple-select-outlined-label">Product Variation</InputLabel>
+                                                    {/* <InputLabel id="demo-simple-select-outlined-label">Product Variation</InputLabel> */}
                                                     <Select
                                                         labelId="Product_Variation"
                                                         id="Product_Variation"
@@ -5114,20 +5130,22 @@ class ProductDetailsComponent extends Component {
                                                     </Select>
                                                 </FormControl>
 
-                                                {!this.state.toBeEdited && <TextField
-                                                    id="Variant Variation"
-                                                    label="Product Variation"
-                                                    defaultValue={this.state.selectedVariationName}
-                                                    InputProps={{
-                                                        readOnly: true,
-                                                    }}
-                                                    InputLabelProps={{
-                                                        shrink: true,
-                                                    }}
-                                                    size="small"
-                                                    variant="outlined"
-                                                    className="InputField"
-                                                />}
+                                                {!this.state.toBeEdited &&
+                                                    <TextField
+                                                        id="Variant Variation"
+                                                        label="Product Variation"
+                                                        defaultValue={this.state.selectedVariationName}
+                                                        InputProps={{
+                                                            readOnly: true,
+                                                        }}
+                                                        InputLabelProps={{
+                                                            shrink: true,
+                                                        }}
+                                                        size="small"
+                                                        variant="outlined"
+                                                        className="InputField"
+                                                    />
+                                                }
 
                                                 {this.state.variation1NameEmpty && this.state.toBeEdited && (
                                                     <p className="error">
@@ -5138,12 +5156,11 @@ class ProductDetailsComponent extends Component {
                                                 {[...Array(this.state.variation1Options)].map((e, i) => (
                                                     <div>
                                                         <div className="VariantOption align-items-center">
-                                                            {this.state.toBeEdited ? <RemoveCircleOutlineIcon
+                                                            {this.state.toBeEdited && this.state.variation1.options.length > 1 ? <RemoveCircleOutlineIcon
                                                                 className="DeleteOptionButton"
                                                                 color="secondary"
                                                                 onClick={this.onDeleteVariant.bind(this, i, "variant1Option", this.state.variation1.options[i].optionID)}
                                                             /> : null}
-                                                            {/* {this.state.variation1.options[i].optionName ? */}
                                                             <TextField
                                                                 className="InputField"
                                                                 InputLabelProps={{ shrink: "true", }}
@@ -5196,12 +5213,27 @@ class ProductDetailsComponent extends Component {
                                             {[...Array(this.state.variation1Options)].map((e, i) => (
                                                 <div>
                                                     <div className="VariantOption align-items-center">
-                                                        <FormInput
-                                                            variant="outlined"
-                                                            disabled="true"
-                                                            size="small"
-                                                            value={this.state.variation1.options[i].optionName}
-                                                        />
+                                                        <div className="col-3">
+                                                            <FormInput
+                                                                variant="outlined"
+                                                                disabled="true"
+                                                                size="small"
+                                                                value={
+                                                                    this.props.variations.length > 0 && typeof this.props.variations[0].ReturnVal === "undefined" &&
+                                                                    this.props.variations.filter(data => data.ProductVariationID === this.state.variation1.options[i].variationID).map((x) => {
+                                                                        return (x.ProductVariation)
+                                                                    })
+                                                                }
+                                                            />
+                                                        </div>
+                                                        <div className="col-9" style={{paddingLeft:"10px"}}>
+                                                            <FormInput
+                                                                variant="outlined"
+                                                                disabled="true"
+                                                                size="small"
+                                                                value={this.state.variation1.options[i].optionName}
+                                                            />
+                                                        </div>
                                                     </div>
                                                     {this.state.variation1.options[i].errorOption && this.state.toBeEdited && (
                                                         <p className="error">
@@ -5428,7 +5460,7 @@ class ProductDetailsComponent extends Component {
                                                         }} required />
                                                 </div>
                                             </div>
-                                            <div className="StockField">
+                                            {/* <div className="StockField">
                                                 <TextField
                                                     id="standard-start-adornment"
                                                     label="Stock"
@@ -5452,7 +5484,7 @@ class ProductDetailsComponent extends Component {
                                                     value={this.state.stock}
                                                     size="small"
                                                 />
-                                            </div>
+                                            </div> */}
                                             <div className="StockField">
                                                 <TextField
                                                     id="standard-start-adornment"
@@ -5496,7 +5528,7 @@ class ProductDetailsComponent extends Component {
                                                     {this.state.variation1Name ? this.state.variation1Name : "Variation 1 Name"}
                                                 </td>
                                                 <td className="tdHeading"> Price </td>
-                                                <td className="tdHeading"> Stock </td>
+                                                {/* <td className="tdHeading"> Stock </td> */}
                                                 <td className="tdHeading">SKU</td>
                                             </tr>
 
@@ -5625,7 +5657,7 @@ class ProductDetailsComponent extends Component {
                                                                                     ) : null}
                                                                                 </div>
                                                                             </td>
-                                                                            <td className="tdNestedNew">
+                                                                            {/* <td className="tdNestedNew">
                                                                                 <div className="StepContainer">
                                                                                     <TextField
                                                                                         id="productStock1"
@@ -5678,7 +5710,7 @@ class ProductDetailsComponent extends Component {
                                                                                         </Tooltip>
                                                                                     ) : null}
                                                                                 </div>
-                                                                            </td>
+                                                                            </td> */}
                                                                             <td className="tdNestedNew">
                                                                                 <div className="StepContainer">
                                                                                     <TextField
@@ -5840,7 +5872,7 @@ class ProductDetailsComponent extends Component {
                                                                 ) : null}
                                                             </div>
                                                         </td>
-                                                        <td className="tdNestedText">
+                                                        {/* <td className="tdNestedText">
                                                             <div className="StepContainer">
                                                                 <TextField
                                                                     id="productStock1"
@@ -5886,7 +5918,7 @@ class ProductDetailsComponent extends Component {
                                                                     </Tooltip>
                                                                 ) : null}
                                                             </div>
-                                                        </td>
+                                                        </td> */}
                                                         <td className="tdNestedText">
                                                             <div className="StepContainer">
                                                                 <TextField
@@ -5999,28 +6031,7 @@ class ProductDetailsComponent extends Component {
                                         <p className="FontType3">Dimension: </p>
                                         <div className="InputFieldMiddleElementNested">
                                             <p className="FontTypeInputLabel">Height</p>
-                                            {/* <InputGroup className="InputFieldMiddleElementNested">
-                                                <FormInput
-                                                    step=".10"
-                                                    type="number"
-                                                    value={this.state.height}
-                                                    invalid={
-                                                        this.state.heightEmpty || this.state.heightNotDecimal
-                                                    }
-                                                    onChange={this.handleChange.bind(this, "height")}
-                                                    onFocus={this.setHint.bind(this, "ProductHeight")}
-                                                    onBlur={() =>
-                                                        this.setState({
-                                                            FocusOn: false,
-                                                        })
-                                                    }
-                                                    disabled={!this.state.toBeEdited}
-                                                />
-                                                <InputGroupAddon type="append">
-                                                    <InputGroupText className="groupText">m</InputGroupText>
-                                                </InputGroupAddon>
-                                            </InputGroup> */}
-                                            <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
+                                            <FormControl style={{ width: "100%" }} variant="outlined">
                                                 <OutlinedInput
                                                     endAdornment={<InputAdornment position="end">m</InputAdornment>}
                                                     size="small"
@@ -6042,28 +6053,7 @@ class ProductDetailsComponent extends Component {
                                         </div>
                                         <div className="InputFieldMiddleElementNested">
                                             <p className="FontTypeInputLabel">Width</p>
-                                            {/* <InputGroup className="InputFieldMiddleElementNested">
-                                                <FormInput
-                                                    type="number"
-                                                    step=".10"
-                                                    value={this.state.width}
-                                                    invalid={
-                                                        this.state.widthEmpty || this.state.widthNotDecimal
-                                                    }
-                                                    onChange={this.handleChange.bind(this, "width")}
-                                                    onFocus={this.setHint.bind(this, "ProductWidth")}
-                                                    onBlur={() =>
-                                                        this.setState({
-                                                            FocusOn: false,
-                                                        })
-                                                    }
-                                                    disabled={!this.state.toBeEdited}
-                                                />
-                                                <InputGroupAddon type="append">
-                                                    <InputGroupText className="groupText">m</InputGroupText>
-                                                </InputGroupAddon>
-                                            </InputGroup> */}
-                                            <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
+                                            <FormControl style={{ width: "100%" }} variant="outlined">
                                                 <OutlinedInput
                                                     endAdornment={<InputAdornment position="end">m</InputAdornment>}
                                                     size="small"
@@ -6080,13 +6070,12 @@ class ProductDetailsComponent extends Component {
                                                     }
                                                     label="" required
                                                     disabled={!this.state.toBeEdited}
-
                                                 />
                                             </FormControl>
                                         </div>
                                         <div className="InputFieldMiddleElementNested">
                                             <p className="FontTypeInputLabel">Depth</p>
-                                            <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
+                                            <FormControl style={{ width: "100%" }} variant="outlined">
                                                 <OutlinedInput
                                                     endAdornment={<InputAdornment position="end">m</InputAdornment>}
                                                     size="small"
@@ -6105,27 +6094,6 @@ class ProductDetailsComponent extends Component {
                                                     label="" required
                                                 />
                                             </FormControl>
-                                            {/* <InputGroup className="InputFieldSecondElement">
-                                                <FormInput
-                                                    type="number"
-                                                    step=".10"
-                                                    value={this.state.depth}
-                                                    invalid={
-                                                        this.state.depthEmpty || this.state.depthNotDecimal
-                                                    }
-                                                    onChange={this.handleChange.bind(this, "depth")}
-                                                    onFocus={this.setHint.bind(this, "ProductDepth")}
-                                                    onBlur={() =>
-                                                        this.setState({
-                                                            FocusOn: false,
-                                                        })
-                                                    }
-                                                    disabled={!this.state.toBeEdited}
-                                                />
-                                                <InputGroupAddon type="append">
-                                                    <InputGroupText className="groupText">m</InputGroupText>
-                                                </InputGroupAddon>
-                                            </InputGroup> */}
                                         </div>
                                     </div>
 
@@ -6156,29 +6124,6 @@ class ProductDetailsComponent extends Component {
                                     <div className="HorizontalContainer">
                                         <div className="InputFieldMiddleElement">
                                             <p className="FontTypeInputLabel">Weight</p>
-                                            {/* <InputGroup className="InputField">
-                                                <FormInput
-                                                    type="number"
-                                                    step=".10"
-                                                    value={this.state.weight}
-                                                    onChange={this.handleChange.bind(this, "weight")}
-                                                    onFocus={this.setHint.bind(this, "ProductWeight")}
-                                                    onBlur={() =>
-                                                        this.setState({
-                                                            FocusOn: false,
-                                                        })
-                                                    }
-                                                    invalid={
-                                                        this.state.weightEmpty || this.state.weightNotDecimal
-                                                    }
-                                                    disabled={!this.state.toBeEdited}
-                                                />
-                                                <InputGroupAddon type="append">
-                                                    <InputGroupText className="groupText">
-                                                        kg
-                                                    </InputGroupText>
-                                                </InputGroupAddon>
-                                            </InputGroup> */}
                                             <FormControl className="InputField" variant="outlined">
                                                 <OutlinedInput
                                                     endAdornment={<InputAdornment position="end">kg</InputAdornment>}
