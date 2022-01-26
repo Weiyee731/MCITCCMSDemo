@@ -173,13 +173,12 @@ class ViewProductEndorsementComponent extends Component {
     ];
 
     return (
-      <div style={{ width: "100%" }}>
-        <div style={{ margin: "2%" }}>
-
+      <div className="container-fluid my-2">
+        <div className="row">
           {
             this.state.isProductClick === false ?
               <>
-                <div className="col-md-12 col-12 m-auto" >
+                <div className="col-md-12 col-12 mb-3 d-flex" >
                   <SearchBar
                     id=""
                     placeholder="Enter Product Name"

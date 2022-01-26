@@ -162,7 +162,7 @@ class ViewUserComponent extends Component {
             {
                 id: "Name",
                 numeric: false,
-                disablePadding: true,
+                disablePadding: false,
                 label: "Name",
             },
             {
@@ -192,8 +192,8 @@ class ViewUserComponent extends Component {
         };
 
         return (
-            <div style={{ width: "100%" }}>
-                <div style={{ margin: "2%" }}>
+            <div className="container-fluid my-2">
+                <div className="row">
                     {
                         this.state.isdetailsShown === true ?
                             <UserDetailsComponent
@@ -202,7 +202,7 @@ class ViewUserComponent extends Component {
                             />
                             :
                             <>
-                                <div className="col-md-12 col-12 m-auto" >
+                                <div className="col-md-12 col-12 mb-3 d-flex" >
                                     <SearchBar
                                         id=""
                                         placeholder="Search By Name, Phone and Email ..."

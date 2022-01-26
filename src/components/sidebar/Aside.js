@@ -58,6 +58,12 @@ const Aside = ({ rtl, toggled, handleToggleSidebar, sidebarItems }) => {
     setCollapsed(typeof value !== "undefined" && value !== null ? value : !isCollapsed);
   };
 
+  const checkLogout = () => {
+    if (localStorage.getItem("DataSetDraft") !== null && JSON.parse(localStorage.getItem("DataSetDraft")).length > 0)
+      setLogoutDialog(true)
+    else resetLogonUser()
+  }
+
   return (
     <ProSidebar
       image={false} // can set the image background under this option
@@ -116,10 +122,7 @@ const Aside = ({ rtl, toggled, handleToggleSidebar, sidebarItems }) => {
           </a>
         </div> */}
         <div className="sidebar-btn-wrapper" style={{ padding: '20px 24px', }}>
-          <Button onClick={(e) => {
-            setLogoutDialog(true)
-            // resetLogonUser()
-          }}>Logout <LogoutIcon /></Button>
+          <Button onClick={(e) => { checkLogout() }}>Logout <LogoutIcon /></Button>
         </div>
       </SidebarFooter>
 

@@ -2087,7 +2087,14 @@ class ProductDetailsComponent extends Component {
             const formData = new FormData()
 
             const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-            formData.append("ProductID", productID);
+            // formData.append("ProductID", productID);
+            // formData.append("projectDomain", localStorage.getItem("projectDomain"));
+
+            formData.append("ID", productID);
+            formData.append("targetFolder", "products");
+            formData.append("projectDomain", localStorage.getItem("projectDomain"));
+
+
             //upload single file
             let filenames = ""
             let variationID = ""
@@ -2129,10 +2136,12 @@ class ProductDetailsComponent extends Component {
                 imageHeight: imageHeight,
                 UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID
             }
-            let imageURL = "https://" + localStorage.getItem("projectDomain") + "/images/uploadproductImages.php"
+            let imageURL = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/uploadImages.php"
+
+            // let imageURL = "https://" + localStorage.getItem("projectDomain") + "/images/uploadproductImages.php"
             // axios.post("https://tourism.denoo.my/MCITCApi/php/uploadproductImages.php", formData, config).then((res) => {
             // axios.post("https://myemporia.my/emporiaimage/uploadproductImages.php", formData, config).then((res) => {
-            axios.post("https://" + localStorage.getItem("projectDomain") + "/emporiaimage/uploadproductImages.php", formData, config).then((res) => {
+            axios.post(imageURL, formData, config).then((res) => {
                 console.log("res", res)
                 if (res.status === 200 && res.data === 1) {
                     this.props.CallAddProductMedia(object)
@@ -4931,8 +4940,9 @@ class ProductDetailsComponent extends Component {
                                         post_content={this.props.productInfo.length > 0 ? this.props.productInfo[0].ProductDescription : ""}
                                         handleChange={this.handleChangeEditor}
                                         content={this.state.description}
-                                        imageFileUrl="products"
+                                        imageFileUrl="productDescription"
                                         editorState={this.state.toBeEdited}
+                                        projectID={JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID}
                                     />
                                     {this.state.productDesciptionEmpty && this.state.toBeEdited && (
                                         <p className="error">Product description cannot be empty.</p>
@@ -5226,7 +5236,7 @@ class ProductDetailsComponent extends Component {
                                                                 }
                                                             />
                                                         </div>
-                                                        <div className="col-9" style={{paddingLeft:"10px"}}>
+                                                        <div className="col-9" style={{ paddingLeft: "10px" }}>
                                                             <FormInput
                                                                 variant="outlined"
                                                                 disabled="true"

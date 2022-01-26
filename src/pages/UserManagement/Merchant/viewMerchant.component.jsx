@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { TableCell,
+import {
+  TableCell,
 } from "@material-ui/core";
 import { GitAction } from "../../../store/action/gitAction";
 
@@ -81,11 +82,11 @@ class ViewMerchantsComponent extends Component {
   renderTableRows = (data, index) => {
     return (
       <>
-        <TableCell align="left"> {data.FirstName + " " + data.LastName} </TableCell>
-        <TableCell align="left"> {data.ShopName} </TableCell>
-        <TableCell align="left"> {data.UserContactNo} </TableCell>
-        <TableCell align="left"> {data.ShopCity} </TableCell>
-        <TableCell align="left"> {data.ShopState} </TableCell>
+        <TableCell align="left"  style={{ width: "40%" }}> {data.FirstName + " " + data.LastName} </TableCell>
+        <TableCell align="left"  style={{ width: "20%" }}> {data.ShopName} </TableCell>
+        <TableCell align="left"  style={{ width: "15%" }}> {data.UserContactNo} </TableCell>
+        <TableCell align="left"  style={{ width: "15%" }}> {data.ShopCity} </TableCell>
+        <TableCell align="left"  style={{ width: "10%" }}> {data.ShopState} </TableCell>
       </>
     )
   }
@@ -163,13 +164,13 @@ class ViewMerchantsComponent extends Component {
       {
         id: "FirstName",
         numeric: false,
-        disablePadding: true,
+        disablePadding: false,
         label: "Representative Name",
       },
       {
         id: "CompanyName",
         numeric: false,
-        disablePadding: true,
+        disablePadding: false,
         label: "Shop Name",
       },
       {
@@ -237,8 +238,8 @@ class ViewMerchantsComponent extends Component {
     }
 
     return (
-      <div style={{ width: "100%" }}>
-        <div style={{ margin: "2%" }}>
+      <div className="container-fluid my-2">
+        <div className="row">
           {
             this.state.isdetailsShown === true ?
               <MerchantDetails
@@ -248,7 +249,7 @@ class ViewMerchantsComponent extends Component {
                 setDetailsShown={setDetailsShown}
               /> :
               <>
-                <div className="col-md-12 col-12 m-auto" >
+                <div className="col-md-12 col-12 mb-3 d-flex" >
                   <SearchBar
                     id=""
                     placeholder="Search By Representive Name, Shop Name and Contact..."

@@ -170,60 +170,63 @@ class ViewProductPromotionComponent extends Component {
             )
         }
         return (
-            <div style={{ width: "100%" }}>
-                {this.state.isdetailsShown ? (
-                    <PromotionDetailsComponent data={this.state} data2={this.props} />
-                ) :
-                    (
-                        <>
-                            <SearchBar
-                                id=""
-                                placeholder="Search by promotion title..."
-                                buttonOnClick={() => this.onSearch("", "")}
-                                onChange={(e) => this.searchSpace(e.target.value)}
-                                className="searchbar-input mb-auto"
-                                disableButton={this.state.isDataFetching}
-                                tooltipText="Search with current data"
-                                value={this.state.searchKeywords}
-                            />
-                            < TableComponents
-                                // table settings 
-                                tableTopLeft={<h3 style={{ fontWeight: 600 }}>Promotion List</h3>}
-                                tableTopRight={renderButtonOnTableTopRight()}
-                                tableOptions={{
-                                    dense: true,
-                                    tableOrderBy: 'asc',
-                                    sortingIndex: "PromotionID",
-                                    stickyTableHeader: true,
-                                }}
-                                paginationOptions={[8, 15, 20, { label: 'All', value: -1 }]}
-                                tableHeaders={tableHeadCells}
-                                tableRows={{
-                                    renderTableRows: this.renderTableRows,
-                                    checkbox: true,
-                                    checkboxColor: "primary",
-                                    onRowClickSelect: false
-                                }}
-                                selectedIndexKey={"ProductID"}
+            <div className="container-fluid my-2">
+                <div className="row">
+                    {this.state.isdetailsShown ? (
+                        <PromotionDetailsComponent data={this.state} data2={this.props} />
+                    ) :
+                        (
+                            <>
+                                <div className="col-md-12 col-12 mb-3 d-flex" >
+                                    <SearchBar
+                                        id=""
+                                        placeholder="Search by promotion title..."
+                                        buttonOnClick={() => this.onSearch("", "")}
+                                        onChange={(e) => this.searchSpace(e.target.value)}
+                                        className="searchbar-input mb-auto"
+                                        disableButton={this.state.isDataFetching}
+                                        tooltipText="Search with current data"
+                                        value={this.state.searchKeywords}
+                                    />
+                                </div>
+                                < TableComponents
+                                    // table settings 
+                                    tableTopLeft={<h3 style={{ fontWeight: 600 }}>Promotion List</h3>}
+                                    tableTopRight={renderButtonOnTableTopRight()}
+                                    tableOptions={{
+                                        dense: true,
+                                        tableOrderBy: 'asc',
+                                        sortingIndex: "PromotionID",
+                                        stickyTableHeader: true,
+                                    }}
+                                    paginationOptions={[8, 15, 20, { label: 'All', value: -1 }]}
+                                    tableHeaders={tableHeadCells}
+                                    tableRows={{
+                                        renderTableRows: this.renderTableRows,
+                                        checkbox: true,
+                                        checkboxColor: "primary",
+                                        onRowClickSelect: false
+                                    }}
+                                    selectedIndexKey={"ProductID"}
 
-                                Data={this.state.isFiltered === false ? this.props.allpromo
-                                    : this.state.filteredProduct
-                                }
-                                onSelectRow={(e) => this.setState({ selectedListID: e })}
-                                onSelectAllRows={(e) => this.setState({ selectedListID: e })}
-                                onTableRowClick={this.onTableRowClick}
-                                SelectionActionButtons={
-                                    <Tooltip title="Delete">
-                                        <IconButton aria-label="delete" onClick={() => { this.onDelete() }}   >
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </Tooltip>
-                                }
-                            />
-                        </>
+                                    Data={this.state.isFiltered === false ? this.props.allpromo
+                                        : this.state.filteredProduct
+                                    }
+                                    onSelectRow={(e) => this.setState({ selectedListID: e })}
+                                    onSelectAllRows={(e) => this.setState({ selectedListID: e })}
+                                    onTableRowClick={this.onTableRowClick}
+                                    SelectionActionButtons={
+                                        <Tooltip title="Delete">
+                                            <IconButton aria-label="delete" onClick={() => { this.onDelete() }}   >
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    }
+                                />
+                            </>
 
-                    )}
-
+                        )}
+                </div>
             </div>
         );
     }

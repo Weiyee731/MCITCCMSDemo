@@ -13,8 +13,10 @@ const SubMenuItems = (props) => {
             suffix={typeof item.suffix !== "undefined" && item.suffix !== null ? item.suffix : null}
             title={item.title}
         >
+            {console.log("item.submenus", item.submenus)}
+            {console.log("item.submenus", item)}
             {
-                typeof item.submenus !== "undefined" && item.submenus !== null && item.submenus.map((menuitem, index) => {
+                typeof item.submenus !== "undefined" && item.submenus !== null && item.submenus.length > 0 && item.submenus.map((menuitem, index) => {
                     return (
                         typeof menuitem.submenus !== "undefined" && menuitem.submenus !== null && menuitem.submenus.length > 0 ?
                             <SubMenuItems key={'submenu-' + menuitem.item} item={menuitem} />

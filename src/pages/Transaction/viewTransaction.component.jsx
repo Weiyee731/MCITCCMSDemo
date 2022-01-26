@@ -17,6 +17,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Box from "@material-ui/core/Box";
 import FormControl from "@material-ui/core/FormControl";
 import Collapse from "@material-ui/core/Collapse";
+
 import { toast } from "react-toastify";
 import {
     Select,
@@ -384,7 +385,7 @@ function Row(props) {
                                 checkExisting(product).map((Data) => {
                                     return (
                                         <>
-                                            <FormControl variant="outlined" size="small" style={{ width: "100%" }}>
+                                            <FormControl variant="outlined" size="small" style={{ width: "100%", paddingBottom: "10px", paddingTop: "10px" }}>
                                                 <Select
                                                     native
                                                     id="Logistic"
@@ -1359,7 +1360,7 @@ class DisplayTable extends Component {
         };
 
         return (
-            <div style={{ margin: "2%" }}>
+            <div >
                 {this.state.detailsShown ? (
                     ""
                     //   <TransactionDetails
@@ -1373,7 +1374,7 @@ class DisplayTable extends Component {
                     <div>
                         <div>
                             <Paper style={divStyle}>
-                                <h3>Orders List</h3>
+                                <h3 style={{ fontWeight: 600 }}>Orders List</h3>
                                 <TableContainer>
                                     {this.props.Data.length != 0 ? (
                                         <Table
@@ -1679,48 +1680,44 @@ class ViewTransactionsComponent extends Component {
 
         }
         return (
-            <div style={{ width: "100%" }}>
-                {!this.state.tabsHidden ? (
-                    <div>
-                        <div className="selectContainer">
-                            <div className="row" style={{ marginBottom: "10px", margin: "2%" }}>
-                                <div className="col-md-10 col-10 m-auto" >
-                                    <SearchBar
-                                        id=""
-                                        placeholder="Search By Tracking Number or Order Number..."
-                                        buttonOnClick={() => this.onSearch("", "")}
-                                        onChange={(e) => this.searchSpace(e.target.value)}
-                                        className="searchbar-input mb-auto"
-                                        disableButton={this.state.isDataFetching}
-                                        tooltipText="Search with current data"
-                                        value={this.state.searchKeywords}
-                                    />
-                                </div>
+            <div className="container-fluid my-2">
+                <div className="row">
+                    {!this.state.tabsHidden ? (
+                        <div className="col-md-12 col-12 mb-3 d-flex">
+                            <div className="col-10 d-inline-flex">
+                                <SearchBar
+                                    id=""
+                                    placeholder="Search By Tracking Number or Order Number..."
+                                    buttonOnClick={() => this.onSearch("", "")}
+                                    onChange={(e) => this.searchSpace(e.target.value)}
+                                    className="searchbar-input mb-auto"
+                                    disableButton={this.state.isDataFetching}
+                                    tooltipText="Search with current data"
+                                    value={this.state.searchKeywords}
+                                />
+                            </div>
 
-                                <div className="col-md-2 col-2 m-auto" style={{ paddingTop: "10px" }}>
-                                    <div className="selectContainer">
-                                        <FormControl variant="outlined" size="small">
-                                            <Select
-                                                native
-                                                value={this.state.productSupplier}
-                                                onChange={this.updateList.bind(this)}
-                                                inputProps={{
-                                                    name: "Product Supplier",
-                                                    id: "productSupplier",
-                                                }}
-                                                className="select"
-                                            >
-                                                {generateOptions}
-                                            </Select>
-                                        </FormControl>
-                                    </div>
-                                </div>
+                            <div className="col-2 d-inline-flex" style={{ paddingTop: "10px" }}>
+                                <FormControl variant="outlined" size="small">
+                                    <Select
+                                        native
+                                        value={this.state.productSupplier}
+                                        onChange={this.updateList.bind(this)}
+                                        inputProps={{
+                                            name: "Product Supplier",
+                                            id: "productSupplier",
+                                        }}
+                                        className="select"
+                                    >
+                                        {generateOptions}
+                                    </Select>
+                                </FormControl>
                             </div>
                         </div>
-                    </div>
-                ) : null}
-                {generateTable}
-                {console.log("list", this.props)}
+                    ) : null}
+                    {generateTable}
+                    {console.log("list", this.props)}
+                </div>
             </div>
         );
     }

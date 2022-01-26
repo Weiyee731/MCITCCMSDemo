@@ -13,24 +13,23 @@ import { ModalPopOut } from "../components/ModalComponent/ModalComponent";
 
 
 const DescriptionFunction = (props) => {
-    const { post_content, content, handleChange, imageFileUrl, editorState } = props
+    const { post_content, content, handleChange, imageFileUrl, editorState, projectID } = props
 
-
-    let uploadURL = "https://" + localStorage.getItem("projectDomain") + "/emporiaimage/uploadProduct.php"
-    let imageURL = "https://" + localStorage.getItem("projectDomain") + "/emporiaimage/"
+    let uploadURL = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/uploadImages.php"
+    let imageURL = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/"
 
     return (
         <>
             <Editor
 
-            
+
                 id="editor1"
                 apiKey='x4mqgazypswvw9k7ylkasipxjmrgp49stwbne96rwg4l1xhi'
                 initialValue={post_content}
                 value={content}
                 onEditorChange={(e) => handleChange(e)}
                 disabled={editorState === true ? false : true}
-            
+
                 init={{
                     height: 600,
                     menubar: false,
@@ -48,7 +47,7 @@ const DescriptionFunction = (props) => {
                     a11y_advanced_options: true,
                     media_alt_source: false,
                     media_poster: false,
-                    maxSize:5242880,
+                    maxSize: 5242880,
 
                     font_formats: "Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Oswald=oswald; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats",
                     content_style: "body { font-family: Montserrat; }",
@@ -67,32 +66,25 @@ const DescriptionFunction = (props) => {
                         var input = document.createElement('input');
                         input.setAttribute('type', 'file');
                         input.setAttribute('accept', 'image/*');
-                        console.log("meta", meta)
 
                         input.onchange = function () {
                             var file = this.files[0];
 
                             const formData = new FormData();
                             let imagename = new Date().valueOf();
-                            formData.append("directory", "images/" + imageFileUrl);
-                            // formData.append("upload[]", file);
-                            formData.append("imageFile", file);
-                            formData.append("imageName", imagename);
-                            // formData.append("ProductID", 1333);
-                            // let url =
-                            //     "https://tourism.denoo.my/TourismAPI/upload.php";
 
-                            console.log("file", file)
-                            console.log("imagename", imagename)
-                            console.log("directory", "images/" + imageFileUrl)
+                            formData.append("ID", projectID);
+                            formData.append("targetFolder", imageFileUrl);
+                            formData.append("projectDomain", localStorage.getItem("projectDomain"));
+                            formData.append("upload[]", file);
+                            formData.append("imageName[]", imagename);
                             axios.post(uploadURL, formData, {}).then((res) => {
 
                                 if (res.request.status === 200) {
                                     var reader = new FileReader();
                                     reader.readAsDataURL(file);
-                                    let link = imageURL + imageFileUrl + "/" + imagename + "." + file.name.split(".").pop()
-                                    console.log("this is the link", link)
-
+                                    let link = imageURL + imageFileUrl + "/" + projectID + "/" + imagename + "." + file.name.split(".").pop()
+                
                                     cb(link, { title: imagename });
                                     reader.onerror = error => { };
                                 }
@@ -118,13 +110,11 @@ const DescriptionFunction = (props) => {
                                 return;
                             }
 
-                            console.log("blobInfo", blobInfo)
-                            console.log("blobInfo1", xhr)
                             if (xhr.status < 200 || xhr.status >= 300) {
                                 failure('HTTP Error: ' + xhr.status);
                                 return;
                             }
-                            let link = imageURL + imageFileUrl + "/" + imagename + "." + blobInfo.filename().split(".").pop()
+                            let link = imageURL + imageFileUrl + "/" + projectID + "/" + imagename + "." + blobInfo.filename().split(".").pop()
                             success(link);
                         };
 
@@ -133,12 +123,14 @@ const DescriptionFunction = (props) => {
                         };
 
                         formData = new FormData();
-                        formData.append('file', blobInfo.blob(), blobInfo.filename());
-                        formData.append("directory", "images/" + imageFileUrl);
-                        formData.append("imageFile", blobInfo.blob());
-                        formData.append("imageName", imagename);
+                        formData.append("ID", projectID);
+                        formData.append("targetFolder", imageFileUrl);
+                        formData.append("projectDomain", localStorage.getItem("projectDomain"));
+                        formData.append("upload[]", blobInfo.blob());
+                        formData.append("imageName[]", imagename);
+
                         xhr.send(formData);
-                    
+
                     }
 
                 }}

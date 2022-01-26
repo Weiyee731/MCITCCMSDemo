@@ -2037,7 +2037,11 @@ class AddProductComponent extends Component {
       const formData = new FormData()
 
       const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-      formData.append("ProductID", productID);
+
+      formData.append("ID", productID);
+      formData.append("targetFolder", "products");
+      formData.append("projectDomain", localStorage.getItem("projectDomain"));
+
       //upload single file
       let filenames = ""
       let variationID = ""
@@ -2095,8 +2099,6 @@ class AddProductComponent extends Component {
           imageWidth += ","
           imageHeight += ","
         }
-
-        // console.log()
       }
 
       let object = {
@@ -2107,13 +2109,16 @@ class AddProductComponent extends Component {
         sliderOrder: slideOrder,
         imageWidth: imageWidth,
         imageHeight: imageHeight,
+        UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
       }
-      let imageURL = "https://" + localStorage.getItem("projectDomain") + "/images/uploadproductImages.php"
+      let imageURL = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/uploadImages.php"
+      // let imageURL = "https://" + localStorage.getItem("projectDomain") + "/images/uploadproductImages.php"
+      // let imageURL = "https://" + localStorage.getItem("projectDomain") + "/images/uploadproductImages.php"
       // axios.post("https://tourism.denoo.my/MCITCApi/php/uploadproductImages.php", formData, config).then((res) => {
       // axios.post("https://myemporia.my/emporiaimage/uploadproductImages.php", formData, config).then((res) => {
       axios.post(imageURL, formData, config).then((res) => {
         console.log(res)
-        if (res.status === 200 && res.data === 1) {
+        if (res.status === 200) {
           this.props.callAddProductMedia(object)
         }
         else {
@@ -3262,36 +3267,54 @@ class AddProductComponent extends Component {
 
   OnSubmit = () => {
     // this.checkEverything();
-    // this.uploadFile(1)
+    this.uploadFile(3)
 
     if (this.checkGeneral() === 1) {
-      toast.error("Please fill in all required information")
+      toast.error("Input Error: Please fill in all required information")
     }
     else {
-      // this.onSubmitProductVariation(1)
-      if (this.state.name === "" || this.state.description === "" || this.state.productCategory === "" || this.state.productSupplier === "" || this.state.height === ""
-        || this.state.width === "" || this.state.depth === "" || this.state.weight === ""
-        || this.state.brand === "" || this.state.model === "" || this.state.tags === "")
-        toast.error("Please fill in all required information")
-      else {
-        let object = {
-          name: this.state.name,
-          description: this.state.description,
-          productCategory: this.state.productCategory,
-          productSupplier: this.state.productSupplier,
-          height: this.state.height,
-          width: this.state.width,
-          depth: this.state.depth,
-          weight: this.state.weight,
-          sku: "-",
-          brand: this.state.brand,
-          model: this.state.model,
-          tags: this.state.tags,
-          ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
-          UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+
+      if (this.state.variation1.options.length > 0) {
+        let priceEmpty = 0
+        let skuEmpty = 0
+        let skuLength = 0
+        priceEmpty = this.state.variation1.options.filter((options) => options.price === "").length
+        skuLength = this.state.variation1.options.filter((options) => options.sku.length < 8).length
+        skuEmpty = this.state.variation1.options.filter((options) => options.sku === "").length
+
+        if (skuLength > 0 || priceEmpty > 0 || skuEmpty > 0) {
+          toast.error("Input Error: Please fill in all variation with requirement")
         }
-        this.props.callAddProduct(object)
-        this.setState({ isSubmit: true })
+        else {
+          //   // this.onSubmitProductVariation(1)
+          if (this.state.name === "" || this.state.description === "" || this.state.productCategory === "" || this.state.productSupplier === "" || this.state.height === ""
+            || this.state.width === "" || this.state.depth === "" || this.state.weight === ""
+            || this.state.brand === "" || this.state.model === "" || this.state.tags === "")
+            toast.error("Please fill in all required information")
+          else {
+            let object = {
+              name: this.state.name,
+              description: this.state.description,
+              productCategory: this.state.productCategory,
+              productSupplier: this.state.productSupplier,
+              height: this.state.height,
+              width: this.state.width,
+              depth: this.state.depth,
+              weight: this.state.weight,
+              sku: "-",
+              brand: this.state.brand,
+              model: this.state.model,
+              tags: this.state.tags,
+              ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+              UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+            }
+            this.props.callAddProduct(object)
+            this.setState({ isSubmit: true })
+          }
+        }
+      }
+      else {
+        toast.error("Input Error: Please fill in all required information")
       }
     }
   }
@@ -4493,20 +4516,12 @@ class AddProductComponent extends Component {
                 <p className="Heading">Product Description</p>
                 <DescriptionFunction
                   post_content=""
-                  // postId="1333"
                   handleChange={this.handleChangeEditor}
                   content={this.state.description}
-                  imageFileUrl="products"
+                  imageFileUrl="productDescription"
                   editorState={true}
+                  projectID={JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID}
                 />
-                {/* <DescriptionFunction
-                  post_content=""
-                  // postId="1333"
-                  handleChange={this.handleChange}
-                  content={this.state.description}
-                  imageFileUrl="products"
-                /> */}
-
                 {this.state.productDesciptionEmpty && (
                   <p className="error">Product description cannot be empty.</p>
                 )}

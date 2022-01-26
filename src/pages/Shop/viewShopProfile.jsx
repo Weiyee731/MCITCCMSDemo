@@ -210,18 +210,29 @@ class EditShopProfile extends Component {
             imagedetails.name.split('.').pop());
 
         let FullImageName = JSON.stringify(imageName) + "." + fileExt;
-        formData.append("imageFile", this.state.imageFile[0]);
-        formData.append("imageName", imageName);
+
+        formData.append("ID", JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID);
+        formData.append("targetFolder", "shopProfile");
+        formData.append("projectDomain", localStorage.getItem("projectDomain"));
+        formData.append("upload[]", this.state.imageFile[0]);
+        formData.append("imageName[]", imageName);
+  
+        // formData.append("imageFile", this.state.imageFile[0]);
+        // formData.append("imageName", imageName);
 
         let file = {
             USERID: localStorage.getItem("loginUser") !== null && JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
             USERPROFILEIMAGE: FullImageName,
             TYPE: "SHOPIMAGE",
         };
+
+        let imageURL = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/uploadImages.php"
+     
         axios
             .post(
-                "https://" + localStorage.getItem("projectDomain") + "/emporiaimage/uploaduserprofilepicture.php",
+                // "https://" + localStorage.getItem("projectDomain") + "/emporiaimage/uploaduserprofilepicture.php",
                 //  "https://" + localStorage.getItem("projectDomain") + "/images/uploadproductImages.php"
+                imageURL,
                 formData,
                 {}
             )
@@ -420,10 +431,10 @@ class EditShopProfile extends Component {
                                 <div className="row">
                                     <div onClick={() => this.modalOpen()} className="imagecontainer">
                                         <img
-                                            className="profilePic"
+                                            // className="profilePic"
                                             src={merchantDetails.ShopImage && merchantDetails.ShopImage.length ? imgurl + merchantDetails.ShopImage : Logo}
                                             alt="Profile"
-                                            width="100px"
+                                            width="200px"
                                             height="100px"
                                             onError={(e) => {
                                                 e.target.onerror = null;
@@ -581,7 +592,7 @@ class EditShopProfile extends Component {
                                 >
                                     <div>
                                         <Dropzone
-                                            style={{ width: "100vw", height: "60vh" }}
+                                            style={{ width: "150vw", height: "60vh" }}
                                             onDrop={(acceptedFiles) => {
                                                 if (acceptedFiles.length > 0) {
                                                     this.setState({

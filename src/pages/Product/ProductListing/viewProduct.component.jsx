@@ -11,11 +11,12 @@ import Logo from "../../../assets/logos/logo.png";
 
 // UI Component
 import GroupAddIcon from '@mui/icons-material/Add';
+// import FormControl from '@mui/material/FormControl';
 import FormControl from "@material-ui/core/FormControl";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Select, TableCell, } from "@material-ui/core";
+import { TableCell, Select } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
 const history = createHistory()
@@ -50,14 +51,14 @@ const tableHeadCells = [
   },
   {
     id: "ProductName",
-    align: 'center',
+    align: 'left',
     numeric: false,
     disablePadding: false,
     label: "Product Name",
   },
   {
     id: "ProductPrice",
-    align: 'center',
+    align: 'left',
     numeric: false,
     disablePadding: false,
     label: "Price Sold (RM)",
@@ -202,13 +203,13 @@ class ViewProductComponent extends Component {
     }
 
     return (
-      <div style={{ width: "100%" }}>
-        <div style={{ margin: "2%" }}>
-          <div className="row" style={{ marginBottom: "10px", flex: "1" }}>
-            <div className="col-md-10 col-10 m-auto" >
+      <div className="container-fluid my-2">
+        <div className="row">
+          <div className="col-md-12 col-12 mb-3 d-flex">
+            <div className="col-10 d-inline-flex">
               <SearchBar
                 id=""
-                placeholder="Enter Product Name"
+                placeholder="Enter Product SKU, Product Name or Store to search"
                 buttonOnClick={() => this.onSearch("", "")}
                 onChange={(e) => this.searchSpace(e.target.value)}
                 className="searchbar-input mb-auto"
@@ -217,23 +218,21 @@ class ViewProductComponent extends Component {
                 value={this.state.searchKeywords}
               />
             </div>
-
-            <div className="col-md-2 col-2 m-auto" style={{ paddingTop: "10px", flex: "1" }}>
-              <div className="selectContainer">
-                <FormControl variant="outlined" size="small" fullWidth="true">
-                  <Select
-                    native
-                    value={this.state.selectedMerchant}
-                    onChange={this.filterMerchantListing.bind(this)}
-                    className="select"
-                  >
-                    <option value={0}>All Merchant Shop</option>
-                    {generateOptions}
-                  </Select>
-                </FormControl>
-              </div>
+            <div className="col-2 d-inline-flex" style={{ paddingTop: "10px" }}>
+              <FormControl variant="outlined" size="small" fullWidth="true">
+                <Select
+                  native
+                  value={this.state.selectedMerchant}
+                  onChange={this.filterMerchantListing.bind(this)}
+                  className="select"
+                >
+                  <option value={0}>All Merchant Shop</option>
+                  {generateOptions}
+                </Select>
+              </FormControl>
             </div>
           </div>
+
           <TableComponents
             // table settings 
             tableTopLeft={<h3 style={{ fontWeight: 600 }}>Product Listing</h3>}

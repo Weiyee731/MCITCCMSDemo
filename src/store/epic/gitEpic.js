@@ -1619,7 +1619,9 @@ export class GitEpic {
           "&USERID=" + payload.UserID
         );
         let json = await resposne.json();
-        json = JSON.parse(json);
+
+        console.log("json", json)
+        // json = JSON.parse(json);
         return {
           type: GitAction.ProductMediaAdded,
           payload: json,

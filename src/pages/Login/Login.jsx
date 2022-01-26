@@ -76,13 +76,13 @@ class Dashboard extends Component {
                             window.location.pathname.split("/")[1]
                         )
 
-                    // setLogonUser(
-                    //     this.props.logonUser,
-                    //     this.props.sidebars,
-                    //     "myemporia",
-                    //     "my",
-                    //     "CMS.myemporia.my"
-                    // )
+                    setLogonUser(
+                        this.props.logonUser,
+                        this.props.sidebars,
+                        "myemporia",
+                        "my",
+                        "CMS.myemporia.my"
+                    )
                 }
                 else {
                     toast.error("The username and password does not match.")
