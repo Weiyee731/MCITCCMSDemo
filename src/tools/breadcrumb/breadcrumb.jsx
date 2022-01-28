@@ -24,6 +24,7 @@ function PageHeader(props) {
 
         breadcrumb = breadcrumb.map((item, index) => {
             let link;
+            console.log("breadcrumb", item)
 
             if (lastIndex === index) {
                 link = (<li key={index} aria-current="page">  {item.title}  </li>);
@@ -31,11 +32,11 @@ function PageHeader(props) {
             else {
                 link = (
                     <li key={index} style={{ paddingRight: "10px" }}>
-                        {/* <Link style={{ textDecoration: "none" }} to={item.url}>
-                            {item.title} {"    "}
-                        </Link> */}
-                        {item.title} {"    "}
-                        <ArrowRoundedRight6x9Svg className="breadcrumb-arrow" />
+                        <Link style={{ textDecoration: "none" }} to={item.url}>
+                            {item.title} {"    "}<ArrowRoundedRight6x9Svg className="breadcrumb-arrow" />
+                        </Link>
+                        {/* {item.title} {"    "}
+                        <ArrowRoundedRight6x9Svg className="breadcrumb-arrow" /> */}
                     </li>
                 );
             }

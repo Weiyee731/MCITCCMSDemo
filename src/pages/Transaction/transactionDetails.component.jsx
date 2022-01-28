@@ -17,9 +17,9 @@ import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import { lighten, makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
-// import SearchBox from "../../components/SearchBox/SearchBox";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Button from "@material-ui/core/Button";
+
 
 function mapStateToProps(state) {
   return {

@@ -5,8 +5,8 @@ import { GitAction } from "../../../store/action/gitAction";
 
 // Function Usage
 import { Card, CardText, CardBody } from 'reactstrap'
-import { Accordion } from 'react-bootstrap-accordion'
-import { toast } from "react-toastify";
+// import { Accordion } from 'react-bootstrap-accordion'
+// import { toast } from "react-toastify";
 import 'react-bootstrap-accordion/dist/index.css'
 
 // Share components
@@ -22,18 +22,19 @@ import TableComponents from "../../../components/TableComponents/TableComponents
 
 
 // UI Purpose
-import CancelIcon from '@mui/icons-material/HighlightOffTwoTone';
-import CheckCircleIcon from '@mui/icons-material/CheckCircleTwoTone';
+// import CancelIcon from '@mui/icons-material/HighlightOffTwoTone';
+// import CheckCircleIcon from '@mui/icons-material/CheckCircleTwoTone';
 import ReplyIcon from '@mui/icons-material/Reply';
 import IconButton from '@material-ui/core/IconButton';
 import Rating from "@material-ui/lab/Rating";
-import TextField from "@material-ui/core/TextField";
+// import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Tooltip from '@mui/material/Tooltip';
-import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
+// import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
 import GroupAddIcon from '@mui/icons-material/Add';
-import Badge from '@mui/material/Badge';
-import DraftsIcon from '@mui/icons-material/Drafts';
+import PageviewIcon from '@mui/icons-material/Pageview';
+// import Badge from '@mui/material/Badge';
+// import DraftsIcon from '@mui/icons-material/Drafts';
 import TableCell from '@mui/material/TableCell';
 
 
@@ -179,29 +180,14 @@ class ViewProductGeneralInfo extends Component {
 
   componentDidMount() {
 
-    // if (JSON.parse(localStorage.getItem("loginUser"))[0].UserID !== undefined && this.props.match.params.productId !== undefined) {
-    //   this.props.CallProductDetail({
-    //     productId: this.props.match.params.productId,
-    //     userId: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
-    //     ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
-    //   })
-    //   this.props.CallAllProductCategoryListing()
-    //   this.props.CallProductReviewByProductID({
-    //     ProductID: this.props.match.params.productId,
-    //     ParentProductReviewID: 0
-    //   })
-
-    // }
   }
 
   componentDidUpdate(prevProps) {
 
+    console.log("CHECK", this.props)
+
     if (this.props.variationStock !== null && this.props.variationStock.length > 0 && this.state.isDatabaseSet === false) {
       this.DatabaseListing = this.props.variationStock
-
-      // this.props.variationStock.length > 0 && this.props.variationStock.map((data) => {
-      //   this.state.isOpenOverallDetails.push(false)
-      // })
       this.setState({ isDatabaseSet: true })
     }
 
@@ -227,17 +213,6 @@ class ViewProductGeneralInfo extends Component {
         this.getReviewList(JSON.parse(this.props.reviews))
       }
     }
-
-    // if (this.props.variationStock !== undefined && this.props.variationStock.length > 0) {
-    //   if (JSON.parse(this.props.variationStock[0].ReturnVal !== 0) && this.state.isWaitingUpdate === true) {
-    //     if (prevProps.productInfo !== this.props.productInfo)
-    //       this.setState({
-    //         newArray: this.props.productInfo[0].ProductVariation !== null ? JSON.parse(this.props.productInfo[0].ProductVariation) : [],
-    //         isWaitingUpdate: false,
-    //         isStockEdit: false
-    //       })
-    //   }
-    // }
 
     if (this.props.reviewReturn !== undefined && this.props.reviewReturn.length > 0 && this.state.isReplySubmit === true) {
       this.props.CallProductReviewByProductID({
@@ -368,8 +343,10 @@ class ViewProductGeneralInfo extends Component {
 
       this.state.CategoryHierachyListing.length > 0 && this.state.CategoryHierachyListing.map((category, i) => {
         breadcrumb = [...breadcrumb, ...[
-          { title: category, url: "" },
+          { title: category, url: "/viewProduct/" + category + "/" + this.state.CategoryHierachyID[i] },
         ]]
+
+        console.log("category", category)
 
       })
 
@@ -469,21 +446,6 @@ class ViewProductGeneralInfo extends Component {
           newArray: JSON.parse(this.props.productInfo[0].ProductVariation)
         })
         break;
-
-      // case "submit":
-      //   if (this.state.selectedUpdateID.length > 0) {
-      //     this.props.CallUpdateProductVariationStock({
-      //       ProductVariationDetailID: this.state.selectedUpdateID,
-      //       stock: this.state.selectedUpdateQuantity,
-      //       productId: this.props.match.params.productId,
-      //       userId: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
-      //       ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
-      //     })
-      //     this.setState({ isWaitingUpdate: true })
-      //   } else {
-      //     toast.error("There is no variation to update")
-      //   }
-      //   break;
 
       default:
         break;
@@ -589,7 +551,7 @@ class ViewProductGeneralInfo extends Component {
           padding="normal"
           style={{ width: "55%" }}
         >
-          {data.ProductName} - ({data.ProductVariation})
+          {data.ProductVariation} - ({data.ProductVariationValue})
         </TableCell>
         <TableCell align="center" style={{ width: "15%" }}>{data.ProductStockAmount}</TableCell>
         <TableCell align="center" style={{ width: "15%" }}>{data.FirstDate}</TableCell>
@@ -614,7 +576,7 @@ class ViewProductGeneralInfo extends Component {
             </div>
           }
           {
-            data.ProductVariationStockDetail !== undefined && JSON.parse(data.ProductVariationStockDetail).map((details, index) => {
+            data.ProductVariationStockDetail !== undefined && data.ProductVariationStockDetail !== null ? JSON.parse(data.ProductVariationStockDetail).map((details, index) => {
               return (
                 <>
                   {
@@ -632,6 +594,8 @@ class ViewProductGeneralInfo extends Component {
                 </>
               )
             })
+              :
+              <label style={{ textAlign: "center", fontWeight: "600px" }}>Temporarily this variation is not available</label>
           }
         </div>
       </div>
@@ -787,6 +751,13 @@ class ViewProductGeneralInfo extends Component {
                         <TableComponents
                           tableTopRight={
                             <div className="d-flex">
+                              <Tooltip title="View All Product Stocks">
+                                <IconButton size="medium" sx={{ color: "#0074ea", marginRight: 1 }}>
+                                  <Link className="nav-link" to={{ pathname: url.stockDetails(0) }}>
+                                    <PageviewIcon />
+                                  </Link>
+                                </IconButton>
+                              </Tooltip>
                               <Tooltip title="Add Stock">
                                 <IconButton size="small" sx={{ color: "#0074ea", marginRight: 1 }}>
                                   <Link className="nav-link" to={"/addStock"}>

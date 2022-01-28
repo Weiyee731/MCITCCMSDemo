@@ -11,16 +11,19 @@ import Logo from "../../../assets/logos/logo.png";
 
 // UI Component
 import GroupAddIcon from '@mui/icons-material/Add';
-// import FormControl from '@mui/material/FormControl';
-import FormControl from "@material-ui/core/FormControl";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { TableCell, Select } from "@material-ui/core";
+import TableCell from '@mui/material/TableCell';
 import { Link } from "react-router-dom";
+import PageviewIcon from '@mui/icons-material/Pageview';
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 const history = createHistory()
-
 
 function mapStateToProps(state) {
   return {
@@ -80,8 +83,8 @@ class ViewProductComponent extends Component {
     };
 
     this.props.CallAllProducts({
-      type: 'Merchant',
-      typeValue: '0',
+      type: this.props.match !== undefined ? "Category" : "Merchant",
+      typeValue: this.props.match !== undefined ? this.props.match.params.categoryId : '0',
       userId: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
       productPage: '999',
       page: '1',
@@ -115,10 +118,6 @@ class ViewProductComponent extends Component {
   onTableRowClick = (event, row) => {
     return (
       window.location = url.inventoryProduct(row.ProductID)
-      // <>
-      //   {history.push(url.inventoryProduct(row.ProductID))}
-      //   {window.location.reload(false)}
-      // </>
     )
   }
 
@@ -159,8 +158,8 @@ class ViewProductComponent extends Component {
       if (this.props.productMgmtResult.length > 0 && this.state.selectedListID.length > 0) {
         this.props.CallResetProductMgmtReturnVal()
         this.props.CallAllProducts({
-          type: 'Merchant',
-          typeValue: '0',
+          type: this.props.match !== undefined ? "Category" : "Merchant",
+          typeValue: this.props.match !== undefined ? this.props.match.params.categoryId : '0',
           userId: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
           productPage: '999',
           page: '1',
@@ -172,7 +171,6 @@ class ViewProductComponent extends Component {
   }
 
   render() {
-    console.log("this.props.allstocks ", this.props.allstocks)
     const DataList = JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? this.props.allstocks :
       JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 && this.props.allstocks !== undefined ? this.props.allstocks.filter((x) => parseInt(x.MerchantID) === parseInt(localStorage.getItem("loginUser")[0].UserID)) : []
 
@@ -183,7 +181,7 @@ class ViewProductComponent extends Component {
           .filter((ele, ind) => ind === DataList.findIndex(elem => elem.MerchantID === ele.MerchantID))
           .map((data, i) => {
             return (
-              <option value={data.MerchantID}>{data.MerchantShopName}</option>
+              <MenuItem value={data.MerchantID}>{data.MerchantShopName}</MenuItem>
             );
           });
     }
@@ -191,8 +189,18 @@ class ViewProductComponent extends Component {
     const renderButtonOnTableTopRight = () => {
       return (
         <div className="d-flex">
+          {
+            this.props.match !== undefined &&
+            <Tooltip title="View All Product">
+              <IconButton size="medium" sx={{ color: "#0074ea", marginRight: 1 }}>
+                <Link className="nav-link" to={{ pathname: "/viewProduct" }}>
+                  <PageviewIcon />
+                </Link>
+              </IconButton>
+            </Tooltip>
+          }
           <Tooltip title="Add New Product">
-            <IconButton size="medium" sx={{ border: "2px solid #0074ea", color: "#0074ea", marginRight: 1 }}>
+            <IconButton size="medium" sx={{ color: "#0074ea", marginRight: 1 }}>
               <Link className="nav-link" to={"/addProductsAllIn"}>
                 <GroupAddIcon />
               </Link>
@@ -204,73 +212,81 @@ class ViewProductComponent extends Component {
 
     return (
       <div className="container-fluid my-2">
-        <div className="row">
-          <div className="col-md-12 col-12 mb-3 d-flex">
-            <div className="col-10 d-inline-flex">
-              <SearchBar
-                id=""
-                placeholder="Enter Product SKU, Product Name or Store to search"
-                buttonOnClick={() => this.onSearch("", "")}
-                onChange={(e) => this.searchSpace(e.target.value)}
-                className="searchbar-input mb-auto"
-                disableButton={this.state.isDataFetching}
-                tooltipText="Search with current data"
-                value={this.state.searchKeywords}
-              />
-            </div>
-            <div className="col-2 d-inline-flex" style={{ paddingTop: "10px" }}>
-              <FormControl variant="outlined" size="small" fullWidth="true">
+        <div className="row mb-3">
+          <div className="col-10">
+            <SearchBar
+              id=""
+              placeholder="Search By Product SKU, Product Name or Store to search"
+              buttonOnClick={() => this.onSearch("", "")}
+              onChange={(e) => this.searchSpace(e.target.value)}
+              className="searchbar-input mb-auto"
+              disableButton={this.state.isDataFetching}
+              tooltipText="Search with current data"
+              value={this.state.searchKeywords}
+            />
+          </div>
+          <div className="col-2">
+            <Box sx={{ minWidth: 120 }}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Shop</InputLabel>
                 <Select
-                  native
                   value={this.state.selectedMerchant}
                   onChange={this.filterMerchantListing.bind(this)}
                   className="select"
+                  size="small"
+                  label="Shop"
                 >
-                  <option value={0}>All Merchant Shop</option>
+                  <MenuItem value={0}>All Merchant Shop</MenuItem>
                   {generateOptions}
                 </Select>
               </FormControl>
-            </div>
+            </Box>
           </div>
-
-          <TableComponents
-            // table settings 
-            tableTopLeft={<h3 style={{ fontWeight: 600 }}>Product Listing</h3>}
-            tableTopRight={renderButtonOnTableTopRight()}                        //components on table top right
-            tableOptions={{
-              dense: true,                // optional, default is false
-              tableOrderBy: 'asc',        // optional, default is asc
-              sortingIndex: "ProductName",        // require, it must the same as the desired table header
-              stickyTableHeader: false,    // optional, default is true
-            }}
-            paginationOptions={[8, 15, 20, { label: 'All', value: -1 }]} // optional, by default it will hide the table pagination. You should set settings for pagination options as in array, eg.: [5, 100, 250, { label: 'All', value: -1 }]
-            tableHeaders={tableHeadCells}        //required
-            tableRows={{
-              renderTableRows: this.renderTableRows,   // required, it is a function, please refer to the example I have done in Table Components
-              checkbox: true,                          // optional, by default is true
-              checkboxColor: "primary",                // optional, by default is primary, as followed the MUI documentation
-              onRowClickSelect: false                  // optional, by default is false. If true, the ** onTableRowClick() ** function will be ignored
-            }}
-            selectedIndexKey={"ProductID"}                    // required, as follow the data targetting key of the row, else the data will not be chosen when checkbox is click. 
-
-            Data={
-              this.state.isFiltered === false ?
-                parseInt(this.state.selectedMerchant) === 0 ? DataList : DataList.length > 0 && DataList.filter((x) => parseInt(x.MerchantID) === parseInt(this.state.selectedMerchant))
-                :
-                parseInt(this.state.selectedMerchant) === 0 ? this.state.filteredProduct : this.state.filteredProduct.length > 0 && this.state.filteredProduct.filter((x) => parseInt(x.MerchantID) === parseInt(this.state.selectedMerchant))
-            }                                 // required, the data that listing in the table
-            onSelectRow={(e) => this.setState({ selectedListID: e })}
-            onSelectAllRows={(e) => this.setState({ selectedListID: e })}
-            onTableRowClick={this.onTableRowClick}       // optional, onTableRowClick = (event, row) => { }. The function should follow the one shown, as it will return the data from the selected row
-            SelectionActionButtons={
-              <Tooltip title="Delete">
-                <IconButton aria-label="delete" onClick={() => { this.onDelete() }}   >
-                  <DeleteIcon />
-                </IconButton>
-              </Tooltip>
-            }
-          />
         </div>
+
+        <TableComponents
+          // table settings 
+          tableTopLeft={
+            <div className="d-flex">
+              <h3 style={{ fontWeight: 600 }}>Product Listing</h3>
+              {this.props.match !== undefined &&
+                <h4 style={{ fontWeight: 600, paddingLeft: "10px", paddingTop: "5px" }}> - {this.props.match.params.category}</h4>}
+            </div>
+          }
+          tableTopRight={renderButtonOnTableTopRight()}                        //components on table top right
+          tableOptions={{
+            dense: true,                // optional, default is false
+            tableOrderBy: 'asc',        // optional, default is asc
+            sortingIndex: "ProductName",        // require, it must the same as the desired table header
+            stickyTableHeader: false,    // optional, default is true
+          }}
+          paginationOptions={[8, 15, 20, { label: 'All', value: -1 }]} // optional, by default it will hide the table pagination. You should set settings for pagination options as in array, eg.: [5, 100, 250, { label: 'All', value: -1 }]
+          tableHeaders={tableHeadCells}        //required
+          tableRows={{
+            renderTableRows: this.renderTableRows,   // required, it is a function, please refer to the example I have done in Table Components
+            checkbox: true,                          // optional, by default is true
+            checkboxColor: "primary",                // optional, by default is primary, as followed the MUI documentation
+            onRowClickSelect: false                  // optional, by default is false. If true, the ** onTableRowClick() ** function will be ignored
+          }}
+          selectedIndexKey={"ProductID"}                    // required, as follow the data targetting key of the row, else the data will not be chosen when checkbox is click. 
+
+          Data={
+            this.state.isFiltered === false ?
+              parseInt(this.state.selectedMerchant) === 0 ? DataList : DataList.length > 0 && DataList.filter((x) => parseInt(x.MerchantID) === parseInt(this.state.selectedMerchant))
+              :
+              parseInt(this.state.selectedMerchant) === 0 ? this.state.filteredProduct : this.state.filteredProduct.length > 0 && this.state.filteredProduct.filter((x) => parseInt(x.MerchantID) === parseInt(this.state.selectedMerchant))
+          }                                 // required, the data that listing in the table
+          onSelectRow={(e) => this.setState({ selectedListID: e })}
+          onSelectAllRows={(e) => this.setState({ selectedListID: e })}
+          onTableRowClick={this.onTableRowClick}       // optional, onTableRowClick = (event, row) => { }. The function should follow the one shown, as it will return the data from the selected row
+          SelectionActionButtons={
+            <Tooltip title="Delete">
+              <IconButton aria-label="delete" onClick={() => { this.onDelete() }}   >
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+          }
+        />
       </div>
     );
   }

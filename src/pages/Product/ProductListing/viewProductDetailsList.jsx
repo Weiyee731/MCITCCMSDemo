@@ -57,6 +57,7 @@ function mapStateToProps(state) {
     return {
         suppliers: state.counterReducer["supplier"],
         exist: state.counterReducer["exists"],
+        SKUexists: state.counterReducer["SKUexists"],
         result: state.counterReducer["addResult"],
         productMediaResult: state.counterReducer["productMediaResult"],
         variations: state.counterReducer["variations"],
@@ -100,6 +101,7 @@ function mapDispatchToProps(dispatch) {
         CallAllProductsCategories: (prodData) => dispatch(GitAction.CallAllProductCategory(prodData)),
         CallAllProductVariationByCategoryID: (prodData) => dispatch(GitAction.CallAllProductVariationByCategoryID(prodData)),
         callCheckProduct: (prodData) => dispatch(GitAction.CallCheckProduct(prodData)),
+        CallCheckProductSKU: (prodData) => dispatch(GitAction.CallCheckProductSKU(prodData)),
 
         CallAddProductMedia: (prodData) => dispatch(GitAction.CallAddProductMedia(prodData)),
         CallDeleteProductMedia: (prodData) => dispatch(GitAction.CallDeleteProductMedia(prodData)),
@@ -507,6 +509,7 @@ class ProductDetailsComponent extends Component {
         this.OnSubmit = this.OnSubmit.bind(this)
         this.handleBack = this.handleBack.bind(this)
         this.state = INITIAL_STATE
+        this.ExistanceSKU = []
     }
 
     setHint = (data, e) => {
@@ -2601,6 +2604,14 @@ class ProductDetailsComponent extends Component {
             );
         } else if (data === "variation1SKU") {
 
+            if (e.target.value.length > 0) {
+                this.props.CallCheckProductSKU({
+                    ProductSKU: e.target.value,
+                    UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+                    ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+                })
+            }
+
             const optionData = {
                 isEdit: true,
                 optionName: this.state.variation1.options[index].optionName,
@@ -3353,7 +3364,7 @@ class ProductDetailsComponent extends Component {
             this.state.productNameEmpty ||
             this.state.productNameDublicated ||
             this.state.productCategoryEmpty ||
-            this.state.productSupplierEmpty ||
+            // this.state.productSupplierEmpty ||
             this.state.heightEmpty ||
             this.state.heightNotDecimal ||
             this.state.widthNotDecimal ||
@@ -3374,36 +3385,46 @@ class ProductDetailsComponent extends Component {
 
 
     OnSubmit = () => {
-        // this.checkEverything();
-
         if (this.checkVariationError(this.state.variation1.options) === 1 || this.checkSpecError() === 1 || this.checkGeneral() === 1) {
-            toast.error("Please fill in all required information")
+            toast.error("Input Error: Please fill in all required information")
         }
         else {
-            let object = {
-                ProductID: this.state.ProductID,
-                productSupplier: this.state.productSupplier,
-                name: this.state.name,
-                description: this.state.description,
-                productCategory: this.state.productCategory,
-                // productSupplier: this.state.productSupplier,
-                height: this.state.height,
-                width: this.state.width,
-                depth: this.state.depth,
-                weight: this.state.weight,
-                sku: this.state.sku !== "" ? this.state.sku : "-",
-                brand: this.state.brand,
-                model: this.state.model,
-                tags: this.state.tags,
-                UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
-                ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
+            let listing = this.state.variation1.options
+            let exist = false
+            listing.length > 0 && listing.map((x) => {
+                this.ExistanceSKU.length > 0 && this.ExistanceSKU.map((data) => {
+                    if (data.ProductSKU === x.sku)
+                        exist = true
+                })
+            })
+            listing = listing.length > 0 ? listing.filter((ele, ind) => ind === listing.findIndex(elem => elem.sku === ele.sku)) : []
+            if (listing.length !== this.state.variation1.options.length || exist === true)
+                toast.warning("Input Error: Product SKU need to be unique")
+            else {
+                let object = {
+                    ProductID: this.state.ProductID,
+                    productSupplier: this.state.productSupplier,
+                    name: this.state.name,
+                    description: this.state.description,
+                    productCategory: this.state.productCategory,
+                    // productSupplier: this.state.productSupplier,
+                    height: this.state.height,
+                    width: this.state.width,
+                    depth: this.state.depth,
+                    weight: this.state.weight,
+                    sku: this.state.sku !== "" ? this.state.sku : "-",
+                    brand: this.state.brand,
+                    model: this.state.model,
+                    tags: this.state.tags,
+                    UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+                    ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
+                }
+                this.props.CallUpdateProduct(object)
+                this.onSubmitProductVariation(this.state.ProductID)
+                this.onSubmitProductSpecification(this.state.ProductID)
+                this.uploadFile(this.state.ProductID)
+                this.setState({ isSubmit: true })
             }
-
-            this.props.CallUpdateProduct(object)
-            this.onSubmitProductVariation(this.state.ProductID)
-            this.onSubmitProductSpecification(this.state.ProductID)
-            this.uploadFile(this.state.ProductID)
-            this.setState({ isSubmit: true })
         }
     }
 
@@ -3844,6 +3865,21 @@ class ProductDetailsComponent extends Component {
                     return <p className="error">Product name already exists.</p>;
                 }
             });
+        }
+
+        let existSKU = this.props.SKUexists
+            ? Object.keys(this.props.SKUexists).map((key) => {
+                return this.props.SKUexists[key];
+            })
+            : {};
+        if (existSKU.length > 0) {
+            let listing = this.ExistanceSKU
+            existSKU.map((data) => {
+                if (data.ExistanceInd === 1) {
+                    listing.push(data)
+                    this.ExistanceSKU = listing.length > 0 ? listing.filter((ele, ind) => ind === listing.findIndex(elem => elem.ProductSKU === ele.ProductSKU)) : []
+                }
+            })
         }
 
         const { index } = this.state;
@@ -5973,6 +6009,12 @@ class ProductDetailsComponent extends Component {
                                                                     </Tooltip>
                                                                 ) : null}
                                                             </div>
+                                                            {
+                                                                this.ExistanceSKU.length > 0 && this.ExistanceSKU.filter((data) =>
+                                                                    data.ProductSKU === this.state.variation1.options[x].sku
+                                                                ).length > 0 &&
+                                                                <p className="error">SKU already exists</p>
+                                                            }
                                                         </td>
                                                     </tr>
                                                 )
@@ -6015,11 +6057,14 @@ class ProductDetailsComponent extends Component {
                                                                                 <label>Depth:</label>{data.Depth}
                                                                             </div>
                                                                             <div className="col-1" style={{ paddingBottom: "5px" }}>
-                                                                                <IconButton onClick={() => handleShipping(data, index)}
-                                                                                    disabled={this.state.toBeEdited ? false : true}
-                                                                                >
-                                                                                    <CheckBoxIcon style={{ color: this.state.OptionClick === index ? "blue" : "grey" }} />
-                                                                                </IconButton>
+                                                                                {
+                                                                                    this.state.toBeEdited &&
+                                                                                    <IconButton onClick={() => handleShipping(data, index)}
+                                                                                    // disabled={this.state.toBeEdited ? false : true}
+                                                                                    >
+                                                                                        <CheckBoxIcon style={{ color: this.state.OptionClick === index ? "blue" : "grey" }} />
+                                                                                    </IconButton>
+                                                                                }
                                                                             </div>
                                                                         </div>
                                                                     )
@@ -6220,6 +6265,22 @@ class ProductDetailsComponent extends Component {
                                                 </StepContent>
                                             </Step>
 
+                                            <Step key="productMedia">
+                                                <StepLabel>
+                                                    <HashLink
+                                                        to={`/viewProductDetailList/${this.props.match.params.productId}#productMedia`}
+                                                        className="FontType4"
+                                                    >
+                                                        Product Media
+                                                    </HashLink>
+                                                </StepLabel>
+                                                <StepContent>
+                                                    <LinearProgressWithLabel
+                                                        value={this.state.progressMedia}
+                                                    />
+                                                </StepContent>
+                                            </Step>
+
                                             <Step key="descriptionCard">
                                                 <StepLabel>
                                                     <HashLink
@@ -6262,21 +6323,6 @@ class ProductDetailsComponent extends Component {
                                                 <StepContent>
                                                     <LinearProgressWithLabel
                                                         value={this.state.progressVariation}
-                                                    />
-                                                </StepContent>
-                                            </Step>
-                                            <Step key="productMedia">
-                                                <StepLabel>
-                                                    <HashLink
-                                                        to={`/viewProductDetailList/${this.props.match.params.productId}#productMedia`}
-                                                        className="FontType4"
-                                                    >
-                                                        Product Media
-                                                    </HashLink>
-                                                </StepLabel>
-                                                <StepContent>
-                                                    <LinearProgressWithLabel
-                                                        value={this.state.progressMedia}
                                                     />
                                                 </StepContent>
                                             </Step>

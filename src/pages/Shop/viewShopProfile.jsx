@@ -49,7 +49,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         CallCountry: () => dispatch(GitAction.CallCountry()),
-        CallUpdateProfileImage: (propsData) =>  dispatch(GitAction.CallUpdateProfileImage(propsData)),
+        CallUpdateProfileImage: (propsData) => dispatch(GitAction.CallUpdateProfileImage(propsData)),
         CallMerchants: (propData) => dispatch(GitAction.CallMerchants(propData)),
         CallUpdateShopDetail: (propData) => dispatch(GitAction.CallUpdateShopDetail(propData)),
         CallClearCurrentUser: () => dispatch(GitAction.CallClearCurrentUser()),
@@ -216,7 +216,7 @@ class EditShopProfile extends Component {
         formData.append("projectDomain", localStorage.getItem("projectDomain"));
         formData.append("upload[]", this.state.imageFile[0]);
         formData.append("imageName[]", imageName);
-  
+
         // formData.append("imageFile", this.state.imageFile[0]);
         // formData.append("imageName", imageName);
 
@@ -227,7 +227,7 @@ class EditShopProfile extends Component {
         };
 
         let imageURL = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/uploadImages.php"
-     
+
         axios
             .post(
                 // "https://" + localStorage.getItem("projectDomain") + "/emporiaimage/uploaduserprofilepicture.php",
@@ -326,15 +326,15 @@ class EditShopProfile extends Component {
 
     updateShop() {
         let data = this.props.merchant
-    
+
         this.props.CallUpdateShopDetail({
 
-            USERID: this.state.USERID === "" || this.state.USERID === undefined? data[0].UserID : this.state.USERID,
-            SHOPNAME: this.state.SHOPNAME === "" || this.state.SHOPNAME === undefined? data[0].ShopName : this.state.SHOPNAME,
-            SHOPDESC: this.state.SHOPDESC === "" || this.state.SHOPDESC === undefined? data[0].ShopDescription : this.state.SHOPDESC,
-            SHOPPOSCODE: this.state.SHOPPOSCODE === "" || this.state.SHOPPOSCODE === undefined? data[0].ShopPoscode : this.state.SHOPPOSCODE,
-            SHOPCITY: this.state.SHOPCITY === "" || this.state.SHOPCITY === undefined? data[0].ShopCity : this.state.SHOPCITY,
-            SHOPSTATE: this.state.SHOPSTATE === "" || this.state.SHOPSTATE === undefined? data[0].ShopState : this.state.SHOPSTATE,
+            USERID: this.state.USERID === "" || this.state.USERID === undefined ? data[0].UserID : this.state.USERID,
+            SHOPNAME: this.state.SHOPNAME === "" || this.state.SHOPNAME === undefined ? data[0].ShopName : this.state.SHOPNAME,
+            SHOPDESC: this.state.SHOPDESC === "" || this.state.SHOPDESC === undefined ? data[0].ShopDescription : this.state.SHOPDESC,
+            SHOPPOSCODE: this.state.SHOPPOSCODE === "" || this.state.SHOPPOSCODE === undefined ? data[0].ShopPoscode : this.state.SHOPPOSCODE,
+            SHOPCITY: this.state.SHOPCITY === "" || this.state.SHOPCITY === undefined ? data[0].ShopCity : this.state.SHOPCITY,
+            SHOPSTATE: this.state.SHOPSTATE === "" || this.state.SHOPSTATE === undefined ? data[0].ShopState : this.state.SHOPSTATE,
             SHOPCOUNTRYID: this.state.SHOPCOUNTRYID === "" || this.state.SHOPCOUNTRYID === undefined ? data[0].ShopCountryID : this.state.SHOPCOUNTRYID
         });
     }
@@ -355,7 +355,8 @@ class EditShopProfile extends Component {
         const merchantDetails = this.props.merchant.length > 0 &&
             this.props.merchant[0].ReturnVal === undefined && this.props.merchant[0];
 
-        const imgurl = "https://" + localStorage.getItem("projectDomain") + "/emporiaimage/userprofile/"
+        // const imgurl = "https://" + localStorage.getItem("projectDomain") + "/emporiaimage/userprofile/"
+        const imgurl = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/shopProfile/" + JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID + "/"
 
         const links = [
             // { title: "My Shop Page", url: "merchant/" + userid, data: "view >", icons: <StorefrontOutlinedIcon className="titleicon" /> },
@@ -434,7 +435,7 @@ class EditShopProfile extends Component {
                                             // className="profilePic"
                                             src={merchantDetails.ShopImage && merchantDetails.ShopImage.length ? imgurl + merchantDetails.ShopImage : Logo}
                                             alt="Profile"
-                                            width="200px"
+                                            width="100px"
                                             height="100px"
                                             onError={(e) => {
                                                 e.target.onerror = null;
@@ -690,7 +691,7 @@ class EditShopProfile extends Component {
                                                 </button>
                                             </div>
                                         ) : (
-                                            <div className="justify-content-center contactrowStyle"><div>Click on the box to add or edit the photo</div></div>
+                                            <div style={{ textAlign: "center", color: "grey" }}><div>Click on the box to add or edit the photo</div></div>
                                         )}
 
                                     </div>

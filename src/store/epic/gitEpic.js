@@ -977,7 +977,7 @@ export class GitEpic {
       }
     });
 
-  Product_CheckDuplicate = (action$) =>
+  Product_CheckDuplicateName = (action$) =>
     action$.ofType(GitAction.CheckProduct).switchMap(async ({ payload }) => {
       console.log(
         url + project + "/" +
@@ -1004,6 +1004,41 @@ export class GitEpic {
         alert('checkProduct: ' + error);
         return {
           type: GitAction.ProductChecked,
+          payload: [],
+        };
+      }
+    });
+
+
+  Product_CheckDuplicateSKU = (action$) =>
+    action$.ofType(GitAction.CheckProductSKU).switchMap(async ({ payload }) => {
+      console.log(
+        url + project + "/" +
+        "Product_CheckDuplicationBySKU?PRODUCTSKU=" + payload.ProductSKU +
+        "&USERID=" + payload.UserID +
+        "&PROJECTID=" + payload.ProjectID
+      )
+      try {
+        const resposne = await fetch(
+          url + project + "/" +
+          "Product_CheckDuplicationBySKU?PRODUCTSKU=" + payload.ProductSKU +
+          "&USERID=" + payload.UserID +
+          "&PROJECTID=" + payload.ProjectID
+        );
+        let json = await resposne.json();
+        if (json !== "fail") {
+          json = JSON.parse(json);
+        } else {
+          json = [];
+        }
+        return {
+          type: GitAction.ProductCheckedSKU,
+          payload: json,
+        };
+      } catch (error) {
+        alert('checkProductSKU: ' + error);
+        return {
+          type: GitAction.ProductCheckedSKU,
           payload: [],
         };
       }

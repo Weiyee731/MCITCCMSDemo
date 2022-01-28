@@ -51,7 +51,7 @@ class Pagination extends Component {
                 <li key={index} className={classes}>
                     <button type="button" className="page-link" onClick={() => this.setPage(page)}>
                         {page}
-                        {page === current && <span className="sr-only">(current)</span>}
+                        {page === current && <span className="sr-only"></span>}
                     </button>
                 </li>
             );

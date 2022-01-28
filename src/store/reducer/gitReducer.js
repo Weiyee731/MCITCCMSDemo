@@ -25,6 +25,7 @@ const INITIAL_STATE = {
   productMgmtResult: [],
   endorsedProduct: [],
   exists: [],
+  SKUexists: [],
   addProductVariationResult: [],
   variationResult: [],
   variations: [],
@@ -304,6 +305,14 @@ export function counterReducer(state = INITIAL_STATE, action) {
       return Object.assign({}, state, {
         loading: false,
         exists: action.payload,
+      });
+
+    case GitAction.CheckProductSKU:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.ProductCheckedSKU:
+      return Object.assign({}, state, {
+        loading: false,
+        SKUexists: action.payload,
       });
 
     case GitAction.GetProductDetail:

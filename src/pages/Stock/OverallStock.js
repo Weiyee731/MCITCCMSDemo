@@ -4,9 +4,9 @@ import { GitAction } from "../../store/action/gitAction";
 
 import { Link } from "react-router-dom";
 
-import { browserHistory } from "react-router";
+// import { browserHistory } from "react-router";
 import TableCell from '@mui/material/TableCell';
-import TableRow from '@mui/material/TableCell';
+// import TableRow from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
@@ -25,15 +25,15 @@ import "./OverallStock.css";
 
 // UI Components
 import Select from 'react-select';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
 import GroupAddIcon from '@mui/icons-material/Add';
 import Badge from '@mui/material/Badge';
 import { toast } from "react-toastify";
 import TextField from '@mui/material/TextField';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
+import PageviewIcon from '@mui/icons-material/Pageview';
 import FormHelperText from '@mui/material/FormHelperText';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button } from "@mui/material";
 import InputAdornment from '@mui/material/InputAdornment';
@@ -230,7 +230,7 @@ class Stock extends Component {
                     padding="normal"
                     style={{ width: "55%" }}
                 >
-                    {data.ProductName} - ({data.ProductVariation})
+                    {data.ProductName} - ({data.ProductVariation} : {data.ProductVariationValue})
                 </TableCell>
                 <TableCell align="center" style={{ width: "15%" }}>{data.ProductStockAmount}</TableCell>
                 <TableCell align="center" style={{ width: "15%" }}>{data.FirstDate}</TableCell>
@@ -255,12 +255,12 @@ class Stock extends Component {
                         </div>
                     }
                     {
-                        data.ProductVariationStockDetail !== undefined && JSON.parse(data.ProductVariationStockDetail).map((details, index) => {
+                        data.ProductVariationStockDetail !== undefined && data.ProductVariationStockDetail !== null && JSON.parse(data.ProductVariationStockDetail).map((details, index) => {
                             return (
                                 <>
                                     {
                                         <Link className="nav-link" to={{ pathname: url.stockDetails(data.ProductVariationDetailID) }}>
-                                            <div className="row flex-1" style={{ backgroundColor: index % 2 === 1 ? "#f5f5f5" : "#fffff", padding: "15px" }}>
+                                            <div className="row flex-1" style={{ backgroundColor: index % 2 === 1 ? "#f5f5f5" : "#fffff", paddingTop: index % 2 === 1 ? "10px" : "5px", paddingBottom: index % 2 === 1 ? "10px" : "0px" }}>
                                                 <div className="col-12 col-md-3">
                                                     <label>{details.Column1}</label>
                                                 </div>
@@ -811,11 +811,19 @@ class Stock extends Component {
                         </div>
                     </div>
 
-                    <h1>Stock List</h1>
                     <div className="w-100 container-fluid">
                         <TableComponents
+                            tableTopLeft={
+                                <h3 style={{ fontWeight: 600 }}>Stock List</h3>}
                             tableTopRight={
                                 <div className="d-flex">
+                                    <Tooltip title="View All Product Stocks">
+                                        <IconButton size="medium" sx={{ color: "#0074ea", marginRight: 1 }}>
+                                            <Link className="nav-link" to={{ pathname: url.stockDetails(0) }}>
+                                                <PageviewIcon />
+                                            </Link>
+                                        </IconButton>
+                                    </Tooltip>
                                     <Tooltip title="Add Stock">
                                         <IconButton size="small" sx={{ color: "#0074ea", marginRight: 1 }}>
                                             <Link className="nav-link" to={"/addStock"}>
@@ -868,13 +876,13 @@ class Stock extends Component {
                 <AlertDialog
                     open={this.DraftListing[0].isDraftListingShown}
                     fullWidth={true}
-                    maxWidth="xl"
+                    maxWidth="md"
                     handleToggleDialog={() => <>{this.DraftListing[0].isDraftListingShown = false}
                         {this.setState({ isSet: false })}
                     </>}
                 >
                     <TableComponents
-                        tableTopLeft={<h3>Unsaved Stock Listing</h3>}
+                        tableTopLeft={<h4>Unsaved Stock Listing</h4>}
                         tableOptions={{
                             dense: true,
                             tableOrderBy: 'asc',

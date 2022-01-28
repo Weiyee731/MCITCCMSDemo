@@ -44,12 +44,14 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from '@mui/material/FormControl';
+import { touchRippleClasses } from "@mui/material";
 
 
 function mapStateToProps(state) {
   return {
     suppliers: state.counterReducer["supplier"],
     exist: state.counterReducer["exists"],
+    SKUexists: state.counterReducer["SKUexists"],
     result: state.counterReducer["addResult"],
     productMediaResult: state.counterReducer["productMediaResult"],
     variations: state.counterReducer["variations"],
@@ -86,7 +88,6 @@ function mapDispatchToProps(dispatch) {
     CallAllProductCategoryListing: (prodData) => dispatch(GitAction.CallAllProductCategoryListing(prodData)),
     CallAllProductsCategories: (prodData) => dispatch(GitAction.CallAllProductCategory(prodData)),
 
-
     callAddProduct: (prodData) => dispatch(GitAction.CallAddProduct(prodData)),
     callAllSupplierByUserStatus: (suppData) => dispatch(GitAction.CallAllSupplierByUserStatus(suppData)),
     callCheckProduct: (prodData) => dispatch(GitAction.CallCheckProduct(prodData)),
@@ -98,7 +99,9 @@ function mapDispatchToProps(dispatch) {
     CallResetProductVariationDetailResult: () => dispatch(GitAction.CallResetProductVariationDetailResult()),
     CallAddProductSpecsDetail: (prodData) => dispatch(GitAction.CallAddProductSpecsDetail(prodData)),
     CallResetProductSpecsDetailResults: () => dispatch(GitAction.CallResetProductSpecsDetailResults()),
-    CallProductDetail: (prodData) => dispatch(GitAction.CallProductDetail(prodData))
+    CallProductDetail: (prodData) => dispatch(GitAction.CallProductDetail(prodData)),
+
+    CallCheckProductSKU: (prodData) => dispatch(GitAction.CallCheckProductSKU(prodData))
   };
 }
 
@@ -512,6 +515,7 @@ class AddProductComponent extends Component {
     this.shippingInfo = React.createRef();
     this.OnSubmit = this.OnSubmit.bind(this)
     this.state = INITIAL_STATE
+    this.ExistanceSKU = []
   }
 
   setHint = (data, e) => {
@@ -2077,7 +2081,6 @@ class AddProductComponent extends Component {
 
       for (let i = 0; i < uploadingMedia.length; i++) {
         let fileExt = getFileExtension(uploadingMedia[i])
-        // console.log("resize", this.resizeFile(uploadingMedia[i], fileExt))
         let filename = productID + "_" + i + "_" + convertDateTimeToString(new Date())
         let image = uploadingMedia[i]
 
@@ -2321,6 +2324,7 @@ class AddProductComponent extends Component {
         200
       );
     } else if (data === "SKU") {
+
       this.setState({
         sku: e.target.value,
       });
@@ -2499,36 +2503,47 @@ class AddProductComponent extends Component {
         }.bind(this),
         500
       );
-    } else if (data === "variation1Stock") {
-      const optionData = {
-        optionName: this.state.variation1.options[index].optionName,
-        price: this.state.variation1.options[index].price,
-        stock: e.target.value,
-        sku: this.state.variation1.options[index].sku,
-        picture: this.state.variation1.options[index].picture,
-        pictureURL: this.state.variation1.options[index].pictureURL,
-        errorOption: this.state.variation1.options[index].errorOption,
-        errorPrice: this.state.variation1.options[index].errorPrice,
-        errorSKU: this.state.variation1.options[index].errorSKU,
-        errorStock: e.target.value == "" || e.target.value < 0,
-        variation2Options: this.state.variation1.options[index]
-          .variation2Options,
-      };
+    }
+    // else if (data === "variation1Stock") {
+    //   const optionData = {
+    //     optionName: this.state.variation1.options[index].optionName,
+    //     price: this.state.variation1.options[index].price,
+    //     stock: e.target.value,
+    //     sku: this.state.variation1.options[index].sku,
+    //     picture: this.state.variation1.options[index].picture,
+    //     pictureURL: this.state.variation1.options[index].pictureURL,
+    //     errorOption: this.state.variation1.options[index].errorOption,
+    //     errorPrice: this.state.variation1.options[index].errorPrice,
+    //     errorSKU: this.state.variation1.options[index].errorSKU,
+    //     errorStock: e.target.value == "" || e.target.value < 0,
+    //     variation2Options: this.state.variation1.options[index]
+    //       .variation2Options,
+    //   };
 
-      var variations = this.state.variation1;
+    //   var variations = this.state.variation1;
 
-      variations.options[index] = optionData;
+    //   variations.options[index] = optionData;
 
-      this.setState({
-        variation1: variations,
-      });
-      setTimeout(
-        function () {
-          this.checkProgress();
-        }.bind(this),
-        500
-      );
-    } else if (data === "variation1SKU") {
+    //   this.setState({
+    //     variation1: variations,
+    //   });
+    //   setTimeout(
+    //     function () {
+    //       this.checkProgress();
+    //     }.bind(this),
+    //     500
+    //   );
+    // } 
+    else if (data === "variation1SKU") {
+
+      if (e.target.value.length > 0) {
+        this.props.CallCheckProductSKU({
+          ProductSKU: e.target.value,
+          UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+          ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+        })
+      }
+
       const optionData = {
         optionName: this.state.variation1.options[index].optionName,
         price: this.state.variation1.options[index].price,
@@ -2540,8 +2555,7 @@ class AddProductComponent extends Component {
         errorPrice: this.state.variation1.options[index].errorPrice,
         errorSKU: e.target.value == "" || e.target.value.length < 8,
         errorStock: this.state.variation1.options[index].errorStock,
-        variation2Options: this.state.variation1.options[index]
-          .variation2Options,
+        variation2Options: this.state.variation1.options[index].variation2Options,
       };
 
       var variations = this.state.variation1;
@@ -2680,36 +2694,39 @@ class AddProductComponent extends Component {
       this.setState({
         variation1: variations,
       });
-    } else if (data === "variation2Stock") {
-      const optionData = {
-        optionName: this.state.variation1.options[index].variation2Options
-          .options[indexVariant2].optionName,
-        price: this.state.variation1.options[index].variation2Options.options[
-          indexVariant2
-        ].price,
-        stock: e.target.value,
-        sku: this.state.variation1.options[index].variation2Options.options[
-          indexVariant2
-        ].sku,
-        errorOption: this.state.variation1.options[index].variation2Options
-          .options[indexVariant2].errorOption,
-        errorPrice: this.state.variation1.options[index].variation2Options
-          .options[indexVariant2].errorPrice,
-        errorStock: e.target.value == "" || e.target.value < 0,
-        errorSKU: this.state.variation1.options[index].variation2Options
-          .options[indexVariant2].errorSKU,
-      };
+    }
+    //  else if (data === "variation2Stock") {
+    //   const optionData = {
+    //     optionName: this.state.variation1.options[index].variation2Options
+    //       .options[indexVariant2].optionName,
+    //     price: this.state.variation1.options[index].variation2Options.options[
+    //       indexVariant2
+    //     ].price,
+    //     stock: e.target.value,
+    //     sku: this.state.variation1.options[index].variation2Options.options[
+    //       indexVariant2
+    //     ].sku,
+    //     errorOption: this.state.variation1.options[index].variation2Options
+    //       .options[indexVariant2].errorOption,
+    //     errorPrice: this.state.variation1.options[index].variation2Options
+    //       .options[indexVariant2].errorPrice,
+    //     errorStock: e.target.value == "" || e.target.value < 0,
+    //     errorSKU: this.state.variation1.options[index].variation2Options
+    //       .options[indexVariant2].errorSKU,
+    //   };
 
-      var variations = this.state.variation1;
+    //   var variations = this.state.variation1;
 
-      variations.options[index].variation2Options.options[
-        indexVariant2
-      ] = optionData;
+    //   variations.options[index].variation2Options.options[
+    //     indexVariant2
+    //   ] = optionData;
 
-      this.setState({
-        variation1: variations,
-      });
-    } else if (data === "variation2SKU") {
+    //   this.setState({
+    //     variation1: variations,
+    //   });
+    // } 
+    else if (data === "variation2SKU") {
+
       const optionData = {
         optionName: this.state.variation1.options[index].variation2Options
           .options[indexVariant2].optionName,
@@ -2738,6 +2755,8 @@ class AddProductComponent extends Component {
       this.setState({
         variation1: variations,
       });
+
+
     }
     setTimeout(
       function () {
@@ -3266,56 +3285,68 @@ class AddProductComponent extends Component {
 
 
   OnSubmit = () => {
-    // this.checkEverything();
-    this.uploadFile(3)
 
     if (this.checkGeneral() === 1) {
       toast.error("Input Error: Please fill in all required information")
     }
     else {
 
-      if (this.state.variation1.options.length > 0) {
-        let priceEmpty = 0
-        let skuEmpty = 0
-        let skuLength = 0
-        priceEmpty = this.state.variation1.options.filter((options) => options.price === "").length
-        skuLength = this.state.variation1.options.filter((options) => options.sku.length < 8).length
-        skuEmpty = this.state.variation1.options.filter((options) => options.sku === "").length
+      let listing = this.state.variation1.options
+      let exist = false
+      listing.length > 0 && listing.map((x) => {
+        this.ExistanceSKU.length > 0 && this.ExistanceSKU.map((data) => {
+          if (data.ProductSKU === x.sku)
+            exist = true
+        })
+      })
+      listing = listing.length > 0 ? listing.filter((ele, ind) => ind === listing.findIndex(elem => elem.sku === ele.sku)) : []
+      if (listing.length !== this.state.variation1.options.length || exist === true)
+        toast.warning("Input Error: Product SKU need to be unique")
+      else {
+        if (this.state.variation1.options.length > 0) {
+          let priceEmpty = 0
+          let skuEmpty = 0
+          let skuLength = 0
+          priceEmpty = this.state.variation1.options.filter((options) => options.price === "").length
+          skuLength = this.state.variation1.options.filter((options) => options.sku.length < 8).length
+          skuEmpty = this.state.variation1.options.filter((options) => options.sku === "").length
 
-        if (skuLength > 0 || priceEmpty > 0 || skuEmpty > 0) {
-          toast.error("Input Error: Please fill in all variation with requirement")
-        }
-        else {
-          //   // this.onSubmitProductVariation(1)
-          if (this.state.name === "" || this.state.description === "" || this.state.productCategory === "" || this.state.productSupplier === "" || this.state.height === ""
-            || this.state.width === "" || this.state.depth === "" || this.state.weight === ""
-            || this.state.brand === "" || this.state.model === "" || this.state.tags === "")
-            toast.error("Please fill in all required information")
+          if (skuLength > 0 || priceEmpty > 0 || skuEmpty > 0 || this.state.selectedVariationID === 0) {
+            toast.error("Input Error: Please fill in all variation with requirement")
+          }
           else {
-            let object = {
-              name: this.state.name,
-              description: this.state.description,
-              productCategory: this.state.productCategory,
-              productSupplier: this.state.productSupplier,
-              height: this.state.height,
-              width: this.state.width,
-              depth: this.state.depth,
-              weight: this.state.weight,
-              sku: "-",
-              brand: this.state.brand,
-              model: this.state.model,
-              tags: this.state.tags,
-              ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
-              UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+            if (this.state.name === "" || this.state.description === "" || this.state.productCategory === "" || this.state.productSupplier === "" || this.state.height === ""
+              || this.state.width === "" || this.state.depth === "" || this.state.weight === ""
+              || this.state.brand === "" || this.state.model === "" || this.state.tags === "")
+              toast.error("Please fill in all required information")
+            else {
+              let object = {
+                name: this.state.name,
+                description: this.state.description,
+                productCategory: this.state.productCategory,
+                productSupplier: this.state.productSupplier,
+                height: this.state.height,
+                width: this.state.width,
+                depth: this.state.depth,
+                weight: this.state.weight,
+                sku: "-",
+                brand: this.state.brand,
+                model: this.state.model,
+                tags: this.state.tags,
+                ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+                UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+              }
+              this.props.callAddProduct(object)
+              this.setState({ isSubmit: true })
             }
-            this.props.callAddProduct(object)
-            this.setState({ isSubmit: true })
           }
         }
+        else {
+          toast.error("Input Error: Please fill in all required information")
+        }
       }
-      else {
-        toast.error("Input Error: Please fill in all required information")
-      }
+
+
     }
   }
 
@@ -3417,10 +3448,10 @@ class AddProductComponent extends Component {
         if (this.state.isSubmit === true) {
           toast.success("Product is successfully submitted to Admin for endorsement. Estimated 3 - 5 days for admin to revise your added product.")
           this.setState({ isSubmit: false })
-          // setTimeout(() => {
-          //   window.location.href = "/viewProduct"
-          //   window.location.reload(false);
-          // }, 3000);
+          setTimeout(() => {
+            window.location.href = "/viewProduct"
+            window.location.reload(false);
+          }, 3000);
         }
       }
     }
@@ -3580,6 +3611,22 @@ class AddProductComponent extends Component {
           return <p className="error">Product name already exists.</p>;
         }
       });
+    }
+
+    let existSKU = this.props.SKUexists
+      ? Object.keys(this.props.SKUexists).map((key) => {
+        return this.props.SKUexists[key];
+      })
+      : {};
+    if (existSKU.length > 0) {
+      let listing = this.ExistanceSKU
+      existSKU.map((data) => {
+
+        if (data.ExistanceInd === 1) {
+          listing.push(data)
+          this.ExistanceSKU = listing.length > 0 ? listing.filter((ele, ind) => ind === listing.findIndex(elem => elem.ProductSKU === ele.ProductSKU)) : []
+        }
+      })
     }
 
     const { index } = this.state;
@@ -3952,7 +3999,8 @@ class AddProductComponent extends Component {
                 {this.state.productNameEmpty && (
                   <p className="error">Product name cannot be empty.</p>
                 )}
-                {/* {this.state.name && checkDuplicate} */}
+
+                {this.state.name && checkDuplicate}
 
                 {this.state.productCategoryEmpty && (
                   <p className="error">Product category cannot be empty.</p>
@@ -4759,29 +4807,6 @@ class AddProductComponent extends Component {
                     <div className="VariantMain">
                       <div className="ItemContainer">
                         <div className="VariantContainer">
-
-                          {/* <InputGroup className="ItemContainer">
-                            <InputGroupAddon type="prepend">
-                              <InputGroupText className="groupText">
-                                RM
-                              </InputGroupText>
-                            </InputGroupAddon>
-                            <FormInput
-                              onChange={this.handleChange.bind(this, "Price")}
-                              value={this.state.price}
-                              // invalid={this.state.priceEmpty}
-                              placeholder="Price"
-                              type="number"
-                              step=".10"
-                              onFocus={this.setHint.bind(this, "VariationPrice")}
-                              onBlur={() =>
-                                this.setState({
-                                  FocusOn: false,
-                                })
-                              }
-                            />
-                          </InputGroup> */}
-
                           <TextField type="number" size="small"
                             inputProps={{ min: "0", step: "0.10" }}
                             onFocus={this.setHint.bind(this, "VariationPrice")}
@@ -4799,28 +4824,6 @@ class AddProductComponent extends Component {
                             }} required />
                         </div>
                       </div>
-                      {/* <div className="StockField">
-                        <TextField
-                          // id="standard-start-adornment"
-                          label="Stock"
-                          size="small"
-                          variant="outlined"
-                          className="InputField2"
-                          InputLabelProps={{
-                            shrink: "true",
-                          }}
-                          type="number"
-                          onChange={this.handleChange.bind(this, "stock")}
-                          // error={this.state.stockEmpty}
-                          onFocus={this.setHint.bind(this, "VariationStock")}
-                          onBlur={() =>
-                            this.setState({
-                              FocusOn: false,
-                            })
-                          }
-                          value={this.state.stock}
-                        />
-                      </div> */}
                       <div className="StockField">
                         <TextField
                           id="standard-start-adornment"
@@ -4859,7 +4862,6 @@ class AddProductComponent extends Component {
                           {this.state.variation1Name ? this.state.variation1Name : "Variation 1 Name"}
                         </td>
                         <td className="tdHeading"> Price </td>
-                        {/* <td className="tdHeading"> Stock </td> */}
                         <td className="tdHeading">SKU</td>
                       </tr>
 
@@ -4886,45 +4888,6 @@ class AddProductComponent extends Component {
                                       </td>
                                       <td className="tdNestedNew">
                                         <div className="StepContainer">
-                                          {/* <InputGroup className="TextFieldsTables">
-                                            <InputGroupAddon type="prepend">
-                                              <InputGroupText className="groupText">
-                                                RM
-                                              </InputGroupText>
-                                            </InputGroupAddon>
-
-                                            <FormInput
-                                              type="number"
-                                              step=".10"
-                                              key={"price " + i}
-                                              onChange={this.handleChangeOptionsVariant2.bind(
-                                                this,
-                                                "variation2Price",
-                                                x,
-                                                i
-                                              )}
-                                              onFocus={this.setHint.bind(
-                                                this,
-                                                "VariationPrice"
-                                              )}
-                                              onBlur={() =>
-                                                this.setState({
-                                                  FocusOn: false,
-                                                })
-                                              }
-                                              value={
-                                                this.state.variation1.options[x]
-                                                  .variation2Options.options[i]
-                                                  .price
-                                              }
-                                              invalid={
-                                                this.state.variation1.options[x]
-                                                  .variation2Options.options[i]
-                                                  .errorPrice
-                                              }
-                                            />
-                                          </InputGroup> */}
-
                                           <TextField type="number" size="small"
                                             inputProps={{ min: "0", step: "0.10" }}
                                             key={"price " + i}
@@ -4971,7 +4934,7 @@ class AddProductComponent extends Component {
                                           ) : null}
                                         </div>
                                       </td>
-                                      {/* <td className="tdNestedNew">
+                                      <td className="tdNestedNew">
                                         <div className="StepContainer">
                                           <TextField
                                             id="productStock1"
@@ -5007,7 +4970,6 @@ class AddProductComponent extends Component {
                                             }}
                                             variant="outlined"
                                             className="InputField2"
-                                          // error={this.state.stock || this.state.skuNotLongEnough}
                                           />
                                           {this.state.variation1.options[x]
                                             .variation2Options.options[i]
@@ -5021,7 +4983,7 @@ class AddProductComponent extends Component {
                                             </Tooltip>
                                           ) : null}
                                         </div>
-                                      </td> */}
+                                      </td>
 
                                       <td className="tdNestedNew">
                                         <div className="StepContainer">
@@ -5236,6 +5198,12 @@ class AddProductComponent extends Component {
                                   </Tooltip>
                                 ) : null}
                               </div>
+                              {
+                                this.ExistanceSKU.length > 0 && this.state.variation1.options[x].sku !== "" && this.ExistanceSKU.filter((data) =>
+                                  data.ProductSKU === this.state.variation1.options[x].sku
+                                ).length > 0 &&
+                                <p className="error">SKU already exists</p>
+                              }
                             </td>
                           </tr>
                         )
@@ -5494,6 +5462,22 @@ class AddProductComponent extends Component {
                         />
                       </StepContent>
                     </Step>
+
+                    <Step key="productMedia">
+                      <StepLabel>
+                        <HashLink
+                          to="/addProductsAllIn#productMedia"
+                          className="FontType4"
+                        >
+                          Product Media
+                        </HashLink>
+                      </StepLabel>
+                      <StepContent>
+                        <LinearProgressWithLabel
+                          value={this.state.progressMedia}
+                        />
+                      </StepContent>
+                    </Step>
                     <Step key="descriptionCard">
                       <StepLabel>
                         <HashLink
@@ -5536,21 +5520,6 @@ class AddProductComponent extends Component {
                       <StepContent>
                         <LinearProgressWithLabel
                           value={this.state.progressVariation}
-                        />
-                      </StepContent>
-                    </Step>
-                    <Step key="productMedia">
-                      <StepLabel>
-                        <HashLink
-                          to="/addProductsAllIn#productMedia"
-                          className="FontType4"
-                        >
-                          Product Media
-                        </HashLink>
-                      </StepLabel>
-                      <StepContent>
-                        <LinearProgressWithLabel
-                          value={this.state.progressMedia}
                         />
                       </StepContent>
                     </Step>

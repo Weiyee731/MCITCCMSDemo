@@ -12,6 +12,7 @@ import AlertDialog from "../../components/ModalComponent/ModalComponent";
 import Logo from "../../assets/logos/logo.png";
 import { ArrowRoundedLeft8x13Svg } from '../../assets/svg';
 import "./OverallStock.css";
+import { url } from "../../tools/Helpers";
 
 // UI Components
 import { Button } from "@mui/material";
@@ -182,8 +183,11 @@ class StockDetail extends Component {
 
     onTableRowClick = (event, row) => {
         let filteredProduct = []
+        console.log("row", row)
+
         filteredProduct = this.props.variationStock !== null && this.props.variationStock.length > 0 &&
-            this.props.variationStock.filter((x) => parseInt(x.ProductVariationDetailID) === parseInt(this.props.match.params.ProductVariationDetailID))
+            this.props.variationStock.filter((x) => parseInt(x.ProductVariationDetailID) === parseInt(row.ProductVariationDetailID))
+        // parseInt(this.props.match.params.ProductVariationDetailID))
 
         this.setState({
             GridStorage: [{
@@ -201,10 +205,10 @@ class StockDetail extends Component {
             ProductVariationSKU: row.ProductVariationSKU,
 
             filteredData: filteredProduct,
-
             isOpenStockModal: true,
         })
     }
+
     // Remove selected state listing and localStorage listing data
     onDelete = () => {
 
@@ -357,6 +361,7 @@ class StockDetail extends Component {
                         </div>
                     </div>
                     <hr />
+                    {console.log("this.state11", this.state)}
                     <div className="row" style={{ paddingTop: "5px", paddingBottom: "5px" }}>
                         <div className="col-12 col-md-6">
                             <div className="row">
@@ -414,13 +419,14 @@ class StockDetail extends Component {
             window.location.reload(false)
         }
 
+        console.log("this.props", this.props)
         return (
             <div className="container-fluid my-2" >
                 <div className="row">
                     <div className="d-flex px-3">
                         <Button style={{ paddingLeft: "10px", paddingRight: "10px", textDecoration: "none", color: "black" }} onClick={() => goBack()}>
                             <ArrowRoundedLeft8x13Svg fontSize="inherit" style={{ margin: "10px" }} />
-                            Back
+                            Stock List
                         </Button>
                     </div>
 
@@ -440,10 +446,15 @@ class StockDetail extends Component {
                             }
 
                             tableTopLeft={
-                                this.props.match.params.ProductVariationDetailID === 0 ? <h4>All Product</h4> :
+                                parseInt(this.props.match.params.ProductVariationDetailID) === 0 ? <h4>All Product List</h4> :
                                     this.props.variationStock !== null && this.props.variationStock.length > 0 ?
                                         this.props.variationStock.filter((x) => parseInt(x.ProductVariationDetailID) === parseInt(this.props.match.params.ProductVariationDetailID)).map((data) => {
-                                            return (<h4>{data.ProductName}</h4>)
+                                            return (
+                                                <div className="d-flex">
+                                                    <h4 onClick={() => window.location = url.inventoryProduct(data.ProductID)}>{data.ProductName}</h4>
+                                                    <label onClick={() => window.location = url.inventoryProduct(data.ProductID)} style={{ color: "blue", paddingTop: "9px", paddingLeft: "10px", fontSize: "10px" }}>Click to view Product Info</label>
+                                                </div>
+                                            )
                                         }) : ""
                             }
                             tableOptions={{
@@ -454,7 +465,7 @@ class StockDetail extends Component {
                                 stickyTableHeight: 300,
                                 elevation: 1
                             }}
-                            paginationOptions={[5, 100, 250, { label: 'All', value: -1 }]}
+                            paginationOptions={[10, 20, 30, { label: 'All', value: -1 }]}
                             tableHeaders={headCells}
                             tableRows={{
                                 renderTableRows: this.renderTableRows,
@@ -479,7 +490,7 @@ class StockDetail extends Component {
                         fullWidth
                         maxWidth="md"
                         handleToggleDialog={() => <>{this.setState(INITIAL_STATE)}{this.setState({ isOpenStockModal: false })}</>}
-                        title="New Stock"
+                        title="Stock Details"
                         showAction={false}
                     >
                         <div className="container-fluid">

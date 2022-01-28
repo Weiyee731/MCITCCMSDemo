@@ -142,6 +142,22 @@ const routes = [
         exact: true,
         element: <ViewProductComponent />,
     },
+
+    {
+        path: "/viewProduct/:category/:categoryId/",
+        exact: true,
+        element: (props) => (
+            <>
+                <ViewProductComponent
+                    {...props}
+                    layout="standard"
+                    categoryId={props.match.params.categoryId}
+                    category={props.match.params.category}
+                />
+                {console.log("xxxprops", props)}
+            </>
+        ),
+    },
     {
         path: "/viewProductEndorsement",
         exact: true,

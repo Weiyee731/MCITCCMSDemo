@@ -316,6 +316,15 @@ export class GitAction {
     };
   }
 
+  static CheckProductSKU = "CHECK-PRODUCTSKU";
+  static ProductCheckedSKU = "CHECKED-PRODUCTSKU";
+  static CallCheckProductSKU(prodData) {
+    return {
+      type: GitAction.CheckProductSKU,
+      payload: prodData,
+    };
+  }
+
   static GetProductDetail = "GET-PRODUCT-DETAIL";
   static GotProductDetail = "GOT-PRODUCT-DETAIL";
   static CallProductDetail(propData) {

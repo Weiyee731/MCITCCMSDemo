@@ -5,30 +5,35 @@ import PropTypes from "prop-types";
 import clsx from "clsx";
 
 // UI Components
-import { lighten, makeStyles } from "@material-ui/core/styles";
-import TableContainer from "@material-ui/core/TableContainer";
-import TablePagination from "@material-ui/core/TablePagination";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
-import Checkbox from "@material-ui/core/Checkbox";
-import IconButton from "@material-ui/core/IconButton";
-import Box from "@material-ui/core/Box";
-import FormControl from "@material-ui/core/FormControl";
-import Collapse from "@material-ui/core/Collapse";
+// import {  makeStyles } from '@mui/styles';
+import TableContainer from "@mui/material/TableContainer";
+import TablePagination from "@mui/material/TablePagination";
+import TableSortLabel from "@mui/material/TableSortLabel";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
+import Checkbox from "@mui/material/Checkbox";
+import IconButton from "@mui/material/IconButton";
+import Collapse from "@mui/material/Collapse";
 
 import { toast } from "react-toastify";
 import {
-    Select,
+    // Select,
     Table,
     TableBody,
     TableCell,
     TableHead,
     TableRow,
     TextField,
-} from "@material-ui/core";
-import Button from "@material-ui/core/Button";
+} from "@mui/material";
+import Button from "@mui/material/Button";
+
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+
 
 // Share Components
 import "./viewTransaction.component.css";
@@ -94,46 +99,46 @@ function stableSort(array, comparator) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        width: "100%",
-    },
-    paper: {
-        width: "100%",
-        margin: "auto",
-        padding: "1%",
-        // paddingRight: "1%",
-        marginTop: "15px",
-    },
-    table: {
-        // margin: "20px",
-        minWidth: 750,
-    },
-    visuallyHidden: {
-        border: 0,
-        clip: "rect(0 0 0 0)",
-        height: 1,
-        margin: -1,
-        overflow: "hidden",
-        padding: 0,
-        position: "absolute",
-        top: 20,
-        width: 1,
-    },
-    highlight:
-        theme.palette.type === "light"
-            ? {
-                color: theme.palette.secondary.main,
-                backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-            }
-            : {
-                color: theme.palette.text.primary,
-                backgroundColor: theme.palette.secondary.dark,
-            },
-    title: {
-        flex: "1 1 100%",
-    },
-}));
+// const useStyles = makeStyles((theme) => ({
+//     root: {
+//         width: "100%",
+//     },
+//     paper: {
+//         width: "100%",
+//         margin: "auto",
+//         padding: "1%",
+//         // paddingRight: "1%",
+//         marginTop: "15px",
+//     },
+//     table: {
+//         // margin: "20px",
+//         minWidth: 750,
+//     },
+//     visuallyHidden: {
+//         border: 0,
+//         clip: "rect(0 0 0 0)",
+//         height: 1,
+//         margin: -1,
+//         overflow: "hidden",
+//         padding: 0,
+//         position: "absolute",
+//         top: 20,
+//         width: 1,
+//     },
+//     highlight:
+//         theme.palette.type === "light"
+//             ? {
+//                 color: theme.palette.secondary.main,
+//                 // backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+//             }
+//             : {
+//                 color: theme.palette.text.primary,
+//                 backgroundColor: theme.palette.secondary.dark,
+//             },
+//     title: {
+//         flex: "1 1 100%",
+//     },
+// }));
 
 const headCells = [
     {
@@ -186,7 +191,7 @@ function DisplayTableHead(props) {
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
     };
-    const classes = useStyles();
+    // const classes = useStyles();
     return (
         <TableHead>
             <TableRow>
@@ -204,7 +209,7 @@ function DisplayTableHead(props) {
                         >
                             {headCell.label}
                             {orderBy === headCell.id ? (
-                                <span className={classes.visuallyHidden}>
+                                <span >
                                     {order === "desc" ? "sorted descending" : "sorted ascending"}
                                 </span>
                             ) : null}
@@ -227,30 +232,30 @@ DisplayTableHead.propTypes = {
 };
 
 const DisplayTableToolbar = (props) => {
-    const classes = useStyles();
+    // const classes = useStyles();
     const { numSelected } = props;
 
-    return <Toolbar className={clsx(classes.root)}></Toolbar>;
+    return <Toolbar ></Toolbar>;
 };
 
 DisplayTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
 };
 
-const useRowStyles = makeStyles({
-    root: {
-        "& > *": {
-            borderBottom: "unset",
-        },
-    },
-});
+// const useRowStyles = makeStyles({
+//     root: {
+//         "& > *": {
+//             borderBottom: "unset",
+//         },
+//     },
+// });
 
 
 function Row(props) {
     const { row, setData, index, logistic, prop, address, country } = props;
     const [open, setOpen] = React.useState(false);
     const [openId, setOpenId] = React.useState(false);
-    const classes = useRowStyles();
+    // const classes = useRowStyles();
     const [selectedProductDetailsID, setSelectedProductDetailsID] = React.useState([]);
     const [selectedRowID, setSelectedRowID] = React.useState([]);
     const [selectedProductIndex, setSelectedProductIndex] = React.useState([]);
@@ -314,6 +319,8 @@ function Row(props) {
 
             <TableBody>
                 <TableRow>
+                    
+                {console.log("products", product)}
                     <TableCell style={{ width: "10%" }}>
                         <Checkbox
                             checked={
@@ -327,7 +334,7 @@ function Row(props) {
                     <TableCell style={{ width: "10%" }}>
                         <img
                             height={60}
-                            src={product.ProductImage !== null ? JSON.parse(product.ProductImages)[0] : Logo}
+                            src={product.ProductImages !== null ? JSON.parse(product.ProductImages)[0] : Logo}
                             onError={(e) => { e.target.onerror = null; e.target.src = Logo }}
                             alt={product.ProductName}
                         />
@@ -356,7 +363,7 @@ function Row(props) {
                     <div className="col-3" style={{ width: "20%" }}>
                         <img
                             height={60}
-                            src={product.ProductImage !== null ? JSON.parse(product.ProductImages)[0] : Logo}
+                            src={product.ProductImages !== null ? JSON.parse(product.ProductImages)[0] : Logo}
                             onError={(e) => { e.target.onerror = null; e.target.src = Logo }}
                             alt={product.ProductName}
                         />
@@ -370,6 +377,7 @@ function Row(props) {
                         <div style={{ fontSize: "13px", fontWeight: "bold" }}>  Total Paid : {(product.ProductQuantity * product.ProductVariationPrice).toFixed(2)}  / Qty ({product.ProductQuantity})</div>
                     </div>
                 </div>
+                {console.log("product", product)}
             </div>
         )
     }
@@ -387,19 +395,18 @@ function Row(props) {
                                         <>
                                             <FormControl variant="outlined" size="small" style={{ width: "100%", paddingBottom: "10px", paddingTop: "10px" }}>
                                                 <Select
-                                                    native
-                                                    id="Logistic"
+                                                    id="Logistic" label=""
                                                     value={Data.existingLogisticID}
                                                     onChange={(x) => handleInputChange(x.target.value, "LogisticID", product)}
                                                     className="select"
                                                 >
                                                     {logistic.map((courier) => (
-                                                        <option
+                                                        <MenuItem
                                                             value={courier.LogisticID}
                                                             key={courier.LogisticID}
                                                         >
                                                             {courier.LogisticName}
-                                                        </option>
+                                                        </MenuItem>
                                                     ))}
                                                 </Select>
                                             </FormControl>
@@ -589,27 +596,26 @@ function Row(props) {
                     <div className="col-3" style={{ paddingTop: "10px" }}>
                         <FormControl variant="outlined" size="small" style={{ width: "100%" }}>
                             <Select
-                                native
-                                id="Logistic"
+                                id="Logistic" label=""
                                 defaultValue={1}
                                 value={logisticID}
                                 onChange={(x) => setLogisticID(x.target.value)}
                                 className="select"
                             >
                                 {logistic.map((courier) => (
-                                    <option
+                                    <MenuItem
                                         value={courier.LogisticID}
                                         key={courier.LogisticID}
                                     >
                                         {courier.LogisticName}
-                                    </option>
+                                    </MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
                     </div>
                     <div className="col-3" style={{ paddingTop: "10px" }}>
                         <TextField
-                            id="outlined-size-small" size="small"
+                            id="outlined-size-small" size="small" label=""
                             width="100%"
                             className="font"
                             variant="outlined"
@@ -638,6 +644,7 @@ function Row(props) {
     // Check whether the selected user details is in the editing list
     const checkExistingUserDetails = (userdetails) => {
         let filterData = []
+        console.log(newUserDetails)
         if (newUserDetails.length > 0) {
             filterData = newUserDetails.filter((x) => parseInt(x.OrderID) === parseInt(userdetails.OrderID))
 
@@ -700,7 +707,7 @@ function Row(props) {
                             </div>
                             <div className="col-8">
                                 <TextField
-                                    id="outlined-size-small" size="small"
+                                    id="outlined-size-small" size="small" label=""
                                     width="100%"
                                     className="font"
                                     variant="outlined"
@@ -718,7 +725,7 @@ function Row(props) {
                             </div>
                             <div className="col-8">
                                 <TextField
-                                    id="outlined-size-small" size="small"
+                                    id="outlined-size-small" size="small" label=""
                                     width="100%"
                                     className="font"
                                     variant="outlined"
@@ -739,7 +746,7 @@ function Row(props) {
                             </div>
                             <div className="col-8">
                                 <TextField
-                                    id="outlined-size-small" size="small"
+                                    id="outlined-size-small" size="small" label=""
                                     width="100%"
                                     className="font"
                                     variant="outlined"
@@ -757,7 +764,7 @@ function Row(props) {
                             </div>
                             <div className="col-8">
                                 <TextField
-                                    id="outlined-size-small" size="small"
+                                    id="outlined-size-small" size="small" label=""
                                     width="100%"
                                     className="font"
                                     variant="outlined"
@@ -776,7 +783,7 @@ function Row(props) {
                             </div>
                             <div className="col-8">
                                 <TextField
-                                    id="outlined-size-small" size="small"
+                                    id="outlined-size-small" size="small" label=""
                                     width="100%"
                                     className="font"
                                     variant="outlined"
@@ -795,20 +802,19 @@ function Row(props) {
                             <div className="col-8">
                                 <FormControl variant="outlined" size="small" style={{ width: "100%" }}>
                                     <Select
-                                        native
-                                        id="Logistic"
+                                        id="Logistic" label=""
                                         value={checkExistingUserDetails(row) !== 0 ? checkExistingUserDetails(row).map((Data) => { return (Data.CountryID) }) : address.CountryID}
                                         onChange={(x) => handleUserDetailsChange(x.target.value, "Country", row)}
                                         className="select"
                                         disabled={checkExistingUserDetails(row) !== 0 ? false : true}
                                     >
                                         {country.length > 0 && country.map((country) => (
-                                            <option
+                                            <MenuItem
                                                 value={country.CountryId}
                                                 key={country.CountryId}
                                             >
                                                 {country.CountryName}
-                                            </option>
+                                            </MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>
@@ -822,6 +828,9 @@ function Row(props) {
 
     // handle user details change
     const handleUserDetailsChange = (data, type, userDetails) => {
+        console.log("handleUserDetailsChange", data)
+        console.log("handleUserDetailsChange", type)
+        console.log("handleUserDetailsChange", userDetails)
         let Listing = [...newUserDetails]
         let DataIndex = 0
 
@@ -996,6 +1005,7 @@ function Row(props) {
                                             <div className="col-8">
                                                 <TextField
                                                     id="outlined-size-small" size="small"
+                                                    label=""
                                                     width="100%"
                                                     className="font"
                                                     variant="outlined"
@@ -1014,6 +1024,7 @@ function Row(props) {
                                             <div className="col-8">
                                                 <TextField
                                                     id="outlined-size-small" size="small"
+                                                    label=""
                                                     width="100%"
                                                     className="font"
                                                     variant="outlined"
@@ -1036,6 +1047,7 @@ function Row(props) {
                                             <div className="col-8">
                                                 <TextField
                                                     id="outlined-size-small" size="small"
+                                                    label=""
                                                     width="100%"
                                                     className="font"
                                                     variant="outlined"
@@ -1053,18 +1065,19 @@ function Row(props) {
                                                     <div className="col-3" style={{ textAlign: "left" }}>
                                                         <p className="subTextLeft">{"Method"}</p>
                                                     </div>
+                                                    {console.log("HI", checkExistingUserDetails(row))}
+                                                    {console.log("HI", row)}
                                                     <div className="col-8">
                                                         <FormControl variant="outlined" size="small" style={{ width: "100%" }}>
                                                             <Select
-                                                                native
-                                                                id="Logistic"
+                                                                id="Logistic" label=""
                                                                 value={checkExistingUserDetails(row) !== 0 ? checkExistingUserDetails(row).map((Data) => { return (Data.Method) }) : row.PickUpInd === 1 ? "Self Pick Up" : "Delivery"}
                                                                 onChange={(x) => handleUserDetailsChange(x.target.value, "Method", row)}
                                                                 className="select"
                                                                 disabled={checkExistingUserDetails(row) !== 0 ? false : true}
                                                             >
-                                                                <option> Self Pick Up </option>
-                                                                <option> Delivery </option>
+                                                                <MenuItem value="Self Pick Up"> Self Pick Up </MenuItem>
+                                                                <MenuItem value="Delivery"> Delivery </MenuItem>
                                                             </Select>
                                                         </FormControl>
                                                     </div>
@@ -1129,7 +1142,7 @@ function Row(props) {
                                                                 ))
                                                             }
                                                             {selectedProductDetailsID.length > 0 && trackingView()}
-                                                            {JSON.parse(row.OrderProductDetail)
+                                                            {row.OrderProductDetail.length > 0 && row.OrderProductDetail !== null && JSON.parse(row.OrderProductDetail)
                                                                 .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
                                                                 .map((product, i) => (
                                                                     <>
@@ -1146,12 +1159,12 @@ function Row(props) {
                                                 }
                                             </>
                                         </div>
-                                        {getTrackingLength(JSON.parse(row.OrderProductDetail)).length > 0 && getTrackingLength(JSON.parse(row.OrderProductDetail))
+                                        {row.OrderProductDetail.length > 0 && row.OrderProductDetail !== null &&  getTrackingLength(JSON.parse(row.OrderProductDetail)).length > 0 && getTrackingLength(JSON.parse(row.OrderProductDetail))
                                             .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
                                             .map((track, index) => {
                                                 return (
                                                     <div className="row" style={{ borderTop: "4px solid #fff", paddingTop: "5px", paddingBottom: "5px" }}>
-                                                        {row.OrderProductDetail ? JSON.parse(row.OrderProductDetail)
+                                                        {row.OrderProductDetail.length > 0 && row.OrderProductDetail !== null  ? JSON.parse(row.OrderProductDetail)
                                                             .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
                                                             .map((product, i) => (
                                                                 <>
@@ -1535,8 +1548,6 @@ class ViewTransactionsComponent extends Component {
         }
     }
 
-
-
     setTabsHidden = (value) => {
         this.setState({
             tabsHidden: value,
@@ -1641,7 +1652,7 @@ class ViewTransactionsComponent extends Component {
         if (allTransactionStatusData.length > 0) {
             var generateOptions = allTransactionStatusData.map((status, i) => {
                 return (
-                    <option value={status.TrackingStatus}>{status.TrackingStatus}</option>
+                    <MenuItem value={status.TrackingStatus}>{status.TrackingStatus}</MenuItem>
                 );
             });
         }
@@ -1681,10 +1692,10 @@ class ViewTransactionsComponent extends Component {
         }
         return (
             <div className="container-fluid my-2">
-                <div className="row">
+                <div className="row mb-3">
                     {!this.state.tabsHidden ? (
-                        <div className="col-md-12 col-12 mb-3 d-flex">
-                            <div className="col-10 d-inline-flex">
+                        <>
+                            <div className="col-10">
                                 <SearchBar
                                     id=""
                                     placeholder="Search By Tracking Number or Order Number..."
@@ -1697,26 +1708,25 @@ class ViewTransactionsComponent extends Component {
                                 />
                             </div>
 
-                            <div className="col-2 d-inline-flex" style={{ paddingTop: "10px" }}>
-                                <FormControl variant="outlined" size="small">
-                                    <Select
-                                        native
-                                        value={this.state.productSupplier}
-                                        onChange={this.updateList.bind(this)}
-                                        inputProps={{
-                                            name: "Product Supplier",
-                                            id: "productSupplier",
-                                        }}
-                                        className="select"
-                                    >
-                                        {generateOptions}
-                                    </Select>
-                                </FormControl>
+                            <div className="col-2">
+                                <Box sx={{ minWidth: 120 }}>
+                                    <FormControl fullWidth>
+                                        <InputLabel id="demo-simple-select-label">Order Status</InputLabel>
+                                        <Select
+                                            value={this.state.currentlyChosen}
+                                            onChange={this.updateList.bind(this)}
+                                            className="select"
+                                            size="small"
+                                            label="Order Status"
+                                        >
+                                            {generateOptions}
+                                        </Select>
+                                    </FormControl>
+                                </Box>
                             </div>
-                        </div>
+                        </>
                     ) : null}
                     {generateTable}
-                    {console.log("list", this.props)}
                 </div>
             </div>
         );

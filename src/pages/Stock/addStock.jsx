@@ -54,7 +54,6 @@ function mapDispatchToProps(dispatch) {
         CallAddProductVariationStock: (prodData) => dispatch(GitAction.CallAddProductVariationStock(prodData)),
         CallGridList: (prodData) => dispatch(GitAction.CallGridList(prodData)),
         CallResetProductVariationStock: () => dispatch(GitAction.CallResetProductVariationStock()),
-
     };
 }
 
@@ -700,15 +699,12 @@ class AddStock extends Component {
                     <div className="d-flex px-3">
                         <Button style={{ paddingLeft: "10px", paddingRight: "10px", textDecoration: "none", color: "black" }} onClick={() => goBack()}>
                             <ArrowRoundedLeft8x13Svg fontSize="inherit" style={{ margin: "10px" }} />
-                            Back
+                            Stock List
                         </Button>
-                        <h2 style={{ paddingTop: "5px" }}>Stock List</h2>
-                        <div className="d-md-flex my-2" style={{ marginLeft: 'auto', textAlign: "right" }}>
-                            <div style={{ width: '200px', marginLeft: 5 }}>
+                        <div className="d-md-flex my-2" style={{ marginLeft: 'auto' }}>
+                            <div style={{ width: '200px', marginRight: "15px", marginTop: "5px" }}>
                                 <TextField variant="standard" size="small" fullWidth label="Container" value={this.state.ContainerID} onChange={(e) => this.handleFormInput(e, "Container", 0)} required />
                             </div>
-                        </div>
-                        <div className="d-md-flex my-2" style={{ marginLeft: 'auto' }}>
                             <div style={{ width: '200px', marginLeft: 5 }}>
                                 <ResponsiveDatePickers variant="standard" title="Stock In Date" value={this.state.StockInDate} onChange={(e) => this.onDateChange(e, "StockInDate")} />
                             </div>
@@ -728,12 +724,16 @@ class AddStock extends Component {
                             }
 
                             tableTopLeft={
-                                this.DataState.length > 0 &&
-                                <Tooltip title="Submit New Stock">
-                                    <IconButton size="small" sx={{ color: "#0074ea", marginRight: 2, }} onClick={() => this.OnHandleSubmitStock()}>
-                                        <SubmitIcon /> <label style={{ paddingLeft: "5px" }}>Upload Stock  </label>
-                                    </IconButton>
-                                </Tooltip>
+                                <>
+                                    <h4 style={{ paddingTop: "5px" }}>New Stock List</h4>
+                                    {this.DataState.length > 0 &&
+                                        <Tooltip title="Submit New Stock">
+                                            <IconButton size="small" sx={{ color: "#0074ea", marginRight: 2, }} onClick={() => this.OnHandleSubmitStock()}>
+                                                <SubmitIcon /> <label style={{ paddingLeft: "5px" }}>Upload Stock  </label>
+                                            </IconButton>
+                                        </Tooltip>}
+                                </>
+
                             }
                             tableOptions={{
                                 dense: true,

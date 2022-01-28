@@ -37,7 +37,8 @@ const rootEpic = combineEpics(
   gitEpic.Product_ViewAll,
   gitEpic.Product_ViewDetail,
   gitEpic.Product_Endorse,
-  gitEpic.Product_CheckDuplicate,
+  gitEpic.Product_CheckDuplicateName,
+  gitEpic.Product_CheckDuplicateSKU,
 
   // Product Variation
   gitEpic.ProductVariation_Add,
