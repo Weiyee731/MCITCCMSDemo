@@ -4,7 +4,6 @@ export class GitAction {
   static Login = "USER_LOGIN";
   static LoginSuccess = "USER_LOGIN_SUCCESS";
   static CallUserLogin(propsData) {
-    console.log(propsData)
     return {
       type: GitAction.Login,
       payload: propsData
@@ -14,7 +13,6 @@ export class GitAction {
   static LoginServer = "USER_LOGINSERVER";
   static LoginServerSuccess = "USER_LOGINSERVER_SUCCESS";
   static CallUserLoginServer(propsData) {
-    console.log(propsData)
     return {
       type: GitAction.LoginServer,
       payload: propsData

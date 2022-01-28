@@ -2170,7 +2170,6 @@ class AddProductComponent extends Component {
       sku: sku,
       UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
     }
-    console.log("onSubmitProductVariation", object)
     this.props.CallAddProductVariationDetail(object)
 
   }

@@ -211,10 +211,7 @@ class Stock extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log("this.props.variationStock", this.props.variationStock)
         if (this.props.variationStock !== null && this.props.variationStock.length > 0 && this.state.isDatabaseSet === false && this.props.variationStock[0].ReturnVal !== "0") {
-
-            console.log("this.props.variationStock", this.props.variationStock)
             this.DatabaseListing = this.props.variationStock
             this.setState({ isDatabaseSet: true })
         }

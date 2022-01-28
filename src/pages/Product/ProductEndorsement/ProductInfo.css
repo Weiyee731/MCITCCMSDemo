@@ -38,9 +38,10 @@
 }
 
 .product-medias-gallery {
-    display: flex;
+    /* display: flex; */
     width: 100%;
     overflow-y: auto;
+    overflow-x: auto;
 }
 
 .product-medias-gallery .product-medias-gallery-image {
@@ -84,7 +85,7 @@
 }
 
 .merchant-name {
-    font-size: 14pt;
+    font-size: 12pt;
     font-weight: 600;
 }
 

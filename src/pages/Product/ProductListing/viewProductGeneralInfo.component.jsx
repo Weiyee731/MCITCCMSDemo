@@ -184,8 +184,6 @@ class ViewProductGeneralInfo extends Component {
 
   componentDidUpdate(prevProps) {
 
-    console.log("CHECK", this.props)
-
     if (this.props.variationStock !== null && this.props.variationStock.length > 0 && this.state.isDatabaseSet === false) {
       this.DatabaseListing = this.props.variationStock
       this.setState({ isDatabaseSet: true })
@@ -346,19 +344,8 @@ class ViewProductGeneralInfo extends Component {
           { title: category, url: "/viewProduct/" + category + "/" + this.state.CategoryHierachyID[i] },
         ]]
 
-        console.log("category", category)
-
       })
-
       this.setState({ breadcrumb: breadcrumb })
-
-      // console.log("this.breadcrumb 2", breadcrumb)
-      // console.log("this.breadcrumb 3", this.state.CategoryHierachyListing)
-      // this.setState({
-      //   breadcrumb: [...breadcrumb, ...[
-      //     { title: [category[i]], url: "" },
-      //   ]]
-      // })
     }
   }
 
@@ -543,7 +530,6 @@ class ViewProductGeneralInfo extends Component {
   renderTableRows = (data, index) => {
     return (
       <>
-        {console.log("data", data)}
         <TableCell
           component="th"
           id={`enhanced-table-checkbox-${index}`}
@@ -672,7 +658,6 @@ class ViewProductGeneralInfo extends Component {
                     </div>
 
                     <div className="row">
-                      {console.log("IMAGE", this.props)}
                       <div key="ProductImages" className=" col-lg-2 ">
                         <img
                           width="200"
@@ -792,7 +777,6 @@ class ViewProductGeneralInfo extends Component {
                           SelectionActionButtons={<Button onClick={() => alert('hi')}>SelectionActionButtons</Button>}
                           carryDataFromChild={this.carryDataFromChild}
                         />
-                        {console.log("DatabaseListing", this.DatabaseListing)}
                       </CardText>
                     </CardBody>
                   </Card>

@@ -320,7 +320,6 @@ function Row(props) {
             <TableBody>
                 <TableRow>
                     
-                {console.log("products", product)}
                     <TableCell style={{ width: "10%" }}>
                         <Checkbox
                             checked={
@@ -377,7 +376,6 @@ function Row(props) {
                         <div style={{ fontSize: "13px", fontWeight: "bold" }}>  Total Paid : {(product.ProductQuantity * product.ProductVariationPrice).toFixed(2)}  / Qty ({product.ProductQuantity})</div>
                     </div>
                 </div>
-                {console.log("product", product)}
             </div>
         )
     }
@@ -644,7 +642,6 @@ function Row(props) {
     // Check whether the selected user details is in the editing list
     const checkExistingUserDetails = (userdetails) => {
         let filterData = []
-        console.log(newUserDetails)
         if (newUserDetails.length > 0) {
             filterData = newUserDetails.filter((x) => parseInt(x.OrderID) === parseInt(userdetails.OrderID))
 
@@ -828,9 +825,6 @@ function Row(props) {
 
     // handle user details change
     const handleUserDetailsChange = (data, type, userDetails) => {
-        console.log("handleUserDetailsChange", data)
-        console.log("handleUserDetailsChange", type)
-        console.log("handleUserDetailsChange", userDetails)
         let Listing = [...newUserDetails]
         let DataIndex = 0
 
@@ -1065,8 +1059,6 @@ function Row(props) {
                                                     <div className="col-3" style={{ textAlign: "left" }}>
                                                         <p className="subTextLeft">{"Method"}</p>
                                                     </div>
-                                                    {console.log("HI", checkExistingUserDetails(row))}
-                                                    {console.log("HI", row)}
                                                     <div className="col-8">
                                                         <FormControl variant="outlined" size="small" style={{ width: "100%" }}>
                                                             <Select
@@ -1576,9 +1568,6 @@ class ViewTransactionsComponent extends Component {
             })
         }
 
-        console.log("transactionList", transactionList)
-
-
         // var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
 
         this.setState({ searchKeywords: value })
@@ -1600,8 +1589,6 @@ class ViewTransactionsComponent extends Component {
                 });
         })
 
-
-        console.log("filteredProduct", this.state.filteredProduct)
         let removeDeplicate = this.state.filteredProduct.filter((ele, ind) => ind === this.state.filteredProduct.findIndex(elem => elem.OrderID === ele.OrderID))
         this.setState({ isFiltered: true, filteredProduct: removeDeplicate })
     }

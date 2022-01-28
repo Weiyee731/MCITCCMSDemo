@@ -2179,7 +2179,7 @@ class ProductDetailsComponent extends Component {
         filterListWithID.length > 0 && filterListWithID.filter((y) => y.isEdit === true).map((x) => {
             CustomizableWithID.push(0)
             ValueWithID.push(x.optionName)
-            stockWithID.push(x.stock)
+            stockWithID.push(1)
             priceWithID.push(x.price)
             skuWithID.push(x.sku)
             optionID.push(x.optionID)
@@ -2188,7 +2188,7 @@ class ProductDetailsComponent extends Component {
         filterListWithoutID.length > 0 && filterListWithoutID.filter((y) => y.optionName !== "").map((x) => {
             CustomizableWithoutID.push(0)
             ValueWithoutID.push(x.optionName)
-            stockWithoutID.push(x.stock)
+            stockWithoutID.push(1)
             priceWithoutID.push(x.price)
             skuWithoutID.push(x.sku)
         })

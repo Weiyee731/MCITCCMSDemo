@@ -1,20 +1,23 @@
 import React, { Component } from 'react'
 import { connect } from "react-redux";
 import { GitAction } from "../../../store/action/gitAction";
-
+import createHistory from 'history/createBrowserHistory'
 import Button from "@material-ui/core/Button";
 import { toast } from "react-toastify";
 
-import clsx from "clsx";
-// import "../../app/App.scss";
+import { Link } from "react-router-dom";
 import "./ProductInfo.css";
 import { isStringNullOrEmpty } from "../../../tools/Helpers";
 import Logo from "../../../assets/logos/logo.png";
+import CategoryHierachy from "../../../components/share/categoryHierachy";
 import IconButton from '@material-ui/core/IconButton';
 import { ArrowRoundedLeft8x13Svg, ArrowRoundedRight8x13Svg } from '../../../assets/svg';
 
+import TableCell from '@mui/material/TableCell';
+import TableComponents from "../../../components/TableComponents/TableComponents";
 
-import createHistory from 'history/createBrowserHistory'
+
+
 const history = createHistory()
 
 function mapStateToProps(state) {
@@ -47,12 +50,14 @@ const INITIAL_STATE = {
     MerchantDetail: [],
 
 
+    categoryListing: [],
+
     // form inputs
 
     // any
     isProductIntoBind: false,
     currentProductIndex: 0,
-    currentImage: {}
+    currentImage: {},
 }
 
 class ProductEndorsementInfo extends Component {
@@ -107,9 +112,9 @@ class ProductEndorsementInfo extends Component {
                 toast.success("This product endorsed successfully.", {
                     autoClose: 3000,
                     onClose: () => {
-                        // history.push("/viewProductEndorsement")
-                        // window.location.reload(false)
-                        this.props.backToList(false)
+                        history.push("/viewProductEndorsement");
+                        window.location.reload(false);
+                        // this.props.backToList(false)
                     }
                 })
             }
@@ -203,85 +208,194 @@ class ProductEndorsementInfo extends Component {
         }
     }
 
+    getTagList() {
+        var tagList = "-";
+
+        let ProductTag = this.props.productInfo.length > 0 && this.props.productInfo[0].ProductTag !== null ? JSON.parse(this.props.productInfo[0].ProductTag.replace(/\\/g, "")) : []
+        ProductTag.map((tag) => {
+            if (tagList == "") {
+                tagList = tag.tag;
+            }
+            else {
+                tagList = tagList + " , " + tag.tag;
+            }
+        })
+        return tagList
+    }
+
+    renderTableRows = (data, index) => {
+        return (
+            <>
+                <TableCell align="left"> {data.ProductSpecification} </TableCell>
+                <TableCell align="left">{data.ProductSpecificationValue}</TableCell>
+            </>
+        )
+    }
+
+    renderTableVariationRows = (data, index) => {
+        return (
+            <>
+                <TableCell align="left"> {data.ProductVariation} </TableCell>
+                <TableCell align="left">{data.ProductVariationValue}</TableCell>
+                <TableCell align="left"> {data.ProductVariationSKU} </TableCell>
+                <TableCell align="left">{data.ProductVariationPrice}</TableCell>
+            </>
+        )
+    }
+
     render() {
         const { productInfo } = this.props
         const { ProductMedias, currentImage } = this.state
+
+        const getCategoryHierachyListing = (listing, id) => {
+            // category = listing
+            this.setState({ categoryListing: listing })
+        }
+
+        const tableSpecHeadCells = [
+            {
+                id: "ProductSpecification",
+                align: 'left',
+                numeric: false,
+                disablePadding: false,
+                label: "Type",
+            },
+            {
+                id: "ProductSpecificationValue",
+                align: 'left',
+                numeric: false,
+                disablePadding: false,
+                label: "Value",
+            },
+        ];
+
+        const tableVariationHeadCells = [
+            {
+                id: "ProductVariation",
+                align: 'left',
+                numeric: false,
+                disablePadding: false,
+                label: "Variation Type",
+            },
+            {
+                id: "ProductVariationValue",
+                align: 'left',
+                numeric: false,
+                disablePadding: false,
+                label: "Variation",
+            },
+            {
+                id: "ProductVariationSKU",
+                align: 'left',
+                numeric: false,
+                disablePadding: false,
+                label: "Variation SKU",
+            },
+            {
+                id: "ProductVariationPrice",
+                align: 'left',
+                numeric: false,
+                disablePadding: false,
+                label: "Variation Price",
+            },
+        ];
         return (
             <div>
-                <div className="container pt-2">
-                    <Button onClick={() => typeof this.props.backToList === "function" && this.props.backToList(false)}>
-                        <i className="fas fa-chevron-left"></i> Back
-                    </Button>
-                    {
-                        typeof this.props.productInfo !== "undefined" && productInfo.length > 0 ?
-                            <div className="row">
-                                <div className="col-4 m-0">
-                                    <div className="product-medias">
-                                        {
-                                            <img src={currentImage.ProductMediaUrl} alt={currentImage.ProductName} width="300px" height="300px" onError={(e) => { e.target.onerror = null; e.target.src = Logo; }} />
-                                        }
-                                        <div>
-                                            <IconButton aria-label="prev-image" style={{ position: 'absolute' }} className="product-carousel-button prev-btn" size="medium" variant="outlined" onClick={() => this.handleImageCarousel('prev')} >
-                                                <ArrowRoundedLeft8x13Svg fontSize="inherit" />
-                                            </IconButton>
-                                            <IconButton aria-label="next-image" style={{ position: 'absolute' }} className="product-carousel-button next-btn" size="medium" variant="outlined" onClick={() => this.handleImageCarousel('next')}  >
-                                                <ArrowRoundedRight8x13Svg fontSize="inherit" />
-                                            </IconButton>
-                                        </div>
-                                    </div>
-                                    <div className="product-medias-gallery">
-                                        {
-                                            ProductMedias.length > 0 && ProductMedias.map((el, idx) => {
-                                                return (
-                                                    <div className="product-medias-gallery-image">
-                                                        <img src={el.ProductMediaUrl} alt={el.ProductName} width="100%" height="100%" onError={(e) => { e.target.onerror = null; e.target.src = Logo; }} onClick={() => this.handleImageCarousel(idx)} />
-                                                    </div>
-                                                )
-                                            })
-                                        }
-                                    </div>
-                                </div>
-                                <div className="col-8">
-                                    <div>
-                                        <h2>{productInfo[0].ProductName}</h2>
-                                        <hr />
-                                        <div>
-                                            <span className="mr-3 product-general-info" ><b>Brand: </b>{productInfo[0].Brand === null ? '-' : productInfo[0].Brand}</span>
-                                            <span className="mr-3 product-general-info" ><b>Model: </b>{productInfo[0].Model === null ? '-' : productInfo[0].Model}</span>
-                                            <span className="product-general-info" ><b>SKU: </b> {productInfo[0].SKU === null ? '-' : productInfo[0].SKU}</span>
-                                            <span className="product-general-info ml-5" >
-                                                <span className="mr-1"><b>Dimension: </b></span>
-                                                <span className="mr-1">{productInfo[0].ProductDimensionHeight === null ? '-' : productInfo[0].ProductDimensionHeight}m (H) X</span>
-                                                <span className="mr-1">{productInfo[0].ProductDimensionWidth === null ? '-' : productInfo[0].ProductDimensionWidth}m (W) X</span>
-                                                <span className="mr-1">{productInfo[0].ProductDimensionDeep === null ? '-' : productInfo[0].ProductDimensionDeep}m (D) {"  "}</span>
-                                                <span className="ml-1">( {productInfo[0].ProductWeight === null ? '-' : productInfo[0].ProductWeight} KG )</span>
-                                            </span>
-
-                                        </div>
-                                        <div className="product-general-info mt-2">Product Category: {productInfo[0].ProductCategoryID}</div>
-                                        <div>
-                                            <div style={{ fontSize: '24pt', color: '#7DA83F' }}>
-                                                RM {productInfo[0].ProductPrice === null ? "-" : productInfo[0].ProductPrice} {" "}
-                                                Stock: ({productInfo[0].ProductStockAmount === null ? "-" : productInfo[0].ProductStockAmount})
+                <div className="container-fluid my-2">
+                    <div className="row">
+                        <div className="col-md-12 col-12 mb-3 d-flex" >
+                            {/* <Button onClick={() => typeof this.props.backToList === "function" && this.props.backToList(false)}> */}
+                            <Button onClick={() => <>
+                                {history.push("/viewProductEndorsement")}
+                                {window.location.reload(false)}
+                            </>}>
+                                <ArrowRoundedLeft8x13Svg fontSize="inherit" />
+                                <Link style={{ paddingLeft: "10px", paddingRight: "10px", textDecoration: "none", color: "black" }} to={"/viewProduct"}>
+                                    Back
+                                </Link>
+                            </Button>
+                        </div>
+                        {console.log("ProductVariation", this.state.ProductVariation)}
+                        {
+                            typeof this.props.productInfo !== "undefined" && productInfo.length > 0 ?
+                                <div>
+                                    <div className="row" style={{ backgroundColor: "white", padding: "20px" }}>
+                                        <div className="col-3 m-0">
+                                            <div className="product-medias">
+                                                {
+                                                    <img src={currentImage.ProductMediaUrl} alt={currentImage.ProductName} width="350px" height="300px" onError={(e) => { e.target.onerror = null; e.target.src = Logo; }} />
+                                                }
+                                                <div>
+                                                    <IconButton aria-label="prev-image" style={{ position: 'absolute' }} className="product-carousel-button prev-btn" size="medium" variant="outlined" onClick={() => this.handleImageCarousel('prev')} >
+                                                        <ArrowRoundedLeft8x13Svg fontSize="inherit" />
+                                                    </IconButton>
+                                                    <IconButton aria-label="next-image" style={{ position: 'absolute' }} className="product-carousel-button next-btn" size="medium" variant="outlined" onClick={() => this.handleImageCarousel('next')}  >
+                                                        <ArrowRoundedRight8x13Svg fontSize="inherit" />
+                                                    </IconButton>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div>
+                                        <div className="col-1 m-0">
+                                            <div className="product-medias-gallery" style={{ paddingTop: "12px" }}>
+                                                {
+                                                    ProductMedias.length > 0 && ProductMedias.map((el, idx) => {
+                                                        return (
+                                                            <div className="product-medias-gallery-image">
+                                                                <img src={el.ProductMediaUrl} alt={el.ProductName} width="100%" height="100%" onError={(e) => { e.target.onerror = null; e.target.src = Logo; }} onClick={() => this.handleImageCarousel(idx)} />
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
+                                            </div>
+                                        </div>
+                                        {console.log("PRODUCT", this.props)}
+                                        <div className="col-7">
+                                            <div>
+                                                <h3><b>{productInfo[0].ProductName}</b></h3>
+                                                <hr />
+                                                <div>
+                                                    <CategoryHierachy productInfo={productInfo} getCategoryHierachyListing={getCategoryHierachyListing} />
+                                                    <label style={{ color: "grey" }}>{this.state.categoryListing.length > 0 && this.state.categoryListing.map((data, index) => {
+                                                        return (
+                                                            index === 0 ?
+                                                                <label >{"  " + data}</label> :
+                                                                <label>{"  >  " + data}</label>
+                                                        )
+                                                    })}</label>
+                                                </div>
+                                                <br />
+                                                <div><label><b> Brand :</b> {productInfo[0].Brand === null ? '-' : productInfo[0].Brand}</label></div>
+                                                <div><label><b> Model :</b> {productInfo[0].Model === null ? '-' : productInfo[0].Model}</label></div>
+                                                <div><label><b> Product Tags :</b> {this.getTagList()}</label></div>
+                                                <div><label><b> Dimension :</b>
+                                                    <span className="mr-1"> {productInfo[0].ProductDimensionHeight === null ? '-' : productInfo[0].ProductDimensionHeight} m (H) x </span>
+                                                    <span className="mr-1"> {productInfo[0].ProductDimensionWidth === null ? '-' : productInfo[0].ProductDimensionWidth}m (W) x </span>
+                                                    <span className="mr-1"> {productInfo[0].ProductDimensionDeep === null ? '-' : productInfo[0].ProductDimensionDeep}m (D) {"  "}</span>
+                                                    <span className="ml-1">( {productInfo[0].ProductWeight === null ? '-' : productInfo[0].ProductWeight} KG )</span>
+                                                </label></div>
+                                                <br />
+                                                <div>
+                                                    <div style={{ fontSize: '24pt', color: "slatgrey", fontWeight: "bold" }}>
+                                                        RM {productInfo[0].ProductPrice === null ? "-" : productInfo[0].ProductPrice} {" "}
+                                                    </div>
+                                                </div>
+                                                <div>
 
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-
-                                {/* Merchant Profile */}
-                                <div className="col-12" >
+                                    {/* Merchant Profile */}
+                                    <br></br>
                                     {
                                         this.state.MerchantDetail.length > 0 &&
-                                        <div className="row merchant-profile">
-                                            <div className="col-2">
+                                        <div className='row' style={{ backgroundColor: "white", padding: "20px" }}>
+                                            <div className="col-1">
                                                 <div className="merchant-profile-image">
                                                     <img
                                                         src={""}
                                                         alt={this.state.MerchantDetail[0].ShopName}
-                                                        width="100%" height="100%"
+                                                        width="100px" height="100%"
                                                         onError={(e) => {
                                                             e.target.onerror = null;
                                                             e.target.src = Logo;
@@ -292,67 +406,111 @@ class ProductEndorsementInfo extends Component {
                                             <div className="col-10">
                                                 <div>
                                                     <div className="merchant-name">{this.state.MerchantDetail[0].ShopName} ({this.state.MerchantDetail[0].ShopCity})</div>
-                                                    <span className="merchant-joined-date">
+
+                                                    <span className="merchant-joined-date" style={{ color: "grey" }}>
                                                         Last Joined: <i>{this.state.MerchantDetail[0].LastJoined === null ? "N/A" : this.state.MerchantDetail[0].LastJoined}</i>
                                                     </span>
-                                                    <p className="mt-1 merchant-description">{this.state.MerchantDetail[0].ShopDescription}</p>
+
+                                                    <label className="mt-1 merchant-description">{this.state.MerchantDetail[0].ShopDescription}</label>
                                                 </div>
                                             </div>
                                         </div>
                                     }
-                                </div>
-                                <div className="col-12 mt-3 product-detail">
-                                    <div className="product-specification mb-2">
-                                        <h5>Product Specifications</h5>
-                                        <br />
-                                        <div>
-                                            <div className="row">
-                                                <div className="col-2">Height</div>
-                                                <div className="col-1">:</div>
-                                                <div className="col">{productInfo[0].ProductDimensionHeight} (m)</div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col-2">Width</div>
-                                                <div className="col-1">:</div>
-                                                <div className="col">{productInfo[0].ProductDimensionWidth} (m)</div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col-2">Length</div>
-                                                <div className="col-1">:</div>
-                                                <div className="col">{productInfo[0].ProductDimensionDeep} (m)</div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col-2">Weight</div>
-                                                <div className="col-1">:</div>
-                                                <div className="col">{productInfo[0].ProductWeight === null ? '-' : productInfo[0].ProductWeight} (KG)</div>
-                                            </div>
-                                            {
-                                                this.state.ProductSpecifications.length > 0 && this.state.ProductSpecifications.map((el, idx) => {
-                                                    return (
-                                                        <div className="row">
-                                                            <div className="col-2">{el.ProductSpecification}</div>
-                                                            <div className="col-1">:</div>
-                                                            <div className="col">{el.ProductSpecificationValue}</div>
-                                                        </div>
-                                                    )
-                                                })
-                                            }
+
+                                    <br />
+                                    <div className='row' >
+                                        <div className='col-6' style={{ backgroundColor: "white", padding: "20px" }}>
+                                            {/* <h6>Product Specification</h6> */}
+                                            <TableComponents
+                                                // table settings 
+                                                tableTopLeft={<h6>Product Specification</h6>}
+                                                tableOptions={{
+                                                    dense: true,                // optional, default is false
+                                                    tableOrderBy: 'asc',        // optional, default is asc
+                                                    sortingIndex: "ProductName",        // require, it must the same as the desired table header
+                                                    stickyTableHeader: false,    // optional, default is true
+                                                }}
+                                                paginationOptions={[5, 10, { label: 'All', value: -1 }]} // optional, by default it will hide the table pagination. You should set settings for pagination options as in array, eg.: [5, 100, 250, { label: 'All', value: -1 }]
+                                                tableHeaders={tableSpecHeadCells}        //required
+                                                tableRows={{
+                                                    renderTableRows: this.renderTableRows,   // required, it is a function, please refer to the example I have done in Table Components
+                                                    checkbox: false,                          // optional, by default is true
+                                                }}
+                                                Data={this.state.ProductSpecifications}
+                                            />
+                                        </div>
+
+                                        <div className='col-6' style={{ backgroundColor: "white", padding: "20px" }}>
+                                            <TableComponents
+                                                // table settings 
+                                                tableTopLeft={<h6>Product Variation</h6>}
+                                                tableOptions={{
+                                                    dense: true,                // optional, default is false
+                                                    tableOrderBy: 'asc',        // optional, default is asc
+                                                    sortingIndex: "ProductVariationDetailID",        // require, it must the same as the desired table header
+                                                    stickyTableHeader: false,    // optional, default is true
+                                                }}
+                                                paginationOptions={[5, 10, { label: 'All', value: -1 }]} // optional, by default it will hide the table pagination. You should set settings for pagination options as in array, eg.: [5, 100, 250, { label: 'All', value: -1 }]
+                                                tableHeaders={tableVariationHeadCells}        //required
+                                                tableRows={{
+                                                    renderTableRows: this.renderTableVariationRows,   // required, it is a function, please refer to the example I have done in Table Components
+                                                    checkbox: false,                          // optional, by default is true
+                                                }}
+                                                Data={this.state.ProductVariation}
+                                            />
                                         </div>
                                     </div>
-                                    <div className="product-description" dangerouslySetInnerHTML={{ __html: productInfo[0].ProductDescription }}></div>
+                                    <div className="col-12 mt-3 product-detail">
+                                        <div className="product-specification mb-2">
+                                            <h5>Product Specifications</h5>
+                                            <br />
+                                            <div>
+                                                <div className="row">
+                                                    <div className="col-2">Height</div>
+                                                    <div className="col-1">:</div>
+                                                    <div className="col">{productInfo[0].ProductDimensionHeight} (m)</div>
+                                                </div>
+                                                <div className="row">
+                                                    <div className="col-2">Width</div>
+                                                    <div className="col-1">:</div>
+                                                    <div className="col">{productInfo[0].ProductDimensionWidth} (m)</div>
+                                                </div>
+                                                <div className="row">
+                                                    <div className="col-2">Length</div>
+                                                    <div className="col-1">:</div>
+                                                    <div className="col">{productInfo[0].ProductDimensionDeep} (m)</div>
+                                                </div>
+                                                <div className="row">
+                                                    <div className="col-2">Weight</div>
+                                                    <div className="col-1">:</div>
+                                                    <div className="col">{productInfo[0].ProductWeight === null ? '-' : productInfo[0].ProductWeight} (KG)</div>
+                                                </div>
+                                                {
+                                                    this.state.ProductSpecifications.length > 0 && this.state.ProductSpecifications.map((el, idx) => {
+                                                        return (
+                                                            <div className="row">
+                                                                <div className="col-2">{el.ProductSpecification}</div>
+                                                                <div className="col-1">:</div>
+                                                                <div className="col">{el.ProductSpecificationValue}</div>
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
+                                            </div>
+                                        </div>
+                                        <div className="product-description" dangerouslySetInnerHTML={{ __html: productInfo[0].ProductDescription }}></div>
+                                    </div>
+                                    <div className="col-12 p-0">
+                                        <Button col="primary" variant="outlined" className="AddButton" onClick={() => this.endorseProduct()}>Endorse this Product</Button>
+                                    </div>
                                 </div>
-                                <div className="col-12 p-0">
-                                    <Button col="primary" variant="outlined" className="AddButton" onClick={() => this.endorseProduct()}>Endorse this Product</Button>
+                                :
+                                <div>
+                                    <i>Something went wrong, please try again later</i>
                                 </div>
-                            </div>
-                            :
-                            <div>
-                                <i>Something went wrong, please try again later</i>
-                            </div>
-                    }
-
+                        }
+                    </div>
                 </div>
-
             </div>
         )
     }
