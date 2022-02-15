@@ -60,6 +60,10 @@ import StockManagement from "../../../pages/Stock/OverallStock";
 import NewStock from "../../../pages/Stock/addStock";
 import StockDetail from "../../../pages/Stock/StockDetail";
 
+import ShoplotListing from "../../../pages/Setting/StoreListing";
+
+import ShoplotDetailListing from "../../../pages/Setting/StoreDetailListing";
+
 const routes = [
     // {
     //     path: "/",
@@ -255,7 +259,26 @@ const routes = [
         ),
     },
 
+    {
+        path: "/shoplotList",
+        exact: true,
+        element: <ShoplotListing />,
+    },
 
+    
+    {
+        path: "/viewShoplotDetailList/:shoplotID",
+        exact: true,
+        element: (props) => (
+            <>
+                <ShoplotDetailListing
+                    {...props}
+                    layout="standard"
+                    shoplotID={props.match.params.shoplotID}
+                />
+            </>
+        ),
+    },
 ]
 
 export default routes

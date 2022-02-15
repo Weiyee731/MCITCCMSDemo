@@ -183,7 +183,6 @@ class StockDetail extends Component {
 
     onTableRowClick = (event, row) => {
         let filteredProduct = []
-        console.log("row", row)
 
         filteredProduct = this.props.variationStock !== null && this.props.variationStock.length > 0 &&
             this.props.variationStock.filter((x) => parseInt(x.ProductVariationDetailID) === parseInt(row.ProductVariationDetailID))
@@ -355,7 +354,9 @@ class StockDetail extends Component {
                             />
                         </div>
                         <div className="col-8">
-                            <div><label style={{ fontWeight: "bold" }}>Product Name: {filteredProduct.length > 0 && filteredProduct[0].ProductName !== null ? filteredProduct[0].ProductName : ""}</label></div>
+                            <div><label style={{ fontWeight: "bold" }}>Product Name: {filteredProduct.length > 0 && filteredProduct[0].ProductName !== null ? filteredProduct[0].ProductName : ""}</label>
+                                <label onClick={() => window.location = url.inventoryProduct(filteredProduct[0].ProductID)} style={{ color: "blue", paddingTop: "9px", paddingLeft: "10px", fontSize: "10px" }}>Click to view Product Info</label>
+                            </div>
                             <div><label style={{ fontSize: "13px", color: "lightslategrey" }}>Variation:{this.state.ProductVariation} - ({this.state.ProductVariationValue} )</label></div>
                             <div><label style={{ fontSize: "13px", color: "lightslategrey" }}>SKU: {this.state.ProductVariationSKU}</label></div>
                         </div>
@@ -419,7 +420,6 @@ class StockDetail extends Component {
             window.location.reload(false)
         }
 
-        console.log("this.props", this.props)
         return (
             <div className="container-fluid my-2" >
                 <div className="row">

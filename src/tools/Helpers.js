@@ -335,6 +335,8 @@ export const url = {
     productcateogory: (category) => category.ProductName !== null ? `/shop/ProductCategory/${category.ProductName}` : `/shop/ProductCategory/`,
 
     stockDetails: (variationDetailsID) => variationDetailsID !== null ? `/viewStockDetailList/${variationDetailsID}` : `/viewStockDetailList/`,
+
+    shoplotDetails: (ShoplotID) => ShoplotID !== null ? `/viewShoplotDetailList/${ShoplotID}` : `/viewShoplotDetailList/`,
 };
 
 export function getCategoryParents(category) {

@@ -16,7 +16,7 @@ const SubMenuItems = (props) => {
             {console.log("item.submenus", item.submenus)}
             {console.log("item.submenus", item)}
             {
-                typeof item.submenus !== "undefined" && item.submenus !== null && item.submenus.length > 0 && item.submenus.map((menuitem, index) => {
+                typeof item.submenus !== "undefined" && item.submenus !== null && item.submenus.length > 0 && localStorage.getItem("project") != undefined && item.submenus.map((menuitem, index) => {
                     return (
                         typeof menuitem.submenus !== "undefined" && menuitem.submenus !== null && menuitem.submenus.length > 0 ?
                             <SubMenuItems key={'submenu-' + menuitem.item} item={menuitem} />

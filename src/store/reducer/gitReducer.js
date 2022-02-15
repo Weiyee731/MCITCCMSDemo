@@ -62,7 +62,11 @@ const INITIAL_STATE = {
   // Stock
   variationStock: [],
   variationAction: [],
-  variationStockDetails: []
+  variationStockDetails: [],
+
+  //Shoplot
+  shoplot: [],
+  shoplotAction: [],
 };
 
 export function counterReducer(state = INITIAL_STATE, action) {
@@ -663,6 +667,49 @@ export function counterReducer(state = INITIAL_STATE, action) {
         loading: false,
         grid: action.payload,
       });
+
+    ///////////////////////////////////////////////////  Shoplot  ///////////////////////////////////////////////////
+
+
+    case GitAction.GetShopListing:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotShopListing:
+      return Object.assign({}, state, {
+        loading: false,
+        shoplot: action.payload,
+      });
+
+      case GitAction.GetShopListingByID:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotShopListingByID:
+      return Object.assign({}, state, {
+        loading: false,
+        shoplot: action.payload,
+      });
+
+      case GitAction.AddShoplot:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.AddedShoplot:
+      return Object.assign({}, state, {
+        loading: false,
+        shoplotAction: action.payload,
+      });
+
+      case GitAction.UpdateShoplot:
+        return Object.assign({}, state, { loading: true });
+      case GitAction.UpdatedShoplot:
+        return Object.assign({}, state, {
+          loading: false,
+          shoplotAction: action.payload,
+        });
+
+        case GitAction.DeleteShoplot:
+          return Object.assign({}, state, { loading: true });
+        case GitAction.DeletedShoplot:
+          return Object.assign({}, state, {
+            loading: false,
+            shoplotAction: action.payload,
+          });
 
     /////////////////////////////////////////////////// Default ///////////////////////////////////////////////////
     default:

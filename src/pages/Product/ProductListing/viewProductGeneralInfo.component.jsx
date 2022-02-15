@@ -22,19 +22,13 @@ import TableComponents from "../../../components/TableComponents/TableComponents
 
 
 // UI Purpose
-// import CancelIcon from '@mui/icons-material/HighlightOffTwoTone';
-// import CheckCircleIcon from '@mui/icons-material/CheckCircleTwoTone';
 import ReplyIcon from '@mui/icons-material/Reply';
 import IconButton from '@material-ui/core/IconButton';
 import Rating from "@material-ui/lab/Rating";
-// import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Tooltip from '@mui/material/Tooltip';
-// import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
 import GroupAddIcon from '@mui/icons-material/Add';
 import PageviewIcon from '@mui/icons-material/Pageview';
-// import Badge from '@mui/material/Badge';
-// import DraftsIcon from '@mui/icons-material/Drafts';
 import TableCell from '@mui/material/TableCell';
 
 
@@ -451,12 +445,12 @@ class ViewProductGeneralInfo extends Component {
                 <CardBody style={{ padding: "0.5rem" }} >
                   <CardText>
                     <div className="row">
-                      <div className="col-1">
+                      <div className="col-2 flex-1">
                         <div id="review_avatar" className="review__avatar">
                           <img width="80px" height="80px" src={reviews.avatar ? reviews.avatar : USER} alt={reviews.avatar} onError={(e) => (e.target.src = USER)} />
                         </div>
                       </div>
-                      <div className="col-11">
+                      <div className="col-10 flex-1">
                         <div id="review_content" className=" review__content" style={{ width: "100%", textAlign: "left" }}>
                           <div id="review_author" className=" review__author" style={{ fontSize: "12px", fontWeight: "bold" }}>{reviews.Name}</div>
                           <div id="review_reply_date" className=" review__date" style={{ fontSize: "10px" }}>{reviews.CreatedDate}</div>
@@ -566,9 +560,9 @@ class ViewProductGeneralInfo extends Component {
               return (
                 <>
                   {
-                    <Link className="nav-link" to={{ pathname: url.stockDetails(data.ProductVariationDetailID) }}>
-                      <div className="row flex-1" style={{ backgroundColor: index % 2 === 1 ? "#f5f5f5" : "#fffff", padding: "15px" }}>
-                        <div className="col-12 col-md-3">
+                    <Link className="nav-link" style={{ paddingLeft: "0px" }} to={{ pathname: url.stockDetails(data.ProductVariationDetailID) }}>
+                      <div className="row flex-1" style={{ backgroundColor: index % 2 === 1 ? "#f5f5f5" : "#fffff", paddingTop: index % 2 === 1 ? "10px" : "5px", paddingBottom: index % 2 === 1 ? "10px" : "0px" }}>
+                        <div className="col-12 col-md-3" >
                           <label>{details.Column1}</label>
                         </div>
                         <div className="col-12 col-md-3">
@@ -581,7 +575,7 @@ class ViewProductGeneralInfo extends Component {
               )
             })
               :
-              <label style={{ textAlign: "center", fontWeight: "600px" }}>Temporarily this variation is not available</label>
+              <div style={{ paddingLeft: "0px", paddingTop: "10px" }}>Temporarily this variation is not available</div>
           }
         </div>
       </div>
@@ -694,17 +688,6 @@ class ViewProductGeneralInfo extends Component {
                             <label>{this.getTagList()}</label>
                           </div>
                         </div>
-
-                        {/* <div key="Tags" className="row">
-                          <div className="col-lg-2">
-                            <label style={productInfoLabelStyle}>Product Category :</label>
-                          </div>
-                          <div className="col-lg-10">
-                            {this.state.CategoryHierachyListing.length > 0 && this.state.CategoryHierachyListing.map((category, i) => {
-                              return (<label>{"  >  " + category}</label>)
-                            })}
-                          </div>
-                        </div> */}
 
                         <div key="Description" className="row">
                           <div className="col-lg-2">

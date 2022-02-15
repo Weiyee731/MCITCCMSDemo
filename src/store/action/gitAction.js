@@ -724,5 +724,51 @@ export class GitAction {
       payload: prodData,
     };
   }
+
+  ///////////////////////////////////////////////////  Shoplot  ///////////////////////////////////////////////////
+  static GetShopListing = "GET-SHOPLISTING";
+  static GotShopListing = "GOT-SHOPLISTING";
+  static CallShopList(prodData) {
+    return {
+      type: GitAction.GetShopListing,
+      payload: prodData,
+    };
+  }
+
+  static GetShopListingByID = "GET-SHOPLISTING-BYID";
+  static GotShopListingByID = "GOT-SHOPLISTING-BYID";
+  static CallShopListByID(prodData) {
+    return {
+      type: GitAction.GetShopListingByID,
+      payload: prodData,
+    };
+  }
+
+  static AddShoplot = "ADD-SHOPLISTING";
+  static AddedShoplot = "ADDED-SHOPLISTING";
+  static CallAddShopList(prodData) {
+    return {
+      type: GitAction.AddShoplot,
+      payload: prodData,
+    };
+  }
+
+  static UpdateShoplot = "UPDATE-SHOPLISTING";
+  static UpdatedShoplot = "UPDATED-SHOPLISTING";
+  static CallUpdateShopList(prodData) {
+    return {
+      type: GitAction.UpdateShoplot,
+      payload: prodData,
+    };
+  }
+
+  static DeleteShoplot = "DELETE-SHOPLISTING";
+  static DeletedShoplot = "DELETED-SHOPLISTING";
+  static CallDeleteShopList(prodData) {
+    return {
+      type: GitAction.DeleteShoplot,
+      payload: prodData,
+    };
+  }
 }
 

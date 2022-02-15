@@ -2144,6 +2144,146 @@ export class GitEpic {
       }
     });
 
+  ///////////////////////////////////////////////////  ShopLot  ///////////////////////////////////////////////////
+
+  Shoplot_ShopListing = (action$) =>
+    action$.ofType(GitAction.GetShopListing).switchMap(async ({ payload }) => {
+      console.log(url + project + "/" + "Storage_ShoplotList")
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Storage_ShoplotList"
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        console.log("GetStorage", json)
+
+        return {
+          type: GitAction.GotShopListing,
+          payload: json,
+        };
+      } catch (error) {
+        alert('GetStorage: ' + error);
+        return {
+          type: GitAction.GotShopListing,
+          payload: [],
+        };
+      }
+    });
+
+  Shoplot_ShopListingByID = (action$) =>
+    action$.ofType(GitAction.GetShopListingByID).switchMap(async ({ payload }) => {
+      console.log(url + project + "/Storage_ShoplotListByShoplotID")
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Storage_ShoplotListByShoplotID?SHOPLOTID" + payload.ShoplotID
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        console.log("GetStorage", json)
+
+        return {
+          type: GitAction.GotShopListingByID,
+          payload: json,
+        };
+      } catch (error) {
+        alert('GotShopListingByID: ' + error);
+        return {
+          type: GitAction.GotShopListingByID,
+          payload: [],
+        };
+      }
+    });
+
+  Shoplot_AddShoplot = (action$) =>
+    action$.ofType(GitAction.AddShoplot).switchMap(async ({ payload }) => {
+      console.log(url + project + "/Storage_AddShoplot?SHOPLOTNAME" + payload.ShoplotName +
+        "CONTACTNO" + payload.ContactNo +
+        "LONGITUDE" + payload.Longitude +
+        "LATITUDE" + payload.Latitude)
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Storage_AddShoplot?SHOPLOTNAME" + payload.ShoplotName +
+          "CONTACTNO" + payload.ContactNo +
+          "LONGITUDE" + payload.Longitude +
+          "LATITUDE" + payload.Latitude
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        console.log("AddedShoplot", json)
+
+        return {
+          type: GitAction.AddedShoplot,
+          payload: json,
+        };
+      } catch (error) {
+        alert('AddedShoplot: ' + error);
+        return {
+          type: GitAction.AddedShoplot,
+          payload: [],
+        };
+      }
+    });
+
+    Shoplot_UpdateShoplot = (action$) =>
+    action$.ofType(GitAction.UpdateShoplot).switchMap(async ({ payload }) => {
+      console.log(url + project + "/Storage_UpdateShoplot?SHOPLOTNAME" + payload.ShoplotName +
+      "SHOPLOTID" + payload.ShoplotID +  
+      "CONTACTNO" + payload.ContactNo +
+        "LONGITUDE" + payload.Longitude +
+        "LATITUDE" + payload.Latitude)
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Storage_UpdateShoplot?SHOPLOTNAME" + payload.ShoplotName +
+          "SHOPLOTID" + payload.ShoplotID +
+          "CONTACTNO" + payload.ContactNo +
+          "LONGITUDE" + payload.Longitude +
+          "LATITUDE" + payload.Latitude
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        console.log("UpdateShoplot", json)
+
+        return {
+          type: GitAction.UpdatedShoplot,
+          payload: json,
+        };
+      } catch (error) {
+        alert('UpdatedShoplot: ' + error);
+        return {
+          type: GitAction.UpdatedShoplot,
+          payload: [],
+        };
+      }
+    });
+
+    Shoplot_DeleteShoplot = (action$) =>
+    action$.ofType(GitAction.DeleteShoplot).switchMap(async ({ payload }) => {
+      console.log(url + project + "/Storage_DeleteShoplot?SHOPLOTID" + payload.ShoplotID )
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Storage_DeleteShoplot?SHOPLOTID" + payload.ShoplotID 
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        console.log("DeletedShoplot", json)
+
+        return {
+          type: GitAction.DeletedShoplot,
+          payload: json,
+        };
+      } catch (error) {
+        alert('DeletedShoplot: ' + error);
+        return {
+          type: GitAction.DeletedShoplot,
+          payload: [],
+        };
+      }
+    });
 
   ///////////////////////////////////////////////////  sidebar configurations ///////////////////////////////////////////////////
   User_ViewPage = action$ =>

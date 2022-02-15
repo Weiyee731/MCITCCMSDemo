@@ -194,6 +194,7 @@ class Stock extends Component {
             Listing: []
         }]
 
+
         this.props.CallGridList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
         this.props.CallViewAllProductVariationStock({
             ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
@@ -217,6 +218,7 @@ class Stock extends Component {
         }
 
     }
+
     renderTableRows = (data, index) => {
         return (
             <>
@@ -252,11 +254,11 @@ class Stock extends Component {
                         </div>
                     }
                     {
-                        data.ProductVariationStockDetail !== undefined && data.ProductVariationStockDetail !== null && JSON.parse(data.ProductVariationStockDetail).map((details, index) => {
+                        data.ProductVariationStockDetail !== undefined && data.ProductVariationStockDetail !== null ? JSON.parse(data.ProductVariationStockDetail).map((details, index) => {
                             return (
                                 <>
                                     {
-                                        <Link className="nav-link" to={{ pathname: url.stockDetails(data.ProductVariationDetailID) }}>
+                                        <Link className="nav-link" style={{ paddingLeft: "0px" }} to={{ pathname: url.stockDetails(data.ProductVariationDetailID) }}>
                                             <div className="row flex-1" style={{ backgroundColor: index % 2 === 1 ? "#f5f5f5" : "#fffff", paddingTop: index % 2 === 1 ? "10px" : "5px", paddingBottom: index % 2 === 1 ? "10px" : "0px" }}>
                                                 <div className="col-12 col-md-3">
                                                     <label>{details.Column1}</label>
@@ -270,6 +272,8 @@ class Stock extends Component {
                                 </>
                             )
                         })
+                            :
+                            <div style={{ paddingLeft: "0px", paddingTop: "10px" }}> Temporarily this variation is not available </div>
                     }
                 </div>
             </div>
@@ -337,6 +341,9 @@ class Stock extends Component {
 
     onTableRowClick = (event, row) => {
 
+        console.log("this.PagingListing[0].Listing", this.PagingListing[0].Listing)
+        console.log("this.PagingListing[0].Listing", this.PagingListing[0])
+
         let listing = this.PagingListing[0].Listing
         let selected = ""
         let OverallCollapseTable = this.PagingListing[0].isOpenOverallDetails
@@ -385,6 +392,7 @@ class Stock extends Component {
         this.setState({ selectedListID: [] })
     }
 
+    // Only update cache, haven submit to database
     OnSubmitUpdateCache = (data, DraftNo) => {
         if (!this.errorChecking()) {
             let localListing = localStorage.getItem("DataSetDraft") !== null ? JSON.parse(localStorage.getItem("DataSetDraft")) : []
@@ -412,6 +420,7 @@ class Stock extends Component {
         }
     }
 
+    // Submit data into database and clear particular cache
     OnSubmitAdd = () => {
         if (!this.errorChecking()) {
 
@@ -472,17 +481,17 @@ class Stock extends Component {
                 this.setState({ StockInDate: isStringNullOrEmpty(e) ? "Invalid Date" : e, StockInValidated: (!isStringNullOrEmpty(e) && e !== "Invalid Date") })
                 break;
 
-            case "OrderDate":
-                this.setState({ OrderDate: isStringNullOrEmpty(e) ? "Invalid Date" : e, OrderValidated: (!isStringNullOrEmpty(e) && e !== "Invalid Date") })
-                break;
+            // case "OrderDate":
+            //     this.setState({ OrderDate: isStringNullOrEmpty(e) ? "Invalid Date" : e, OrderValidated: (!isStringNullOrEmpty(e) && e !== "Invalid Date") })
+            //     break;
 
-            case "ReceiveDate":
-                this.setState({ ReceiveDate: isStringNullOrEmpty(e) ? "Invalid Date" : e, ReceiveValidated: (!isStringNullOrEmpty(e) && e !== "Invalid Date") })
-                break;
+            // case "ReceiveDate":
+            //     this.setState({ ReceiveDate: isStringNullOrEmpty(e) ? "Invalid Date" : e, ReceiveValidated: (!isStringNullOrEmpty(e) && e !== "Invalid Date") })
+            //     break;
 
-            case "DBStockInDate":
-                this.setState({ DBStockInDate: isStringNullOrEmpty(e) ? "Invalid Date" : e, DBStockInDateValidated: (!isStringNullOrEmpty(e) && e !== "Invalid Date") })
-                break;
+            // case "DBStockInDate":
+            //     this.setState({ DBStockInDate: isStringNullOrEmpty(e) ? "Invalid Date" : e, DBStockInDateValidated: (!isStringNullOrEmpty(e) && e !== "Invalid Date") })
+            //     break;
 
             default:
                 break;

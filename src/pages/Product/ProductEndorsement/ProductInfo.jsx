@@ -303,24 +303,38 @@ class ProductEndorsementInfo extends Component {
             <div>
                 <div className="container-fluid my-2">
                     <div className="row">
-                        <div className="col-md-12 col-12 mb-3 d-flex" >
-                            {/* <Button onClick={() => typeof this.props.backToList === "function" && this.props.backToList(false)}> */}
-                            <Button onClick={() => <>
-                                {history.push("/viewProductEndorsement")}
-                                {window.location.reload(false)}
-                            </>}>
-                                <ArrowRoundedLeft8x13Svg fontSize="inherit" />
-                                <Link style={{ paddingLeft: "10px", paddingRight: "10px", textDecoration: "none", color: "black" }} to={"/viewProduct"}>
-                                    Back
-                                </Link>
-                            </Button>
+
+                        <div className="row" style={{ display: "flex" }}>
+                            <div className="col-6">
+                                <Button onClick={() => <>
+                                    {history.push("/viewProductEndorsement")}
+                                    {window.location.reload(false)}
+                                </>}>
+                                    <ArrowRoundedLeft8x13Svg fontSize="inherit" />
+
+                                    <Link style={{ paddingLeft: "10px", paddingRight: "10px", textDecoration: "none", color: "black" }} to={"/viewProduct"}>
+                                        Back
+                                    </Link>
+                                </Button>
+                            </div>
+                            <div className="col-6" style={{ textAlign: "right" }}>
+                                <Button variant="outlined" style={{
+                                    float: "right",
+                                    marginBottom: "16px",
+                                    marginLeft: "16px",
+                                    color: "#32d800 ",
+                                    fontWeight: "bold"
+                                }}
+                                    onClick={() => this.endorseProduct()}>Endorse Product
+                                </Button>
+                            </div>
                         </div>
                         {console.log("ProductVariation", this.state.ProductVariation)}
                         {
                             typeof this.props.productInfo !== "undefined" && productInfo.length > 0 ?
                                 <div>
-                                    <div className="row" style={{ backgroundColor: "white", padding: "20px" }}>
-                                        <div className="col-3 m-0">
+                                    <div className="row" style={{ backgroundColor: "white", padding: "10px" }}>
+                                        <div className="col-4 m-0">
                                             <div className="product-medias">
                                                 {
                                                     <img src={currentImage.ProductMediaUrl} alt={currentImage.ProductName} width="350px" height="300px" onError={(e) => { e.target.onerror = null; e.target.src = Logo; }} />
@@ -341,15 +355,14 @@ class ProductEndorsementInfo extends Component {
                                                     ProductMedias.length > 0 && ProductMedias.map((el, idx) => {
                                                         return (
                                                             <div className="product-medias-gallery-image">
-                                                                <img src={el.ProductMediaUrl} alt={el.ProductName} width="100%" height="100%" onError={(e) => { e.target.onerror = null; e.target.src = Logo; }} onClick={() => this.handleImageCarousel(idx)} />
+                                                                <img src={el.ProductMediaUrl} alt={el.ProductName} width="100%" height="80%" onError={(e) => { e.target.onerror = null; e.target.src = Logo; }} onClick={() => this.handleImageCarousel(idx)} />
                                                             </div>
                                                         )
                                                     })
                                                 }
                                             </div>
                                         </div>
-                                        {console.log("PRODUCT", this.props)}
-                                        <div className="col-7">
+                                        <div className="col-6">
                                             <div>
                                                 <h3><b>{productInfo[0].ProductName}</b></h3>
                                                 <hr />
@@ -372,7 +385,8 @@ class ProductEndorsementInfo extends Component {
                                                     <span className="mr-1"> {productInfo[0].ProductDimensionWidth === null ? '-' : productInfo[0].ProductDimensionWidth}m (W) x </span>
                                                     <span className="mr-1"> {productInfo[0].ProductDimensionDeep === null ? '-' : productInfo[0].ProductDimensionDeep}m (D) {"  "}</span>
                                                     <span className="ml-1">( {productInfo[0].ProductWeight === null ? '-' : productInfo[0].ProductWeight} KG )</span>
-                                                </label></div>
+                                                </label>
+                                                </div>
                                                 <br />
                                                 <div>
                                                     <div style={{ fontSize: '24pt', color: "slatgrey", fontWeight: "bold" }}>
@@ -423,7 +437,7 @@ class ProductEndorsementInfo extends Component {
                                             {/* <h6>Product Specification</h6> */}
                                             <TableComponents
                                                 // table settings 
-                                                tableTopLeft={<h6>Product Specification</h6>}
+                                                tableTopLeft={<h6 style={{ fontWeight: "bold" }}>Product Specification</h6>}
                                                 tableOptions={{
                                                     dense: true,                // optional, default is false
                                                     tableOrderBy: 'asc',        // optional, default is asc
@@ -443,7 +457,7 @@ class ProductEndorsementInfo extends Component {
                                         <div className='col-6' style={{ backgroundColor: "white", padding: "20px" }}>
                                             <TableComponents
                                                 // table settings 
-                                                tableTopLeft={<h6>Product Variation</h6>}
+                                                tableTopLeft={<h6 style={{ fontWeight: "bold" }}>Product Variation</h6>}
                                                 tableOptions={{
                                                     dense: true,                // optional, default is false
                                                     tableOrderBy: 'asc',        // optional, default is asc
@@ -460,48 +474,12 @@ class ProductEndorsementInfo extends Component {
                                             />
                                         </div>
                                     </div>
-                                    <div className="col-12 mt-3 product-detail">
-                                        <div className="product-specification mb-2">
-                                            <h5>Product Specifications</h5>
-                                            <br />
-                                            <div>
-                                                <div className="row">
-                                                    <div className="col-2">Height</div>
-                                                    <div className="col-1">:</div>
-                                                    <div className="col">{productInfo[0].ProductDimensionHeight} (m)</div>
-                                                </div>
-                                                <div className="row">
-                                                    <div className="col-2">Width</div>
-                                                    <div className="col-1">:</div>
-                                                    <div className="col">{productInfo[0].ProductDimensionWidth} (m)</div>
-                                                </div>
-                                                <div className="row">
-                                                    <div className="col-2">Length</div>
-                                                    <div className="col-1">:</div>
-                                                    <div className="col">{productInfo[0].ProductDimensionDeep} (m)</div>
-                                                </div>
-                                                <div className="row">
-                                                    <div className="col-2">Weight</div>
-                                                    <div className="col-1">:</div>
-                                                    <div className="col">{productInfo[0].ProductWeight === null ? '-' : productInfo[0].ProductWeight} (KG)</div>
-                                                </div>
-                                                {
-                                                    this.state.ProductSpecifications.length > 0 && this.state.ProductSpecifications.map((el, idx) => {
-                                                        return (
-                                                            <div className="row">
-                                                                <div className="col-2">{el.ProductSpecification}</div>
-                                                                <div className="col-1">:</div>
-                                                                <div className="col">{el.ProductSpecificationValue}</div>
-                                                            </div>
-                                                        )
-                                                    })
-                                                }
-                                            </div>
+                                    <br />
+                                    <div className='row' >
+                                        <div className="row" style={{ backgroundColor: "white", padding: "20px" }}>
+                                            <h6 style={{ fontWeight: "bold" }}>Product Description</h6>
+                                            <div dangerouslySetInnerHTML={{ __html: productInfo[0].ProductDescription }}></div>
                                         </div>
-                                        <div className="product-description" dangerouslySetInnerHTML={{ __html: productInfo[0].ProductDescription }}></div>
-                                    </div>
-                                    <div className="col-12 p-0">
-                                        <Button col="primary" variant="outlined" className="AddButton" onClick={() => this.endorseProduct()}>Endorse this Product</Button>
                                     </div>
                                 </div>
                                 :

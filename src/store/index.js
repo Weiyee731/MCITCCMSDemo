@@ -91,6 +91,13 @@ const rootEpic = combineEpics(
   gitEpic.Country_ViewAll,
   gitEpic.CourierService_ViewAll,
   gitEpic.Storage_GridStorageList,
+
+  // Shoplot
+  gitEpic.Shoplot_ShopListingByID,
+  gitEpic.Shoplot_ShopListing,
+  gitEpic.Shoplot_AddShoplot,
+  gitEpic.Shoplot_UpdateShoplot,
+  gitEpic.Shoplot_DeleteShoplot,
 );
 
 const rootReducer = combineReducers({ counterReducer });

@@ -28,6 +28,7 @@
         ]
     }
  */
+import { Settings, Shop2Rounded, ShopOutlined } from '@mui/icons-material';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 
 const sidebar_items = [
@@ -85,6 +86,19 @@ const sidebar_items = [
         to: "/stockList",
         title: "Stock Management",
         icon: "inventory",
+    },
+    
+    {
+        to: "",
+        title: "Setting",
+        icon: <Settings />,
+        submenus: [
+            {
+                to: "/shoplotList",
+                title: "Shoplot",
+                icon: <Shop2Rounded />,
+            },
+        ]
     },
     // {
     //     to: "/quotationList",
