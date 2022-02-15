@@ -52,7 +52,6 @@ function mapDispatchToProps(dispatch) {
     return {
         CallGridList: (prodData) => dispatch(GitAction.CallGridList(prodData)),
         CallShopList: (prodData) => dispatch(GitAction.CallShopList(prodData)),
-
     };
 }
 
@@ -67,44 +66,8 @@ const overallHeadCells = [
 
 
 const INITIAL_STATE = {
-    isOpenDraftModal: false,
-    isDataEdit: false,
-
-    OrderDate: new Date(),
-    ReceiveDate: new Date(),
-    StockInDate: new Date(),
-
-    ProductData: [],
-    rowIndex: "",
-    DraftNo: "",
-    CurrentStock: "",
-    ContainerID: "",
-    ContainerName: "",
-    isContainerError: false,
-
-    StoreStockInData: [{
-        id: "",
-        label: "",
-        value: "",
-        StockInAmount: "",
-        VariationCost: "",
-        CurrentStock: "",
-        isStockInAmountError: false,
-        isVariationCostError: false,
-    }],
-
     filteredProduct: [],
     selectedFilter: [],
-    selectedListID: [],
-    isDiscountClick: false,
-
-    isInvoiceError: false,
-    isStoreError: false,
-    isStockInAmountError: false,
-    ReceiveValidated: true,
-    OrderValidated: true,
-    StockInValidated: true,
-    isSet: false,
 
     // Database Lisiting
     DBStockInDate: "",
@@ -116,6 +79,7 @@ const INITIAL_STATE = {
     // Store
     isBlockModal: false,
     selectedList: [],
+    selectedBlock: "",
 
     // Block Modal
     isBlockNameError: false,
@@ -145,7 +109,7 @@ const OverallListing_State = []
 const DUMMYBLOCK =
     [
         {
-            id: "1", block: "Block A", ShoplotCoordinate: [
+            id: "1", block: "A", ShoplotCoordinate: [
                 { lat: 1.5921641925052, lng: 110.431633074988 },
                 { lat: 1.59115338985581, lng: 110.429951329936 },
                 { lat: 1.59001492677904, lng: 110.430582476623 },
@@ -154,7 +118,7 @@ const DUMMYBLOCK =
             ],
         },
         {
-            id: "2", block: "Block B", ShoplotCoordinate: [
+            id: "2", block: "B", ShoplotCoordinate: [
                 { lat: 1.59219311478493, lng: 110.431658803505 },
                 { lat: 1.59105065831252, lng: 110.432325065247 },
                 { lat: 1.59264758826223, lng: 110.434993215471 },
@@ -163,7 +127,7 @@ const DUMMYBLOCK =
             ],
         },
         {
-            id: "3", block: "Block C", ShoplotCoordinate: [
+            id: "3", block: "C", ShoplotCoordinate: [
                 { lat: 1.5939685198604472, lng: 110.43665361977425 },
                 { lat: 1.5936590240065396, lng: 110.43611937906833 },
                 { lat: 1.5945346343454787, lng: 110.43560473453614 },
@@ -192,29 +156,13 @@ class ShoplotListing extends Component {
 
         this.props.CallGridList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
         this.props.CallShopList({ Block: "A" })
-        // this.props.CallViewAllProductVariationStock({
-        //     ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
-        //     ProductID: 0,
-        //     ProductPerPage: 999,
-        //     Page: 1
-        // })
     }
 
     componentDidMount() {
-        if (localStorage.getItem("DataSetDraft") !== null &&
-            JSON.parse(localStorage.getItem("DataSetDraft")).length > 0) {
-            this.DraftListing[0].storageListing = JSON.parse(localStorage.getItem("DataSetDraft"))
-        }
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (this.props.variationStock !== null && this.props.variationStock.length > 0 && this.state.isDatabaseSet === false && this.props.variationStock[0].ReturnVal !== "0") {
-            this.DatabaseListing = this.props.variationStock
-            this.setState({ isDatabaseSet: true })
-        }
-        console.log("COMPONENTDIDUPDATE", this.props.shoplot)
         if (this.props.shoplot !== null && this.props.shoplot.length > 0 && this.state.isShoplotSet === false) {
-            console.log("COMPONENTDIDUPDATE HERE", this.props.shoplot)
             this.ShoplotListing = this.props.shoplot
             this.setState({ isShoplotSet: true })
         }
@@ -278,7 +226,7 @@ class ShoplotListing extends Component {
                         </div>
                     }
                     {
-                        this.ShoplotListing !== undefined && this.ShoplotListing !== null ? this.ShoplotListing
+                        this.ShoplotListing !== undefined && this.ShoplotListing !== null ? this.ShoplotListing.filter((x) => x.ShoplotBlock === this.state.selectedBlock)
                             .slice((this.state.page - 1) * this.state.rowsPerPage, (this.state.page - 1) * this.state.rowsPerPage + this.state.rowsPerPage)
                             .map((data, index) => {
                                 return (
@@ -287,7 +235,7 @@ class ShoplotListing extends Component {
                                             <Link className="nav-link" style={{ paddingLeft: "0px" }} to={{ pathname: url.shoplotDetails(data.ShoplotID) }}>
                                                 <div className="row flex-1" style={{ backgroundColor: index % 2 === 1 ? "#f5f5f5" : "#fffff", paddingTop: index % 2 === 1 ? "10px" : "5px", paddingBottom: index % 2 === 1 ? "10px" : "0px" }}>
                                                     <div className="col-12 col-md-3">
-                                                        <label style={{paddingLeft:"10px"}}>{data.ShoplotName}</label>
+                                                        <label style={{ paddingLeft: "10px" }}>{data.ShoplotName}</label>
                                                     </div>
                                                     <div className="col-12 col-md-3">
                                                         <label>{data.ContactNumber}</label>
@@ -318,23 +266,6 @@ class ShoplotListing extends Component {
         )
     }
 
-    renderTableActionButton = () => {
-        return (
-            <div className="d-flex">
-                <Tooltip sx={{ marginLeft: 5 }} title="Add New Items">
-                    <IconButton onClick={(event) => { this.onAddButtonClick() }}>
-                        <AddIcon />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Buton">
-                    <IconButton onClick={(event) => { this.onAddButtonClick() }}>
-                        <AddIcon />
-                    </IconButton>
-                </Tooltip>
-            </div>
-        )
-    }
-
     onTableRowClick = (event, row) => {
         console.log("this.PagingListing[0]", this.PagingListing[0])
 
@@ -354,8 +285,10 @@ class ShoplotListing extends Component {
                 OverallCollapseTable[index] = false
         })
 
+        console.log("ROW12345", row)
+
         this.PagingListing[0].isOpenOverallDetails = OverallCollapseTable
-        this.setState({ isOpenOverallDetails: OverallCollapseTable })
+        this.setState({ isOpenOverallDetails: OverallCollapseTable, selectedBlock: row.block })
     }
 
 
@@ -425,7 +358,6 @@ class ShoplotListing extends Component {
     }
 
     handleFormInput = (e, name, index) => {
-
         let blockListing = this.state.BlockData
         switch (name) {
 
@@ -555,8 +487,6 @@ class ShoplotListing extends Component {
 
     render() {
 
-        console.log("ShoplotListing", this.ShoplotListing)
-
         const TextFieldData = (type, variant, title, name, stateValue, error, index) => {
             return (
                 <div className="col-12 col-md-12" style={{ paddingBottom: "10px" }}>
@@ -572,8 +502,6 @@ class ShoplotListing extends Component {
                 { id: "1", value: "Store" },
                 { id: "2", value: "Product Name" }
             ]
-        console.log("this.state111", this.state)
-
 
         return (
             <div className="container-fluid my-2">
