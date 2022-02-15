@@ -45,18 +45,12 @@ function mapStateToProps(state) {
     return {
         shoplot: state.counterReducer["shoplot"],
         grid: state.counterReducer["grid"],
-        variationAction: state.counterReducer["variationAction"],
-        variationStock: state.counterReducer["variationStock"],
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        // CallTesting: () => dispatch(GitAction.CallTesting()),
-        CallAddProductVariationStock: (prodData) => dispatch(GitAction.CallAddProductVariationStock(prodData)),
         CallGridList: (prodData) => dispatch(GitAction.CallGridList(prodData)),
-        CallResetProductVariationStock: () => dispatch(GitAction.CallResetProductVariationStock()),
-
         CallShopList: (prodData) => dispatch(GitAction.CallShopList(prodData)),
 
     };
@@ -69,30 +63,6 @@ const overallHeadCells = [
         disablePadding: false,
         label: 'Block Name',
     },
-    // {
-    //     // id: 'Block',
-    //     // align: 'left',
-    //     // disablePadding: false,
-    //     // label: 'Block Name',
-    // },
-    // {
-    //     id: 'ProductStockAmount',
-    //     align: 'center',
-    //     disablePadding: false,
-    //     label: 'Product Stock',
-    // },
-    // {
-    //     id: 'FirstDate',
-    //     align: 'center',
-    //     disablePadding: false,
-    //     label: 'First Stock Date',
-    // },
-    // {
-    //     id: 'LastDate',
-    //     align: 'center',
-    //     disablePadding: false,
-    //     label: 'Last Stock Date',
-    // },
 ]
 
 
