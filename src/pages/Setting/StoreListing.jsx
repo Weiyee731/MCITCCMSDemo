@@ -18,7 +18,7 @@ import Pagination from "../../tools/Pagination";
 // import { isArrayNotEmpty,isLatitude,  isLongitude} from "../../tools/Helpers";
 import TableComponents from "../../components/TableComponents/TableComponents";
 import AlertDialog from "../../components/ModalComponent/ModalComponent";
-import { isArrayNotEmpty, isLatitude, isLongitude, isStringNullOrEmpty } from "../../tools/Helpers";
+import { isArrayNotEmpty, isLatitude, isLongitude, isStringNullOrEmpty, isContactValid } from "../../tools/Helpers";
 import Logo from "../../assets/logos/logo.png";
 import ResponsiveDatePickers from "../../tools/datePicker";
 import { url } from "../../tools/Helpers";
@@ -39,21 +39,54 @@ import { Button } from "@mui/material";
 import InputAdornment from '@mui/material/InputAdornment';
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 
+import { MapContainer, TileLayer, FeatureGroup } from 'react-leaflet';
+import { EditControl } from "react-leaflet-draw"
+import { useState, useCallback } from 'react';
+
+import { render } from 'react-dom';
+// import ReactMapGL from 'react-map-gl';
+// import DrawControl from './draw-control';
+// import ControlPanel from './control-panel';
+
+// import "leaflet-draw/dist/leaftlet.draw.css"
+// import '../../../node_modules/leaflet/dist/leaflet.css';
+
+// node_modules/leaflet-draw/dist/leaflet.draw.css
+// import "../../../node_modules/leaflet-draw/dist/leaflet.draw.css"
+// import "leaflet/dist/leaftlet.css"
+// import { useRef } from "react";
+
+import GoogleMaps from "../../components/GoogleMap/GoogleMapForPolygonCreation";
+import RoomIcon from '@mui/icons-material/Room';
+import InfoIcon from '@mui/icons-material/Info';
+
+const TOKEN = "pk.eyJ1Ijoic21peWFrYXdhIiwiYSI6ImNqcGM0d3U4bTB6dWwzcW04ZHRsbHl0ZWoifQ.X9cvdajtPbs9JDMG-CMDsA";
 
 
 function mapStateToProps(state) {
     return {
         shoplot: state.counterReducer["shoplot"],
         grid: state.counterReducer["grid"],
+        block: state.counterReducer["block"],
+        shoplotAction: state.counterReducer["shoplotAction"],
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         CallGridList: (prodData) => dispatch(GitAction.CallGridList(prodData)),
+        CallBlockList: (prodData) => dispatch(GitAction.CallBlockList(prodData)),
         CallShopList: (prodData) => dispatch(GitAction.CallShopList(prodData)),
+
+        CallAddShopList: (prodData) => dispatch(GitAction.CallAddShopList(prodData)),
+
+        CallResetShopAction: () => dispatch(GitAction.CallResetShopAction()),
+
+
     };
 }
+
+
 
 const overallHeadCells = [
     {
@@ -97,6 +130,22 @@ const INITIAL_STATE = {
     isShoplotSet: false,
     page: 1,
     rowsPerPage: 10,
+
+    isShopModal: false,
+    ShopModalData: [{
+        ShoplotName: "",
+        ShoplotBlock: [{
+            id: "",
+            value: "",
+            label: ""
+        }],
+        ContactNo: "",
+        isShoplotNameError: false,
+        isContactNoError: false,
+    }],
+    Location: "",
+    isMapAlert: false,
+
 }
 
 const DraftListing_State = [{
@@ -155,16 +204,29 @@ class ShoplotListing extends Component {
         this.ShoplotListing = []
 
         this.props.CallGridList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
-        this.props.CallShopList({ Block: "A" })
+        this.props.CallBlockList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
+        this.props.CallShopList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
     }
+
 
     componentDidMount() {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (this.props.shoplot !== null && this.props.shoplot.length > 0 && this.state.isShoplotSet === false) {
-            this.ShoplotListing = this.props.shoplot
-            this.setState({ isShoplotSet: true })
+        if (prevProps.shoplotAction !== this.props.shoplotAction) {
+            if (this.props.shoplotAction.length > 0 && this.props.shoplotAction[0].ReturnVal === 1) {
+                this.props.CallResetShopAction()
+                toast.success("Data is uploaded")
+            }
+            else
+                this.props.CallShopList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
+        }
+
+        if (prevProps.shoplot !== this.props.shoplot) {
+            if (this.props.shoplot !== null && this.props.shoplot.length > 0 && this.state.isShoplotSet === false) {
+                this.ShoplotListing = this.props.shoplot
+                this.setState({ isShoplotSet: true })
+            }
         }
     }
 
@@ -176,7 +238,6 @@ class ShoplotListing extends Component {
                     id={`enhanced-table-checkbox-${index}`}
                     scope="row"
                     padding="normal"
-                // style={{ width: "55%" }}
                 >
                     {data.block}   <label onClick={() => this.onBlockRowClick(data)} style={{ color: "blue", paddingTop: "9px", paddingLeft: "10px", fontSize: "10px" }}>Click to view Block Info</label>
                 </TableCell>
@@ -185,7 +246,6 @@ class ShoplotListing extends Component {
     }
 
     onBlockRowClick = (data) => {
-        console.log("this is data", data)
         let dataList = []
         data.ShoplotCoordinate.map((x) => {
             dataList.push({
@@ -267,8 +327,6 @@ class ShoplotListing extends Component {
     }
 
     onTableRowClick = (event, row) => {
-        console.log("this.PagingListing[0]", this.PagingListing[0])
-
         let listing = this.PagingListing[0].Listing
         let selected = ""
         let OverallCollapseTable = this.PagingListing[0].isOpenOverallDetails
@@ -284,8 +342,6 @@ class ShoplotListing extends Component {
             } else
                 OverallCollapseTable[index] = false
         })
-
-        console.log("ROW12345", row)
 
         this.PagingListing[0].isOpenOverallDetails = OverallCollapseTable
         this.setState({ isOpenOverallDetails: OverallCollapseTable, selectedBlock: row.block })
@@ -359,6 +415,8 @@ class ShoplotListing extends Component {
 
     handleFormInput = (e, name, index) => {
         let blockListing = this.state.BlockData
+        let shopListing = this.state.ShopModalData
+        let blockData = shopListing[0].ShoplotBlock
         switch (name) {
 
             case "Filter":
@@ -374,7 +432,6 @@ class ShoplotListing extends Component {
                 break;
 
             case "Latitude":
-                console.log("isLatitude(e.target.value)", isLatitude(e.target.value))
                 let isLatitudeError = false
                 if (isStringNullOrEmpty(e.target.value) || !isLatitude(e.target.value))
                     isLatitudeError = true
@@ -388,7 +445,6 @@ class ShoplotListing extends Component {
                 break;
 
             case "Longitude":
-                console.log("isLongitude(e.target.value)", isLongitude(e.target.value))
                 let isLongitudeError = false
                 if (isStringNullOrEmpty(e.target.value) || !isLongitude(e.target.value))
                     isLongitudeError = true
@@ -399,6 +455,65 @@ class ShoplotListing extends Component {
                     isLongitudeError: isLongitudeError,
                 }
                 this.setState({ BlockData: blockListing })
+                break;
+
+            // {TextFieldData("text", "outlined", "Shoplot Name", "ShoplotName", this.state.ShopModalData[0].ShoplotName, this.state.ShopModalData[0].isShoplotNameError, 0)}
+
+            case "ShoplotName":
+                let isShoplotNameError = false
+                if (isStringNullOrEmpty(e.target.value))
+                    isShoplotNameError = true
+                let block = [{
+                    id: blockData[0].id,
+                    value: blockData[0].value,
+                    label: blockData[0].label,
+                }]
+                shopListing[index] = {
+                    ShoplotName: e.target.value,
+                    ShoplotBlock: block,
+                    ContactNo: shopListing[index].ContactNo,
+                    isShoplotNameError: isShoplotNameError,
+                    isContactNoError: shopListing[index].isContactNoError,
+                }
+                this.setState({ ShopModalData: shopListing })
+                break;
+
+            case "ContactNo":
+                let isContactNoError = false
+                if (isStringNullOrEmpty(e.target.value) || !isContactValid(e.target.value))
+                    isContactNoError = true
+
+                block = [{
+                    id: blockData[0].id,
+                    value: blockData[0].value,
+                    label: blockData[0].label,
+                }]
+
+                shopListing[index] = {
+                    ShoplotName: shopListing[index].ShoplotName,
+                    ShoplotBlock: block,
+                    ContactNo: e.target.value,
+                    isShoplotNameError: shopListing[index].isShoplotNameError,
+                    isContactNoError: isContactNoError,
+                }
+                this.setState({ ShopModalData: shopListing })
+                break;
+
+            case "Block":
+                block = [{
+                    id: e.id,
+                    value: e.value,
+                    label: e.label,
+                }]
+
+                shopListing[index] = {
+                    ShoplotName: shopListing[index].ShoplotName,
+                    ShoplotBlock: block,
+                    ContactNo: shopListing[index].ContactNo,
+                    isShoplotNameError: shopListing[index].isShoplotNameError,
+                    isContactNoError: shopListing[index].isContactNoError,
+                }
+                this.setState({ ShopModalData: shopListing })
                 break;
 
             default:
@@ -427,24 +542,69 @@ class ShoplotListing extends Component {
     OnSubmitDatabase = () => {
         if (!this.errorChecking()) {
 
-            let dataCoordinate = []
-            this.state.BlockData.length > 0 && this.state.BlockData.map((data) => {
-                dataCoordinate.push({
-                    lat: parseFloat(data.Latitude),
-                    lng: parseFloat(data.Longitude),
-                })
-            })
-            var blockData = {
-                id: this.BlockListing.length + 1,
-                block: this.state.BlockName,
-                ShoplotCoordinate: dataCoordinate
-            }
-            this.BlockListing = [...this.BlockListing, blockData]
-            this.setState(INITIAL_STATE)
+            // let dataCoordinate = []
+            // this.state.BlockData.length > 0 && this.state.BlockData.map((data) => {
+            //     dataCoordinate.push({
+            //         lat: parseFloat(data.Latitude),
+            //         lng: parseFloat(data.Longitude),
+            //     })
+            // })
+            // var blockData = {
+            //     id: this.BlockListing.length + 1,
+            //     block: this.state.BlockName,
+            //     ShoplotCoordinate: dataCoordinate
+            // }
+            // this.BlockListing = [...this.BlockListing, blockData]
+            // this.setState(INITIAL_STATE)
         }
         else {
             toast.warning("Input Error: Please cross check on All Shop Details Input")
         }
+    }
+
+    OnSubmitShoplotDatabase = () => {
+        if (!this.errorChecking()) {
+
+            let replacePolygon = this.state.Location.replace("POLYGON((", '')
+            let replacePolygon2 = replacePolygon.replace("POLYGON ((", '')
+            let replacePolygon3 = replacePolygon2.replace("))", '')
+
+            let coordinate = replacePolygon3.split(",")
+            let latitude = []
+            let longitude = []
+            coordinate.length > 0 && coordinate.map((data) => {
+                if (data.split(" ")[0] === "") {
+                    console.log("hahaha", data.split(" "))
+                    latitude.push(parseFloat(data.split(" ")[2]))
+                    longitude.push(parseFloat(data.split(" ")[1]))
+                }
+                else {
+                    console.log("hahaha22", data.split(" "))
+                    latitude.push(parseFloat(data.split(" ")[1]))
+                    longitude.push(parseFloat(data.split(" ")[0]))
+                }
+            })
+
+            this.props.CallAddShopList({
+                ShoplotName: this.state.ShopModalData[0].ShoplotName,
+                ContactNo: this.state.ShopModalData[0].ContactNo,
+                ShoplotBlock: this.state.ShopModalData[0].ShoplotBlock[0].value,
+                ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+                ShoplotPolygon: this.state.Location,
+                Longitude: longitude,
+                Latitude: latitude
+            })
+            console.log("OnSubmitShoplotDatabase", latitude)
+            console.log("OnSubmitShoplotDatabase", this.state.Location)
+            console.log("OnSubmitShoplotDatabase", longitude)
+
+            this.setState(INITIAL_STATE)
+            this.setState({ isShopModal: false })
+        }
+        else {
+            toast.warning("Input Error: Please cross check on All Shop Details Input")
+        }
+        console.log("OnSubmitShoplotDatabase", this.state)
     }
 
     OnSubmitUpdateDatabase = () => {
@@ -477,16 +637,30 @@ class ShoplotListing extends Component {
     errorChecking = () => {
         let error = false
         let blockListing = this.state.BlockData
+        let shopListing = this.state.ShopModalData
 
         if (blockListing.length > 0) {
             if (blockListing.filter((data) => data.isLatitudeError === true || data.isLongitudeError === true).length > 0)
                 error = true
         }
+        if (shopListing.length > 0) {
+            if (shopListing.filter((data) => data.isContactNoError === true || data.isShoplotNameError === true).length > 0)
+                error = true
+            if (this.state.Location === "")
+                error = true
+            if (shopListing[0].ShoplotBlock[0].id === "")
+                error = true
+        }
         return error
     }
 
-    render() {
+    setTheState = (value) => {
+        this.setState({
+            Location: value,
+        });
+    };
 
+    render() {
         const TextFieldData = (type, variant, title, name, stateValue, error, index) => {
             return (
                 <div className="col-12 col-md-12" style={{ paddingBottom: "10px" }}>
@@ -502,6 +676,7 @@ class ShoplotListing extends Component {
                 { id: "1", value: "Store" },
                 { id: "2", value: "Product Name" }
             ]
+
 
         return (
             <div className="container-fluid my-2">
@@ -548,6 +723,11 @@ class ShoplotListing extends Component {
                                 <div className="d-flex">
                                     <Tooltip title="Add Block">
                                         <IconButton size="small" sx={{ color: "#0074ea", marginRight: 1 }} onClick={() => this.setState({ isBlockModal: true })}>
+                                            <GroupAddIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Add Shop">
+                                        <IconButton size="small" sx={{ color: "#0074ea", marginRight: 1 }} onClick={() => this.setState({ isShopModal: true })}>
                                             <GroupAddIcon />
                                         </IconButton>
                                     </Tooltip>
@@ -681,6 +861,89 @@ class ShoplotListing extends Component {
                             </div>
                         </div>
                     </AlertDialog >
+
+                    <AlertDialog
+                        open={this.state.isShopModal}
+                        fullWidth
+                        maxWidth="md"
+                        handleToggleDialog={() => <>{this.setState(INITIAL_STATE)}{this.setState({ isShopModal: false })}</>}
+                        title={"New Shoplot"}
+                        showAction={false}
+                    >
+                        <div className="container-fluid" >
+                            <div className="container" style={{ padding: "10px" }}>
+                                <div className="row" >
+                                    <div className="col-4 col-md-4" style={{ paddingBottom: "10px" }}>
+                                        {TextFieldData("text", "outlined", "Shoplot Name", "ShoplotName", this.state.ShopModalData[0].ShoplotName, this.state.ShopModalData[0].isShoplotNameError, 0)}
+                                    </div>
+                                    <div className="col-4 col-md-4" style={{ paddingBottom: "10px" }}>
+                                        <FormControl variant="standard" size="small" fullWidth>
+                                            <InputLabel id="Store-label">Block</InputLabel>
+                                            <Select
+                                                labelId="Block"
+                                                id="Block"
+                                                name="Block"
+                                                value={this.state.ShopModalData[0].ShoplotBlock}
+                                                onChange={(e) => this.handleFormInput(e, "Block", 0)}
+                                                label="Store"
+                                                options={
+                                                    isArrayNotEmpty(this.props.block) && this.props.block.map((el, idx) => {
+                                                        return { id: el.StorageBlockID, value: el.StorageBlock, label: el.StorageBlock }
+                                                    })
+                                                }
+                                            >
+                                            </Select>
+                                        </FormControl>
+                                    </div>
+                                    <div className="col-4 col-md-4" >
+                                        {TextFieldData("text", "outlined", "Contact Number", "ContactNo", this.state.ShopModalData[0].ContactNo, this.state.ShopModalData[0].isContactNoError, 0)}
+                                    </div>
+                                    <hr />
+                                    <div className="col-12" style={{ textAlign: "right" }}>
+                                        <Tooltip title="Map Guide">
+                                            <IconButton size="medium" sx={{ color: "#0074ea", marginRight: 1 }} onClick={() => this.setState({ isMapAlert: true })}>
+                                                < InfoIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </div>
+                                    <div className="col-12 col-md-12" style={{ paddingBottom: "10px", height: "350px" }}>
+                                        <GoogleMaps
+                                            width="100%"
+                                            height="500"
+                                            zoom={14}
+                                            data={this.state}
+                                            setValue={this.setTheState}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-12 col-md-12" style={{ textAlign: "right" }}>
+                                    <Button variant="contained" onClick={() => { this.OnSubmitShoplotDatabase() }} color="primary"  >
+                                        Submit
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </AlertDialog >
+
+                    <AlertDialog
+                        open={this.state.isMapAlert}
+                        fullWidth
+                        maxWidth="sm"
+                        handleToggleDialog={() => <>{this.setState({ isMapAlert: false })}</>}
+                        title={"Map Guide"}
+                        showAction={false}
+                    >
+                        <div className="container-fluid">
+                            <div className="container" style={{ padding: "10px" }}>
+                                <div className="row">
+                                    <label><label style={{ fontWeight: "bold" }}>Left Click</label> on the map to add <RoomIcon /> new coordinate point</label>
+                                    <label><label style={{ fontWeight: "bold" }}>Right Click</label> on the marker to <label style={{ color: "red" }}>remove</label> the marker</label>
+                                </div>
+                            </div>
+                        </div >
+                    </AlertDialog>
                 </div>
             </div >
         )

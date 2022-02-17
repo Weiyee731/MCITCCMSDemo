@@ -2118,6 +2118,337 @@ export class GitEpic {
       }
     });
 
+
+
+  ///////////////////////////////////////////////////  ShopLot  ///////////////////////////////////////////////////
+
+  Shoplot_ShopListing = (action$) =>
+    action$.ofType(GitAction.GetShopListing).switchMap(async ({ payload }) => {
+      console.log(url + project + "/" + "Storage_ShoplotList?PROJECTID" + payload.ProjectID)
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Storage_ShoplotList?PROJECTID=" + payload.ProjectID
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        console.log("GotShopListing", json)
+
+        return {
+          type: GitAction.GotShopListing,
+          payload: json,
+        };
+      } catch (error) {
+        alert('GotShopListing: ' + error);
+        return {
+          type: GitAction.GotShopListing,
+          payload: [],
+        };
+      }
+    });
+
+  Shoplot_ShopListingByID = (action$) =>
+    action$.ofType(GitAction.GetShopListingByID).switchMap(async ({ payload }) => {
+      console.log(url + project + "/" +
+        "Storage_ShoplotListByShoplotID?SHOPLOTID=" + payload.ShoplotID)
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Storage_ShoplotListByShoplotID?SHOPLOTID=" + payload.ShoplotID
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        console.log("GotShopListingByID", json)
+
+        return {
+          type: GitAction.GotShopListingByID,
+          payload: json,
+        };
+      } catch (error) {
+        alert('GotShopListingByID: ' + error);
+        return {
+          type: GitAction.GotShopListingByID,
+          payload: [],
+        };
+      }
+    });
+
+  Shoplot_AddShoplot = (action$) =>
+    action$.ofType(GitAction.AddShoplot).switchMap(async ({ payload }) => {
+      console.log(url + project + "/Storage_AddShoplot?SHOPLOTNAME=" + payload.ShoplotName +
+        "&CONTACTNO=" + payload.ContactNo +
+        "&SHOPLOTBLOCK=" + payload.ShoplotBlock +
+        "&PROJECTID=" + payload.ProjectID +
+        "&SHOPLOTPOLYGONSTRING=" + payload.ShoplotPolygon +
+        "&LONGITUDE=" + payload.Longitude +
+        "&LATITUDE=" + payload.Latitude)
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Storage_AddShoplot?SHOPLOTNAME=" + payload.ShoplotName +
+          "&CONTACTNO=" + payload.ContactNo +
+          "&SHOPLOTBLOCK=" + payload.ShoplotBlock +
+          "&PROJECTID=" + payload.ProjectID +
+          "&SHOPLOTPOLYGONSTRING=" + payload.ShoplotPolygon +
+          "&LONGITUDE=" + payload.Longitude +
+          "&LATITUDE=" + payload.Latitude
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        console.log("AddedShoplot", json)
+
+        return {
+          type: GitAction.AddedShoplot,
+          payload: json,
+        };
+      } catch (error) {
+        alert('AddedShoplot: ' + error);
+        return {
+          type: GitAction.AddedShoplot,
+          payload: [],
+        };
+      }
+    });
+
+  Shoplot_UpdateShoplot = (action$) =>
+    action$.ofType(GitAction.UpdateShoplot).switchMap(async ({ payload }) => {
+      console.log(url + project + "/Storage_UpdateShoplot?SHOPLOTNAME=" + payload.ShoplotName +
+        "&SHOPLOTID=" + payload.ShoplotID +
+        "&CONTACTNO=" + payload.ContactNo +
+        "&SHOPLOTBLOCK=" + payload.ShoplotBlock +
+        "&SHOPLOTPOLYGONSTRING=" + payload.ShoplotPolygon)
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Storage_UpdateShoplot?SHOPLOTNAME=" + payload.ShoplotName +
+          "&SHOPLOTID=" + payload.ShoplotID +
+          "&CONTACTNO=" + payload.ContactNo +
+          "&SHOPLOTBLOCK=" + payload.ShoplotBlock +
+          "&SHOPLOTPOLYGONSTRING=" + payload.ShoplotPolygon
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        console.log("UpdateShoplot", json)
+
+        return {
+          type: GitAction.UpdatedShoplot,
+          payload: json,
+        };
+      } catch (error) {
+        alert('UpdatedShoplot: ' + error);
+        return {
+          type: GitAction.UpdatedShoplot,
+          payload: [],
+        };
+      }
+    });
+
+  Shoplot_DeleteShoplot = (action$) =>
+    action$.ofType(GitAction.DeleteShoplot).switchMap(async ({ payload }) => {
+      console.log(url + project + "/Storage_DeleteShoplot?SHOPLOTID=" + payload.ShoplotID)
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Storage_DeleteShoplot?SHOPLOTID=" + payload.ShoplotID
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        console.log("DeletedShoplot", json)
+
+        return {
+          type: GitAction.DeletedShoplot,
+          payload: json,
+        };
+      } catch (error) {
+        alert('DeletedShoplot: ' + error);
+        return {
+          type: GitAction.DeletedShoplot,
+          payload: [],
+        };
+      }
+    });
+
+  Storage_AddShoplotCoordinate = (action$) =>
+    action$.ofType(GitAction.AddShoplotCoordinateListing).switchMap(async ({ payload }) => {
+      console.log(
+        url + project + "/" +
+        "Storage_AddShoplotCoordinate?SHOPLOTID=" + payload.ShoplotID
+        + "&LONGITUDE=" + payload.Longitude
+        + "&LATITUDE=" + payload.Latitude
+      )
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Storage_AddShoplotCoordinate?SHOPLOTID=" + payload.ShoplotID
+          + "&LONGITUDE=" + payload.Longitude
+          + "&LATITUDE=" + payload.Latitude
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        console.log("AddedShoplotCoordinateListing", json)
+
+        return {
+          type: GitAction.AddedShoplotCoordinateListing,
+          payload: json,
+        };
+      } catch (error) {
+        alert('AddedShoplotCoordinateListing: ' + error);
+        return {
+          type: GitAction.AddedShoplotCoordinateListing,
+          payload: [],
+        };
+      }
+    });
+
+  Storage_UpdateShoplotCoordinate = (action$) =>
+    action$.ofType(GitAction.UpdateShoplotCoordinateListing).switchMap(async ({ payload }) => {
+      console.log(
+        url + project + "/" +
+        "Storage_UpdateShoplotCoordinate?SHOPLOTID=" + payload.ShoplotID
+        + "&LONGITUDE=" + payload.Longitude
+        + "&LATITUDE=" + payload.Latitude
+      )
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Storage_UpdateShoplotCoordinate?SHOPLOTID=" + payload.ShoplotID
+          + "&LONGITUDE=" + payload.Longitude
+          + "&LATITUDE=" + payload.Latitude
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        console.log("UpdatedShoplotCoordinateListing", json)
+
+        return {
+          type: GitAction.UpdatedShoplotCoordinateListing,
+          payload: json,
+        };
+      } catch (error) {
+        alert('UpdatedShoplotCoordinateListing: ' + error);
+        return {
+          type: GitAction.UpdatedShoplotCoordinateListing,
+          payload: [],
+        };
+      }
+    });
+
+  ///////////////////////////////////////////////////  Block List ///////////////////////////////////////////////////
+
+  Shoplot_BlockListing = (action$) =>
+    action$.ofType(GitAction.GetBlockListing).switchMap(async ({ payload }) => {
+      console.log(url + project + "/" + "Storage_BlockList?PROJECTID=" + payload.ProjectID)
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Storage_BlockList?PROJECTID=" + payload.ProjectID
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        console.log("GotBlockListing", json)
+
+        return {
+          type: GitAction.GotBlockListing,
+          payload: json,
+        };
+      } catch (error) {
+        alert('GotBlockListing: ' + error);
+        return {
+          type: GitAction.GotBlockListing,
+          payload: [],
+        };
+      }
+    });
+
+  Storage_AddBlock = (action$) =>
+    action$.ofType(GitAction.AddBlockListing).switchMap(async ({ payload }) => {
+      console.log(
+        url + project + "/" +
+        "Storage_AddBlock?PROJECTID=" + payload.ProjectID
+        + "&BLOCKNAME=" + payload.BlockName
+      )
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Storage_AddBlock?PROJECTID=" + payload.ProjectID
+          + "&BLOCKNAME=" + payload.BlockName
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        console.log("AddedBlockListing", json)
+
+        return {
+          type: GitAction.AddedBlockListing,
+          payload: json,
+        };
+      } catch (error) {
+        alert('AddedBlockListing: ' + error);
+        return {
+          type: GitAction.AddedBlockListing,
+          payload: [],
+        };
+      }
+    });
+
+  Storage_UpdateBlock = (action$) =>
+    action$.ofType(GitAction.UpdateBlockListing).switchMap(async ({ payload }) => {
+      console.log(
+        url + project + "/" +
+        "Storage_UpdateBlock?STORAGEBLOCKID=" + payload.StorageBlockID +
+        "&BLOCKNAME=" + payload.BlockName
+      )
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Storage_UpdateBlock?STORAGEBLOCKID=" + payload.StorageBlockID +
+          "&BLOCKNAME=" + payload.BlockName
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        console.log("UpdatedBlockListing", json)
+
+        return {
+          type: GitAction.UpdatedBlockListing,
+          payload: json,
+        };
+      } catch (error) {
+        alert('UpdatedBlockListing: ' + error);
+        return {
+          type: GitAction.UpdatedBlockListing,
+          payload: [],
+        };
+      }
+    });
+
+  Storage_DeleteBlock = (action$) =>
+    action$.ofType(GitAction.DeleteBlockListing).switchMap(async ({ payload }) => {
+      console.log(
+        url + project + "/" +
+        "Storage_DeleteBlock?STORAGEBLOCKID=" + payload.StorageBlockID
+      )
+      try {
+        const response = await fetch(
+          url + project + "/" +
+          "Storage_DeleteBlock?STORAGEBLOCKID=" + payload.StorageBlockID
+        );
+        let json = await response.json();
+        json = JSON.parse(json);
+        console.log("DeletedBlockListing", json)
+
+        return {
+          type: GitAction.DeletedBlockListing,
+          payload: json,
+        };
+      } catch (error) {
+        alert('DeletedBlockListing: ' + error);
+        return {
+          type: GitAction.DeletedBlockListing,
+          payload: [],
+        };
+      }
+    });
+
+  ///////////////////////////////////////////////////  Grid  ///////////////////////////////////////////////////
+
   Storage_GridStorageList = (action$) =>
     action$.ofType(GitAction.GetStorage).switchMap(async ({ payload }) => {
       console.log(url + project + "/" +
@@ -2144,142 +2475,97 @@ export class GitEpic {
       }
     });
 
-  ///////////////////////////////////////////////////  ShopLot  ///////////////////////////////////////////////////
-
-  Shoplot_ShopListing = (action$) =>
-    action$.ofType(GitAction.GetShopListing).switchMap(async ({ payload }) => {
-      console.log(url + project + "/" + "Storage_ShoplotList")
+  Storage_AddGrid = (action$) =>
+    action$.ofType(GitAction.AddGridListing).switchMap(async ({ payload }) => {
+      console.log(
+        url + project + "/" +
+        "Storage_AddGrid?PROJECTID=" + payload.ProjectID
+        + "&GRIDSTORAGECODE=" + payload.GridStorageCode
+        + "&SHOPLOTID=" + payload.ShoplotID
+        + "&SHOPLOTNAME=" + payload.ShoplotName
+      )
       try {
         const response = await fetch(
           url + project + "/" +
-          "Storage_ShoplotList"
+          "Storage_AddGrid?PROJECTID=" + payload.ProjectID
+          + "&GRIDSTORAGECODE=" + payload.GridStorageCode
+          + "&SHOPLOTID=" + payload.ShoplotID
+          + "&SHOPLOTNAME=" + payload.ShoplotName
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("GetStorage", json)
+        console.log("AddGridListing", json)
 
         return {
-          type: GitAction.GotShopListing,
+          type: GitAction.AddedGridListing,
           payload: json,
         };
       } catch (error) {
-        alert('GetStorage: ' + error);
+        alert('AddGridListing: ' + error);
         return {
-          type: GitAction.GotShopListing,
+          type: GitAction.AddedGridListing,
           payload: [],
         };
       }
     });
 
-  Shoplot_ShopListingByID = (action$) =>
-    action$.ofType(GitAction.GetShopListingByID).switchMap(async ({ payload }) => {
-      console.log(url + project + "/Storage_ShoplotListByShoplotID")
+  Storage_UpdateGrid = (action$) =>
+    action$.ofType(GitAction.UpdateGridListing).switchMap(async ({ payload }) => {
+      console.log(
+        url + project + "/" +
+        "Storage_UpdateGrid?GRIDSTORAGEID=" + payload.GridStorageID
+        + "&GRIDSTORAGECODE=" + payload.GridStorageCode
+        + "&SHOPLOTID=" + payload.ShoplotID
+        + "&SHOPLOTNAME=" + payload.ShoplotName
+      )
       try {
         const response = await fetch(
           url + project + "/" +
-          "Storage_ShoplotListByShoplotID?SHOPLOTID" + payload.ShoplotID
+          "Storage_UpdateGrid?GRIDSTORAGEID=" + payload.GridStorageID
+          + "&GRIDSTORAGECODE=" + payload.GridStorageCode
+          + "&SHOPLOTID=" + payload.ShoplotID
+          + "&SHOPLOTNAME=" + payload.ShoplotName
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("GetStorage", json)
+        console.log("UpdatedGridListing", json)
 
         return {
-          type: GitAction.GotShopListingByID,
+          type: GitAction.UpdatedGridListing,
           payload: json,
         };
       } catch (error) {
-        alert('GotShopListingByID: ' + error);
+        alert('UpdatedGridListing: ' + error);
         return {
-          type: GitAction.GotShopListingByID,
+          type: GitAction.UpdatedGridListing,
           payload: [],
         };
       }
     });
 
-  Shoplot_AddShoplot = (action$) =>
-    action$.ofType(GitAction.AddShoplot).switchMap(async ({ payload }) => {
-      console.log(url + project + "/Storage_AddShoplot?SHOPLOTNAME" + payload.ShoplotName +
-        "CONTACTNO" + payload.ContactNo +
-        "LONGITUDE" + payload.Longitude +
-        "LATITUDE" + payload.Latitude)
+  Storage_DeleteGrid = (action$) =>
+    action$.ofType(GitAction.DeleteGridListing).switchMap(async ({ payload }) => {
+      console.log(
+        url + project + "/" +
+        "Storage_DeleteGrid?GRIDSTORAGEID=" + payload.GridStorageID
+      )
       try {
         const response = await fetch(
           url + project + "/" +
-          "Storage_AddShoplot?SHOPLOTNAME" + payload.ShoplotName +
-          "CONTACTNO" + payload.ContactNo +
-          "LONGITUDE" + payload.Longitude +
-          "LATITUDE" + payload.Latitude
+          "Storage_DeleteGrid?GRIDSTORAGEID=" + payload.GridStorageID
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("AddedShoplot", json)
+        console.log("DeletedGridListing", json)
 
         return {
-          type: GitAction.AddedShoplot,
+          type: GitAction.DeletedGridListing,
           payload: json,
         };
       } catch (error) {
-        alert('AddedShoplot: ' + error);
+        alert('DeletedGridListing: ' + error);
         return {
-          type: GitAction.AddedShoplot,
-          payload: [],
-        };
-      }
-    });
-
-    Shoplot_UpdateShoplot = (action$) =>
-    action$.ofType(GitAction.UpdateShoplot).switchMap(async ({ payload }) => {
-      console.log(url + project + "/Storage_UpdateShoplot?SHOPLOTNAME" + payload.ShoplotName +
-      "SHOPLOTID" + payload.ShoplotID +  
-      "CONTACTNO" + payload.ContactNo +
-        "LONGITUDE" + payload.Longitude +
-        "LATITUDE" + payload.Latitude)
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Storage_UpdateShoplot?SHOPLOTNAME" + payload.ShoplotName +
-          "SHOPLOTID" + payload.ShoplotID +
-          "CONTACTNO" + payload.ContactNo +
-          "LONGITUDE" + payload.Longitude +
-          "LATITUDE" + payload.Latitude
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        console.log("UpdateShoplot", json)
-
-        return {
-          type: GitAction.UpdatedShoplot,
-          payload: json,
-        };
-      } catch (error) {
-        alert('UpdatedShoplot: ' + error);
-        return {
-          type: GitAction.UpdatedShoplot,
-          payload: [],
-        };
-      }
-    });
-
-    Shoplot_DeleteShoplot = (action$) =>
-    action$.ofType(GitAction.DeleteShoplot).switchMap(async ({ payload }) => {
-      console.log(url + project + "/Storage_DeleteShoplot?SHOPLOTID" + payload.ShoplotID )
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Storage_DeleteShoplot?SHOPLOTID" + payload.ShoplotID 
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        console.log("DeletedShoplot", json)
-
-        return {
-          type: GitAction.DeletedShoplot,
-          payload: json,
-        };
-      } catch (error) {
-        alert('DeletedShoplot: ' + error);
-        return {
-          type: GitAction.DeletedShoplot,
+          type: GitAction.DeletedGridListing,
           payload: [],
         };
       }

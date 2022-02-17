@@ -90,14 +90,29 @@ const rootEpic = combineEpics(
   // General
   gitEpic.Country_ViewAll,
   gitEpic.CourierService_ViewAll,
-  gitEpic.Storage_GridStorageList,
 
   // Shoplot
-  gitEpic.Shoplot_ShopListingByID,
   gitEpic.Shoplot_ShopListing,
+  gitEpic.Shoplot_ShopListingByID,
   gitEpic.Shoplot_AddShoplot,
   gitEpic.Shoplot_UpdateShoplot,
   gitEpic.Shoplot_DeleteShoplot,
+
+  //Shoplot Coordinate
+  gitEpic.Storage_AddShoplotCoordinate,
+  gitEpic.Storage_UpdateShoplotCoordinate,
+
+  // Block
+  gitEpic.Shoplot_BlockListing,
+  gitEpic.Storage_AddBlock,
+  gitEpic.Storage_UpdateBlock,
+  gitEpic.Storage_DeleteBlock,
+
+  //Grid 
+  gitEpic.Storage_GridStorageList,
+  gitEpic.Storage_AddGrid,
+  gitEpic.Storage_UpdateGrid,
+  gitEpic.Storage_DeleteGrid,
 );
 
 const rootReducer = combineReducers({ counterReducer });

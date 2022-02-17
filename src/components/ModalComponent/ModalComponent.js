@@ -56,7 +56,9 @@ export default function AlertDialog(props) {
           <CloseIcon />
         </IconButton>
       </DialogTitle>
-      <DialogContent>
+      <DialogContent style={{
+        height: typeof props.height !== "undefined" && props.height
+      }}>
         {props.message ?
           <DialogContentText id="alert-dialog-description">
             {props.message}

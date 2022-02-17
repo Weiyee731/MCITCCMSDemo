@@ -716,14 +716,6 @@ export class GitAction {
     };
   }
 
-  static GetStorage = "GET-STORAGE";
-  static GotStorage = "GOT-STORAGE";
-  static CallGridList(prodData) {
-    return {
-      type: GitAction.GetStorage,
-      payload: prodData,
-    };
-  }
 
   ///////////////////////////////////////////////////  Shoplot  ///////////////////////////////////////////////////
   static GetShopListing = "GET-SHOPLISTING";
@@ -770,5 +762,115 @@ export class GitAction {
       payload: prodData,
     };
   }
+
+  static AddShoplotCoordinateListing = "ADD-SHOPLOTCOORDINATE";
+  static AddedShoplotCoordinateListing = "ADDED-SHOPLOTCOORDINATE";
+  static CallAddShoplotCoordinate(prodData) {
+    return {
+      type: GitAction.AddShoplotCoordinateListing,
+      payload: prodData,
+    };
+  }
+
+  static UpdateShoplotCoordinateListing = "UPDATE-SHOPLOTCOORDINATE";
+  static UpdatedShoplotCoordinateListing = "UPDATED-SHOPLOTCOORDINATE";
+  static CallUpdateShoplotCoordinate(prodData) {
+    return {
+      type: GitAction.UpdateShoplotCoordinateListing,
+      payload: prodData,
+    };
+  }
+
+  static ResetShopAction = "RESET-SHOPACTION";
+  static CallResetShopAction() {
+    return {
+      type: GitAction.ResetShopAction,
+    };
+  }
+
+  ///////////////////////////////////////////////////  Block  ///////////////////////////////////////////////////
+
+
+  static GetBlockListing = "GET-BLOCKLISTING";
+  static GotBlockListing = "GOT-BLOCKLISTING";
+  static CallBlockList(prodData) {
+    return {
+      type: GitAction.GetBlockListing,
+      payload: prodData,
+    };
+  }
+
+  static AddBlockListing = "ADD-BLOCKLISTING";
+  static AddedBlockListing = "ADDED-BLOCKLISTING";
+  static CallAddBlockList(prodData) {
+    return {
+      type: GitAction.AddBlockListing,
+      payload: prodData,
+    };
+  }
+
+  static UpdateBlockListing = "UPDATE-BLOCKLISTING";
+  static UpdatedBlockListing = "UPDATED-BLOCKLISTING";
+  static CallUpdateBlockList(prodData) {
+    return {
+      type: GitAction.UpdateBlockListing,
+      payload: prodData,
+    };
+  }
+
+  static DeleteBlockListing = "DELETE-BLOCKLISTING";
+  static DeletedBlockListing = "DELETED-BLOCKLISTING";
+  static CallDeleteBlockList(prodData) {
+    return {
+      type: GitAction.DeleteBlockListing,
+      payload: prodData,
+    };
+  }
+
+  ///////////////////////////////////////////////////  Grid  ///////////////////////////////////////////////////
+
+  static GetStorage = "GET-STORAGE";
+  static GotStorage = "GOT-STORAGE";
+  static CallGridList(prodData) {
+    return {
+      type: GitAction.GetStorage,
+      payload: prodData,
+    };
+  }
+
+  static AddGridListing = "ADD-GRIDLISTING";
+  static AddedGridListing = "ADDED-GRIDLISTING";
+  static CallAddGridList(prodData) {
+    return {
+      type: GitAction.AddGridListing,
+      payload: prodData,
+    };
+  }
+
+  static UpdateGridListing = "UPDATE-GRIDLISTING";
+  static UpdatedGridListing = "UPDATED-GRIDLISTING";
+  static CallUpdateGridList(prodData) {
+    return {
+      type: GitAction.UpdateGridListing,
+      payload: prodData,
+    };
+  }
+
+  static DeleteGridListing = "DELETE-GRIDLISTING";
+  static DeletedGridListing = "DELETED-GRIDLISTING";
+  static CallDeleteGridList(prodData) {
+    return {
+      type: GitAction.DeleteGridListing,
+      payload: prodData,
+    };
+  }
+
+  static ResetGridAction = "RESET-GRIDACTION";
+  static CallResetGridAction() {
+    return {
+      type: GitAction.ResetGridAction,
+    };
+  }
+
 }
 

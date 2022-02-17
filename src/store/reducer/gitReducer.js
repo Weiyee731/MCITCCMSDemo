@@ -50,7 +50,7 @@ const INITIAL_STATE = {
   //General
   countries: [],
   logistic: [],
-  grid: [],
+
 
   // Quotation
   quotations: [],
@@ -66,7 +66,16 @@ const INITIAL_STATE = {
 
   //Shoplot
   shoplot: [],
+  shoplotByID: [],
   shoplotAction: [],
+  coordinateAction: [],
+  // Block
+  block: [],
+  blockAction: [],
+  // grid
+  grid: [],
+  gridAction: [],
+
 };
 
 export function counterReducer(state = INITIAL_STATE, action) {
@@ -660,14 +669,6 @@ export function counterReducer(state = INITIAL_STATE, action) {
         logistic: action.payload,
       });
 
-    case GitAction.GetStorage:
-      return Object.assign({}, state, { loading: true });
-    case GitAction.GotStorage:
-      return Object.assign({}, state, {
-        loading: false,
-        grid: action.payload,
-      });
-
     ///////////////////////////////////////////////////  Shoplot  ///////////////////////////////////////////////////
 
 
@@ -679,15 +680,15 @@ export function counterReducer(state = INITIAL_STATE, action) {
         shoplot: action.payload,
       });
 
-      case GitAction.GetShopListingByID:
+    case GitAction.GetShopListingByID:
       return Object.assign({}, state, { loading: true });
     case GitAction.GotShopListingByID:
       return Object.assign({}, state, {
         loading: false,
-        shoplot: action.payload,
+        shoplotByID: action.payload,
       });
 
-      case GitAction.AddShoplot:
+    case GitAction.AddShoplot:
       return Object.assign({}, state, { loading: true });
     case GitAction.AddedShoplot:
       return Object.assign({}, state, {
@@ -695,21 +696,121 @@ export function counterReducer(state = INITIAL_STATE, action) {
         shoplotAction: action.payload,
       });
 
-      case GitAction.UpdateShoplot:
-        return Object.assign({}, state, { loading: true });
-      case GitAction.UpdatedShoplot:
-        return Object.assign({}, state, {
-          loading: false,
-          shoplotAction: action.payload,
-        });
+    case GitAction.UpdateShoplot:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.UpdatedShoplot:
+      return Object.assign({}, state, {
+        loading: false,
+        shoplotAction: action.payload,
+      });
 
-        case GitAction.DeleteShoplot:
-          return Object.assign({}, state, { loading: true });
-        case GitAction.DeletedShoplot:
-          return Object.assign({}, state, {
-            loading: false,
-            shoplotAction: action.payload,
-          });
+    case GitAction.DeleteShoplot:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.DeletedShoplot:
+      return Object.assign({}, state, {
+        loading: false,
+        shoplotAction: action.payload,
+      });
+
+    case GitAction.AddShoplotCoordinateListing:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.AddedShoplotCoordinateListing:
+      return Object.assign({}, state, {
+        loading: false,
+        coordinateAction: action.payload,
+      });
+
+    case GitAction.UpdateShoplotCoordinateListing:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.UpdatedShoplotCoordinateListing:
+      return Object.assign({}, state, {
+        loading: false,
+        coordinateAction: action.payload,
+      });
+
+
+    case GitAction.ResetShopAction:
+      return Object.assign({}, state, {
+        loading: true,
+        shoplotAction: [],
+      });
+
+    ///////////////////////////////////////////////////  Block  ///////////////////////////////////////////////////
+
+
+    case GitAction.GetBlockListing:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotBlockListing:
+      return Object.assign({}, state, {
+        loading: false,
+        block: action.payload,
+      });
+
+    case GitAction.AddBlockListing:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.AddedBlockListing:
+      return Object.assign({}, state, {
+        loading: false,
+        blockAction: action.payload,
+      });
+
+    case GitAction.UpdateBlockListing:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.UpdatedBlockListing:
+      return Object.assign({}, state, {
+        loading: false,
+        blockAction: action.payload,
+      });
+
+    case GitAction.DeleteBlockListing:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.DeletedBlockListing:
+      return Object.assign({}, state, {
+        loading: false,
+        blockAction: action.payload,
+      });
+
+    ///////////////////////////////////////////////////  Grid  ///////////////////////////////////////////////////
+
+    case GitAction.GetStorage:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotStorage:
+      return Object.assign({}, state, {
+        loading: false,
+        grid: action.payload,
+      });
+
+
+    case GitAction.AddGridListing:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.AddedGridListing:
+      return Object.assign({}, state, {
+        loading: false,
+        gridAction: action.payload,
+      });
+
+    case GitAction.UpdateGridListing:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.UpdatedGridListing:
+      return Object.assign({}, state, {
+        loading: false,
+        gridAction: action.payload,
+      });
+
+    case GitAction.DeleteGridListing:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.DeletedGridListing:
+      return Object.assign({}, state, {
+        loading: false,
+        gridAction: action.payload,
+      });
+
+    case GitAction.ResetGridAction:
+      return Object.assign({}, state, {
+        loading: true,
+        gridAction: [],
+      });
+
 
     /////////////////////////////////////////////////// Default ///////////////////////////////////////////////////
     default:

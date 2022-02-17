@@ -18,7 +18,7 @@ import Pagination from "../../tools/Pagination";
 // import { isArrayNotEmpty,isLatitude,  isLongitude} from "../../tools/Helpers";
 import TableComponents from "../../components/TableComponents/TableComponents";
 import AlertDialog from "../../components/ModalComponent/ModalComponent";
-import { isArrayNotEmpty, isLatitude, isLongitude, isStringNullOrEmpty } from "../../tools/Helpers";
+import { isArrayNotEmpty, isLatitude, isLongitude, isStringNullOrEmpty, isContactValid } from "../../tools/Helpers";
 import Logo from "../../assets/logos/logo.png";
 import LoadingPanel from "../../tools/LoadingPanel";
 import ResponsiveDatePickers from "../../tools/datePicker";
@@ -45,18 +45,37 @@ import Select from 'react-select';
 
 // Function Usage
 import { Card, CardText, CardBody } from 'reactstrap'
+import GoogleMaps from "../../components/GoogleMap/GoogleMapForPolygonCreation";
+import RoomIcon from '@mui/icons-material/Room';
+import InfoIcon from '@mui/icons-material/Info';
 
 function mapStateToProps(state) {
     return {
         shoplot: state.counterReducer["shoplot"],
+        shoplotByID: state.counterReducer["shoplotByID"],
+        block: state.counterReducer["block"],
         grid: state.counterReducer["grid"],
+        gridAction: state.counterReducer["gridAction"],
+        coordinateAction: state.counterReducer["coordinateAction"],
+        shoplotAction: state.counterReducer["shoplotAction"],
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         CallGridList: (prodData) => dispatch(GitAction.CallGridList(prodData)),
+        CallBlockList: (prodData) => dispatch(GitAction.CallBlockList(prodData)),
         CallShopList: (prodData) => dispatch(GitAction.CallShopList(prodData)),
+        CallShopListByID: (prodData) => dispatch(GitAction.CallShopListByID(prodData)),
+
+        CallUpdateShopList: (prodData) => dispatch(GitAction.CallUpdateShopList(prodData)),
+        CallUpdateShoplotCoordinate: (prodData) => dispatch(GitAction.CallUpdateShoplotCoordinate(prodData)),
+        CallResetShopAction: (prodData) => dispatch(GitAction.CallResetShopAction(prodData)),
+
+        CallDeleteGridList: (prodData) => dispatch(GitAction.CallDeleteGridList(prodData)),
+        CallUpdateGridList: (prodData) => dispatch(GitAction.CallUpdateGridList(prodData)),
+        CallAddGridList: (prodData) => dispatch(GitAction.CallAddGridList(prodData)),
+        CallResetGridAction: (prodData) => dispatch(GitAction.CallResetGridAction(prodData)),
 
     };
 }
@@ -73,12 +92,13 @@ const INITIAL_STATE = {
     GridModalData: [{
         gridId: "",
         gridStorage: "",
-        rental: "",
+        gridStorageCode: "",
+        // rental: "",
 
         shopLot: [],
 
         isStorageError: false,
-        isRentalError: false,
+        // isRentalError: false,
     }],
 
     //Shoplot Modal
@@ -89,9 +109,14 @@ const INITIAL_STATE = {
         ShoplotPolygonString: "",
         ShoplotBlock: "",
         isShoplotNameError: false,
-        isShoplotCoordinateError: false
+        isShoplotCoordinateError: false,
+        latitude: "",
+        longitude: "",
+        // ShopCoordinate: ""
     }],
-    isShopModal: false
+    Location: "",
+    isShopModal: false,
+    isMapAlert: false,
 
 }
 
@@ -102,14 +127,14 @@ const tableHeadCells = [
         numeric: false,
         disablePadding: true,
         label: "Grid Code",
-    },
-    {
-        id: "RentalPrice",
-        align: 'left',
-        numeric: false,
-        disablePadding: false,
-        label: "Rental Price (Month)",
-    },
+    }
+    // {
+    //     id: "RentalPrice",
+    //     align: 'left',
+    //     numeric: false,
+    //     disablePadding: false,
+    //     label: "Rental Price (Month)",
+    // },
 ];
 
 
@@ -121,44 +146,115 @@ class StoreDetailListing extends Component {
         this.ShoplotListing = []
         this.GridListing = []
         this.props.CallGridList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
-        this.props.CallShopList({ Block: "A" })
+        this.props.CallBlockList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
+        this.props.CallShopList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
+        this.props.CallShopListByID({ ShoplotID: this.props.match.params.shoplotID })
     }
 
     componentDidMount() {
-        if (this.props.shoplot !== null && this.props.shoplot.length > 0 && this.state.isShoplotSet === false) {
-            console.log("COMPONENTDIDUPDATE HERE", this.props.shoplot)
-            this.ShoplotListing = this.props.shoplot.length > 0 && this.props.shoplot.filter((x) => parseInt(x.ShoplotID) === parseInt(this.props.match.params.shoplotID))
-            this.setState({ isShoplotSet: true })
+        console.log("this.props", this.props)
+        if (this.props.shoplotByID !== null && this.props.shoplotByID.length > 0 && this.state.isShoplotSet === false) {
+            this.setShoplot(this.props.shoplotByID)
         }
         if (this.props.grid !== null && this.props.grid.length > 0 && this.state.isGridtSet === false) {
-            this.GridListing = this.props.grid
+            // console.log("this.props.grid", this.props.grid.)
+            this.GridListing = this.props.grid.filter((x) => parseInt(x.ShoplotID) === parseInt(this.props.match.params.shoplotID))
             this.setState({ isGridtSet: true })
         }
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (this.props.shoplot !== null && this.props.shoplot.length > 0 && this.state.isShoplotSet === false) {
-            this.ShoplotListing = this.props.shoplot.length > 0 && this.props.shoplot.filter((x) => parseInt(x.ShoplotID) === parseInt(this.props.match.params.shoplotID))
-            this.setState({ isShoplotSet: true })
+
+        console.log("this.propsssss", this.props)
+        if (prevProps.shoplotAction !== this.props.shoplotAction) {
+            if (this.props.shoplotAction.length > 0 && this.props.shoplotAction[0].ReturnVal === 1) {
+                toast.success("Data is uploaded")
+                this.props.CallResetShopAction()
+            }
+            else
+                this.props.CallShopListByID({ ShoplotID: this.props.match.params.shoplotID })
         }
-        // if (this.props.grid !== null && this.props.grid.length > 0 && this.state.isGridtSet === false) {
-        //     this.GridListing = this.props.grid
-        //     this.setState({ isGridtSet: true })
-        // }
+
+        if (prevProps.gridAction !== this.props.gridAction) {
+            if (this.props.gridAction.length > 0 && this.props.gridAction[0].ReturnVal === 1) {
+                this.props.CallResetGridAction()
+            }
+            else
+                this.props.CallGridList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
+        }
+
+        if (prevProps.shoplotByID !== this.props.shoplotByID) {
+            if (this.props.shoplotByID !== null && this.props.shoplotByID.length > 0 && this.state.isShoplotSet === false) {
+                this.setShoplot(this.props.shoplotByID)
+                this.setState({ isShoplotSet: true })
+            }
+        }
+    }
+
+    setShoplot = (shoplot) => {
+        this.ShoplotListing = shoplot
+
+        let shopLotListing = []
+        let block = []
+        let selectedBlock = this.props.block.length > 0 && this.props.block.filter((x) => x.StorageBlock === shoplot[0].ShoplotBlock)
+
+        let replacePolygon = shoplot[0].ShoplotPolygonString.replace("POLYGON((", '')
+        let replacePolygon2 = replacePolygon.replace("POLYGON ((", '')
+        let replacePolygon3 = replacePolygon2.replace("))", '')
+
+        let coordinate = replacePolygon3.split(",")
+        let ShopsCoordinate = []
+        coordinate.length > 0 && coordinate.map((data) => {
+
+            if (data.split(" ")[0] === "") {
+                ShopsCoordinate.push({
+                    lat: parseFloat(data.split(" ")[2]),
+                    lng: parseFloat(data.split(" ")[1])
+                })
+            }
+            else {
+                ShopsCoordinate.push({
+                    lat: parseFloat(data.split(" ")[1]),
+                    lng: parseFloat(data.split(" ")[0])
+                })
+            }
+        })
+
+        block = [{
+            id: selectedBlock[0].StorageBlockID,
+            value: shoplot[0].ShoplotBlock,
+            label: shoplot[0].ShoplotBlock,
+        }]
+
+        shopLotListing[0] = {
+            ShoplotID: shoplot[0].ShoplotID,
+            ShoplotName: shoplot[0].ShoplotName,
+            ContactNumber: shoplot[0].ContactNumber,
+            ShoplotPolygonString: shoplot[0].ShoplotPolygonString,
+            ShoplotBlock: block,
+            isShoplotNameError: false,
+            isShoplotCoordinateError: false,
+            isContactError: false,
+            latitude: ShopsCoordinate[0].lat,
+            longitude: ShopsCoordinate[0].lng,
+            ShoplotCoordinate: ShopsCoordinate
+        }
+        this.setState({ ShopModalData: shopLotListing, isShoplotSet: true })
     }
 
     renderTableRows = (data, index) => {
         return (
             <>
                 <TableCell align="left"> {data.GridStorage}  </TableCell>
-                <TableCell align="left"> {data.GridStorage} </TableCell>
+                {/* <TableCell align="left"> {data.GridStorage} </TableCell> */}
             </>
         )
     }
 
     handleFormInput = (e, name, index) => {
+        let shopData = this.state.ShopModalData
+        let gridData = this.state.GridModalData
         if (name === "Shoplot") {
-            let gridData = this.state.GridModalData
             let shopLotListing = []
             shopLotListing = [{
                 id: e.id,
@@ -168,47 +264,106 @@ class StoreDetailListing extends Component {
 
             gridData[0] = {
                 gridId: gridData[0].gridId,
-                gridStorage: gridData[0].gridStorage,
-                rental: gridData[0].rental,
+                gridStorageCode: gridData[0].gridStorageCode,
+                // rental: gridData[0].rental,
                 shopLot: shopLotListing,
                 isStorageError: false,
-                isRentalError: false,
+                // isRentalError: false,
             }
             this.setState({ GridModalData: gridData })
         }
 
         if (name === "GridStorage") {
-            let gridData = this.state.GridModalData
             let isStorageError = false
             if (isStringNullOrEmpty(e.target.value))
-                isStorageError = true
+                isStorageError = true  
 
             gridData[0] = {
                 gridId: gridData[0].gridId,
-                gridStorage: e.target.value,
-                rental: gridData[0].rental,
+                gridStorageCode: e.target.value,
+                // rental: gridData[0].rental,
                 shopLot: gridData[0].shopLot,
                 isStorageError: isStorageError,
-                isRentalError: gridData[0].isRentalError,
+                // isRentalError: gridData[0].isRentalError,
             }
             this.setState({ GridModalData: gridData })
         }
 
-        if (name === "Rental") {
-            let gridData = this.state.GridModalData
-            let isRentalError = false
-            if (isStringNullOrEmpty(e.target.value))
-                isRentalError = true
+        // if (name === "Rental") {
+        //     let isRentalError = false
+        //     if (isStringNullOrEmpty(e.target.value))
+        //         isRentalError = true
 
-            gridData[0] = {
-                gridId: gridData[0].gridId,
-                gridStorage: gridData[0].gridStorage,
-                rental: e.target.value,
-                shopLot: gridData[0].shopLot,
-                isStorageError: gridData[0].isStorageError,
-                isRentalError: isRentalError,
+        //     gridData[0] = {
+        //         gridId: gridData[0].gridId,
+        //         gridStorage: gridData[0].gridStorage,
+        //         rental: e.target.value,
+        //         shopLot: gridData[0].shopLot,
+        //         isStorageError: gridData[0].isStorageError,
+        //         isRentalError: isRentalError,
+        //     }
+        //     this.setState({ GridModalData: gridData })
+        // }
+
+        if (name === "Block") {
+            let block = []
+            block = [{
+                id: e.id,
+                label: e.label,
+                value: e.value,
+            }]
+
+            shopData[0] = {
+                ShoplotID: shopData[0].ShoplotID,
+                ShoplotName: shopData[0].ShoplotName,
+                ContactNumber: shopData[0].ContactNumber,
+                ShoplotCoordinate: shopData[0].ShoplotCoordinate,
+                ShoplotPolygonString: shopData[0].ShoplotPolygonString,
+                ShoplotBlock: block,
+                isShoplotNameError: shopData[0].isShoplotNameError,
+                isContactError: shopData[0].isContactError,
             }
-            this.setState({ GridModalData: gridData })
+            this.setState({ ShopModalData: shopData })
+        }
+
+        // {TextFieldData("text", "outlined", "Contact Number", "ContactNumber", this.state.ShopModalData[0].ContactNumber, this.state.ShopModalData[0].isContactError, 0)}
+        // {TextFieldData("text", "outlined", "Shoplot Name", "ShoplotName", this.state.ShopModalData[0].ShoplotName, this.state.ShopModalData[0].isShoplotNameError, 0)}
+
+
+        if (name === "ContactNumber") {
+            let isContactError = false
+            if (isStringNullOrEmpty(e.target.value) || !isContactValid(e.target.value))
+                isContactError = true
+
+            shopData[0] = {
+                ShoplotID: shopData[0].ShoplotID,
+                ShoplotName: shopData[0].ShoplotName,
+                ContactNumber: e.target.value,
+                ShoplotCoordinate: shopData[0].ShoplotCoordinate,
+                ShoplotPolygonString: shopData[0].ShoplotPolygonString,
+                ShoplotBlock: shopData[0].ShoplotBlock,
+                isShoplotNameError: shopData[0].isShoplotNameError,
+                isContactError: isContactError,
+            }
+            this.setState({ ShopModalData: shopData })
+        }
+
+        if (name === "ShoplotName") {
+            let isShoplotNameError = false
+            if (isStringNullOrEmpty(e.target.value))
+                isShoplotNameError = true
+
+            shopData[0] = {
+                ShoplotID: shopData[0].ShoplotID,
+                ShoplotName: e.target.value,
+                ContactNumber: shopData[0].ContactNumber,
+                ShoplotCoordinate: shopData[0].ShoplotCoordinate,
+                ShoplotPolygonString: shopData[0].ShoplotPolygonString,
+                ShoplotBlock: shopData[0].ShoplotBlock,
+                isShoplotNameError: isShoplotNameError,
+                isContactError: shopData[0].isContactError,
+            }
+            this.setState({ ShopModalData: shopData })
         }
     }
 
@@ -225,10 +380,10 @@ class StoreDetailListing extends Component {
         gridData[0] = {
             gridId: "",
             gridStorage: "",
-            rental: "",
+            // rental: "",
             shopLot: shopLotListing,
             isStorageError: false,
-            isRentalError: false,
+            // isRentalError: false,
         }
         this.setState({ GridModalData: gridData, isGridModal: true })
     }
@@ -246,38 +401,32 @@ class StoreDetailListing extends Component {
         gridData[0] = {
             gridId: row.GridStorageID,
             gridStorage: row.GridStorage,
-            rental: row.Rental,
+            gridStorageCode: row.GridStorageCode,
+            // rental: row.Rental,
             shopLot: shopLotListing,
             isStorageError: false,
-            isRentalError: false,
+            // isRentalError: false,
         }
         this.setState({ GridModalData: gridData, isGridModal: true, isEditBlock: true })
     }
 
-    editShop = () => {
-
-        let shopLotListing = this.ShoplotListing
-
-        shopLotListing[0] = {
-            ShoplotID: shopLotListing[0].ShoplotID,
-            ShoplotName: shopLotListing[0].ShoplotName,
-            ShoplotCoordinate: shopLotListing[0].ShoplotCoordinate,
-            ShoplotPolygonString: shopLotListing[0].ShoplotPolygonString,
-            ShoplotBlock: shopLotListing[0].ShoplotBlock,
-            isShoplotNameError: false,
-            isShoplotCoordinateError: false
-        }
-        this.setState({ ShopModalData: shopLotListing, isShopModal: true })
-    }
-
     OnSubmitDatabase = () => {
-        if (!this.errorChecking()) {
-            var gridData = {
-                GridStorage: this.state.GridModalData[0].gridStorage,
-                GridRental: this.state.GridModalData[0].rental
-            }
-            this.GridListing = [...this.GridListing, gridData]
+        if (!this.errorChecking("grid")) {
+            // var gridData = {
+            //     GridStorage: this.state.GridModalData[0].gridStorage,
+            //     GridRental: this.state.GridModalData[0].rental
+            // }
+            // this.GridListing = [...this.GridListing, gridData]
+            // this.setState(INITIAL_STATE)
+
+            this.props.CallAddGridList({
+                GridStorageCode: this.state.GridModalData[0].gridStorageCode,
+                ShoplotID: this.state.GridModalData[0].shopLot[0].id,
+                ShoplotName: this.state.GridModalData[0].shopLot[0].value,
+                ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
+            })
             this.setState(INITIAL_STATE)
+            this.setState({ isGridModal: false })
         }
         else {
             toast.warning("Input Error: Please cross check on All Grid Details Input")
@@ -285,43 +434,118 @@ class StoreDetailListing extends Component {
     }
 
     OnSubmitUpdateDatabase = () => {
-        if (!this.errorChecking()) {
-            let dbGridListing = this.GridListing
-            let index = dbGridListing.findIndex(x => parseInt(x.GridStorageID) === parseInt(this.state.GridModalData[0].gridId))
+        if (!this.errorChecking("grid")) {
+            this.props.CallUpdateGridList({
+                GridStorageID: this.state.GridModalData[0].gridId,
+                GridStorageCode: this.state.GridModalData[0].gridStorageCode,
+                ShoplotID: this.state.GridModalData[0].shopLot[0].id,
+                ShoplotName: this.state.GridModalData[0].shopLot[0].value
+            })
+            // let dbGridListing = this.GridListing
+            // let index = dbGridListing.findIndex(x => parseInt(x.GridStorageID) === parseInt(this.state.GridModalData[0].gridId))
 
-            dbGridListing[index] = {
-                GridStorage: this.state.GridModalData[0].gridStorage,
-                GridRental: this.state.GridModalData[0].rental
-            }
-            this.GridListing = dbGridListing
-            this.setState({ isGridModal: false })
+            // dbGridListing[index] = {
+            //     GridStorage: this.state.GridModalData[0].gridStorage,
+            //     GridRental: this.state.GridModalData[0].rental
+            // }
+            // this.GridListing = dbGridListing
+            // this.setState({ isGridModal: false })
             // this.setState(INITIAL_STATE)
+            this.setState(INITIAL_STATE)
+            this.setState({ isGridModal: false })
         }
         else {
             toast.warning("Input Error: Please cross check on All Grid Details Input")
         }
-
     }
 
-    errorChecking = () => {
+    OnSubmitUpdateShoplot = () => {
+        if (!this.errorChecking("shop")) {
+            if (this.state.Location === "") {
+                this.props.CallUpdateShopList({
+                    ShoplotName: this.state.ShopModalData[0].ShoplotName,
+                    ContactNo: this.state.ShopModalData[0].ContactNumber,
+                    ShoplotID: this.state.ShopModalData[0].ShoplotID,
+                    ShoplotBlock: this.state.ShopModalData[0].ShoplotBlock[0].value,
+                    ShoplotPolygon: this.state.ShopModalData[0].ShoplotPolygonString
+                })
+            }
+            else {
+                let replacePolygon = this.state.Location.replace("POLYGON((", '')
+                let replacePolygon2 = replacePolygon.replace("POLYGON ((", '')
+                let replacePolygon3 = replacePolygon2.replace("))", '')
+
+                let coordinate = replacePolygon3.split(",")
+                let latitude = []
+                let longitude = []
+
+                coordinate.length > 0 && coordinate.map((data) => {
+                    if (data.split(" ")[0] === "") {
+                        console.log("hahaha", data.split(" "))
+                        latitude.push(parseFloat(data.split(" ")[2]))
+                        longitude.push(parseFloat(data.split(" ")[1]))
+                    }
+                    else {
+                        console.log("hahaha22", data.split(" "))
+                        latitude.push(parseFloat(data.split(" ")[1]))
+                        longitude.push(parseFloat(data.split(" ")[0]))
+                    }
+                })
+
+                this.props.CallUpdateShopList({
+                    ShoplotName: this.state.ShopModalData[0].ShoplotName,
+                    ContactNo: this.state.ShopModalData[0].ContactNumber,
+                    ShoplotID: this.state.ShopModalData[0].ShoplotID,
+                    ShoplotBlock: this.state.ShopModalData[0].ShoplotBlock[0].value,
+                    ShoplotPolygon: this.state.Location
+                })
+                this.props.CallUpdateShoplotCoordinate({
+                    ShoplotID: this.state.ShopModalData[0].ShoplotID,
+                    Longitude: longitude,
+                    Latitude: latitude
+                })
+            }
+            this.setState(INITIAL_STATE)
+            this.setState({ isShopModal: false })
+        }
+        else {
+            toast.warning("Input Error: Please cross check on All Shoplot Details Input")
+        }
+    }
+
+    errorChecking = (data) => {
         let error = false
         let gridListing = this.state.GridModalData
+        let shopListing = this.state.ShopModalData
 
-        if (gridListing.length > 0) {
-            if (gridListing.filter((data) => data.isStorageError === true || data.isRentalError === true).length > 0)
+        if (gridListing.length > 0 && data === "grid") {
+            console.log()
+            if (gridListing.filter((data) => data.isStorageError === true || data.gridStorageCode === undefined).length > 0)
                 error = true
-            if (gridListing.filter((data) => data.GridStorage === undefined || data.GridRental === undefined).length > 0)
+            // if (gridListing.filter((data) => data.gridStorage === undefined || data.rental === undefined).length > 0)
+            //     error = true
+            if (gridListing[0].shopLot[0].id === "")
+                error = true
+        }
+        if (shopListing.length > 0 && data === "shop") {
+            if (shopListing.filter((data) => data.isContactNoError === true || data.isShoplotNameError === true).length > 0)
+                error = true
+            if (shopListing.filter((data) => data.ContactNumber === undefined || data.ShoplotName === undefined).length > 0)
+                error = true
+            if (shopListing[0].ShoplotBlock[0].id === "")
                 error = true
         }
         return error
     }
 
+    setTheState = (value) => {
+        this.setState({
+            Location: value,
+        });
+    };
+
 
     render() {
-        console.log(" this.GridListing", this.GridListing)
-        console.log(" this.ShoplotListing", this.props.match.params.shoplotID)
-        console.log(" this.props", this.props)
-        console.log("this.state", this.state.GridModalData)
         const productInfoLabelStyle = {
             fontSize: "14px",
             fontWeight: "bold",
@@ -353,8 +577,6 @@ class StoreDetailListing extends Component {
             this.ShoplotListing !== undefined && this.ShoplotListing.length > 0 ?
                 <div style={{ width: "100%" }}>
                     <div >
-                        {/* <div style={{ margin: "1%" }}>
-                        </div> */}
                         <div style={{ display: "flex", marginLeft: "1%" }}>
                             <Button onClick={() => typeof this.props.backToList === "function" && this.handleBack()}>
                                 <ArrowRoundedLeft8x13Svg fontSize="inherit" />
@@ -366,21 +588,16 @@ class StoreDetailListing extends Component {
                         </div>
 
                         <div style={{ marginLeft: "2%", marginRight: "2%", marginBottom: "2%" }}>
-                            <Card style={{ width: '100%' }}>
+                            <Card style={{ width: '100%', height: "330px" }}>
                                 <CardBody>
                                     <CardText>
                                         <div className="row">
                                             <div className="col-lg-10">
-                                                <h6 style={{ textAlign: "left" }} >Shop Information</h6>
-                                            </div>
-                                            <div className="col-lg-2" style={{ textAlign: "right" }}>
-                                                <Button style={{ backgroundColor: "white" }} onClick={() => this.editShop()}>
-                                                    View Details
-                                                </Button>
+                                                <h5 style={{ textAlign: "left" }} onClick={() => this.setState({ isShopModal: true, isMapAlert: true })} >Shop Information <label onClick={() => this.setState({ isShopModal: true, isMapAlert: true })} style={{ color: "blue", paddingTop: "8px", paddingLeft: "3px", fontSize: "9px" }}>Click to view Shop Info</label></h5>
                                             </div>
                                         </div>
                                         <div className="row">
-                                            <div className="col-8">
+                                            <div className="col-7">
                                                 <div className="row">
                                                     <div className="col-3">
                                                         <div className="row">
@@ -421,8 +638,19 @@ class StoreDetailListing extends Component {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="col-4">
-
+                                            <div className="col-5">
+                                                <div className="col-12">
+                                                    <GoogleMaps
+                                                        zoom={16}
+                                                        width="80%"
+                                                        height="350"
+                                                        longitude={this.state.ShopModalData[0].longitude}
+                                                        latitude={this.state.ShopModalData[0].latitude}
+                                                        polypath={this.state.ShopModalData}
+                                                        markerLabel={this.state.ShopModalData[0].ShoplotName}
+                                                        toView={true}
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                     </CardText>
@@ -457,8 +685,8 @@ class StoreDetailListing extends Component {
                                                 onRowClickSelect: false                  // optional, by default is false. If true, the ** onTableRowClick() ** function will be ignored
                                             }}
                                             selectedIndexKey={"GridStorageID"}                    // required, as follow the data targetting key of the row, else the data will not be chosen when checkbox is click. 
-
-                                            Data={this.GridListing}                                 // required, the data that listing in the table
+                                            Data={this.props.grid.length > 0 && this.props.grid.filter((x) => parseInt(x.ShoplotID) === parseInt(this.props.match.params.shoplotID))}
+                                            // Data={this.GridListing}                                 // required, the data that listing in the table
                                             onSelectRow={(e) => this.setState({ selectedListID: e })}
                                             onSelectAllRows={(e) => this.setState({ selectedListID: e })}
                                             onTableRowClick={this.onTableRowClick}       // optional, onTableRowClick = (event, row) => { }. The function should follow the one shown, as it will return the data from the selected row
@@ -485,22 +713,85 @@ class StoreDetailListing extends Component {
                             showAction={false}
                         >
                             <div className="container-fluid">
-                                {/*   shopLotListing[0] = {
-            ShoplotID: shopLotListing[0].ShoplotID,
-            ShoplotName: shopLotListing[0].ShoplotName,
-            ShoplotCoordinate: shopLotListing[0].ShoplotCoordinate,
-            ShoplotPolygonString: shopLotListing[0].ShoplotPolygonString,
-            ShoplotBlock: shopLotListing[0].ShoplotBlock,
-            isShoplotNameError: false,
-            isShoplotCoordinateError: false
-        }
-        this.setState({ ShopModalData: shopLotListing, isShopModal: true }) */}
+                                <div className="container" style={{ padding: "10px" }}>
+                                    <div className="row">
+                                        <div className="col-4 col-md-4" style={{ paddingBottom: "10px" }}>
+                                            {TextFieldData("text", "outlined", "Shoplot Name", "ShoplotName", this.state.ShopModalData[0].ShoplotName, this.state.ShopModalData[0].isShoplotNameError, 0)}
+                                        </div>
+                                        <div className="col-4 col-md-4" style={{ paddingBottom: "30px" }}>
+                                            {console.log("this.state.ShopModalData[0]", this.state.ShopModalData[0])}
+                                            <FormControl variant="standard" size="small" fullWidth>
+                                                <InputLabel id="Store-label">Block</InputLabel>
+                                                <Select
+                                                    labelId="Block"
+                                                    id="Block"
+                                                    name="Block"
+                                                    value={this.state.ShopModalData[0].ShoplotBlock}
+                                                    onChange={(e) => this.handleFormInput(e, "Block", 0)}
+                                                    label="Store"
+                                                    options={
+                                                        isArrayNotEmpty(this.props.block) && this.props.block.map((el, idx) => {
+                                                            return { id: el.StorageBlockID, value: el.StorageBlock, label: el.StorageBlock }
+                                                        })
+                                                    }
+                                                >
+                                                </Select>
+                                            </FormControl>
+                                        </div>
+                                        <div className="col-4 col-md-4" style={{ paddingBottom: "10px" }}>
+                                            {TextFieldData("text", "outlined", "Contact Number", "ContactNumber", this.state.ShopModalData[0].ContactNumber, this.state.ShopModalData[0].isContactError, 0)}
+                                        </div>
+                                        <hr />
+                                        <div className="col-12" style={{ textAlign: "right" }}>
+                                            <Tooltip title="Map Guide">
+                                                <IconButton size="medium" sx={{ color: "#0074ea", marginRight: 1 }} onClick={() => this.setState({ isMapAlert: true })}>
+                                                    < InfoIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </div>
+                                        <div className="col-12 col-md-12" style={{ paddingBottom: "10px", height: "350px" }}>
+                                            <GoogleMaps
+                                                zoom={15}
+                                                width="100%"
+                                                height="500"
+                                                data={this.state}
+                                                setValue={this.setTheState}
+                                                longitude={this.state.ShopModalData[0].longitude}
+                                                latitude={this.state.ShopModalData[0].latitude}
+                                                polypath={this.state.ShopModalData}
+                                                markerLabel={this.state.ShopModalData[0].ShoplotName}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {
+                                        <div className="row">
+                                            <div className="col-12 col-md-12" style={{ textAlign: "right" }}>
+                                                <Button variant="contained" onClick={() => { this.OnSubmitUpdateShoplot() }} color="primary"  >
+                                                    Update
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </AlertDialog >
+
+                        <AlertDialog
+                            open={this.state.isGridModal}
+                            fullWidth
+                            maxWidth="sm"
+                            handleToggleDialog={() => <>{this.setState(INITIAL_STATE)}{this.setState({ isGridModal: false })}</>}
+                            title={this.state.isEditGrid === true ? this.state.GridName : "New Grid Storage"}
+                            showAction={false}
+                        >
+                            <div className="container-fluid" style={{ height: "300px" }}>
                                 <div className="container" style={{ padding: "10px" }}>
                                     <div className="col-12 col-md-12" style={{ paddingBottom: "10px" }}>
-                                        {TextFieldData("text", "outlined", "Shoplot Name", "ShoplotName", this.state.ShopModalData[0].ShoplotName, this.state.GridModalData[0].isShoplotNameError, 0)}
+                                        {TextFieldData("text", "outlined", "Grid Storage", "GridStorage", this.state.GridModalData[0].gridStorageCode, this.state.GridModalData[0].isStorageError, 0)}
                                     </div>
                                     {/* <div className="col-12 col-md-12" style={{ paddingBottom: "10px" }}>
-                                        {TextFieldData("number", "outlined", "Rental (Monthly)", "ShoplotCoordinate", this.state.ShoplotCoordinate[0].rental, this.state.GridModalData[0].isShoplotCoordinateError, 0)}
+                                        {TextFieldData("number", "outlined", "Rental (Monthly)", "Rental", this.state.GridModalData[0].rental, this.state.GridModalData[0].isRentalError, 0)}
                                     </div> */}
                                     <div className="col-12 col-md-12" style={{ paddingBottom: "30px" }}>
                                         <FormControl variant="standard" size="small" fullWidth>
@@ -512,6 +803,7 @@ class StoreDetailListing extends Component {
                                                 value={this.state.GridModalData[0].shopLot}
                                                 onChange={(e) => this.handleFormInput(e, "Shoplot", 0)}
                                                 label="Store"
+
                                                 options={
                                                     isArrayNotEmpty(this.props.shoplot) && this.props.shoplot.map((el, idx) => {
                                                         return { id: el.ShoplotID, value: el.ShoplotName, label: el.ShoplotName }
@@ -543,61 +835,26 @@ class StoreDetailListing extends Component {
                         </AlertDialog >
 
                         <AlertDialog
-                            open={this.state.isGridModal}
+                            open={this.state.isMapAlert}
                             fullWidth
                             maxWidth="sm"
-                            handleToggleDialog={() => <>{this.setState(INITIAL_STATE)}{this.setState({ isGridModal: false })}</>}
-                            title={this.state.isEditGrid === true ? this.state.GridName : "New Grid Storage"}
+                            handleToggleDialog={() => <>{this.setState({ isMapAlert: false })}</>}
+                            title={"Map Guide"}
                             showAction={false}
                         >
                             <div className="container-fluid">
                                 <div className="container" style={{ padding: "10px" }}>
-                                    <div className="col-12 col-md-12" style={{ paddingBottom: "10px" }}>
-                                        {TextFieldData("text", "outlined", "Grid Storage", "GridStorage", this.state.GridModalData[0].gridStorage, this.state.GridModalData[0].isStorageError, 0)}
+                                    <div className="row">
+                                        <label>Red polygon  is current shoplot's location</label>
+                                        <label><label style={{ fontWeight: "bold" }}>Left Click</label> on the map to add <RoomIcon /> new coordinate point</label>
+                                        <label><label style={{ fontWeight: "bold" }}>Right Click</label> on the marker to <label style={{ color: "red" }}>remove</label> the marker</label>
+                                        <label><label style={{ fontWeight: "bold" }}>Scroll Up </label> to Zoom In</label>
+                                        <label><label style={{ fontWeight: "bold" }}>Scroll Down </label> to Zoom Out</label>
                                     </div>
-                                    <div className="col-12 col-md-12" style={{ paddingBottom: "10px" }}>
-                                        {TextFieldData("number", "outlined", "Rental (Monthly)", "Rental", this.state.GridModalData[0].rental, this.state.GridModalData[0].isRentalError, 0)}
-                                    </div>
-                                    <div className="col-12 col-md-12" style={{ paddingBottom: "30px" }}>
-                                        <FormControl variant="standard" size="small" fullWidth>
-                                            <InputLabel id="Store-label">Shoplot</InputLabel>
-                                            <Select
-                                                labelId="Shoplot"
-                                                id="Shoplot"
-                                                name="Shoplot"
-                                                value={this.state.GridModalData[0].shopLot}
-                                                onChange={(e) => this.handleFormInput(e, "Shoplot", 0)}
-                                                label="Store"
-                                                options={
-                                                    isArrayNotEmpty(this.props.shoplot) && this.props.shoplot.map((el, idx) => {
-                                                        return { id: el.ShoplotID, value: el.ShoplotName, label: el.ShoplotName }
-                                                    })
-                                                }
-                                            >
-                                            </Select>
-                                        </FormControl>
-                                        {console.log("this.props.shoplot", this.props.shoplot)}
-                                    </div>
-                                    {
-                                        <div className="row">
-                                            <div className="col-12 col-md-12" style={{ textAlign: "right" }}>
-                                                {
-                                                    this.state.isEditBlock ?
-                                                        <Button variant="contained" onClick={() => { this.OnSubmitUpdateDatabase() }} color="primary"  >
-                                                            Update
-                                                        </Button>
-                                                        :
-                                                        <Button variant="contained" onClick={() => { this.OnSubmitDatabase() }} color="primary"  >
-                                                            Submit
-                                                        </Button>
-                                                }
-                                            </div>
-                                        </div>
-                                    }
                                 </div>
-                            </div>
-                        </AlertDialog >
-                    </div>
+                            </div >
+                        </AlertDialog>
+                    </div >
                 </div >
                 : <LoadingPanel />
         )
