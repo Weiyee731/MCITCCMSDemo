@@ -1,20 +1,27 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { GitAction } from "../../store/action/gitAction";
+
 import { Link } from "react-router-dom";
 
+// import { browserHistory } from "react-router";
 import TableCell from '@mui/material/TableCell';
+// import TableRow from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
+import AddIcon from '@mui/icons-material/Add';
+import DraftsIcon from '@mui/icons-material/Drafts';
 
 // Share Components
 import SearchBar from "../../components/SearchBar/SearchBar"
 import Pagination from "../../tools/Pagination";
+// import { isArrayNotEmpty,isLatitude,  isLongitude} from "../../tools/Helpers";
 import TableComponents from "../../components/TableComponents/TableComponents";
 import AlertDialog from "../../components/ModalComponent/ModalComponent";
-import { isArrayNotEmpty, isStringNullOrEmpty, isContactValid } from "../../tools/Helpers";
+import { isArrayNotEmpty, isLatitude, isLongitude, isStringNullOrEmpty, isContactValid } from "../../tools/Helpers";
+import Logo from "../../assets/logos/logo.png";
+import ResponsiveDatePickers from "../../tools/datePicker";
 import { url } from "../../tools/Helpers";
-import GoogleMaps from "../../components/GoogleMap/GoogleMapForPolygonCreation";
 
 // UI Components
 import Select from 'react-select';
@@ -22,13 +29,38 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
 import GroupAddIcon from '@mui/icons-material/Add';
+import Badge from '@mui/material/Badge';
 import { toast } from "react-toastify";
 import TextField from '@mui/material/TextField';
+import PageviewIcon from '@mui/icons-material/Pageview';
 import FormHelperText from '@mui/material/FormHelperText';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button } from "@mui/material";
+import InputAdornment from '@mui/material/InputAdornment';
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+
+import { MapContainer, TileLayer, FeatureGroup } from 'react-leaflet';
+import { EditControl } from "react-leaflet-draw"
+import { useState, useCallback } from 'react';
+
+import { render } from 'react-dom';
+// import ReactMapGL from 'react-map-gl';
+// import DrawControl from './draw-control';
+// import ControlPanel from './control-panel';
+
+// import "leaflet-draw/dist/leaftlet.draw.css"
+// import '../../../node_modules/leaflet/dist/leaflet.css';
+
+// node_modules/leaflet-draw/dist/leaflet.draw.css
+// import "../../../node_modules/leaflet-draw/dist/leaflet.draw.css"
+// import "leaflet/dist/leaftlet.css"
+// import { useRef } from "react";
+
+import GoogleMaps from "../../components/GoogleMap/GoogleMapForPolygonCreation";
 import RoomIcon from '@mui/icons-material/Room';
 import InfoIcon from '@mui/icons-material/Info';
+
+const TOKEN = "pk.eyJ1Ijoic21peWFrYXdhIiwiYSI6ImNqcGM0d3U4bTB6dWwzcW04ZHRsbHl0ZWoifQ.X9cvdajtPbs9JDMG-CMDsA";
 
 
 function mapStateToProps(state) {
@@ -36,7 +68,6 @@ function mapStateToProps(state) {
         shoplot: state.counterReducer["shoplot"],
         grid: state.counterReducer["grid"],
         block: state.counterReducer["block"],
-        blockAction: state.counterReducer["blockAction"],
         shoplotAction: state.counterReducer["shoplotAction"],
     };
 }
@@ -44,18 +75,17 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         CallGridList: (prodData) => dispatch(GitAction.CallGridList(prodData)),
-
+        CallBlockList: (prodData) => dispatch(GitAction.CallBlockList(prodData)),
         CallShopList: (prodData) => dispatch(GitAction.CallShopList(prodData)),
+
         CallAddShopList: (prodData) => dispatch(GitAction.CallAddShopList(prodData)),
+
         CallResetShopAction: () => dispatch(GitAction.CallResetShopAction()),
 
-        CallBlockList: (prodData) => dispatch(GitAction.CallBlockList(prodData)),
-        CallAddBlockList: (prodData) => dispatch(GitAction.CallAddBlockList(prodData)),
-        CallDeleteBlockList: (prodData) => dispatch(GitAction.CallDeleteBlockList(prodData)),
-        CallUpdateBlockList: (prodData) => dispatch(GitAction.CallUpdateBlockList(prodData)),
-        CallResetBlockAction: (prodData) => dispatch(GitAction.CallResetBlockAction(prodData)),
+
     };
 }
+
 
 
 const overallHeadCells = [
@@ -71,11 +101,11 @@ const overallHeadCells = [
 const INITIAL_STATE = {
     filteredProduct: [],
     selectedFilter: [],
-    filteredShoplot: [],
-    isAddModal: false,
 
     // Database Lisiting
+    DBStockInDate: "",
     isOpenOverallDetails: [],
+    isDatabaseSet: false,
     searchKeywords: "",
     isFiltered: false,
 
@@ -100,6 +130,7 @@ const INITIAL_STATE = {
     isShoplotSet: false,
     page: 1,
     rowsPerPage: 10,
+
     isShopModal: false,
     ShopModalData: [{
         ShoplotName: "",
@@ -114,25 +145,69 @@ const INITIAL_STATE = {
     }],
     Location: "",
     isMapAlert: false,
-    selectedID: [],
-    isBlockAlert: false,
+
 }
+
+const DraftListing_State = [{
+    isDraftListingShown: false,
+    storageListing: [],
+}]
+
+const OverallListing_State = []
+
+const DUMMYBLOCK =
+    [
+        {
+            id: "1", block: "A", ShoplotCoordinate: [
+                { lat: 1.5921641925052, lng: 110.431633074988 },
+                { lat: 1.59115338985581, lng: 110.429951329936 },
+                { lat: 1.59001492677904, lng: 110.430582476623 },
+                { lat: 1.59102304881136, lng: 110.432309819229 },
+                { lat: 1.5921641925052, lng: 110.431633074988 },
+            ],
+        },
+        {
+            id: "2", block: "B", ShoplotCoordinate: [
+                { lat: 1.59219311478493, lng: 110.431658803505 },
+                { lat: 1.59105065831252, lng: 110.432325065247 },
+                { lat: 1.59264758826223, lng: 110.434993215471 },
+                { lat: 1.59378358792204, lng: 110.43431969478 },
+                { lat: 1.59219311478493, lng: 110.431658803505 },
+            ],
+        },
+        {
+            id: "3", block: "C", ShoplotCoordinate: [
+                { lat: 1.5939685198604472, lng: 110.43665361977425 },
+                { lat: 1.5936590240065396, lng: 110.43611937906833 },
+                { lat: 1.5945346343454787, lng: 110.43560473453614 },
+                { lat: 1.5937790950076558, lng: 110.43433013423987 },
+                { lat: 1.592637929429218, lng: 110.43500991320931 },
+                { lat: 1.593685862577975, lng: 110.43677943664157 },
+                { lat: 1.5939685198604472, lng: 110.43665361977425 },
+            ],
+        },
+    ]
+
 
 class ShoplotListing extends Component {
     constructor(props) {
         super(props);
         this.state = INITIAL_STATE
-        this.DatabaseListing = []
+        this.DraftListing = DraftListing_State
+        this.DatabaseListing = OverallListing_State
         this.PagingListing = [{
             isOpenOverallDetails: [],
             Listing: []
         }]
-    }
 
-    componentDidMount() {
+        this.BlockListing = DUMMYBLOCK
         this.props.CallGridList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
         this.props.CallBlockList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
         this.props.CallShopList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
+    }
+
+
+    componentDidMount() {
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -145,18 +220,14 @@ class ShoplotListing extends Component {
                 this.props.CallShopList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
         }
 
-        if (prevProps.blockAction !== this.props.blockAction) {
-            if (this.props.blockAction.length > 0 && this.props.blockAction[0].ReturnVal === 1) {
-                this.props.CallResetBlockAction()
-                toast.success("Data is uploaded")
-            }
-            else
-                this.props.CallBlockList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
-        }
+        // if (prevProps.shoplot !== this.props.shoplot) {
+        //     if (this.props.shoplot !== null && this.props.shoplot.length > 0 && this.state.isShoplotSet === false) {
+        //         this.ShoplotListing = this.props.shoplot
+        //         this.setState({ isShoplotSet: true })
+        //     }
+        // }
     }
 
-    ///////////////////////////////////////////////////  Share Function ///////////////////////////////////////////////////
-   
     renderTableRows = (data, index) => {
         return (
             <>
@@ -166,32 +237,38 @@ class ShoplotListing extends Component {
                     scope="row"
                     padding="normal"
                 >
-                    {data.StorageBlock}   <label onClick={() => this.onBlockRowClick(data)} style={{ color: "blue", paddingTop: "9px", paddingLeft: "10px", fontSize: "10px" }}>Click to edit Block Name</label>
+                    {data.StorageBlock}   <label onClick={() => this.onBlockRowClick(data)} style={{ color: "blue", paddingTop: "9px", paddingLeft: "10px", fontSize: "10px" }}>Click to view Block Info</label>
                 </TableCell>
             </>
         )
     }
 
-    renderTableCollapseRows = (data, index) => {
-        const shoplotView = (shop, i) => {
-            return (
-                <>
-                    {
-                        <Link className="nav-link" style={{ paddingLeft: "0px" }} to={{ pathname: url.shoplotDetails(shop.ShoplotID) }}>
-                            <div className="row flex-1" style={{ backgroundColor: i % 2 === 1 ? "#f5f5f5" : "#fffff", paddingTop: i % 2 === 1 ? "10px" : "5px", paddingBottom: i % 2 === 1 ? "10px" : "0px" }}>
-                                <div className="col-12 col-md-3">
-                                    <label style={{ paddingLeft: "10px" }}>{shop.ShoplotName}</label>
-                                </div>
-                                <div className="col-12 col-md-3">
-                                    <label>{shop.ContactNumber}</label>
-                                </div>
-                            </div>
-                        </Link>
-                    }
-                </>
-            )
-        }
+    onBlockRowClick = (data) => {
+        let dataList = []
+        data.ShoplotCoordinate.map((x) => {
+            dataList.push({
+                Latitude: x.lat,
+                Longitude: x.lng,
+                isLatitudeError: false,
+                isLongitudeError: false
+            })
+        })
+        this.setState({
+            isBlockModal: true,
+            isEditBlock: true,
 
+            selectedBlockID: data.id,
+            isBlockNameError: false,
+            BlockName: data.block,
+            BlockData: dataList,
+        })
+    }
+
+    handlePageChange = (page) => {
+        this.setState(() => ({ page }));
+    };
+
+    renderTableCollapseRows = (data, index) => {
         return (
             <div className="container-fluid my-2">
                 <div className="row" style={{ paddingLeft: "10px" }}>
@@ -207,34 +284,37 @@ class ShoplotListing extends Component {
                         </div>
                     }
                     {
-                        this.state.isFiltered === true ?
-                            <>
-                                {this.state.filteredShoplot !== undefined && this.state.filteredShoplot !== null && this.state.filteredShoplot.length > 0 && this.state.filteredShoplot.filter((x) => x.StorageBlockID === this.state.selectedBlock)
-                                    .slice((this.state.page - 1) * this.state.rowsPerPage, (this.state.page - 1) * this.state.rowsPerPage + this.state.rowsPerPage)
-                                    .map((data, index) => {
-                                        return (shoplotView(data, index))
-                                    })
-                                }
-                            </>
+                        this.props.shoplot !== undefined && this.props.shoplot !== null ? this.props.shoplot.filter((x) => x.StorageBlockID === this.state.selectedBlock)
+                            .slice((this.state.page - 1) * this.state.rowsPerPage, (this.state.page - 1) * this.state.rowsPerPage + this.state.rowsPerPage)
+                            .map((data, index) => {
+                                return (
+                                    <>
+                                        {
+                                            <Link className="nav-link" style={{ paddingLeft: "0px" }} to={{ pathname: url.shoplotDetails(data.ShoplotID) }}>
+                                                <div className="row flex-1" style={{ backgroundColor: index % 2 === 1 ? "#f5f5f5" : "#fffff", paddingTop: index % 2 === 1 ? "10px" : "5px", paddingBottom: index % 2 === 1 ? "10px" : "0px" }}>
+                                                    <div className="col-12 col-md-3">
+                                                        <label style={{ paddingLeft: "10px" }}>{data.ShoplotName}</label>
+                                                    </div>
+                                                    <div className="col-12 col-md-3">
+                                                        <label>{data.ContactNumber}</label>
+                                                    </div>
+                                                </div>
+                                            </Link>
+                                        }
+                                    </>
+                                )
+                            })
                             :
-                            <>
-                                {this.props.shoplot !== undefined && this.props.shoplot !== null && this.props.shoplot.length > 0 ? this.props.shoplot.filter((x) => x.StorageBlockID === this.state.selectedBlock)
-                                    .slice((this.state.page - 1) * this.state.rowsPerPage, (this.state.page - 1) * this.state.rowsPerPage + this.state.rowsPerPage)
-                                    .map((data, index) => {
-                                        return (shoplotView(data, index))
-                                    })
-                                    :
-                                    (<div style={{ paddingLeft: "0px", paddingTop: "10px" }}> Temporarily there is no shoplot in this block </div>)}
-                            </>
+                            <div style={{ paddingLeft: "0px", paddingTop: "10px" }}> Temporarily this variation is not available </div>
                     }
 
                     <Pagination
                         current={this.state.page}
                         total={
-                            this.state.isFiltered === true ?
-                                Math.ceil(this.state.filteredShoplot !== undefined && this.state.filteredShoplot !== null && this.state.filteredShoplot.filter((x) => x.StorageBlockID === this.state.selectedBlock).length / this.state.rowsPerPage)
-                                :
-                                Math.ceil(this.props.shoplot !== undefined && this.props.shoplot !== null && this.props.shoplot.filter((x) => x.StorageBlockID === this.state.selectedBlock).length / this.state.rowsPerPage)
+                            // this.state.setRating === 0 ?
+                            Math.ceil(this.props.shoplot.length / this.state.rowsPerPage)
+                            // :
+                            // Math.ceil(this.filterRating(this.state.setRating) / this.state.rowsPerPage)
                         }
                         onPageChange={this.handlePageChange}
                     />
@@ -264,6 +344,23 @@ class ShoplotListing extends Component {
         this.setState({ isOpenOverallDetails: OverallCollapseTable, selectedBlock: row.StorageBlockID })
     }
 
+
+    // Remove selected state listing and localStorage listing data
+    onDelete = () => {
+        alert(this.state.selectedList)
+        // let localListing = localStorage.getItem("DataSetDraft") !== null ? JSON.parse(localStorage.getItem("DataSetDraft")) : []
+        // let selectedList = this.state.selectedListID
+
+        // if (localListing.length > 0 && selectedList.length > 0) {
+        //     selectedList.map((datalist) => {
+        //         localListing = localListing.filter((data) => data.DraftNo !== datalist.DraftNo)
+        //     })
+        // }
+        // localStorage.setItem("DataSetDraft", JSON.stringify(localListing))
+        // this.DraftListing[0].storageListing = localListing
+        // this.setState({ selectedListID: [] })
+    }
+
     carryDataFromChild = (e) => {
         let checkFiltering = false
 
@@ -287,11 +384,8 @@ class ShoplotListing extends Component {
     }
 
     searchSpace = (value) => {
-        let DatabaseListing = this.props.block
-        let DBShopList = this.props.shoplot
-        let DBGridList = this.props.grid
-        let selectedShoplot = []
-        let selectedBlock = []
+        var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+        let DatabaseListing = this.DatabaseListing
         this.setState({ searchKeywords: value })
         this.state.filteredProduct.splice(0, this.state.filteredProduct.length)
 
@@ -300,55 +394,19 @@ class ShoplotListing extends Component {
                 toast.warning("Input Error: A filter range is required")
 
             else if (parseInt(this.state.selectedFilter.id) === 1) {
-                DatabaseListing = DatabaseListing.filter((data) => data.StorageBlock !== null && data.StorageBlock.toLowerCase().includes(value.toLowerCase()));
-                this.setState({ filteredProduct: DatabaseListing, isFiltered: true, filteredShoplot: this.props.shoplot })
+                DatabaseListing.map((list) => {
+                    list.ProductVariationStockDetail !== null && JSON.parse(list.ProductVariationStockDetail).filter((x) =>
+                        x.Column1 !== null && x.Column1.toLowerCase().includes(value.toLowerCase())).map(filteredItem => {
+                            this.state.filteredProduct.push(list);
+                        });
+                })
+                this.setState({ isFiltered: true })
             }
-
             else if (parseInt(this.state.selectedFilter.id) === 2) {
-                DatabaseListing = DatabaseListing.filter((data) => data.StorageBlock !== null);
-
-                if (value !== "") {
-                    DBShopList = DBShopList.filter((data) => data.ShoplotName !== null && data.ShoplotName.toLowerCase().includes(value.toLowerCase()));
-                    let removeDuplicate = DBShopList.length > 0 ? DBShopList.filter((ele, ind) => ind === DBShopList.findIndex(elem => parseInt(elem.StorageBlockID) === parseInt(ele.StorageBlockID))) : []
-                    removeDuplicate.length > 0 && removeDuplicate.map((shop) => {
-                        DatabaseListing.filter((block) => parseInt(block.StorageBlockID) === parseInt(shop.StorageBlockID)).map((x) => {
-                            selectedBlock.push(x)
-                        })
-                    })
-                }
-                else {
-                    selectedBlock = DatabaseListing
-                }
-                this.setState({ filteredProduct: selectedBlock, isFiltered: true, filteredShoplot: DBShopList })
+                DatabaseListing = DatabaseListing.filter((data) => data.ProductName !== null && data.ProductName.toLowerCase().includes(value.toLowerCase()));
+                this.setState({ filteredProduct: DatabaseListing, isFiltered: true })
             }
-
-            else if (parseInt(this.state.selectedFilter.id) === 3) {
-
-                DatabaseListing = DatabaseListing.filter((data) => data.StorageBlock !== null);
-                if (value !== "") {
-                    DBGridList = DBGridList.length > 0 && DBGridList.filter((data) => data.GridStorageCode !== null && data.GridStorageCode.toLowerCase().includes(value.toLowerCase()))
-                    let removeDuplicateGrid = DBGridList.length > 0 ? DBGridList.filter((ele, ind) => ind === DBGridList.findIndex(elem => parseInt(elem.ShoplotID) === parseInt(ele.ShoplotID))) : []
-
-                    removeDuplicateGrid.length > 0 && removeDuplicateGrid.map((grid) => {
-                        DBShopList.length > 0 && DBShopList.filter((shop) => parseInt(shop.ShoplotID) === parseInt(grid.ShoplotID)).map((x) => {
-                            selectedShoplot.push(x)
-                        })
-                    })
-                    let removeDuplicateShop = selectedShoplot.length > 0 ? selectedShoplot.filter((ele, ind) => ind === selectedShoplot.findIndex(elem => parseInt(elem.StorageBlockID) === parseInt(ele.StorageBlockID))) : []
-                    removeDuplicateShop.length > 0 && removeDuplicateShop.map((shop) => {
-                        DatabaseListing.filter((block) => parseInt(block.StorageBlockID) === parseInt(shop.StorageBlockID)).map((x) => {
-                            selectedBlock.push(x)
-                        })
-                    })
-                }
-                else {
-                    selectedShoplot = DBShopList
-                    selectedBlock = DatabaseListing
-                }
-                this.setState({ filteredProduct: selectedBlock, isFiltered: true, filteredShoplot: selectedShoplot })
-            }
-        }
-        else toast.warning("No Listing Available for filter")
+        } else toast.warning("No Listing Available for filter")
     }
 
     handleFormInput = (e, name, index) => {
@@ -361,12 +419,41 @@ class ShoplotListing extends Component {
                 this.setState({ selectedFilter: { id: e.id, value: e.value, label: e.label } })
                 break;
 
+
             case "BlockName":
                 if (isStringNullOrEmpty(e.target.value))
                     this.setState({ isBlockNameError: true, BlockName: e.target.value })
                 else
                     this.setState({ isBlockNameError: false, BlockName: e.target.value })
                 break;
+
+            case "Latitude":
+                let isLatitudeError = false
+                if (isStringNullOrEmpty(e.target.value) || !isLatitude(e.target.value))
+                    isLatitudeError = true
+                blockListing[index] = {
+                    Latitude: e.target.value,
+                    Longitude: blockListing[index].Longitude,
+                    isLatitudeError: isLatitudeError,
+                    isLongitudeError: blockListing[index].isLongitudeError,
+                }
+                this.setState({ BlockData: blockListing })
+                break;
+
+            case "Longitude":
+                let isLongitudeError = false
+                if (isStringNullOrEmpty(e.target.value) || !isLongitude(e.target.value))
+                    isLongitudeError = true
+                blockListing[index] = {
+                    Latitude: blockListing[index].Latitude,
+                    Longitude: e.target.value,
+                    isLatitudeError: blockListing[index].isLatitudeError,
+                    isLongitudeError: isLongitudeError,
+                }
+                this.setState({ BlockData: blockListing })
+                break;
+
+            // {TextFieldData("text", "outlined", "Shoplot Name", "ShoplotName", this.state.ShopModalData[0].ShoplotName, this.state.ShopModalData[0].isShoplotNameError, 0)}
 
             case "ShoplotName":
                 let isShoplotNameError = false
@@ -414,6 +501,7 @@ class ShoplotListing extends Component {
                     value: e.value,
                     label: e.label,
                 }]
+
                 shopListing[index] = {
                     ShoplotName: shopListing[index].ShoplotName,
                     ShoplotBlock: block,
@@ -429,48 +517,9 @@ class ShoplotListing extends Component {
         }
     }
 
-    errorChecking = (data) => {
-        let error = false
-        let blockListing = this.state.BlockData
-        let shopListing = this.state.ShopModalData
-
-        if (blockListing.length > 0 && data === "block") {
-            if (blockListing.filter((data) => data.isLatitudeError === true || data.isLongitudeError === true).length > 0)
-                error = true
-        }
-        if (shopListing.length > 0 && data === "shop") {
-            if (shopListing.filter((data) => data.isContactNoError === true || data.isShoplotNameError === true).length > 0)
-                error = true
-            if (this.state.Location === "")
-                error = true
-            if (shopListing[0].ShoplotBlock[0].id === "")
-                error = true
-        }
-        return error
-    }
-    
-    clearState = () => {
-        this.PagingListing = [{
-            isOpenOverallDetails: [],
-            Listing: []
-        }]
-        this.setState(INITIAL_STATE)
-    }
-
-    ///////////////////////////////////////////////////  Block Function ///////////////////////////////////////////////////
-
-    onBlockRowClick = (data) => {
-        this.setState({
-            isBlockModal: true,
-            isEditBlock: true,
-            selectedBlockID: data.StorageBlockID,
-            isBlockNameError: false,
-            BlockName: data.StorageBlock,
-        })
-    }
-
     addNewBlock = () => {
         let blockListing = this.state.BlockData
+
         blockListing = [...blockListing, {
             Latitude: "",
             Longitude: "",
@@ -480,48 +529,38 @@ class ShoplotListing extends Component {
         this.setState({ BlockData: blockListing })
     }
 
-    OnSubmitAddBlockDatabase = () => {
-        if (!this.errorChecking("block")) {
-            this.props.CallAddBlockList({
-                ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
-                BlockName: this.state.BlockName
-            })
-            this.setState(INITIAL_STATE)
+    removeBlockData = (index) => {
+        let blockListing = this.state.BlockData
+        blockListing = blockListing.filter((x, i) => i !== index)
+        this.setState({ BlockData: blockListing })
+    }
+
+    OnSubmitDatabase = () => {
+        if (!this.errorChecking()) {
+
+            // let dataCoordinate = []
+            // this.state.BlockData.length > 0 && this.state.BlockData.map((data) => {
+            //     dataCoordinate.push({
+            //         lat: parseFloat(data.Latitude),
+            //         lng: parseFloat(data.Longitude),
+            //     })
+            // })
+            // var blockData = {
+            //     id: this.BlockListing.length + 1,
+            //     block: this.state.BlockName,
+            //     ShoplotCoordinate: dataCoordinate
+            // }
+            // this.BlockListing = [...this.BlockListing, blockData]
+            // this.setState(INITIAL_STATE)
         }
         else {
             toast.warning("Input Error: Please cross check on All Shop Details Input")
         }
     }
-    OnDeleteBlockDatabase = () => {
-        let selectedID = []
-        let containShop = []
-        this.state.selectedList.length > 0 && this.state.selectedList.map((data) => {
-            selectedID.push(data.StorageBlockID)
-        })
-
-        selectedID.map((ID) => {
-            this.props.shoplot.length > 0 && this.props.shoplot.filter((x) => parseInt(x.StorageBlockID) === parseInt(ID)).map((data) => {
-                containShop.push(data)
-            })
-        })
-
-        if (containShop.length > 0) {
-            this.setState({ selectedID: selectedID, isBlockAlert: true })
-        }
-        else {
-            this.props.CallDeleteBlockList({ StorageBlockID: selectedID })
-            this.setState(INITIAL_STATE)
-        }
-    }
-
-    ///////////////////////////////////////////////////  Shop Function ///////////////////////////////////////////////////
-
-    handlePageChange = (page) => {
-        this.setState(() => ({ page }));
-    };
 
     OnSubmitShoplotDatabase = () => {
-        if (!this.errorChecking("shop")) {
+        if (!this.errorChecking()) {
+
             let replacePolygon = this.state.Location.replace("POLYGON((", '')
             let replacePolygon2 = replacePolygon.replace("POLYGON ((", '')
             let replacePolygon3 = replacePolygon2.replace("))", '')
@@ -544,31 +583,39 @@ class ShoplotListing extends Component {
                 ShoplotName: this.state.ShopModalData[0].ShoplotName,
                 ContactNo: this.state.ShopModalData[0].ContactNo,
                 ShoplotBlock: this.state.ShopModalData[0].ShoplotBlock[0].value,
-                StorageBlockID: this.state.ShopModalData[0].ShoplotBlock[0].id,
                 ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
                 ShoplotPolygon: this.state.Location,
                 Longitude: longitude,
                 Latitude: latitude
             })
             this.setState(INITIAL_STATE)
+            this.setState({ isShopModal: false })
         }
         else {
             toast.warning("Input Error: Please cross check on All Shop Details Input")
         }
     }
 
-    OnSubmitUpdateShoplotDatabase = () => {
-        if (!this.errorChecking("block")) {
+    OnSubmitUpdateDatabase = () => {
+        if (!this.errorChecking()) {
+            let dbBlockListing = this.BlockListing
+            let index = dbBlockListing.findIndex(x => parseInt(x.id) === parseInt(this.state.selectedBlockID))
+            let dataCoordinate = []
 
-            this.props.CallUpdateBlockList({
-                StorageBlockID: this.state.selectedBlockID,
-                BlockName: this.state.BlockName
+            this.state.BlockData.length > 0 && this.state.BlockData.map((data) => {
+                dataCoordinate.push({
+                    lat: parseFloat(data.Latitude),
+                    lng: parseFloat(data.Longitude),
+                })
             })
+
+            dbBlockListing[index] = {
+                id: this.state.selectedListID,
+                block: this.state.BlockName,
+                ShoplotCoordinate: dataCoordinate
+            }
+            this.BlockListing = dbBlockListing
             this.setState(INITIAL_STATE)
-            this.PagingListing = [{
-                isOpenOverallDetails: [],
-                Listing: []
-            }]
         }
         else {
             toast.warning("Input Error: Please cross check on All Shop Details Input")
@@ -576,13 +623,31 @@ class ShoplotListing extends Component {
 
     }
 
-    // set Map Marker Location
+    errorChecking = () => {
+        let error = false
+        let blockListing = this.state.BlockData
+        let shopListing = this.state.ShopModalData
+
+        if (blockListing.length > 0) {
+            if (blockListing.filter((data) => data.isLatitudeError === true || data.isLongitudeError === true).length > 0)
+                error = true
+        }
+        if (shopListing.length > 0) {
+            if (shopListing.filter((data) => data.isContactNoError === true || data.isShoplotNameError === true).length > 0)
+                error = true
+            if (this.state.Location === "")
+                error = true
+            if (shopListing[0].ShoplotBlock[0].id === "")
+                error = true
+        }
+        return error
+    }
+
     setTheState = (value) => {
         this.setState({
             Location: value,
         });
     };
-
 
     render() {
         const TextFieldData = (type, variant, title, name, stateValue, error, index) => {
@@ -597,9 +662,8 @@ class ShoplotListing extends Component {
 
         const filterSelection =
             [
-                { id: "1", value: "Block" },
-                { id: "2", value: "Shoplot" },
-                { id: "3", value: "Grid" }
+                { id: "1", value: "Store" },
+                { id: "2", value: "Product Name" }
             ]
 
 
@@ -626,10 +690,10 @@ class ShoplotListing extends Component {
                             >
                             </Select>
                         </div>
-                        <div className="col-10 d-inline-flex">
+                        <div className="col-4 d-inline-flex">
                             <SearchBar
                                 id=""
-                                placeholder="Enter Block Name, Shoplot Name or Grid Code to search"
+                                placeholder="Enter Product SKU, Product Name or Store to search"
                                 buttonOnClick={() => this.onSearch("", "")}
                                 onChange={(e) => this.searchSpace(e.target.value)}
                                 className="searchbar-input mb-auto"
@@ -646,8 +710,13 @@ class ShoplotListing extends Component {
                                 <h3 style={{ fontWeight: 600 }}>Shoplot List</h3>}
                             tableTopRight={
                                 <div className="d-flex">
-                                    <Tooltip title="Add Shop And Block">
-                                        <IconButton size="small" sx={{ color: "#0074ea", marginRight: 1 }} onClick={() => this.setState({ isAddModal: true })}>
+                                    <Tooltip title="Add Block">
+                                        <IconButton size="small" sx={{ color: "#0074ea", marginRight: 1 }} onClick={() => this.setState({ isBlockModal: true })}>
+                                            <GroupAddIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Add Shop">
+                                        <IconButton size="small" sx={{ color: "#0074ea", marginRight: 1 }} onClick={() => this.setState({ isShopModal: true })}>
                                             <GroupAddIcon />
                                         </IconButton>
                                     </Tooltip>
@@ -678,7 +747,7 @@ class ShoplotListing extends Component {
                             onSelectRow={(e) => this.setState({ selectedList: e })}
                             onSelectAllRows={(e) => this.setState({ selectedList: e })}
                             SelectionActionButtons={<Tooltip title="Delete">
-                                <IconButton aria-label="delete" onClick={() => { this.OnDeleteBlockDatabase() }}   >
+                                <IconButton aria-label="delete" onClick={() => { this.onDelete() }}   >
                                     <DeleteIcon />
                                 </IconButton>
                             </Tooltip>}
@@ -689,9 +758,9 @@ class ShoplotListing extends Component {
                     <AlertDialog
                         open={this.state.isBlockModal}
                         fullWidth
-                        maxWidth="sm"
-                        handleToggleDialog={() => this.clearState()}
-                        title={this.state.isEditBlock === true ? "Edit Block" : "New Block"}
+                        maxWidth="md"
+                        handleToggleDialog={() => <>{this.setState(INITIAL_STATE)}{this.setState({ isBlockModal: false })}</>}
+                        title={this.state.isEditBlock === true ? this.state.BlockName : "New Block"}
                         showAction={false}
                     >
                         <div className="container-fluid">
@@ -699,29 +768,94 @@ class ShoplotListing extends Component {
                                 <div className="col-12 col-md-12" style={{ paddingBottom: "10px" }}>
                                     {TextFieldData("text", "outlined", "Block Name", "BlockName", this.state.BlockName, this.state.isBlockNameError, 0)}
                                 </div>
-                                <div className="row">
-                                    <div className="col-12 col-md-12" style={{ textAlign: "right" }}>
-                                        {
-                                            this.state.isEditBlock ?
-                                                <Button variant="contained" onClick={() => { this.OnSubmitUpdateShoplotDatabase() }} color="primary" disabled={this.state.isBlockNameError === false && this.state.BlockName !== "" ? false : true}>
-                                                    Update
-                                                </Button>
-                                                :
-                                                <Button variant="contained" onClick={() => { this.OnSubmitAddBlockDatabase() }} color="primary" disabled={this.state.isBlockNameError === false && this.state.BlockName !== "" ? false : true}>
-                                                    Submit
-                                                </Button>
-                                        }
+                                {
+                                    this.state.isBlockNameError === false && this.state.BlockName !== "" &&
+                                    <>
+                                        <hr />
+                                        <div className="row">
+                                            <div className="col-12 col-md-12" style={{ textAlign: "right" }}>
+                                                <Tooltip title="Add Store">
+                                                    <IconButton size="small" sx={{ color: "#0074ea", marginRight: 4 }} onClick={() => this.addNewBlock()}>
+                                                        <GroupAddIcon /><label style={{ paddingLeft: "5px" }}>Add Coordinate</label>
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </div>
+                                        </div>
+                                    </>
+                                }
+                                {this.state.BlockData.length > 0 && this.state.BlockData.map((data, index) => {
+                                    return (
+                                        <>
+                                            <div className="row">
+                                                {
+                                                    this.state.isBlockNameError === false && this.state.BlockName !== "" ?
+                                                        <>
+                                                            <div className="col-12 col-md-6" style={{ paddingBottom: "10px" }}>
+                                                                <div className="row">
+
+                                                                    {
+                                                                        this.state.BlockData.length > 1 &&
+                                                                        <div className="col-1 col-md-1">
+                                                                            <RemoveCircleOutlineIcon
+                                                                                className="DeleteOptionButton mr-2"
+                                                                                style={{ cursor: 'pointer' }}
+                                                                                color="secondary"
+                                                                                onClick={() => this.removeBlockData(index)}
+                                                                            />
+                                                                        </div>
+                                                                    }
+                                                                    <div className="col-6 col-md-6">
+                                                                        <label style={{ fontWeight: "bold" }}>Coordinate {index + 1}</label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br />
+                                                            <div className="row">
+                                                                <div className="col-6 col-md-6">
+                                                                    {TextFieldData("number", "outlined", "Latitude", "Latitude", data.Latitude, data.isLatitudeError, index)}
+                                                                </div>
+                                                                <div className="col-6 col-md-6">
+                                                                    {TextFieldData("number", "outlined", "Longitude", "Longitude", data.Longitude, data.isLongitudeError, index)}
+                                                                </div>
+                                                            </div>
+
+                                                            <br />
+                                                        </>
+                                                        :
+                                                        <div style={{ paddingBottom: "50px" }}>
+                                                        </div>
+                                                }
+                                                <hr />
+                                            </div>
+                                        </>
+                                    )
+                                })}
+                                {
+                                    this.state.isBlockNameError === false && this.state.BlockName !== "" &&
+                                    <div className="row">
+                                        <div className="col-12 col-md-12" style={{ textAlign: "right" }}>
+                                            {
+                                                this.state.isEditBlock ?
+                                                    <Button variant="contained" onClick={() => { this.OnSubmitUpdateDatabase() }} color="primary"  >
+                                                        Update
+                                                    </Button>
+                                                    :
+                                                    <Button variant="contained" onClick={() => { this.OnSubmitDatabase() }} color="primary"  >
+                                                        Submit
+                                                    </Button>
+                                            }
+                                        </div>
                                     </div>
-                                </div>
+                                }
                             </div>
                         </div>
-                    </AlertDialog>
+                    </AlertDialog >
 
                     <AlertDialog
                         open={this.state.isShopModal}
                         fullWidth
                         maxWidth="md"
-                        handleToggleDialog={() => this.clearState()}
+                        handleToggleDialog={() => <>{this.setState(INITIAL_STATE)}{this.setState({ isShopModal: false })}</>}
                         title={"New Shoplot"}
                         showAction={false}
                     >
@@ -786,7 +920,7 @@ class ShoplotListing extends Component {
                         open={this.state.isMapAlert}
                         fullWidth
                         maxWidth="sm"
-                        handleToggleDialog={() => this.clearState()}
+                        handleToggleDialog={() => <>{this.setState({ isMapAlert: false })}</>}
                         title={"Map Guide"}
                         showAction={false}
                     >
@@ -799,59 +933,7 @@ class ShoplotListing extends Component {
                             </div>
                         </div >
                     </AlertDialog>
-
-                    <AlertDialog
-                        open={this.state.isBlockAlert}
-                        fullWidth
-                        maxWidth="sm"
-                        handleToggleDialog={() => this.clearState()}
-                        title="Reminder"
-                        showAction={false}
-                    >
-                        <div className="container-fluid">
-                            <div className="container">
-                                <label style={{ fontSize: "18px" }}>Are you sure to delete this block? Still have a list of shop under this block</label>
-                                <div style={{ paddingTop: "10px" }}>
-                                    <p className="text-danger" style={{ fontSize: "16px" }}><i>Disclaimer: Shoplot under this block will be remove from list</i></p>
-                                </div>
-                                <br />
-                                <div style={{ textAlign: "right" }}>
-                                    <Button variant="contained" color="primary" style={{ margin: "10px" }} onClick={() => {
-                                        <>
-                                            {this.props.CallDeleteBlockList({ StorageBlockID: this.state.selectedID })}
-                                            {this.clearState()}
-                                        </>
-                                    }}>
-                                        Yes
-                                    </Button>
-                                    <Button variant="contained" color="secondary" onClick={() => this.clearState()}>
-                                        No
-                                    </Button>
-                                </div>
-                            </div>
-                        </div >
-                    </AlertDialog >
-
-                    <AlertDialog
-                        open={this.state.isAddModal}
-                        fullWidth
-                        maxWidth="sm"
-                        handleToggleDialog={() => this.clearState()}
-                        title="Select the Desired Action"
-                        showAction={false}
-                    >
-                        <div className="container-fluid">
-                            <div style={{ textAlign: "center" }}>
-                                <Button variant="contained" color="primary" style={{ margin: "10px", padding: "30px" }} onClick={() => { this.setState({ isBlockModal: true }) }}>
-                                    Add Block
-                                </Button>
-                                <Button variant="contained" color="secondary" style={{ margin: "10px", padding: "30px" }} onClick={() => this.setState({ isShopModal: true })}>
-                                    Add Shoplot
-                                </Button>
-                            </div>
-                        </div >
-                    </AlertDialog >
-                </div >
+                </div>
             </div >
         )
     }

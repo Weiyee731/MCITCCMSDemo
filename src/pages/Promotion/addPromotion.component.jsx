@@ -139,9 +139,6 @@ function TransferList(props) {
             product.ProductName
         )
     );
-
-    console.log("CHECK allproducts", props.allproducts)
-
     const [right, setRight] = React.useState([]);
     const [LeftImages, setLeftImage] = React.useState(props);
     const leftChecked = intersection(checked, left);
@@ -455,15 +452,6 @@ class AddPromotionBannerComponent extends Component {
         };
 
         this.uploadHandler = this.uploadHandler.bind(this);
-        // this.setProductChosen = this.setProductChosen.bind(this)
-
-        // this.props.CallAllProductsByProductStatus({
-        //   ProductStatus: "Endorsed",
-        //   UserID: window.localStorage.getItem("id"),
-        // });
-
-        console.log(" JSON.parse(localStorage.getItem()", JSON.parse(localStorage.getItem("loginUser")))
-
         this.props.CallAllProductsListing({
             type: "Merchant",
             typeValue: JSON.parse(localStorage.getItem("loginUser")) !== undefined ? JSON.parse(localStorage.getItem("loginUser"))[0].UserID : 0,
@@ -582,7 +570,6 @@ class AddPromotionBannerComponent extends Component {
     // -------------------------------------------------- Send Data Method 1---------------------------------------------------------------------
 
     submitValues = () => {
-        console.log("promoInfo submitvalue", this.state)
         if (
             !(
                 this.state.PromotionTitleEmpty &&
@@ -623,8 +610,6 @@ class AddPromotionBannerComponent extends Component {
                 ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
             };
 
-            console.log("promoInfo", promoInfo)
-
             formData.append("imageFile", this.state.file[0]);
             formData.append("imageName", BannerImage);
             // let url = "https://myemporia.my/emporiaimage/uploadpromotion.php"
@@ -632,7 +617,6 @@ class AddPromotionBannerComponent extends Component {
 
             axios.post(url, formData, {}).then(res => {
                 if (res.status === 200) {
-                    console.log("res", res)
                     this.props.CallAddPromotion(promoInfo)
                     this.setState({ isPromoSubmit: true })
                 }
@@ -899,7 +883,6 @@ class AddPromotionBannerComponent extends Component {
                             <i className="fas fa-chevron-left"></i>Back
                         </Button>
                     </div>
-                    {console.log("CHECHKING", this.props)}
                     <Card style={{ width: "80%", margin: "0 auto" }}>
                         <CardContent>
                             {/* -------------------------------- Add Promotion Title ------------------------------------- */}

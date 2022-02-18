@@ -770,6 +770,12 @@ export function counterReducer(state = INITIAL_STATE, action) {
         blockAction: action.payload,
       });
 
+    case GitAction.ResetBlockAction:
+      return Object.assign({}, state, {
+        loading: true,
+        blockAction: [],
+      });
+
     ///////////////////////////////////////////////////  Grid  ///////////////////////////////////////////////////
 
     case GitAction.GetStorage:

@@ -793,7 +793,6 @@ class MerchantDetailsComponent extends Component {
   }
 
   componentDidUpdate(prodData) {
-    console.log("this.porps", this.props)
     if (this.props.currentUser.length > 0) {
       this.props.CallClearCurrentUser()
       setTimeout(() => {

@@ -30,13 +30,6 @@ export class GitEpic {
 
   User_Login = action$ =>
     action$.ofType(GitAction.Login).switchMap(async ({ payload }) => {
-      console.log(loginUrl + payload.ProjectDomainName + "/" +
-        "User_Login?username=" +
-        payload.username +
-        "&password=" +
-        payload.password +
-        "&ProjectDomainName=" +
-        payload.ProjectDomainName)
       try {
         const response = await fetch(
           loginUrl + payload.ProjectDomainName + "/" +
@@ -68,14 +61,7 @@ export class GitEpic {
 
   User_LoginServer = action$ =>
     action$.ofType(GitAction.LoginServer).switchMap(async ({ payload }) => {
-      console.log(LiveServerLoginUrl + payload.ProjectDomainName + "/" +
-        "User_Login?username=" +
-        payload.username +
-        "&password=" +
-        payload.password +
-        "&ProjectDomainName=" +
-        payload.ProjectDomainName)
-      try {
+        try {
         const response = await fetch(
           LiveServerLoginUrl + payload.ProjectDomainName + "/" +
           "User_Login?username=" +
@@ -102,96 +88,9 @@ export class GitEpic {
       }
     });
 
-  // User_Login = action$ =>
-  //   action$.ofType(GitAction.Login).switchMap(async ({ payload }) => {
-  //     try {
-  //       console.log("CHECK1")
-  //       console.log(
-  //         loginUrl + payload.ProjectDomainName + "/" +
-  //         "User_Login?username=" +
-  //         payload.username +
-  //         "&password=" +
-  //         payload.password +
-  //         "&ProjectDomainName=" +
-  //         payload.ProjectDomainName
-  //       )
-  //       const response = await fetch(
-  //         loginUrl  + payload.ProjectDomainName + "/" +
-  //         "User_Login?username=" +
-  //         payload.username +
-  //         "&password=" +
-  //         payload.password +
-  //         "&ProjectDomainName=" +
-  //         payload.ProjectDomainName
-  //       );
-  //       console.log("json", response.json())
-  //       console.log("json1", response)
-  //       console.log("json2", await response.json())
-  //       let json = await response.json();
-  //       console.log("json")
-
-  //       return {
-  //         type: GitAction.LoginSuccess,
-  //         payload: JSON.parse(json),
-  //       };
-  //     }
-  //     catch (error) {
-  //       toast.error("Error Code: User_Login. Please check on URL")
-  //       return {
-  //         type: GitAction.LoginSuccess,
-  //         payload: [],
-  //       };
-  //     }
-  //   });
-
-  // User_LoginServer = action$ =>
-  //   action$.ofType(GitAction.LoginServer).switchMap(async ({ payload }) => {
-
-  //     try {
-  //       console.log(LiveServerLoginUrl
-  //         + payload.ProjectDomainName + "/" +
-  //         "User_Login?username=" +
-  //         payload.username +
-  //         "&password=" +
-  //         payload.password +
-  //         "&ProjectDomainName=" +
-  //         payload.ProjectDomainName)
-
-  //       const response = await fetch(
-  //         LiveServerLoginUrl
-  //         + payload.ProjectDomainName + "/" +
-  //         "User_Login?username=" +
-  //         payload.username +
-  //         "&password=" +
-  //         payload.password +
-  //         "&ProjectDomainName=" +
-  //         payload.ProjectDomainName
-  //       );
-
-  //       console.log("json", response.json())
-  //       console.log("json1", response)
-  //       console.log("json2", await response.json())
-  //       let json = await response.json();
-  //       console.log("json", json)
-
-  //       return {
-  //         type: GitAction.LoginServerSuccess,
-  //         payload: JSON.parse(json),
-  //       };
-  //     }
-  //     catch (error) {
-  //       toast.error("Error Code: User_Login. Please check on URL")
-  //       return {
-  //         type: GitAction.LoginServerSuccess,
-  //         payload: [],
-  //       };
-  //     }
-  //   });
 
   User_Logout = action$ =>
     action$.ofType(GitAction.Logout).switchMap(async ({ payload }) => {
-      console.log(url + project + "/" +
-        "User_Logout?UserId=" + payload.UserId)
       try {
         const response = await fetch(
           url + project + "/" +
@@ -245,16 +144,6 @@ export class GitEpic {
 
   User_ViewProfile = (action$) =>
     action$.ofType(GitAction.GetUserProfile).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "User_ProfileListByType?TYPE=" + payload.TYPE +
-        "&TYPEVALUE=" + payload.TYPEVALUE +
-        "&USERID=" + payload.USERID +
-        "&UserRoleID=" + payload.USERROLEID +
-        "&LISTPERPAGE=" + payload.LISTPERPAGE +
-        "&PAGE=" + payload.PAGE +
-        "&ProjectID=" + payload.ProjectID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -283,11 +172,6 @@ export class GitEpic {
 
   User_UpdateProfileStatus = (action$) =>
     action$.ofType(GitAction.UpdateUserStatus).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "User_UpdateProfileStatus?USERID=" + payload.USERID +
-        "&USERSTATUS=" + payload.USERSTATUS
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -296,7 +180,6 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("this. json", json)
         if (json.map((val) => val.ReturnVal === 1)) {
           toast.success("Updated Successful");
         }
@@ -313,47 +196,8 @@ export class GitEpic {
       }
     });
 
-  // User_ProfileByID = action$ =>
-  //   action$.ofType(GitAction.GetUserProfile).switchMap(async ({ payload }) => {
-  //     // console.log(url + 
-  //     //   double_click_and_paste_url_here
-  //     // )
-  //     try {
-  //       const response = await fetch(url + project + "/" +
-  //         "User_ProfileByID?USERID=" + payload.USERID
-  //       );
-
-  //       let json = await response.json();
-  //       json = JSON.parse(json)
-  //       return {
-  //         type: GitAction.GotUserProfile,
-  //         payload: json,
-  //       };
-  //     }
-  //     catch (error) {
-  //       toast.error("Error Code: GetUserProfile")
-  //       return {
-  //         type: GitAction.GotUserProfile,
-  //         payload: [],
-  //       };
-  //     }
-  //   });
-
-
   Shop_UpdateDetails = (action$) =>
     action$.ofType(GitAction.UpdateShopDetail).switchMap(async ({ payload }) => {
-
-      console.log(
-        url + project + "/" +
-        "User_UpdateShopDetail?USERID=" + payload.USERID +
-        "&SHOPNAME=" + payload.SHOPNAME +
-        "&SHOPDESC=" + payload.SHOPDESC +
-        "&SHOPPOSCODE=" + payload.SHOPPOSCODE +
-        "&SHOPCITY=" + payload.SHOPCITY +
-        "&SHOPSTATE=" + payload.SHOPSTATE +
-        "&SHOPCOUNTRYID=" + payload.SHOPCOUNTRYID
-
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -366,7 +210,6 @@ export class GitEpic {
           "&SHOPCOUNTRYID=" + payload.SHOPCOUNTRYID
         );
         let json = await response.json();
-        console.log("json", json)
         json = JSON.parse(json);
         if (json.map((val) => val.ReturnVal === 1)) {
           toast.success("Upload Successful");
@@ -386,13 +229,6 @@ export class GitEpic {
 
   Shop_UpdateProfileImage = (action$) =>
     action$.ofType(GitAction.UpdateProfileImage).switchMap(async ({ payload }) => {
-      console.log(url + project + "/" +
-        "User_UserUpdatePhoto?USERID=" +
-        payload.USERID +
-        "&TYPE=" +
-        payload.TYPE +
-        "&USERPROFILEIMAGE=" +
-        payload.USERPROFILEIMAGE)
       try {
         const response = await fetch(
           url + project + "/" +
@@ -404,7 +240,6 @@ export class GitEpic {
           payload.USERPROFILEIMAGE
         );
         let json = await response.json();
-        console.log("json")
         json = JSON.parse(json);
 
         if (json.map((val) => val.ReturnVal === 1)) {
@@ -426,21 +261,6 @@ export class GitEpic {
   ///////////////////////////////////////////////////  Order  ///////////////////////////////////////////////////
   Order_Add = (action$) =>
     action$.ofType(GitAction.AddOrder).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Order_AddOrder?USERID=" + payload.UserID +
-        "&USERADDRESSID=" + payload.UserAddressID +
-        "&PROMOTIONID=0&PROMOTIONCODEID=0&PAYMENTMETHODID=" + payload.PaymentMethodID +
-        "&USERPAYMENTMETHODID=" + payload.UserPaymentMethodID +
-        "&ORDERTOTALAMOUNT=" + payload.OrderTotalAmount +
-        "&ORDERPAIDAMOUNT=" + payload.OrderPaidAmount +
-        "&PRODUCTID=" + payload.ProductID +
-        "&PRODUCTQUANTITY=" + payload.ProductQuantity +
-        "&PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailID +
-        "&TRACKINGSTATUSID=" + payload.TrackingStatusID +
-        "&PickUpInd=" + payload.PickUpInd +
-        "&ProjectID=" + payload.ProjectID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -495,11 +315,6 @@ export class GitEpic {
 
   Order_ViewAll = (action$) =>
     action$.ofType(GitAction.GetTransactions).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Order_ViewOrder?TRACKINGSTATUS=" + payload.TrackingStatus +
-        "&ProjectID=" + payload.ProjectID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -523,19 +338,6 @@ export class GitEpic {
 
   Order_UpdateUserDetails = (action$) =>
     action$.ofType(GitAction.OrderUserDetailsUpdate).switchMap(async ({ payload }) => {
-      console.log(url + project + "/" +
-        "Order_UpdateOrderUserDetails?OrderID=" + payload.OrderID +
-        "&FirstName=" + payload.FirstName +
-        "&LastName=" + payload.LastName +
-        "&UserContactNo=" + payload.UserContactNo +
-        "&PickUpInd=" + payload.PickUpInd +
-        "&UserEmailAddress=" + payload.UserEmailAddress +
-        "&UserAddressLine1=" + payload.UserAddressLine1 +
-        "&UserAddressLine2=" + payload.UserAddressLine2 +
-        "&UserPoscode=" + payload.UserPoscode +
-        "&UserState=" + payload.UserState +
-        "&UserCity=" + payload.UserCity +
-        "&CountryID=" + payload.CountryID)
       try {
         const response = await fetch(
           url + project + "/" +
@@ -602,7 +404,6 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("JSON", json)
         if (json[0].ReturnVal === 1)
           toast.success("Logistic Data is successfully Updated")
         return {
@@ -623,10 +424,6 @@ export class GitEpic {
 
   Address_ViewAll = (action$) =>
     action$.ofType(GitAction.GetAllAddress).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "User_ViewAllAddressBook?ProjectID=" + payload.ProjectID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -652,16 +449,6 @@ export class GitEpic {
 
   Merchants_ViewProfile = (action$) =>
     action$.ofType(GitAction.GetMerchants).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "User_ProfileListByType?TYPE=" + payload.type +
-        "&TYPEVALUE=" + payload.typeValue +
-        "&USERID=" + payload.USERID +
-        "&UserRoleID=" + payload.userRoleID +
-        "&LISTPERPAGE=" + payload.productPage +
-        "&PAGE=" + payload.page +
-        "&ProjectID=" + payload.ProjectID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -721,9 +508,6 @@ export class GitEpic {
 
   Product_Add = (action$) =>
     action$.ofType(GitAction.AddProduct).switchMap(async ({ payload }) => {
-
-      console.log("CHECK THIS IS PAYLOAD", payload)
-      console.log("CHECK THIS IS PAYLOAD", payload.ProjectID)
       return fetch(
         url + project + "/Product_AddProductByPost"
         , {
@@ -754,13 +538,6 @@ export class GitEpic {
         .then(response => response.json())
         .then(json => {
           json = json;
-          console.log("json", json)
-          // if (json !== "fail") {
-          //   json = json;
-          //   // toast.success("Successfully update stock. Fetching the latest data..", { autoClose: 3000 })
-          // } else {
-          //   json = [];
-          // }
           return {
             type: GitAction.AddedProduct,
             payload: json,
@@ -820,11 +597,6 @@ export class GitEpic {
 
   Product_Delete = (action$) =>
     action$.ofType(GitAction.DeleteProduct).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_DeleteProducts?ProductIDs=" + payload.ProductID +
-        "&USERID=" + payload.UserID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -833,7 +605,6 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("json", json)
         return {
           type: GitAction.DeletedProduct,
           payload: json,
@@ -849,15 +620,6 @@ export class GitEpic {
 
   Product_ViewAll = (action$) =>
     action$.ofType(GitAction.GetProduct).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_ItemListByType?Type=" + payload.type +
-        "&TypeValue=" + payload.typeValue +
-        "&USERID=" + payload.userId +
-        "&PRODUCTPERPAGE=" + payload.productPage +
-        "&PAGE=" + payload.page +
-        "&ProjectID=" + payload.ProjectID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -870,7 +632,6 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("json", json)
         return {
           type: GitAction.GotProduct,
           payload: json,
@@ -886,14 +647,6 @@ export class GitEpic {
 
   Product_ViewListing = (action$) =>
     action$.ofType(GitAction.GetProductListing).switchMap(async ({ payload }) => {
-      console.log(url + project + "/" +
-        "Product_ItemListByType?Type=" + payload.type +
-        "&TypeValue=" + payload.typeValue +
-        "&USERID=" + payload.userId +
-        "&PRODUCTPERPAGE=" + payload.productPage +
-        "&PAGE=" + payload.page +
-        "&ProjectID=" + payload.ProjectID)
-
       try {
         const response = await fetch(
           url + project + "/" +
@@ -906,7 +659,6 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-        // console.log("json", json)
         return {
           type: GitAction.GotProductListing,
           payload: json,
@@ -922,12 +674,6 @@ export class GitEpic {
 
   Product_ViewDetail = (action$) =>
     action$.ofType(GitAction.GetProductDetail).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_ItemDetailByProductID?ProductID=" + payload.productId +
-        "&USERID=" + payload.userId +
-        "&ProjectID=" + payload.ProjectID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -952,11 +698,6 @@ export class GitEpic {
 
   Product_Endorse = (action$) =>
     action$.ofType(GitAction.EndorseProduct).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_EndorseProducts?ProductIDs=" + payload.ProductID +
-        "&USERID=" + payload.UserID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -979,11 +720,6 @@ export class GitEpic {
 
   Product_CheckDuplicateName = (action$) =>
     action$.ofType(GitAction.CheckProduct).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_CheckDuplication?PRODUCTNAME=" + payload.ProductName +
-        "&ProjectID=" + payload.ProjectID
-      )
       try {
         const resposne = await fetch(
           url + project + "/" +
@@ -1012,12 +748,6 @@ export class GitEpic {
 
   Product_CheckDuplicateSKU = (action$) =>
     action$.ofType(GitAction.CheckProductSKU).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_CheckDuplicationBySKU?PRODUCTSKU=" + payload.ProductSKU +
-        "&USERID=" + payload.UserID +
-        "&PROJECTID=" + payload.ProjectID
-      )
       try {
         const resposne = await fetch(
           url + project + "/" +
@@ -1048,13 +778,6 @@ export class GitEpic {
   ///////////////////////////////////////////////////  Product Variation  ///////////////////////////////////////////////////
   ProductVariation_Add = (action$) =>
     action$.ofType(GitAction.AddProductVariation).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_AddProductVariation?PRODUCTVARIATION=" + payload.ProductVariation +
-        "&PRODUCTCATEGORYID=" + payload.ProductCategoryID +
-        "&CUSTOMIZABLE=" + payload.CustomizableIndicator +
-        "&USERID=" + payload.UserID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1084,14 +807,6 @@ export class GitEpic {
 
   ProductVariation_Update = (action$) =>
     action$.ofType(GitAction.UpdateProductVariation).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_UpdateProductVariation?PRODUCTVARIATIONID=" + payload.ProductVariationID +
-        "&PRODUCTVARIATION=" + payload.ProductVariation +
-        "&PRODUCTCATEGORYID=" + payload.ProductCategoryID +
-        "&CUSTOMIZABLE=" + payload.Customizable +
-        "&USERID=" + payload.UserID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1118,11 +833,6 @@ export class GitEpic {
 
   ProductVariation_Delete = (action$) =>
     action$.ofType(GitAction.DeleteProductVariation).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_DeleteProductVariation?PRODUCTVARIATIONID=" + payload.ProductVariationID +
-        "&USERID=" + payload.UserID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1152,17 +862,6 @@ export class GitEpic {
 
   ProductVariationDetail_Add = (action$) =>
     action$.ofType(GitAction.AddProductVariationDetail).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_AddProductVariationDetail?PRODUCTVARIATIONID=" + payload.ProductVariation +
-        "&PRODUCTID=" + payload.ProductID +
-        "&CUSTOMIZABLE=" + payload.Customizable +
-        "&VALUE=" + payload.Value +
-        "&PRODUCTSTOCK=" + payload.stock +
-        "&PRODUCTVARIATIONSKU=" + payload.sku +
-        "&PRODUCTVARIATIONPRICE=" + payload.price +
-        "&USERID=" + payload.UserID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1193,16 +892,6 @@ export class GitEpic {
 
   ProductVariationDetail_Update = (action$) =>
     action$.ofType(GitAction.UpdateProductVariationDetail).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_UpdateProductVariationDetails?PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailID +
-        "&CUSTOMIZABLE=" + payload.Customizable +
-        "&VALUE=" + payload.Value +
-        "&PRODUCTSTOCK=" + payload.stock +
-        "&PRODUCTVARIATIONSKU=" + payload.sku +
-        "&PRODUCTVARIATIONPRICE=" + payload.price +
-        "&USERID=" + payload.UserID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1232,11 +921,6 @@ export class GitEpic {
 
   ProductVariationDetail_Delete = (action$) =>
     action$.ofType(GitAction.DeleteProductVariationDetail).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_DeleteProductVariationDetails?PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailID +
-        "&USERID=" + payload.UserID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1260,9 +944,6 @@ export class GitEpic {
 
   ProductVariationDetail_ViewAllByCategoryID = (action$) =>
     action$.ofType(GitAction.GetProductVariationByCategoryID).switchMap(async ({ payload }) => {
-
-      console.log(url + project + "/" +
-        "Product_ViewProductVariationByCategoryID?PRODUCTCATEGORYID=" + payload)
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1286,59 +967,8 @@ export class GitEpic {
 
   ///////////////////////////////////////////////////  Product Stock  ///////////////////////////////////////////////////
 
-  // ProductVariationStock_Update = (action$) =>
-  //   action$.ofType(GitAction.UpdateProductVariationStock).switchMap(async ({ payload }) => {
-  //     try {
-  //       const response = await fetch(
-  //         url + project + "/" +
-  //         "Product_UpdateProductStockVariation?PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailID +
-  //         "&PRODUCTSTOCK=" + payload.stock
-  //       );
-  //       let json = await response.json();
-  //       json = JSON.parse(json);
-  //       if (json[0].ReturnVal === 1)
-  //         toast.success("Variation stock updated successfully")
-
-  //       try {
-  //         const response = await fetch(
-  //           url + project + "/" +
-  //           "Product_ItemDetailByProductID?ProductID=" + payload.productId +
-  //           "&USERID=" + payload.userId +
-  //           "&ProjectID=" + payload.ProjectID
-  //         );
-  //         let json2 = await response.json();
-  //         json2 = JSON.parse(json2);
-  //         return {
-  //           type: GitAction.UpdatedProductVariationStock,
-  //           payloadProduct: json2,
-  //           payload: json,
-  //         };
-  //       } catch (error) {
-  //         alert('UpdatedProductVariationStock: ' + error);
-  //         return {
-  //           type: GitAction.UpdatedProductVariationStock,
-  //           payload: [],
-  //         };
-  //       }
-
-  //     } catch (error) {
-  //       alert('updateProductVariationStock: ' + error);
-  //       return {
-  //         type: GitAction.UpdatedProductVariationStock,
-  //         payload: [],
-  //       };
-  //     }
-  //   });
-
   ProductVariationStock_Add = (action$) =>
     action$.ofType(GitAction.AddProductVariationStock).switchMap(async ({ payload }) => {
-      console.log(url + project + "/" +
-        "Product_AddProductVariationStock?COINTAINERID=" + payload.ContainerID +
-        "&USERID=" + payload.UserID +
-        "&PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailsID +
-        "&PRODUCTSTOCK=" + payload.ProductStock +
-        "&PRODUCTVARIATIONCOST=" + payload.ProductVariationCost +
-        "&GRIDSTORAGEID=" + payload.GridStorageID)
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1369,10 +999,6 @@ export class GitEpic {
 
   ProductVariationStock_View = (action$) =>
     action$.ofType(GitAction.ViewProductVariationStock).switchMap(async ({ payload }) => {
-      console.log(url + project + "/" +
-        "Product_ItemListWithVariation?PROJECTID=" + payload.ProjectID +
-        "&PRODUCTPERPAGE=" + payload.ProductPerPage +
-        "&PAGE=" + payload.Page)
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1381,7 +1007,6 @@ export class GitEpic {
           "&PAGE=" + payload.Page
         );
         let json = await response.json();
-        console.log("json", json)
         json = JSON.parse(json);
         return {
           type: GitAction.ViewedProductVariationStock,
@@ -1399,13 +1024,6 @@ export class GitEpic {
   ProductVariationStock_ViewAll = (action$) =>
     action$.ofType(GitAction.ViewProductVariationStockWithID).switchMap(async ({ payload }) => {
       try {
-        console.log(
-          url + project + "/" +
-          "Product_ItemListWithProductVariationStock?PROJECTID=" + payload.ProjectID +
-          "&PRODUCTID=" + payload.ProductID +
-          "&PRODUCTPERPAGE=" + payload.ProductPerPage +
-          "&PAGE=" + payload.Page
-        )
         const response = await fetch(
           url + project + "/" +
           "Product_ItemListWithProductVariationStock?PROJECTID=" + payload.ProjectID +
@@ -1414,7 +1032,6 @@ export class GitEpic {
           "&PAGE=" + payload.Page
         );
         let json = await response.json();
-        console.log("json", json)
         json = JSON.parse(json);
         return {
           type: GitAction.ViewedProductVariationStockWithID,
@@ -1433,16 +1050,11 @@ export class GitEpic {
   ProductVariationStock_ViewWithVariationDetailsID = (action$) =>
     action$.ofType(GitAction.ViewProductVariationStockWithVariationDetailsID).switchMap(async ({ payload }) => {
       try {
-        console.log(
-          url + project + "/" +
-          "Product_ItemListWithProductVariationStockDetailList?PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailID
-        )
         const response = await fetch(
           url + project + "/" +
           "Product_ItemListWithProductVariationStockDetailList?PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailID
         );
         let json = await response.json();
-        console.log("json", json)
         json = JSON.parse(json);
         return {
           type: GitAction.ViewedProductVariationStockWithVariationDetailsID,
@@ -1460,15 +1072,6 @@ export class GitEpic {
   ProductVariationStock_UpdateDetails = (action$) =>
     action$.ofType(GitAction.UpdateProductVariationStockDetails).switchMap(async ({ payload }) => {
       try {
-        console.log(
-          url + project + "/" +
-          "Product_UpdateProductVariationStock?PRODUCTVARIATIONSTOCKID=" + payload.ProductVariationStockID +
-          "&USERID=" + payload.UserID +
-          "&APPROVEDBY=" + payload.ApprovedBy +
-          "&PRODUCTSTOCK=" + payload.ProductStock +
-          "&PRODUCTVARIATIONCOST=" + payload.ProductVariationCost +
-          "&GRIDSTORAGEID=" + payload.GridStorage
-        )
         const response = await fetch(
           url + project + "/" +
           "Product_UpdateProductVariationStock?PRODUCTVARIATIONSTOCKID=" + payload.ProductVariationStockID +
@@ -1479,7 +1082,6 @@ export class GitEpic {
           "&GRIDSTORAGEID=" + payload.GridStorage
         );
         let json = await response.json();
-        console.log("json", json)
         json = JSON.parse(json);
         return {
           type: GitAction.UpdatedProductVariationStockDetails,
@@ -1497,21 +1099,13 @@ export class GitEpic {
   ProductVariationStock_Delete = (action$) =>
     action$.ofType(GitAction.DeleteProductVariationStock).switchMap(async ({ payload }) => {
       try {
-        console.log(
-          url + project + "/" +
-          "Product_DeleteProductVariationStock?PRODUCTVARIATIONSTOCKID=" + payload.ProductVariationStockID +
-          "&USERID=" + payload.UserID +
-          "&APPROVEDBY=" + payload.ApprovedBy
-        )
         const response = await fetch(
           url + project + "/" +
           "Product_DeleteProductVariationStock?PRODUCTVARIATIONSTOCKID=" + payload.ProductVariationStockID +
           "&USERID=" + payload.UserID +
           "&APPROVEDBY=" + payload.ApprovedBy
         );
-
         let json = await response.json();
-        console.log("json", json)
         json = JSON.parse(json);
         return {
           type: GitAction.DeletedProductVariationStock,
@@ -1531,13 +1125,6 @@ export class GitEpic {
 
   ProductSpecsDetail_Add = (action$) =>
     action$.ofType(GitAction.AddProductSpecsDetail).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_AddProductSpecificationDetail?PRODUCTVARIATIONID=" + payload.ProductVariation +
-        "&PRODUCTID=" + payload.ProductID +
-        "&PRODUCTSPECIFICATIONVALUE=" + payload.value +
-        "&USERID=" + payload.UserID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1563,14 +1150,6 @@ export class GitEpic {
 
   ProductSpecsDetail_Update = (action$) =>
     action$.ofType(GitAction.UpdateProductSpecsDetail).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_UpdateProductSpecificationDetail?PRODUCTVARIATIONID=" + payload.ProductVariation +
-        "&PRODUCTID=" + payload.ProductID +
-        "&PRODUCTSPECIFICATIONVALUE=" + payload.value +
-        "&PRODUCTSPECIFICATIONDETAILID=" + payload.specificationDetailID +
-        "&USERID=" + payload.UserID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1597,11 +1176,6 @@ export class GitEpic {
 
   ProductSpecsDetail_Delete = (action$) =>
     action$.ofType(GitAction.DeleteProductSpecsDetail).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_DeleteProductSpecificationDetail?PRODUCTSPECIFICATIONDETAILID=" + payload.specificationDetailID +
-        "&USERID=" + payload.UserID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1628,18 +1202,6 @@ export class GitEpic {
 
   ProductMedia_Add = (action$) =>
     action$.ofType(GitAction.AddProductMedia).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_AddProductMedia?" +
-        "PRODUCTID=" + payload.ProductID +
-        "&PRODUCTVARIATIONDETAILID=" + payload.variationID +
-        "&PRODUCTSLIDEORDER=" + payload.sliderOrder +
-        "&TYPE=" + payload.mediaType +
-        "&WIDTH=" + payload.imageWidth +
-        "&HEIGHT=" + payload.imageHeight +
-        "&IMAGENAME=" + payload.imageName +
-        "&USERID=" + payload.UserID
-      )
       try {
         const resposne = await fetch(
           url + project + "/" +
@@ -1654,8 +1216,6 @@ export class GitEpic {
           "&USERID=" + payload.UserID
         );
         let json = await resposne.json();
-
-        console.log("json", json)
         // json = JSON.parse(json);
         return {
           type: GitAction.ProductMediaAdded,
@@ -1672,12 +1232,6 @@ export class GitEpic {
 
   ProductMedia_Delete = (action$) =>
     action$.ofType(GitAction.deleteProductMedia).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_DeleteProductMedia?" +
-        "PRODUCTMEDIAID=" + payload.imageID +
-        "&USERID=" + payload.UserID
-      )
       try {
         const resposne = await fetch(
           url + project + "/" +
@@ -1704,14 +1258,6 @@ export class GitEpic {
 
   ProductCategory_Add = (action$) =>
     action$.ofType(GitAction.AddProductCategory).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_AddProductCategory?PRODUCTCATEGORY=" + payload.ProductCategory +
-        "&PRODUCTCATEGORYIMAGE=" + payload.ProductCategoryImage +
-        "&HIERARCHYID=" + payload.HierarchyID +
-        "&PARENTPRODUCTCATEGORYID=" + payload.ParentProductCategoryID +
-        "&ProjectID=" + payload.ProjectID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1738,12 +1284,6 @@ export class GitEpic {
 
   ProductCategory_Update = (action$) =>
     action$.ofType(GitAction.UpdateProductCategory).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_UpdateProductCategory?PRODUCTCATEGORYID=" + payload.ProductCategoryID +
-        "&PRODUCTCATEGORY=" + payload.ProductCategory +
-        "&USERID=" + payload.UserID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1768,11 +1308,6 @@ export class GitEpic {
 
   ProductCategory_Delete = (action$) =>
     action$.ofType(GitAction.DeleteProductCategory).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_DeleteProductCategory?PRODUCTCATEGORYID=" + payload.ProductCategoryID +
-        "&USERID=" + payload.UserID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1796,10 +1331,6 @@ export class GitEpic {
 
   ProductCategory_ViewAll = (action$) =>
     action$.ofType(GitAction.GetProductCategory).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Product_CategoryListByAll?ProjectID=" + payload.ProjectID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1871,13 +1402,6 @@ export class GitEpic {
 
   ProductReview_Add = (action$) =>
     action$.ofType(GitAction.addProductReview).switchMap(async ({ payload }) => {
-      console.log(url + project + "/" +
-        "Product_AddReview?PARENTPRODUCTREVIEWID=" + payload.parentProductReviewID
-        + "&PRODUCTID=" + payload.productID
-        + "&USERID=" + payload.UserID
-        + "&PRODUCTREVIEWRATING=" + payload.productReviewRating
-        + "&PRODUCTREVIEWCOMMENT=" + payload.productReviewComment
-        + "&REPLYPARENTID=" + payload.replyParentID)
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1890,15 +1414,10 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("json add review", json)
         if (json[0].ReturnVal === 1) {
           toast.success("Sucessfully send a review");
         }
         try {
-
-          console.log(url + project + "/" +
-            "Product_ViewReviewByProductID?PRODUCTID=" + payload.productID +
-            "&PARENTPRODUCTREVIEWID=0")
           const response_1 = await fetch(
             url + project + "/" +
             "Product_ViewReviewByProductID?PRODUCTID=" + payload.productID +
@@ -1930,9 +1449,6 @@ export class GitEpic {
 
   Promotion_ViewAll = (action$) =>
     action$.ofType(GitAction.GetPromotion).switchMap(async () => {
-      console.log(
-        url + project + "/" +
-        "Promo_ViewPromotion?ACTIVEIND")
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1940,8 +1456,6 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-
-        console.log("JSON", json)
         return {
           type: GitAction.GotPromotion,
           payload: json,
@@ -1957,24 +1471,6 @@ export class GitEpic {
 
   Promotion_Add = (action$) =>
     action$.ofType(GitAction.AddPromotion).switchMap(async ({ payload }) => {
-      console.log(url + project + "/" +
-        "Promo_AddPromotion?PROMOTIONTITLE=" +
-        payload.PromotionTitle +
-        "&PROMOTIONDESC=" +
-        payload.PromotionDesc +
-        "&PROMOTIONSTARTDATE=" +
-        payload.PromotionStartDate +
-        "&PROMOTIONDISCOUNTPERCENTAGE=" +
-        payload.DiscountPercentage +
-        "&BANNERIMAGE=" +
-        payload.BannerImage +
-        "&SLIDEORDER=" +
-        payload.SlideOrder +
-        "&PROMOTIONENDDATE=" +
-        payload.PromotionEndDate +
-        "&PRODUCTID=" +
-        payload.ProductID +
-        "&ProjectID=" + payload.ProjectID)
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1991,8 +1487,6 @@ export class GitEpic {
 
         let json = await response.json();
         json = JSON.parse(json);
-
-        console.log("json", json)
         return {
           type: GitAction.AddedPromotion,
           payload: json,
@@ -2008,16 +1502,6 @@ export class GitEpic {
 
   Promotion_Update = (action$) =>
     action$.ofType(GitAction.UpdatePromotion).switchMap(async ({ payload }) => {
-      console.log(url + project + "/" +
-        "Promo_UpdatePromotion?PROMOTIONID=" + payload.PromotionID +
-        "&PROMOTIONTITLE=" + payload.PromotionTitle +
-        "&PROMOTIONDESC=" + payload.PromotionDesc +
-        "&BANNERIMAGE=" + payload.BannerImage +
-        "&SLIDEORDER=" + payload.SlideOrder +
-        "&PROMOTIONSTARTDATE=" + payload.promoStart +
-        "&PROMOTIONENDDATE=" + payload.promoEnd +
-        "&PROMOTIONITEMID=" + payload.ProductID +
-        "&PROMOTIONDISCOUNTPERCENTAGE=" + payload.DiscountPercentage)
       try {
         const response = await fetch(
           url + project + "/" +
@@ -2048,8 +1532,6 @@ export class GitEpic {
 
   Promotion_Delete = (action$) =>
     action$.ofType(GitAction.DeletePromotion).switchMap(async ({ payload }) => {
-      console.log(url + project + "/" +
-        "Promo_DeletePromotion?PROMOTIONID=" + payload.PromotionID)
       try {
         const response = await fetch(
           url + project + "/" +
@@ -2124,7 +1606,6 @@ export class GitEpic {
 
   Shoplot_ShopListing = (action$) =>
     action$.ofType(GitAction.GetShopListing).switchMap(async ({ payload }) => {
-      console.log(url + project + "/" + "Storage_ShoplotList?PROJECTID" + payload.ProjectID)
       try {
         const response = await fetch(
           url + project + "/" +
@@ -2132,7 +1613,6 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("GotShopListing", json)
 
         return {
           type: GitAction.GotShopListing,
@@ -2149,8 +1629,6 @@ export class GitEpic {
 
   Shoplot_ShopListingByID = (action$) =>
     action$.ofType(GitAction.GetShopListingByID).switchMap(async ({ payload }) => {
-      console.log(url + project + "/" +
-        "Storage_ShoplotListByShoplotID?SHOPLOTID=" + payload.ShoplotID)
       try {
         const response = await fetch(
           url + project + "/" +
@@ -2158,7 +1636,6 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("GotShopListingByID", json)
 
         return {
           type: GitAction.GotShopListingByID,
@@ -2175,19 +1652,13 @@ export class GitEpic {
 
   Shoplot_AddShoplot = (action$) =>
     action$.ofType(GitAction.AddShoplot).switchMap(async ({ payload }) => {
-      console.log(url + project + "/Storage_AddShoplot?SHOPLOTNAME=" + payload.ShoplotName +
-        "&CONTACTNO=" + payload.ContactNo +
-        "&SHOPLOTBLOCK=" + payload.ShoplotBlock +
-        "&PROJECTID=" + payload.ProjectID +
-        "&SHOPLOTPOLYGONSTRING=" + payload.ShoplotPolygon +
-        "&LONGITUDE=" + payload.Longitude +
-        "&LATITUDE=" + payload.Latitude)
       try {
         const response = await fetch(
           url + project + "/" +
           "Storage_AddShoplot?SHOPLOTNAME=" + payload.ShoplotName +
           "&CONTACTNO=" + payload.ContactNo +
           "&SHOPLOTBLOCK=" + payload.ShoplotBlock +
+          "&STORAGEBLOCKID=" + payload.StorageBlockID +
           "&PROJECTID=" + payload.ProjectID +
           "&SHOPLOTPOLYGONSTRING=" + payload.ShoplotPolygon +
           "&LONGITUDE=" + payload.Longitude +
@@ -2195,7 +1666,6 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("AddedShoplot", json)
 
         return {
           type: GitAction.AddedShoplot,
@@ -2212,11 +1682,6 @@ export class GitEpic {
 
   Shoplot_UpdateShoplot = (action$) =>
     action$.ofType(GitAction.UpdateShoplot).switchMap(async ({ payload }) => {
-      console.log(url + project + "/Storage_UpdateShoplot?SHOPLOTNAME=" + payload.ShoplotName +
-        "&SHOPLOTID=" + payload.ShoplotID +
-        "&CONTACTNO=" + payload.ContactNo +
-        "&SHOPLOTBLOCK=" + payload.ShoplotBlock +
-        "&SHOPLOTPOLYGONSTRING=" + payload.ShoplotPolygon)
       try {
         const response = await fetch(
           url + project + "/" +
@@ -2224,11 +1689,11 @@ export class GitEpic {
           "&SHOPLOTID=" + payload.ShoplotID +
           "&CONTACTNO=" + payload.ContactNo +
           "&SHOPLOTBLOCK=" + payload.ShoplotBlock +
+          "&STORAGEBLOCKID=" + payload.StorageBlockID +
           "&SHOPLOTPOLYGONSTRING=" + payload.ShoplotPolygon
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("UpdateShoplot", json)
 
         return {
           type: GitAction.UpdatedShoplot,
@@ -2245,7 +1710,6 @@ export class GitEpic {
 
   Shoplot_DeleteShoplot = (action$) =>
     action$.ofType(GitAction.DeleteShoplot).switchMap(async ({ payload }) => {
-      console.log(url + project + "/Storage_DeleteShoplot?SHOPLOTID=" + payload.ShoplotID)
       try {
         const response = await fetch(
           url + project + "/" +
@@ -2253,7 +1717,6 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("DeletedShoplot", json)
 
         return {
           type: GitAction.DeletedShoplot,
@@ -2270,12 +1733,6 @@ export class GitEpic {
 
   Storage_AddShoplotCoordinate = (action$) =>
     action$.ofType(GitAction.AddShoplotCoordinateListing).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Storage_AddShoplotCoordinate?SHOPLOTID=" + payload.ShoplotID
-        + "&LONGITUDE=" + payload.Longitude
-        + "&LATITUDE=" + payload.Latitude
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -2285,8 +1742,6 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("AddedShoplotCoordinateListing", json)
-
         return {
           type: GitAction.AddedShoplotCoordinateListing,
           payload: json,
@@ -2302,12 +1757,6 @@ export class GitEpic {
 
   Storage_UpdateShoplotCoordinate = (action$) =>
     action$.ofType(GitAction.UpdateShoplotCoordinateListing).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Storage_UpdateShoplotCoordinate?SHOPLOTID=" + payload.ShoplotID
-        + "&LONGITUDE=" + payload.Longitude
-        + "&LATITUDE=" + payload.Latitude
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -2317,7 +1766,6 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("UpdatedShoplotCoordinateListing", json)
 
         return {
           type: GitAction.UpdatedShoplotCoordinateListing,
@@ -2336,7 +1784,6 @@ export class GitEpic {
 
   Shoplot_BlockListing = (action$) =>
     action$.ofType(GitAction.GetBlockListing).switchMap(async ({ payload }) => {
-      console.log(url + project + "/" + "Storage_BlockList?PROJECTID=" + payload.ProjectID)
       try {
         const response = await fetch(
           url + project + "/" +
@@ -2344,7 +1791,6 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("GotBlockListing", json)
 
         return {
           type: GitAction.GotBlockListing,
@@ -2361,11 +1807,6 @@ export class GitEpic {
 
   Storage_AddBlock = (action$) =>
     action$.ofType(GitAction.AddBlockListing).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Storage_AddBlock?PROJECTID=" + payload.ProjectID
-        + "&BLOCKNAME=" + payload.BlockName
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -2374,7 +1815,6 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("AddedBlockListing", json)
 
         return {
           type: GitAction.AddedBlockListing,
@@ -2391,11 +1831,6 @@ export class GitEpic {
 
   Storage_UpdateBlock = (action$) =>
     action$.ofType(GitAction.UpdateBlockListing).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Storage_UpdateBlock?STORAGEBLOCKID=" + payload.StorageBlockID +
-        "&BLOCKNAME=" + payload.BlockName
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -2404,7 +1839,6 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("UpdatedBlockListing", json)
 
         return {
           type: GitAction.UpdatedBlockListing,
@@ -2421,10 +1855,6 @@ export class GitEpic {
 
   Storage_DeleteBlock = (action$) =>
     action$.ofType(GitAction.DeleteBlockListing).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Storage_DeleteBlock?STORAGEBLOCKID=" + payload.StorageBlockID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -2432,7 +1862,6 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("DeletedBlockListing", json)
 
         return {
           type: GitAction.DeletedBlockListing,
@@ -2451,8 +1880,6 @@ export class GitEpic {
 
   Storage_GridStorageList = (action$) =>
     action$.ofType(GitAction.GetStorage).switchMap(async ({ payload }) => {
-      console.log(url + project + "/" +
-        "Storage_GridStorageList?PROJECTID=" + payload.ProjectID)
       try {
         const response = await fetch(
           url + project + "/" +
@@ -2460,7 +1887,6 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("GetStorage", json)
 
         return {
           type: GitAction.GotStorage,
@@ -2477,13 +1903,6 @@ export class GitEpic {
 
   Storage_AddGrid = (action$) =>
     action$.ofType(GitAction.AddGridListing).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Storage_AddGrid?PROJECTID=" + payload.ProjectID
-        + "&GRIDSTORAGECODE=" + payload.GridStorageCode
-        + "&SHOPLOTID=" + payload.ShoplotID
-        + "&SHOPLOTNAME=" + payload.ShoplotName
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -2494,7 +1913,6 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("AddGridListing", json)
 
         return {
           type: GitAction.AddedGridListing,
@@ -2511,13 +1929,6 @@ export class GitEpic {
 
   Storage_UpdateGrid = (action$) =>
     action$.ofType(GitAction.UpdateGridListing).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Storage_UpdateGrid?GRIDSTORAGEID=" + payload.GridStorageID
-        + "&GRIDSTORAGECODE=" + payload.GridStorageCode
-        + "&SHOPLOTID=" + payload.ShoplotID
-        + "&SHOPLOTNAME=" + payload.ShoplotName
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -2528,7 +1939,6 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("UpdatedGridListing", json)
 
         return {
           type: GitAction.UpdatedGridListing,
@@ -2545,10 +1955,6 @@ export class GitEpic {
 
   Storage_DeleteGrid = (action$) =>
     action$.ofType(GitAction.DeleteGridListing).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "Storage_DeleteGrid?GRIDSTORAGEID=" + payload.GridStorageID
-      )
       try {
         const response = await fetch(
           url + project + "/" +
@@ -2556,7 +1962,6 @@ export class GitEpic {
         );
         let json = await response.json();
         json = JSON.parse(json);
-        console.log("DeletedGridListing", json)
 
         return {
           type: GitAction.DeletedGridListing,
@@ -2574,12 +1979,6 @@ export class GitEpic {
   ///////////////////////////////////////////////////  sidebar configurations ///////////////////////////////////////////////////
   User_ViewPage = action$ =>
     action$.ofType(GitAction.FetchSidebar).switchMap(async ({ payload }) => {
-      console.log(
-        url + project + "/" +
-        "User_ViewPage?" +
-        "ROLEGROUPID=" + payload.ROLEGROUPID +
-        "&USERID=" + payload.USERID
-      )
       try {
         const response = await fetch(
           url + project + "/" +

@@ -341,9 +341,6 @@ class Stock extends Component {
 
     onTableRowClick = (event, row) => {
 
-        console.log("this.PagingListing[0].Listing", this.PagingListing[0].Listing)
-        console.log("this.PagingListing[0].Listing", this.PagingListing[0])
-
         let listing = this.PagingListing[0].Listing
         let selected = ""
         let OverallCollapseTable = this.PagingListing[0].isOpenOverallDetails

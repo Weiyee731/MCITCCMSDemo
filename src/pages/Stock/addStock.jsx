@@ -509,9 +509,6 @@ class AddStock extends Component {
                 })
             })
 
-            console.log("Listing", Listing)
-            console.log("Listing ProductVariationDetailID", ProductVariationDetailID)
-
             this.props.CallAddProductVariationStock({
                 ContainerID: this.state.ContainerID,
                 UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,

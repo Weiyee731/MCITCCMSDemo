@@ -312,8 +312,6 @@ class AddStock extends Component {
         let checkSimilar = false
         let listing = this.DataState
 
-        console.log("pproduct checkSimilarProduct", product)
-
         if (listing.length > 0) {
             if (listing.filter((data) => data.ProductSKU == product.SKU).length > 0) {
                 checkSimilar = true

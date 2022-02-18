@@ -158,7 +158,6 @@ const routes = [
                     categoryId={props.match.params.categoryId}
                     category={props.match.params.category}
                 />
-                {console.log("xxxprops", props)}
             </>
         ),
     },

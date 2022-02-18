@@ -329,7 +329,6 @@ class ProductEndorsementInfo extends Component {
                                 </Button>
                             </div>
                         </div>
-                        {console.log("ProductVariation", this.state.ProductVariation)}
                         {
                             typeof this.props.productInfo !== "undefined" && productInfo.length > 0 ?
                                 <div>

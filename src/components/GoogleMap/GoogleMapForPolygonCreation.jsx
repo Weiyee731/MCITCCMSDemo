@@ -35,12 +35,8 @@ export class GoogleMaps extends Component {
             strokeWeight: 2,
             fillColor: "#5555FF",
         });
-
-        console.log("POLY112345", poly)
         var id;
-
         const onMapClicked = (props, map, e) => {
-            console.log("mapmap", map)
             var marker = new window.google.maps.Marker({
                 position: { lat: e.latLng.lat(), lng: e.latLng.lng() },
                 map: map,
@@ -182,8 +178,6 @@ export class GoogleMaps extends Component {
 
         return (
             <div>
-                {console.log("POLY112345", this.props.polypath)}
-                {console.log("this.state MAP", this.state)}
                 <Map
                     onClick={this.props.toView === undefined && onMapClicked}
                     google={this.props.google}
@@ -204,7 +198,6 @@ export class GoogleMaps extends Component {
                         position: "relative",
                     }}
                 >
-                    {console.log("CHECKING", this.state)}
                     {this.props.polypath !== undefined && this.props.polypath.map((POLY) => {
                         return (
                             <Polygon

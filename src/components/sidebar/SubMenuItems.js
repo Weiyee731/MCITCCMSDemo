@@ -13,8 +13,6 @@ const SubMenuItems = (props) => {
             suffix={typeof item.suffix !== "undefined" && item.suffix !== null ? item.suffix : null}
             title={item.title}
         >
-            {console.log("item.submenus", item.submenus)}
-            {console.log("item.submenus", item)}
             {
                 typeof item.submenus !== "undefined" && item.submenus !== null && item.submenus.length > 0 && localStorage.getItem("project") != undefined && item.submenus.map((menuitem, index) => {
                     return (

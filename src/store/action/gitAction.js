@@ -827,6 +827,13 @@ export class GitAction {
     };
   }
 
+  static ResetBlockAction = "RESET-BLOCKACTION";
+  static CallResetBlockAction() {
+    return {
+      type: GitAction.ResetBlockAction,
+    };
+  }
+
   ///////////////////////////////////////////////////  Grid  ///////////////////////////////////////////////////
 
   static GetStorage = "GET-STORAGE";

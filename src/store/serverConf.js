@@ -1,7 +1,6 @@
 
 const project = localStorage.getItem("project")
 const projectURL = localStorage.getItem("projectURL")
-console.log("window.location.hostname", window.location.hostname)
 export const ServerConfiguration = {
 
 

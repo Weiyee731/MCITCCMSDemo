@@ -139,31 +139,24 @@ class EditShopProfile extends Component {
 
             })
             if (this.props.merchant !== null) {
-                console.log("check", this.props.merchant[0])
                 let shopDetails = this.props.merchant[0];
                 if (shopDetails !== undefined) {
                     this.setDetails(shopDetails)
                 }
             }
-            console.log("CHECKING PROPS", this.props)
             let ratingCount = []
             if (this.props.productsListing !== null && this.props.productsListing.length > 0) {
                 this.props.productsListing.map((X) => {
-                    console.log("CHECKING PROPS2", X)
                     ratingCount.push(X.ProductRating)
                 })
             }
             this.setState({ shopRating: parseFloat(ratingCount.reduce((subtotal, item) => subtotal + item, 0) / ratingCount.length).toFixed(2) })
-
-            // console.log("CHECK", parseFloat(ratingCount.reduce((subtotal, item) => subtotal + item, 0) / rating.length).toFixed(2))
-            // console.log("CHECK", rating.reduce((subtotal, item) => subtotal + item, 0))
 
         } else {
             // browserHistory.push("/login");
             // window.location.reload(false);
         }
     }
-    // {console.log("MERCHANT", this.p)}
     componentDidUpdate(prevProps) {
 
         if (prevProps.shopUpdated !== this.props.shopUpdated) {
@@ -175,8 +168,6 @@ class EditShopProfile extends Component {
             // clearImmediate(this.props.merchant);
             // window.location.reload(false);
         }
-
-        console.log("this.props.shopUpdated", this.props.shopUpdated)
         if (this.props.shopUpdated !== undefined && this.props.shopUpdated.length > 0) {
             this.props.CallMerchants(this.state);
             this.props.CallClearShopUpdate()
@@ -300,10 +291,6 @@ class EditShopProfile extends Component {
     };
 
     handleChange(data, e) {
-        // var { value } = e.target;
-        // value = value.replace(/ /g,"%20");
-        console.log("data", data)
-        console.log("data", e.target.value)
         if (data === "SHOPPOSCODE") {
             this.setState({
                 SHOPPOSCODE: e.target.value,
@@ -349,25 +336,17 @@ class EditShopProfile extends Component {
 
     render() {
 
-        console.log("THIS.PROPS", this.props)
-        console.log("THIS.state", this.state)
-        // let userid = JSON.parse(localStorage.getItem("loginUser"))[0].UserID;
         const merchantDetails = this.props.merchant.length > 0 &&
             this.props.merchant[0].ReturnVal === undefined && this.props.merchant[0];
 
-        // const imgurl = "https://" + localStorage.getItem("projectDomain") + "/emporiaimage/userprofile/"
         const imgurl = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/shopProfile/" + JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID + "/"
 
         const links = [
-            // { title: "My Shop Page", url: "merchant/" + userid, data: "view >", icons: <StorefrontOutlinedIcon className="titleicon" /> },
             { title: "Products", url: "", data: merchantDetails ? merchantDetails.MerchantTotalProduct : [0], icons: <ListAltOutlinedIcon className="titleicon" /> },
-            // { title: "Response Rate", url: "", data: "37%", icons: <SmsOutlinedIcon className="titleicon" /> },
-            // { title: "Response Time", url: "", data: "Within Hour", icons: <AccessTimeOutlinedIcon className="titleicon" /> },
+     
             {
                 title: "Shop Rating",
                 url: "",
-                // url: "viewReviews",
-                // data: merchantDetails.ShopRating ? merchantDetails.ShopReviewCount + (merchantDetails.ShopRating) : [0],
                 data: this.state.shopRating,
                 icons: <GradeOutlinedIcon className="titleicon" />
             },
@@ -391,8 +370,6 @@ class EditShopProfile extends Component {
         };
 
         const handleSubmit = (files, allFiles) => {
-            console.log("CHECK ", allFiles)
-            console.log("CHECK ", this.state)
             allFiles.forEach((f) => f.remove());
         };
         return (
@@ -460,9 +437,7 @@ class EditShopProfile extends Component {
                                 </div>
                                 {links}
                             </div>
-                            {console.log("currentUser", this.props)}
-                            {console.log("currentUser", this.state)}
-
+   
                             <div className="col-8 col-md-8 col-lg-8">
                                 {this.props.merchant && this.props.merchant.length > 0 && this.props.merchant[0] !== null &&
                                     this.props.merchant.map((row) => (

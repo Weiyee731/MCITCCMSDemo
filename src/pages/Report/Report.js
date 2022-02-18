@@ -35,7 +35,6 @@ class Report extends Component {
     }
 
     render() {
-        console.log("Etsting")
         return (
             <div>
                 <h1>Report</h1>

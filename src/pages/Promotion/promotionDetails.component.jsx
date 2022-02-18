@@ -149,8 +149,6 @@ class PromotionDetailsComponent extends Component {
     };
 
     handleChange(data, e) {
-        console.log("this.state data", data)
-        console.log("this.state e", e)
         if (data === "PromotionTitle") {
             this.setState({
                 PromotionTitle: e.target.value,
@@ -547,8 +545,6 @@ class PromotionDetailsComponent extends Component {
 
             // else
             //   listing = this.props.allproducts.length > 0 && this.props.allproducts.filter((x) => x.ProductID !== this.props.data.PromotionID)
-
-            console.log("listing", listing)
             return listing
 
         }
@@ -556,18 +552,8 @@ class PromotionDetailsComponent extends Component {
         const checkSelected = (data) => {
             let allProductListing = []
 
-            console.log(this.props.allproducts)
             allProductListing = this.props.allproducts
             let filteredListing = []
-
-            // let selectedID = []
-            // data.length > 0 && data.map((x) => {
-            //   selectedID.push(x.ProductID)
-            // })
-
-            console.log("CHECKING", this.props.allproducts)
-            console.log("CHECKING111 ", this.props)
-
             let selectedID = [1, 3, 5]
             selectedID.length > 0 && selectedID.map((data) => {
 
@@ -627,13 +613,11 @@ class PromotionDetailsComponent extends Component {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {console.log("row1212", tableData)}
                             {tableData.map((row) => (
                                 <TableRow
                                     key={row.ProductID}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
-                                    {console.log("row11", row)}
                                     <TableCell component="th" scope="row">
                                         <div className="row">
                                             <div style={{ paddingLeft: "5px" }}>
@@ -661,7 +645,6 @@ class PromotionDetailsComponent extends Component {
         return (
             <div>
                 {" "}
-                {console.log("THIS.PROPS", this.props)}
                 <div className="App" style={{ width: "100%", alignContent: "center" }}   >
                     <div className="App-header">
                         <h1 style={{ margin: "10px" }}>Promotion Details</h1>
@@ -675,7 +658,6 @@ class PromotionDetailsComponent extends Component {
                                 <div className="col-2">
                                     <label>Promotion Title : </label>
                                 </div>
-                                {console.log("THIS.STATE", this.state)}
                                 <div className="col-4">
                                     <TextField
                                         id="outlined-size-small" size="small"
@@ -796,9 +778,6 @@ class PromotionDetailsComponent extends Component {
                                 </div>
                             </div>
                             <br />
-                            {console.log("CHECKING", this.props)}
-                            {console.log("CHECK PROMO", checkPromo())}
-
                             {
                                 this.props.data.PromotionDetail !== null ?
                                     TablePromoListing(checkPromo()[0].PromotionDetail !== null && JSON.parse(checkPromo()[0].PromotionDetail))
@@ -862,7 +841,6 @@ class PromotionDetailsComponent extends Component {
                                                     key={row.ProductID}
                                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                                 >
-                                                    {console.log("row", row)}
                                                     <TableCell>
                                                         <Checkbox
                                                             // checked={

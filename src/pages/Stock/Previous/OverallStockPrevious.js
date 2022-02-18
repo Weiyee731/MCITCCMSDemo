@@ -228,7 +228,7 @@ class Stock extends Component {
     }
 
     onDraftTableRowClick = (event, row) => {
-        console.log("row", row)
+     
         this.setState({
             DraftNo: row.DraftNo,
             rowIndex: row.rowIndex,
@@ -269,7 +269,6 @@ class Stock extends Component {
     }
 
     onAddButtonClick = (item) => {
-        console.log('add button')
     }
 
     // Remove selected state listing and localStorage listing data
@@ -370,8 +369,6 @@ class Stock extends Component {
     }
 
     onDateChange = (e, name) => {
-
-        console.log("e", e)
         switch (name) {
             case "StockInDate":
                 this.setState({ StockInDate: isStringNullOrEmpty(e) ? "Invalid Date" : e, StockInValidated: (!isStringNullOrEmpty(e) && e !== "Invalid Date") })
@@ -405,7 +402,6 @@ class Stock extends Component {
                 break;
 
             case "Store":
-                console.log("eeee", e)
                 if (isStringNullOrEmpty(e))
                     this.setState({
                         Store: [{
@@ -583,10 +579,6 @@ class Stock extends Component {
                 </>
             )
         }
-
-        console.log(localStorage.getItem("DataSetDraft") !== null &&
-            JSON.parse(localStorage.getItem("DataSetDraft")).length > 0 &&
-            JSON.parse(localStorage.getItem("DataSetDraft")))
 
         return (
             <div className="container-fluid my-2">

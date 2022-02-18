@@ -362,7 +362,6 @@ class StockDetail extends Component {
                         </div>
                     </div>
                     <hr />
-                    {console.log("this.state11", this.state)}
                     <div className="row" style={{ paddingTop: "5px", paddingBottom: "5px" }}>
                         <div className="col-12 col-md-6">
                             <div className="row">
