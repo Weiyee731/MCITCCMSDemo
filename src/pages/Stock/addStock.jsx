@@ -359,12 +359,11 @@ class AddStock extends Component {
                     this.state.filteredProduct.push(filteredListing[0])
                     let GridList = this.props.grid
                     let GridValue = GridList.length > 0 && GridList.filter((x) => parseInt(x.GridStorageID) === parseInt(filteredListing[0].GridStorageID))
-
                     this.setState({
                         StoreStockInData: [{
                             id: filteredListing[0].GridStorageID,
-                            label: GridValue.GridStorage,
-                            value: GridValue.GridStorage,
+                            label: GridValue[0].GridStorage,
+                            value: GridValue[0].GridStorage,
                             StockInAmount: filteredListing[0].ProductStockAmount,
                             VariationCost: filteredListing[0].ProductVariationCost,
                             isStockInAmountError: false,

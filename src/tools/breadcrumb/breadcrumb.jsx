@@ -24,8 +24,6 @@ function PageHeader(props) {
 
         breadcrumb = breadcrumb.map((item, index) => {
             let link;
-            console.log("breadcrumb", item)
-
             if (lastIndex === index) {
                 link = (<li key={index} aria-current="page">  {item.title}  </li>);
             }

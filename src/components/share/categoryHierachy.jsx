@@ -27,10 +27,6 @@ class CategoryHierachy extends Component {
     }
 
     getCategoryListing(productInfo, categoryInfo) {
-
-        console.log("INSDIE")
-        console.log("INSDIE", productInfo)
-        console.log("INSDIE", categoryInfo)
         let tempCategoryHierachy = 0
         this.state.CategoryHierachyListing.splice(0, this.state.CategoryHierachyListing.length)
 

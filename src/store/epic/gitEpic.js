@@ -61,7 +61,7 @@ export class GitEpic {
 
   User_LoginServer = action$ =>
     action$.ofType(GitAction.LoginServer).switchMap(async ({ payload }) => {
-        try {
+      try {
         const response = await fetch(
           LiveServerLoginUrl + payload.ProjectDomainName + "/" +
           "User_Login?username=" +

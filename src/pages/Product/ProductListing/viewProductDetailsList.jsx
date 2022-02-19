@@ -2146,7 +2146,7 @@ class ProductDetailsComponent extends Component {
             // axios.post("https://myemporia.my/emporiaimage/uploadproductImages.php", formData, config).then((res) => {
             axios.post(imageURL, formData, config).then((res) => {
                 console.log("res", res)
-                if (res.status === 200 && res.data === 1) {
+                if (res.status === 200) {
                     this.props.CallAddProductMedia(object)
                     this.setState({ isMediaFileSend: true })
                 }
@@ -3665,9 +3665,9 @@ class ProductDetailsComponent extends Component {
 
                 setTimeout(() => {
                     // toast.success("Product details successfully updated")
-                    history.push("/viewProduct");
+                    // history.push("/viewProduct");
                     // window.location.href = "/viewProduct"
-                    window.location.reload(false);
+                    // window.location.reload(false);
                 }, 1000);
             }
         }

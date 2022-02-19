@@ -100,6 +100,7 @@ const INITIAL_STATE = {
     Location: "",
     isShopModal: false,
     isMapAlert: false,
+    isDeleteShop: false,
 
     searchKeywords: "",
     filteredProduct: [],
@@ -149,8 +150,15 @@ class StoreDetailListing extends Component {
                 toast.success("Data is uploaded")
                 this.props.CallResetShopAction()
             }
-            else
-                this.props.CallShopListByID({ ShoplotID: this.props.match.params.shoplotID })
+            else {
+                if (this.state.isDeleteShop === true)
+                    setTimeout(() => {
+                        history.push("/shoplotList");
+                        window.location.reload(false);
+                    }, 1000)
+                else
+                    this.props.CallShopListByID({ ShoplotID: this.props.match.params.shoplotID })
+            }
         }
 
         if (prevProps.gridAction !== this.props.gridAction) {
@@ -550,10 +558,7 @@ class StoreDetailListing extends Component {
                                         onClick={() =>
                                             <>
                                                 {this.props.CallDeleteShopList({ ShoplotID: this.props.match.params.shoplotID })}
-                                                {setTimeout(() => {
-                                                    history.push("/shoplotList");
-                                                    window.location.reload(false);
-                                                }, 1000)}
+                                                {this.setState({ isDeleteShop: true })}
                                             </>
                                         }
                                     >
@@ -620,7 +625,7 @@ class StoreDetailListing extends Component {
                                                         <GoogleMaps
                                                             zoom={16}
                                                             width="80%"
-                                                            height="350"
+                                                            height="500"
                                                             longitude={this.state.ShopModalData[0].longitude}
                                                             latitude={this.state.ShopModalData[0].latitude}
                                                             polypath={this.state.ShopModalData}
@@ -642,7 +647,7 @@ class StoreDetailListing extends Component {
                                             <CardText>
                                                 <div className="row">
                                                     <div className="col-lg-10">
-                                                        <h5 style={{ textAlign: "left" }} >Grid Information </h5>
+                                                        <h5 style={{ textAlign: "left" }} >Grid Listing </h5>
                                                     </div>
                                                 </div>
                                                 <div className="col-12 d-inline-flex" style={{ paddingBottom: "20px" }}>

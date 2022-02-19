@@ -43,7 +43,6 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 
 function mapStateToProps(state) {
     return {
-        foods: state.counterReducer["foods"],
         grid: state.counterReducer["grid"],
         variationAction: state.counterReducer["variationAction"],
         variationStock: state.counterReducer["variationStock"],
@@ -52,11 +51,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        // CallTesting: () => dispatch(GitAction.CallTesting()),
         CallAddProductVariationStock: (prodData) => dispatch(GitAction.CallAddProductVariationStock(prodData)),
         CallGridList: (prodData) => dispatch(GitAction.CallGridList(prodData)),
         CallResetProductVariationStock: () => dispatch(GitAction.CallResetProductVariationStock()),
-
         CallViewAllProductVariationStock: (prodData) => dispatch(GitAction.CallViewAllProductVariationStock(prodData)),
 
     };
@@ -193,8 +190,6 @@ class Stock extends Component {
             isOpenOverallDetails: [],
             Listing: []
         }]
-
-
         this.props.CallGridList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
         this.props.CallViewAllProductVariationStock({
             ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
@@ -212,14 +207,31 @@ class Stock extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (this.props.variationStock !== null && this.props.variationStock.length > 0 && this.state.isDatabaseSet === false && this.props.variationStock[0].ReturnVal !== "0") {
-            this.DatabaseListing = this.props.variationStock
-            this.setState({ isDatabaseSet: true })
+        if (prevProps.variationStock !== this.props.variationStock) {
+            if (this.props.variationStock !== null && this.props.variationStock.length > 0 && this.state.isDatabaseSet === false && this.props.variationStock[0].ReturnVal !== "0") {
+                this.DatabaseListing = this.props.variationStock
+                this.setState({ isDatabaseSet: true })
+            }
+        }
+
+        if (prevProps.variationAction !== this.props.variationAction) {
+            if (this.props.variationAction.length > 0 && this.props.variationAction[0].ReturnVal === 1) {
+                this.props.CallResetProductVariationStock()
+                toast.success("Data is updated")
+            }
+            else
+                this.props.CallViewAllProductVariationStock({
+                    ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+                    ProductID: 0,
+                    ProductPerPage: 999,
+                    Page: 1
+                })
         }
 
     }
 
     renderTableRows = (data, index) => {
+        let amountList = []
         return (
             <>
                 <TableCell
@@ -231,7 +243,12 @@ class Stock extends Component {
                 >
                     {data.ProductName} - ({data.ProductVariation} : {data.ProductVariationValue})
                 </TableCell>
-                <TableCell align="center" style={{ width: "15%" }}>{data.ProductStockAmount}</TableCell>
+                {
+                    data.ProductVariationStockDetail !== null && JSON.parse(data.ProductVariationStockDetail).map((x) => {
+                        amountList.push(x)
+                    })
+                }
+                <TableCell align="center" style={{ width: "15%" }}>{amountList.length > 0 ? amountList.reduce((amount, item) => amount + item.ProductStockAmount, 0) : 0}</TableCell>
                 <TableCell align="center" style={{ width: "15%" }}>{data.FirstDate}</TableCell>
                 <TableCell align="center" style={{ width: "15%" }}>{data.LastDate}</TableCell>
             </>
@@ -477,19 +494,6 @@ class Stock extends Component {
             case "StockInDate":
                 this.setState({ StockInDate: isStringNullOrEmpty(e) ? "Invalid Date" : e, StockInValidated: (!isStringNullOrEmpty(e) && e !== "Invalid Date") })
                 break;
-
-            // case "OrderDate":
-            //     this.setState({ OrderDate: isStringNullOrEmpty(e) ? "Invalid Date" : e, OrderValidated: (!isStringNullOrEmpty(e) && e !== "Invalid Date") })
-            //     break;
-
-            // case "ReceiveDate":
-            //     this.setState({ ReceiveDate: isStringNullOrEmpty(e) ? "Invalid Date" : e, ReceiveValidated: (!isStringNullOrEmpty(e) && e !== "Invalid Date") })
-            //     break;
-
-            // case "DBStockInDate":
-            //     this.setState({ DBStockInDate: isStringNullOrEmpty(e) ? "Invalid Date" : e, DBStockInDateValidated: (!isStringNullOrEmpty(e) && e !== "Invalid Date") })
-            //     break;
-
             default:
                 break;
         }
@@ -614,7 +618,6 @@ class Stock extends Component {
     }
 
     render() {
-
         const filterSelection =
             [
                 { id: "1", value: "Store" },
@@ -652,8 +655,8 @@ class Stock extends Component {
                         </div>
                         <div className="col-8">
                             <div><label style={{ fontWeight: "bold" }}>Product Name: {filteredProduct.length > 0 && filteredProduct[0].ProductName !== null ? filteredProduct[0].ProductName : ""}</label></div>
-                            <div><label style={{ fontSize: "13px", color: "lightslategrey" }}>Variation: {filteredProduct.length > 0 && filteredProduct[0].Variation !== null ? filteredProduct[0].Variation : ""}</label></div>
-                            <div><label style={{ fontSize: "13px", color: "lightslategrey" }}>SKU: {filteredProduct.length > 0 && filteredProduct[0].SKU !== null ? filteredProduct[0].SKU : ""}</label></div>
+                            <div><label style={{ fontSize: "13px", color: "lightslategrey" }}>Variation: {filteredProduct.length > 0 && filteredProduct[0].ProductVariationValue !== null ? filteredProduct[0].ProductVariationValue : ""}</label></div>
+                            <div><label style={{ fontSize: "13px", color: "lightslategrey" }}>SKU: {filteredProduct.length > 0 && filteredProduct[0].ProductVariationSKU !== null ? filteredProduct[0].ProductVariationSKU : ""}</label></div>
                         </div>
                     </div>
                     <div className="row">
@@ -767,21 +770,6 @@ class Stock extends Component {
                 <div className="row">
                     <div className="col-md-12 col-12 mb-2 d-flex">
                         <div className="col-2 d-inline-flex">
-                            {/* <Select
-                                labelId="Store"
-                                id="Store"
-                                name="Store"
-                                value={data}
-                                onChange={(e) => this.handleFormInput(e, "Store", index)}
-                                label="Store"
-                                options={
-                                    isArrayNotEmpty(this.props.grid) && this.props.grid.map((el, idx) => {
-                                        return { id: el.GridStorageID, value: el.GridStorage, label: el.GridStorage }
-                                    })
-                                }
-                            >
-                            </Select> */}
-
                             <Select
                                 labelId="search-filter-category"
                                 id="search-filter-category"
@@ -800,7 +788,7 @@ class Stock extends Component {
                             >
                             </Select>
                         </div>
-                        <div className="col-4 d-inline-flex">
+                        <div className="col-10 d-inline-flex">
                             <SearchBar
                                 id=""
                                 placeholder="Enter Product SKU, Product Name or Store to search"

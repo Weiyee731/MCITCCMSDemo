@@ -386,6 +386,12 @@ class ProductEndorsementInfo extends Component {
                                                     <span className="ml-1">( {productInfo[0].ProductWeight === null ? '-' : productInfo[0].ProductWeight} KG )</span>
                                                 </label>
                                                 </div>
+                                                <div><label><b> Merchant : </b>
+                                                    {this.state.MerchantDetail.length > 0 && this.state.MerchantDetail[0] !== undefined ? this.state.MerchantDetail[0].ShopName + "(" + this.state.MerchantDetail[0].ShopCity + ")"
+                                                        : "-"
+                                                    }
+                                                    {/* {productInfo[0].Model === null ? '-' : productInfo[0].Model} */}
+                                                </label></div>
                                                 <br />
                                                 <div>
                                                     <div style={{ fontSize: '24pt', color: "slatgrey", fontWeight: "bold" }}>
@@ -399,7 +405,7 @@ class ProductEndorsementInfo extends Component {
                                         </div>
                                     </div>
                                     {/* Merchant Profile */}
-                                    <br></br>
+                                    {/* <br></br>
                                     {
                                         this.state.MerchantDetail.length > 0 &&
                                         <div className='row' style={{ backgroundColor: "white", padding: "20px" }}>
@@ -428,7 +434,7 @@ class ProductEndorsementInfo extends Component {
                                                 </div>
                                             </div>
                                         </div>
-                                    }
+                                    } */}
 
                                     <br />
                                     <div className='row' >

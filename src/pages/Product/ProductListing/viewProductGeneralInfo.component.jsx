@@ -102,7 +102,7 @@ class ViewProductGeneralInfo extends Component {
       variationPage: 1,
       rowsPerPage: 3,
       variationRowsPerPage: 5,
-      setRating: 0,
+      setRating: 6,
 
       isStockEdit: false,
       selectedUpdateQuantity: [],
@@ -522,6 +522,7 @@ class ViewProductGeneralInfo extends Component {
   }
 
   renderTableRows = (data, index) => {
+    let amountList = []
     return (
       <>
         <TableCell
@@ -533,7 +534,12 @@ class ViewProductGeneralInfo extends Component {
         >
           {data.ProductVariation} - ({data.ProductVariationValue})
         </TableCell>
-        <TableCell align="center" style={{ width: "15%" }}>{data.ProductStockAmount}</TableCell>
+        {
+          data.ProductVariationStockDetail !== null && JSON.parse(data.ProductVariationStockDetail).map((x) => {
+            amountList.push(x)
+          })
+        }
+        <TableCell align="center" style={{ width: "15%" }}>{amountList.length > 0 ? amountList.reduce((amount, item) => amount + item.ProductStockAmount, 0) : 0}</TableCell>
         <TableCell align="center" style={{ width: "15%" }}>{data.FirstDate}</TableCell>
         <TableCell align="center" style={{ width: "15%" }}>{data.LastDate}</TableCell>
       </>
@@ -609,7 +615,7 @@ class ViewProductGeneralInfo extends Component {
       fontSize: "14px",
       fontWeight: "bold",
     }
-    const rating = [5, 4, 3, 2, 1]
+    const rating = [5, 4, 3, 2, 1, 0]
 
 
     return (
@@ -776,11 +782,6 @@ class ViewProductGeneralInfo extends Component {
                             <h6 style={{ textAlign: "left" }} >Product Review</h6>
                           </div>
                           <div className="col-lg-3" style={{ textAlign: "right" }}>
-                            {/* <Button variant="primary" >
-                              <Link to={url.inventoryProductDetails(this.props.match.params.productId)} className="nav-link">
-                                View All
-                              </Link>
-                            </Button> */}
                           </div>
                         </div>
 
@@ -790,7 +791,7 @@ class ViewProductGeneralInfo extends Component {
                               this.state.productReview.length > 0 &&
                               <div className="row" style={{ textAlign: "left", paddingBottom: "15px" }}>
                                 <div className="col-lg-12">
-                                  <Button variant="outlinedPrimary" onClick={() => this.setState({ setRating: 0, page: 1 })}>All ({this.state.productReview.length})</Button>
+                                  <Button variant="outlinedPrimary" onClick={() => this.setState({ setRating: 6, page: 1 })}>All ({this.state.productReview.length})</Button>
                                   {rating.map((x) => {
                                     return (
                                       <Button variant="outlinedPrimary" onClick={() => this.setState({ setRating: x, page: 1 })}>{x} Star ({this.filterRating(x)})</Button>
@@ -799,10 +800,9 @@ class ViewProductGeneralInfo extends Component {
                                 </div>
                               </div>
                             }
-
                             {this.state.productReview !== undefined && this.state.productReview.length > 0 ?
                               <div style={{ minHeight: "290px" }}>
-                                {this.ratingList(this.state.setRating === 0 ? this.state.productReview : this.state.productReview.filter((x) => x.ProductReviewRating === this.state.setRating))}
+                                {this.ratingList(this.state.setRating === 6 ? this.state.productReview : this.state.productReview.filter((x) => x.ProductReviewRating === this.state.setRating))}
                               </div>
                               :
                               <div>
@@ -826,7 +826,7 @@ class ViewProductGeneralInfo extends Component {
                             <Pagination
                               current={this.state.page}
 
-                              total={this.state.setRating === 0 ?
+                              total={this.state.setRating === 6 ?
                                 Math.ceil(this.state.productReview.length / this.state.rowsPerPage)
                                 :
                                 Math.ceil(this.filterRating(this.state.setRating) / this.state.rowsPerPage)
