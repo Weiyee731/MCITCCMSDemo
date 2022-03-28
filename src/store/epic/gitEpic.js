@@ -1067,6 +1067,7 @@ export class GitEpic {
         const response = await fetch(
           url + project + "/" +
           "Product_ItemListWithProductVariationStockDetailList?PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailID
+          +"&PROJECTID=" + payload.ProjectID
         );
         let json = await response.json();
         json = JSON.parse(json);
