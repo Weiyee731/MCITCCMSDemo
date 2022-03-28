@@ -190,6 +190,7 @@ class ViewProductEndorsementComponent extends Component {
                     value={this.state.searchKeywords}
                   />
                 </div>
+                {console.log("DataList", DataList)}
                 <br />
                 <TableComponents
                   tableTopLeft={<h3 style={{ fontWeight: 600 }}>Product Endorsement List</h3>}
@@ -211,7 +212,7 @@ class ViewProductEndorsementComponent extends Component {
 
                   Data={
                     this.state.isFiltered === false ?
-                      DataList
+                      DataList !== undefined && DataList.length > 0 && DataList[0].ReturnVal === '0' ? [] : DataList
                       :
                       this.state.filteredProduct
                   }                                 // required, the data that listing in the table

@@ -35,7 +35,7 @@ import TableCell from '@mui/material/TableCell';
 function mapStateToProps(state) {
   return {
     productCategories: state.counterReducer["productCategories"],
-    productInfo: state.counterReducer["productsByID"],
+    productInfo: state.counterReducer["productsByID"],  
     reviews: state.counterReducer["reviews"],
     variationStock: state.counterReducer["variationStock"],
     reviewReturn: state.counterReducer["reviewReturn"],

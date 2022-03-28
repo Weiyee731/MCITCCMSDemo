@@ -58,7 +58,9 @@ class ViewProductPromotionComponent extends Component {
             PromotionDetail: "",
             DiscountPercentage: "",
         };
-        this.props.CallViewPromotion(this.state.promotionStatus);
+        this.props.CallViewPromotion({ Ind: 0, ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID });
+  
+        // this.props.CallViewPromotion({ Ind: this.state.promotionStatus, ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID });
     }
 
 
@@ -209,7 +211,7 @@ class ViewProductPromotionComponent extends Component {
                                     }}
                                     selectedIndexKey={"ProductID"}
 
-                                    Data={this.state.isFiltered === false ? this.props.allpromo
+                                    Data={this.state.isFiltered === false ? this.props.allpromo !== undefined && this.props.allpromo.length > 0 && this.props.allpromo[0].ReturnVal === '0' ? [] : this.props.allpromo
                                         : this.state.filteredProduct
                                     }
                                     onSelectRow={(e) => this.setState({ selectedListID: e })}

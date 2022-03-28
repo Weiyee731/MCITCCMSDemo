@@ -48,7 +48,13 @@ export const isUserLogon = () => {
 }
 
 export const resetLogonUser = () => {
-    let projectURL = localStorage.getItem("projectURL")
+    // let projectURL = localStorage.getItem("projectURL")
+    let projectURL = ""
+    if (JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID === 1)
+        projectURL = "CMS.MCITC.my"
+    else
+        projectURL = localStorage.getItem("projectURL")
+
     localStorage.removeItem("userToken")
     localStorage.removeItem("loginUser")
     localStorage.removeItem("sidebarItem");

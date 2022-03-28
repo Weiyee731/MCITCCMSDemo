@@ -30,6 +30,13 @@ export class GitEpic {
 
   User_Login = action$ =>
     action$.ofType(GitAction.Login).switchMap(async ({ payload }) => {
+      console.log(loginUrl + payload.ProjectDomainName + "/" +
+        "User_Login?username=" +
+        payload.username +
+        "&password=" +
+        payload.password +
+        "&ProjectDomainName=" +
+        payload.ProjectDomainName)
       try {
         const response = await fetch(
           loginUrl + payload.ProjectDomainName + "/" +
@@ -61,6 +68,13 @@ export class GitEpic {
 
   User_LoginServer = action$ =>
     action$.ofType(GitAction.LoginServer).switchMap(async ({ payload }) => {
+      console.log(LiveServerLoginUrl + payload.ProjectDomainName + "/" +
+        "User_Login?username=" +
+        payload.username +
+        "&password=" +
+        payload.password +
+        "&ProjectDomainName=" +
+        payload.ProjectDomainName)
       try {
         const response = await fetch(
           LiveServerLoginUrl + payload.ProjectDomainName + "/" +
@@ -1448,11 +1462,12 @@ export class GitEpic {
   ///////////////////////////////////////////////////  Promotion  ///////////////////////////////////////////////////
 
   Promotion_ViewAll = (action$) =>
-    action$.ofType(GitAction.GetPromotion).switchMap(async () => {
+    action$.ofType(GitAction.GetPromotion).switchMap(async ({payload}) => {
       try {
         const response = await fetch(
           url + project + "/" +
-          "Promo_ViewPromotion?ACTIVEIND"
+          "Promo_ViewPromotion?ACTIVEIND=" + payload.Ind +
+          "&ProjectID=" + payload.ProjectID
         );
         let json = await response.json();
         json = JSON.parse(json);
