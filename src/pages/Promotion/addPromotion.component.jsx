@@ -258,7 +258,7 @@ function TransferList(props) {
                 subheader={`${numberOfChecked(items)}/${items.length} selected`}
             />
             <Divider />
-            <List className={classes.list} dense component="div" role="list" style={{ width: "500px", height: "300px" }}>
+            <List className={classes.list} dense component="div" role="list" style={{ width: "400px", height: "300px" }}>
                 {items.length > 0 && items.map((value, i) => {
                     const labelId = `transfer-list-all-item-${value}-label`;
                     return (
@@ -875,7 +875,7 @@ class AddPromotionBannerComponent extends Component {
 
 
         return (
-            <div>
+            <div style={{width:"100%"}}>
                 <div className="App" style={{ width: "100%", alignContent: "center" }}>
                     <div className="App-header">
                         <h2 style={{ margin: "10px" }}>Add Promotion</h2>

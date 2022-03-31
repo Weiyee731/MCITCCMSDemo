@@ -133,7 +133,10 @@ class StockDetail extends Component {
             page: '1',
             ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
         });
-        this.props.CallViewProductVariationStockDetails({ ProductVariationDetailID: this.props.match.params.ProductVariationDetailID })
+        this.props.CallViewProductVariationStockDetails({ 
+            ProductVariationDetailID: this.props.match.params.ProductVariationDetailID,
+            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
+         })
         this.props.CallViewAllProductVariationStock({
             ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
             ProductID: 0,
