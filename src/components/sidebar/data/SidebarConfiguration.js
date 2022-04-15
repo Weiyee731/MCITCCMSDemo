@@ -30,103 +30,108 @@
  */
 
 
-import { Settings, Shop2Rounded, ShopOutlined } from '@mui/icons-material';
-import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
-
-
-const sidebar_items = [
-
-    {
-        to: "",
-        title: "Product",
-        icon: "indeterminate_check_box",
-        submenus: [
-            {
-                to: "/viewProduct",
-                title: "Product Listing",
-                icon: "inventory",
-            },
-            {
-                to: "/viewProductEndorsement",
-                title: "Product Endorsement",
-                icon: "assignment_turned_in",
-            },
-            {
-                to: "/promotionList",
-                title: "Product Promotion",
-                icon: "assignment_turned_in",
-            },
-        ]
-    },
-    {
-        to: "/viewTransactions",
-        title: "Transaction",
-        icon: "money",
-    },
-    {
-        to: "",
-        title: "UserManagement",
-        icon: <AssignmentIndIcon />,
-        submenus: [
-            {
-                to: "/viewMerchants",
-                title: "Merchant",
-                icon: <AssignmentIndIcon />,
-            },
-            {
-                to: "/viewUser",
-                title: "User",
-                icon: <AssignmentIndIcon />,
-            },
-        ]
-    },
-    {
-        to: "/viewShopProfile",
-        title: "Shop Profile",
-        icon: "shop",
-    },
-    {
-        to: "/stockList",
-        title: "Stock Management",
-        icon: "inventory",
-    },
-    {
-        to: "",
-        title: "Setting",
-        icon: <Settings />,
-        submenus: [
-            {
-                to: "/shoplotList",
-                title: "Shoplot",
-                icon: <Shop2Rounded />,
-            },
-        ]
-    },
-    // console.log("row", row)
-
-    // {
-    //     to: "/quotationList",
-    //     title: "Quotation",
-    //     icon: "shop",
-    // },
-    // {
-    //     to: "",
-    //     title: "Stock Management",
-    //     icon: "indeterminate_check_box",
-    //     submenus: [
-    //         {
-    //             to: "/OverallStock",
-    //             title: "Overall",
-    //             icon: "all_inbox",
-    //         },
-    //         {
-    //             to: "/StockGoods",
-    //             title: "Stock Order Goods",
-    //             icon: "assignment_turned_in",
-    //         },
-    //     ]
-    // },
-]
-
-
-export default sidebar_items
+    import { Settings, Shop2Rounded, ShopOutlined } from '@mui/icons-material';
+    import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+    
+    
+    const sidebar_items = [
+    
+        {
+            to: "",
+            title: "Product",
+            icon: "indeterminate_check_box",
+            submenus: [
+                {
+                    to: "/viewProduct",
+                    title: "Product Listing",
+                    icon: "inventory",
+                },
+                {
+                    to: "/viewProductEndorsement",
+                    title: "Product Endorsement",
+                    icon: "assignment_turned_in",
+                },
+                {
+                    to: "/promotionList",
+                    title: "Product Promotion",
+                    icon: "assignment_turned_in",
+                },
+            ]
+        },
+        {
+            to: "/viewTransactions",
+            title: "Transaction",
+            icon: "money",
+        },
+        {
+            to: "",
+            title: "UserManagement",
+            icon: <AssignmentIndIcon />,
+            submenus: [
+                {
+                    to: "/viewMerchants",
+                    title: "Merchant",
+                    icon: <AssignmentIndIcon />,
+                },
+                {
+                    to: "/viewUser",
+                    title: "User",
+                    icon: <AssignmentIndIcon />,
+                },
+            ]
+        },
+        {
+            to: "/viewShopProfile",
+            title: "Shop Profile",
+            icon: "shop",
+        },
+        {
+            to: "/stockList",
+            title: "Stock Management",
+            icon: "inventory",
+        },
+        {
+            to: "",
+            title: "Setting",
+            icon: <Settings />,
+            submenus: [
+                {
+                    to: "/shoplotList",
+                    title: "Shoplot",
+                    icon: <Shop2Rounded />,
+                },
+                {
+                    to: "/category",
+                    title: "Produc Category",
+                    icon: <Shop2Rounded />,
+                },
+            ]
+        },
+        // console.log("row", row)
+    
+        // {
+        //     to: "/quotationList",
+        //     title: "Quotation",
+        //     icon: "shop",
+        // },
+        // {
+        //     to: "",
+        //     title: "Stock Management",
+        //     icon: "indeterminate_check_box",
+        //     submenus: [
+        //         {
+        //             to: "/OverallStock",
+        //             title: "Overall",
+        //             icon: "all_inbox",
+        //         },
+        //         {
+        //             to: "/StockGoods",
+        //             title: "Stock Order Goods",
+        //             icon: "assignment_turned_in",
+        //         },
+        //     ]
+        // },
+    ]
+    
+    
+    export default sidebar_items
