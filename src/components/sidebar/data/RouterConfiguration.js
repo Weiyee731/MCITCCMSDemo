@@ -17,7 +17,6 @@
         element: <UserDetail />,
     },
 ]
-
  */
 // import Dashboard from "../../../pages/Dashboard/Dashboard";
 // import UserManagement from '../../../pages/UserManagement/UserManagement';
@@ -61,6 +60,7 @@ import NewStock from "../../../pages/Stock/addStock";
 import StockDetail from "../../../pages/Stock/StockDetail";
 
 import ShoplotListing from "../../../pages/Setting/StoreListing";
+import ProductCategory from "../../../pages/ProductCategory/viewProductCategories.component";
 
 import ShoplotDetailListing from "../../../pages/Setting/StoreDetailListing";
 import ProductPurchaseOrder from "../../../pages/Report/ProductPurchaseOrder";
@@ -266,7 +266,11 @@ const routes = [
         exact: true,
         element: <ShoplotListing />,
     },
-
+    {
+        path: "/category",
+        exact: true,
+        element: <ProductCategory />,
+    },
     
     {
         path: "/viewShoplotDetailList/:shoplotID",

@@ -61,28 +61,28 @@ class Dashboard extends Component {
 
             if (this.props.logonUser.length > 0) {
                 if (this.props.logonUser[0].ReturnVal !== "0") {
-                    if (window.location.hostname !== "localhost")
-                        setLogonUser(this.props.logonUser,
-                            this.props.sidebars,
-                            window.location.hostname.split(".")[1],
-                            window.location.hostname.split(".")[2],
-                            window.location.hostname
-                        )
-                    else
-                        setLogonUser(this.props.logonUser,
-                            this.props.sidebars,
-                            window.location.pathname.split(".")[1],
-                            window.location.pathname.split(".")[2],
-                            window.location.pathname.split("/")[1]
-                        )
+                    // if (window.location.hostname !== "localhost")
+                    //     setLogonUser(this.props.logonUser,
+                    //         this.props.sidebars,
+                    //         window.location.hostname.split(".")[1],
+                    //         window.location.hostname.split(".")[2],
+                    //         window.location.hostname
+                    //     )
+                    // else
+                    //     setLogonUser(this.props.logonUser,
+                    //         this.props.sidebars,
+                    //         window.location.pathname.split(".")[1],
+                    //         window.location.pathname.split(".")[2],
+                    //         window.location.pathname.split("/")[1]
+                    //     )
 
-                    // setLogonUser(
-                    //     this.props.logonUser,
-                    //     this.props.sidebars,
-                    //     "myemporia",
-                    //     "my",
-                    //     "CMS.myemporia.my"
-                    // )
+                    setLogonUser(
+                        this.props.logonUser,
+                        this.props.sidebars,
+                        "myemporia",
+                        "my",
+                        "CMS.myemporia.my"
+                    )
                 }
                 else {
                     toast.error("The username and password does not match.")

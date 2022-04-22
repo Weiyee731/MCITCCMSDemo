@@ -100,6 +100,11 @@ const sidebar_items = [
                 title: "Shoplot",
                 icon: <Shop2Rounded />,
             },
+            {
+                to: "/category",
+                title: "Produc Category",
+                icon: <Shop2Rounded />,
+            },
         ]
     },
     {
@@ -119,6 +124,7 @@ const sidebar_items = [
             },
         ]
     },
+
     // console.log("row", row)
 
     // {

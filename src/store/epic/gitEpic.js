@@ -20,8 +20,8 @@ const url = ServerConfiguration.ServerUrl;
 const loginUrl = ServerConfiguration.LoginUrl;
 const LiveServerLoginUrl = ServerConfiguration.LiveServerLoginUrl;
 
-const project = window.localStorage.getItem("project")
-// const project = "myemporia"
+// const project = window.localStorage.getItem("project")
+const project = "MCITC"
 // const project = window.location.pathname.split(".")[1]
 
 export class GitEpic {
@@ -1271,30 +1271,64 @@ export class GitEpic {
 
   ///////////////////////////////////////////////////  Product Category ///////////////////////////////////////////////////
 
+  // ProductCategory_Add = (action$) =>
+  //   action$.ofType(GitAction.AddProductCategory).switchMap(async ({ payload }) => {
+  //     try {
+  //       console.log(url + project + "/" +
+  //       "Product_AddProductCategory?PRODUCTCATEGORY=" + payload.ProductCategory +
+  //       "&PRODUCTCATEGORYIMAGE=" + payload.ProductCategoryImage +
+  //       "&HIERARCHYID=" + payload.HierarchyID +
+  //       "&PARENTPRODUCTCATEGORYID=" + payload.ParentProductCategoryID +
+  //       "&PROJECTID=" + payload.ProjectID + 
+  //       "&USERID=" + payload.UserID)
+  //       const response = await fetch(
+  //         url + project + "/" +
+  //         "Product_AddProductCategory?PRODUCTCATEGORY=" + payload.ProductCategory +
+  //         "&PRODUCTCATEGORYIMAGE=" + payload.ProductCategoryImage +
+  //         "&HIERARCHYID=" + payload.HierarchyID +
+  //         "&PARENTPRODUCTCATEGORYID=" + payload.ParentProductCategoryID +
+  //         "&PROJECTID=" + payload.ProjectID + 
+  //         "&USERID=" + payload.UserID
+  //       );
+  //       let json = await response.json();
+  //       json = JSON.parse(json);
+  //       return {
+  //         type: GitAction.AddedProductCategory,
+  //         payload: json,
+  //       };
+  //     } catch (error) {
+  //       alert('addProductCategory: ' + error);
+  //       return {
+  //         type: GitAction.AddedProductCategory,
+  //         payload: [],
+  //       };
+  //     }
+  //   });
+
   ProductCategory_Add = (action$) =>
-    action$.ofType(GitAction.AddProductCategory).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
+    action$.ofType(GitAction.AddProductCategory).switchMap(({ payload }) => {
+      return fetch(
+        url + project + "/" +
           "Product_AddProductCategory?PRODUCTCATEGORY=" + payload.ProductCategory +
           "&PRODUCTCATEGORYIMAGE=" + payload.ProductCategoryImage +
           "&HIERARCHYID=" + payload.HierarchyID +
           "&PARENTPRODUCTCATEGORYID=" + payload.ParentProductCategoryID +
-          "&ProjectID=" + payload.ProjectID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.AddedProductCategory,
-          payload: json,
-        };
-      } catch (error) {
-        alert('addProductCategory: ' + error);
-        return {
-          type: GitAction.AddedProductCategory,
-          payload: [],
-        };
-      }
+          "&PROJECTID=" + payload.ProjectID + 
+          "&USERID=" + payload.UserID
+      )
+        .then((response) => response.json())
+        .then((json) => {
+          if (json != "fail") {
+            json = JSON.parse(json);
+          } else {
+            json = [];
+          }
+          return {
+            type: GitAction.AddedProductCategory,
+            payload: json,
+          };
+        })
+        .catch((error) => toast.error(JSON.stringify(error)));
     });
 
   ProductCategory_Update = (action$) =>
