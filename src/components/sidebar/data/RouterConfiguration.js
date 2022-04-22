@@ -63,6 +63,9 @@ import StockDetail from "../../../pages/Stock/StockDetail";
 import ShoplotListing from "../../../pages/Setting/StoreListing";
 
 import ShoplotDetailListing from "../../../pages/Setting/StoreDetailListing";
+import ProductPurchaseOrder from "../../../pages/Report/ProductPurchaseOrder";
+import QuotationListing from "../../../pages/Report/QuotationListing";
+
 
 const routes = [
     // {
@@ -278,6 +281,19 @@ const routes = [
             </>
         ),
     },
+
+    {
+        path: "/viewPurchaseOrderList",
+        exact: true,
+        element: <ProductPurchaseOrder />,
+    },
+
+    {
+        path: "/viewQuotationList",
+        exact: true,
+        element: <QuotationListing />,
+    },
+
 ]
 
 export default routes

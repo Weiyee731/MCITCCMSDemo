@@ -102,6 +102,23 @@ const sidebar_items = [
             },
         ]
     },
+    {
+        to: "",
+        title: "Report",
+        icon: <AssignmentIndIcon />,
+        submenus: [
+            {
+                to: "/viewPurchaseOrderList",
+                title: "Purchase Order Listing",
+                icon: <AssignmentIndIcon />,
+            },
+            {
+                to: "/viewQuotationList",
+                title: "Quotation Listing",
+                icon: <AssignmentIndIcon />,
+            },
+        ]
+    },
     // console.log("row", row)
 
     // {

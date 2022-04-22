@@ -113,6 +113,16 @@ const rootEpic = combineEpics(
   gitEpic.Storage_AddGrid,
   gitEpic.Storage_UpdateGrid,
   gitEpic.Storage_DeleteGrid,
+
+  gitEpic.PurchaseOrder_UpdateStatus,
+  gitEpic.PurchaseOrder_ViewAll,
+  gitEpic.PurchaseOrder_Delete,
+  gitEpic.ProductListing_ByStatus,
+
+  gitEpic.SalesOrder_Add,
+  gitEpic.Quotation_Add,
+  gitEpic.Quotation_View,
+  gitEpic.Quotation_Delete,
 );
 
 const rootReducer = combineReducers({ counterReducer });
