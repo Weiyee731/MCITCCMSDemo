@@ -623,34 +623,7 @@ export class GitAction {
   }
 
 
-  ///////////////////////////////////////////////////  Quotation  ///////////////////////////////////////////////////
 
-  static AddProductQuotation = "ADD-QUOTATION";
-  static AddedProductQuotation = "ADDED-QUOTATION";
-  static CallAddProductQuotation(prodData) {
-    return {
-      type: GitAction.AddProductQuotation,
-      payload: prodData,
-    };
-  }
-
-  static GetProductQuotation = "GET-QUOTATION";
-  static GotProductQuotation = "GOT-QUOTATION";
-  static CallViewProductQuotation(prodData) {
-    return {
-      type: GitAction.GetProductQuotation,
-      payload: prodData,
-    };
-  }
-
-  static DeleteQuotation = "DELETE-QUOTATION";
-  static DeletedQuotation = "DELETED-QUOTATION";
-  static CallDeleteQuotation(orderData) {
-    return {
-      type: GitAction.DeleteQuotation,
-      payload: orderData,
-    };
-  }
 
   ///////////////////////////////////////////////////  Promotion  ///////////////////////////////////////////////////
 
@@ -878,6 +851,95 @@ export class GitAction {
       type: GitAction.ResetGridAction,
     };
   }
+
+  ///////////////////////////////////////////////////  Purchase Order  ///////////////////////////////////////////////////
+
+
+  static UpdatePurchaseOrderStatus = "UPDATE-PURCHASEORDERSTATUS";
+  static UpdatedPurchaseOrderStatus = "UPDATED-PURCHASEORDERSTATUS";
+
+  static CallUpdatePurchaseOrderStatus(prodData) {
+    return {
+      type: GitAction.UpdatePurchaseOrderStatus,
+      payload: prodData,
+    };
+  }
+
+
+  static GetPurchaseOrders = "GET-PURCHASEORDERS";
+  static GotPurchaseOrders = "GOT-PURCHASEORDERS";
+  static CallGetPurchaseOrders(prodData) {
+    return {
+      type: GitAction.GetPurchaseOrders,
+      payload: prodData,
+    };
+  }
+
+
+  static DeletePurchaseOrder = "DELETE-PURCHASEORDER";
+  static DeletedPurchaseOrder = "DELETED-PURCHASEORDER";
+  static CallDeletePurchaseOrder(prodData) {
+    return {
+      type: GitAction.DeletePurchaseOrder,
+      payload: prodData,
+    };
+  }
+
+  ///////////////////////////////////////////////////  Quotation  ///////////////////////////////////////////////////
+
+  static AddProductQuotation = "ADD-QUOTATION";
+  static AddedProductQuotation = "ADDED-QUOTATION";
+  static CallAddProductQuotation(prodData) {
+    return {
+      type: GitAction.AddProductQuotation,
+      payload: prodData,
+    };
+  }
+
+  static GetProductQuotation = "GET-QUOTATION";
+  static GotProductQuotation = "GOT-QUOTATION";
+  static CallViewProductQuotation(prodData) {
+    return {
+      type: GitAction.GetProductQuotation,
+      payload: prodData,
+    };
+  }
+
+  static DeleteQuotation = "DELETE-QUOTATION";
+  static DeletedQuotation = "DELETED-QUOTATION";
+  static CallDeleteQuotation(orderData) {
+    return {
+      type: GitAction.DeleteQuotation,
+      payload: orderData,
+    };
+  }
+
+
+  static GetProductByStatus = "GET-PRODUCT-BYSTATUS";
+  static GotProductByStatus = "GOT-PRODUCT-BYSTATUS";
+  static CallAllProductsByProductStatus(prodData) {
+    return {
+      type: GitAction.GetProductByStatus,
+      payload: prodData,
+    };
+  }
+
+  static SendSalesOrder = "SEND-SALESORDER";
+  static SentSalesOrder = "SENT-SALESORDER";
+  static CallSendSalesOrder(prodData) {
+    return {
+      type: GitAction.SendSalesOrder,
+      payload: prodData,
+    };
+  }
+
+  static ClearSalesOrder = "CLEAR-SALESORDER";
+  static CallResetSalesOrder() {
+    return {
+      type: GitAction.ClearSalesOrder,
+    };
+  }
+
 
 }
 

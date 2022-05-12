@@ -54,6 +54,7 @@ const INITIAL_STATE = {
 
   // Quotation
   quotations: [],
+  quotationAction: [],
 
   // Promotion
   promotions: [],
@@ -75,6 +76,11 @@ const INITIAL_STATE = {
   // grid
   grid: [],
   gridAction: [],
+
+  POListing: [],
+  POAction: [],
+  ProductByStatus: [],
+  SalesOrder: []
 
 };
 
@@ -597,7 +603,7 @@ export function counterReducer(state = INITIAL_STATE, action) {
     case GitAction.AddedProductQuotation:
       return Object.assign({}, state, {
         loading: false,
-        quotations: action.payload,
+        quotationAction: action.payload,
       });
 
     case GitAction.GetProductQuotation:
@@ -613,7 +619,7 @@ export function counterReducer(state = INITIAL_STATE, action) {
     case GitAction.DeletedQuotation:
       return Object.assign({}, state, {
         loading: false,
-        quotations: action.payload,
+        quotationAction: action.payload,
       });
     ///////////////////////////////////////////////////  Promotion  ///////////////////////////////////////////////////
 
@@ -816,6 +822,58 @@ export function counterReducer(state = INITIAL_STATE, action) {
         loading: true,
         gridAction: [],
       });
+
+    ///////////////////////////////////////////////////  Purchase Order  ///////////////////////////////////////////////////
+
+
+    case GitAction.UpdatePurchaseOrderStatus:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.UpdatedPurchaseOrderStatus:
+      return Object.assign({}, state, {
+        loading: false,
+        POAction: action.payload,
+      });
+
+    case GitAction.GetPurchaseOrders:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotPurchaseOrders:
+      return Object.assign({}, state, {
+        loading: false,
+        POListing: action.payload,
+      });
+
+    case GitAction.DeletePurchaseOrder:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.DeletedPurchaseOrder:
+      return Object.assign({}, state, {
+        loading: false,
+        POAction: action.payload,
+      });
+
+    case GitAction.GetProductByStatus:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotProductByStatus:
+      return Object.assign({}, state, {
+        loading: false,
+        ProductByStatus: action.payload,
+      });
+
+    case GitAction.SendSalesOrder:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.SentSalesOrder:
+      return Object.assign({}, state, {
+        loading: false,
+        SalesOrder: action.payload,
+      });
+
+    case GitAction.ClearSalesOrder:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.ClearedSalesOrder:
+      return Object.assign({}, state, {
+        loading: false,
+        SalesOrder: action.payload,
+      });
+
 
 
     /////////////////////////////////////////////////// Default ///////////////////////////////////////////////////
