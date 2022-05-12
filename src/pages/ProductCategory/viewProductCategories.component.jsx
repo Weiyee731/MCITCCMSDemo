@@ -714,10 +714,6 @@ class DisplayTable extends Component {
                     field: "ProductCategory",
                   },
                   {
-                    title: "Hierarchy Level",
-                    field: "HierarchyID",
-                  },
-                  {
                     title: "Tag",
                     field: "Tag",
                   },
