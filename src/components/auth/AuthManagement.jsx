@@ -1,5 +1,7 @@
 import { toast } from "react-toastify";
 
+import createHistory from 'history/createBrowserHistory'
+const history = createHistory()
 /**
  *   Documentation of this class methods
  *   @function setLogonUser => @param loginUser => @returns void
@@ -17,9 +19,8 @@ export const setLogonUser = (loginUser, sidebarItem, project, SLD, projectURL) =
             localStorage.setItem("project", project)
             localStorage.setItem("projectURL", projectURL)
             localStorage.setItem("projectDomain", project + "." + SLD)
-            window.location.href = "/viewProduct"
+            history.push("/viewProduct")
             window.location.reload(false);
-
         }
         catch (e) {
             toast.error("Error: 1101: Unable to set login status. Please contact your software warehouse.")

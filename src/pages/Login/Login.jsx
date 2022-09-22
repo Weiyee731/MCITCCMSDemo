@@ -20,9 +20,10 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import IconButton from '@mui/material/IconButton';
 import { toast } from "react-toastify";
 
-
 // import css
 import "./Login.css"
+
+var CryptoJS = require("crypto-js");
 
 function mapStateToProps(state) {
     return {
@@ -54,6 +55,10 @@ class Dashboard extends Component {
 
         this.handleInputChange = this.handleInputChange.bind(this)
         this.OnSubmitLogin = this.OnSubmitLogin.bind(this)
+    }
+
+    componentDidMount() {
+        this.checkPathName()
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -108,22 +113,20 @@ class Dashboard extends Component {
         }
     }
 
-    isInputsVerified = () => {
-        const { username, password } = this.state
+    isInputsVerified = (username, password) => {
         return (!isStringNullOrEmpty(username) && !isStringNullOrEmpty(password))
     }
 
-    OnSubmitLogin = () => {
-
+    OnSubmitLogin = (username, password) => {
         let project = ""
 
         if (window.location.hostname === "localhost") {
             project = window.location.pathname !== "/" && window.location.pathname.split(".")[1];
             if (window.location.pathname !== "/") {
-                if (this.isInputsVerified()) {
+                if (this.isInputsVerified(username, password)) {
                     let object = {
-                        username: this.state.username,
-                        password: this.state.password,
+                        username: username,
+                        password: password,
                         ProjectDomainName: project
                     }
                     this.props.CallUserLogin(object)
@@ -136,10 +139,10 @@ class Dashboard extends Component {
         else {
             project = window.location.hostname !== "/" && window.location.hostname.split(".")[1];
             if (window.location.hostname !== "/") {
-                if (this.isInputsVerified()) {
+                if (this.isInputsVerified(username, password)) {
                     let object = {
-                        username: this.state.username,
-                        password: this.state.password,
+                        username: username,
+                        password: password,
                         ProjectDomainName: project
                     }
                     this.props.CallUserLoginServer(object)
@@ -152,9 +155,41 @@ class Dashboard extends Component {
     }
 
 
+
+    checkPathName = () => {
+        const decryptData = (data) => {
+            var bytes = CryptoJS.AES.decrypt(data, 'myemporia@123');
+            var decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+
+            return decryptedData
+        }
+        let project = ""
+        let credential = ""
+        let path = ""
+
+        if (window.location.hostname === "localhost")
+            path = window.location.pathname !== "/" && window.location.pathname.split("/")
+        else
+            path = window.location.hostname !== "/" && window.location.hostname.split("/");
+
+        console.log("pathhh", path)
+        console.log("pathhh", path[2])
+
+        if (path !== undefined && path.length > 0 && path[1] !== "" && path[1].toUpperCase() === "CMS.MYEMPORIA.MY" && path[2] !== undefined && path[2] !== "") {
+            credential = path[path.length - 1];
+            let username = decryptData(credential.split("_")[0])
+            let password = decryptData(credential.split("_")[1])
+
+            if (username !== "" && password !== "")
+                this.OnSubmitLogin(username, password)
+
+        } else {
+            return false
+        }
+    }
+
     render() {
         return (
-            // <form onSubmit={() => this.OnSubmitLogin()} className="container block block--margin-top" style={{ alignItems: "center", display: "flex" }} >
             <div style={{ display: 'flex', width: '100%', height: '100vh', }}>
                 <div className="container login-container m-auto">
 
@@ -207,7 +242,7 @@ class Dashboard extends Component {
                             className="w-100"
                             variant="contained"
                             type="submit"
-                            onClick={() => this.OnSubmitLogin()}
+                            onClick={() => this.OnSubmitLogin(this.state.username, this.state.password)}
                             disabled={this.state.username !== '' && this.state.password !== '' ? false : true}
 
                         >

@@ -32,6 +32,7 @@
 
 import { Settings, Shop2Rounded, ShopOutlined } from '@mui/icons-material';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import StorefrontIcon from '@mui/icons-material/Storefront';
 
 
 const sidebar_items = [
@@ -65,7 +66,7 @@ const sidebar_items = [
     },
     {
         to: "",
-        title: "UserManagement",
+        title: "User Management",
         icon: <AssignmentIndIcon />,
         submenus: [
             {
@@ -124,7 +125,11 @@ const sidebar_items = [
             },
         ]
     },
-
+    {
+        to: "https://myemporia.my",
+        title: "Back to Market Place",
+        icon: <StorefrontIcon />,
+    },
     // console.log("row", row)
 
     // {

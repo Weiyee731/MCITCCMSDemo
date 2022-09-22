@@ -805,7 +805,7 @@ class Stock extends Component {
                     <div className="w-100 container-fluid">
                         <TableComponents
                             tableTopLeft={
-                                <h3 style={{ fontWeight: 600 }}>Stock List</h3>}
+                                <h3 style={{ fontWeight: 600 }}>Stock List2333</h3>}
                             tableTopRight={
                                 <div className="d-flex">
                                     <Tooltip title="View All Product Stocks">

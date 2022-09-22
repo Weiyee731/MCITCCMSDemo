@@ -1,7 +1,7 @@
 
 const project = localStorage.getItem("project")
-// const projectURL = localStorage.getItem("projectURL") 
-const projectURL = "CMS.MCITC.my"
+const projectURL = localStorage.getItem("projectURL") 
+// const projectURL = "CMS.MCITC.my"
 export const ServerConfiguration = {
 
     // https://cms.myemporia.my//eCommerceCMS/api/emporia/

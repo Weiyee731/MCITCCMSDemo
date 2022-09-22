@@ -20,8 +20,8 @@ const url = ServerConfiguration.ServerUrl;
 const loginUrl = ServerConfiguration.LoginUrl;
 const LiveServerLoginUrl = ServerConfiguration.LiveServerLoginUrl;
 
-// const project = window.localStorage.getItem("project")
-const project = "MCITC"
+const project = window.localStorage.getItem("project")
+// const project = "MCITC"
 // const project = window.location.pathname.split(".")[1]
 
 export class GitEpic {
@@ -387,6 +387,8 @@ export class GitEpic {
 
   Transaction_ViewStatus = (action$) =>
     action$.ofType(GitAction.GetTransactionStatus).switchMap(async () => {
+      console.log(url + project + "/" +
+        "Order_ViewOrderStatus")
       try {
         const response = await fetch(
           url + project + "/" +
@@ -522,6 +524,9 @@ export class GitEpic {
 
   Product_Add = (action$) =>
     action$.ofType(GitAction.AddProduct).switchMap(async ({ payload }) => {
+      console.log("window.localStorage.getItem()", window.localStorage.getItem("project"))
+      console.log("localStorage.getItem()", localStorage.getItem("project"))
+      console.log(url + project + "/Product_AddProductByPost")
       return fetch(
         url + project + "/Product_AddProductByPost"
         , {
@@ -1309,12 +1314,12 @@ export class GitEpic {
     action$.ofType(GitAction.AddProductCategory).switchMap(({ payload }) => {
       return fetch(
         url + project + "/" +
-          "Product_AddProductCategory?PRODUCTCATEGORY=" + payload.ProductCategory +
-          "&PRODUCTCATEGORYIMAGE=" + payload.ProductCategoryImage +
-          "&HIERARCHYID=" + payload.HierarchyID +
-          "&PARENTPRODUCTCATEGORYID=" + payload.ParentProductCategoryID +
-          "&PROJECTID=" + payload.ProjectID + 
-          "&USERID=" + payload.UserID
+        "Product_AddProductCategory?PRODUCTCATEGORY=" + payload.ProductCategory +
+        "&PRODUCTCATEGORYIMAGE=" + payload.ProductCategoryImage +
+        "&HIERARCHYID=" + payload.HierarchyID +
+        "&PARENTPRODUCTCATEGORYID=" + payload.ParentProductCategoryID +
+        "&PROJECTID=" + payload.ProjectID +
+        "&USERID=" + payload.UserID
       )
         .then((response) => response.json())
         .then((json) => {
@@ -2056,258 +2061,258 @@ export class GitEpic {
 
   ///////////////////////////////////////////////////  Purchase Order  ///////////////////////////////////////////////////
 
-  PurchaseOrder_UpdateStatus = (action$) =>
-    action$.ofType(GitAction.UpdatePurchaseOrderStatus).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          // url + project + "/" +
-          "https://tourism.denoo.my/MCITCApi/api/MCITC/" +
-          "Product_UpdatePurchaseOrderStatus?PRODUCTPURCHASEORDERID=" +
-          payload.ProductPurchaseOrderID +
-          "&PRODUCTPURCHASEORDERSTATUS=Payable"
-        );
+  // PurchaseOrder_UpdateStatus = (action$) =>
+  //   action$.ofType(GitAction.UpdatePurchaseOrderStatus).switchMap(async ({ payload }) => {
+  //     try {
+  //       const response = await fetch(
+  //         // url + project + "/" +
+  //         "https://tourism.denoo.my/MCITCApi/api/MCITC/" +
+  //         "Product_UpdatePurchaseOrderStatus?PRODUCTPURCHASEORDERID=" +
+  //         payload.ProductPurchaseOrderID +
+  //         "&PRODUCTPURCHASEORDERSTATUS=Payable"
+  //       );
 
-        let json = await response.json();
-        json = JSON.parse(json)
-        return {
-          type: GitAction.UpdatedPurchaseOrderStatus,
-          payload: json,
-        };
-      }
-      catch (error) {
-        toast.error("Error Code: UpdatedPurchaseOrderStatus")
-        return {
-          type: GitAction.UpdatedPurchaseOrderStatus,
-          payload: [],
-        };
-      }
-    });
+  //       let json = await response.json();
+  //       json = JSON.parse(json)
+  //       return {
+  //         type: GitAction.UpdatedPurchaseOrderStatus,
+  //         payload: json,
+  //       };
+  //     }
+  //     catch (error) {
+  //       toast.error("Error Code: UpdatedPurchaseOrderStatus")
+  //       return {
+  //         type: GitAction.UpdatedPurchaseOrderStatus,
+  //         payload: [],
+  //       };
+  //     }
+  //   });
 
-  PurchaseOrder_ViewAll = (action$) =>
-    action$.ofType(GitAction.GetPurchaseOrders).switchMap(async ({ payload }) => {
+  // PurchaseOrder_ViewAll = (action$) =>
+  //   action$.ofType(GitAction.GetPurchaseOrders).switchMap(async ({ payload }) => {
 
-      console.log("https://tourism.denoo.my/MCITCApi/api/MCITC/" +
-        "Product_ViewPurchaseOrder?USERID=" +
-        payload)
-      try {
-        const response = await fetch(
-          // url + project + "/" +
-          "https://tourism.denoo.my/MCITCApi/api/MCITC/" +
-          "Product_ViewPurchaseOrder?USERID=" +
-          payload
-        );
+  //     console.log("https://tourism.denoo.my/MCITCApi/api/MCITC/" +
+  //       "Product_ViewPurchaseOrder?USERID=" +
+  //       payload)
+  //     try {
+  //       const response = await fetch(
+  //         // url + project + "/" +
+  //         "https://tourism.denoo.my/MCITCApi/api/MCITC/" +
+  //         "Product_ViewPurchaseOrder?USERID=" +
+  //         payload
+  //       );
 
-        let json = await response.json();
-        if (json != "fail") {
-          json = JSON.parse(json);
-        } else {
-          json = [];
-        }
-        return {
-          type: GitAction.GotPurchaseOrders,
-          payload: json,
-        };
-      }
-      catch (error) {
-        toast.error("Error Code: GotPurchaseOrders")
-        return {
-          type: GitAction.GotPurchaseOrders,
-          payload: [],
-        };
-      }
-    });
+  //       let json = await response.json();
+  //       if (json != "fail") {
+  //         json = JSON.parse(json);
+  //       } else {
+  //         json = [];
+  //       }
+  //       return {
+  //         type: GitAction.GotPurchaseOrders,
+  //         payload: json,
+  //       };
+  //     }
+  //     catch (error) {
+  //       toast.error("Error Code: GotPurchaseOrders")
+  //       return {
+  //         type: GitAction.GotPurchaseOrders,
+  //         payload: [],
+  //       };
+  //     }
+  //   });
 
-  PurchaseOrder_Delete = (action$) =>
-    action$.ofType(GitAction.DeletePurchaseOrder).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          // url + project + "/" +
-          "https://tourism.denoo.my/MCITCApi/api/MCITC/" +
-          "Product_DeletePurchaseOrder?PRODUCTPURCHASEORDERID=" +
-          payload.purchaseOderID
-        );
+  // PurchaseOrder_Delete = (action$) =>
+  //   action$.ofType(GitAction.DeletePurchaseOrder).switchMap(async ({ payload }) => {
+  //     try {
+  //       const response = await fetch(
+  //         // url + project + "/" +
+  //         "https://tourism.denoo.my/MCITCApi/api/MCITC/" +
+  //         "Product_DeletePurchaseOrder?PRODUCTPURCHASEORDERID=" +
+  //         payload.purchaseOderID
+  //       );
 
-        let json = await response.json();
-        if (json != "fail") {
-          json = JSON.parse(json);
-        } else {
-          json = [];
-        }
-        return {
-          type: GitAction.DeletedPurchaseOrder,
-          payload: json,
-        };
-      }
-      catch (error) {
-        toast.error("Error Code: DeletedPurchaseOrder")
-        return {
-          type: GitAction.DeletedPurchaseOrder,
-          payload: [],
-        };
-      }
+  //       let json = await response.json();
+  //       if (json != "fail") {
+  //         json = JSON.parse(json);
+  //       } else {
+  //         json = [];
+  //       }
+  //       return {
+  //         type: GitAction.DeletedPurchaseOrder,
+  //         payload: json,
+  //       };
+  //     }
+  //     catch (error) {
+  //       toast.error("Error Code: DeletedPurchaseOrder")
+  //       return {
+  //         type: GitAction.DeletedPurchaseOrder,
+  //         payload: [],
+  //       };
+  //     }
 
-    });
+  //   });
 
-  ProductListing_ByStatus = (action$) =>
-    action$.ofType(GitAction.GetProductByStatus).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          "https://tourism.denoo.my/MCITCApi/api/MCITC/" +
-          "Product_ItemListByProductStatus?PRODUCTSTATUS=" +
-          payload.ProductStatus +
-          "&USERID=" +
-          payload.UserID
-        );
-        let json = await response.json();
-        if (json != "fail") {
-          json = JSON.parse(json);
-        } else {
-          json = [];
-        }
-        return {
-          type: GitAction.GotProductByStatus,
-          payload: json,
-        };
-      } catch (error) {
-        alert('getAllProductsByStatus: ' + error);
-        return {
-          type: GitAction.GotProductByStatus,
-          payload: [],
-        };
-      }
-    });
+  // ProductListing_ByStatus = (action$) =>
+  //   action$.ofType(GitAction.GetProductByStatus).switchMap(async ({ payload }) => {
+  //     try {
+  //       const response = await fetch(
+  //         "https://tourism.denoo.my/MCITCApi/api/MCITC/" +
+  //         "Product_ItemListByProductStatus?PRODUCTSTATUS=" +
+  //         payload.ProductStatus +
+  //         "&USERID=" +
+  //         payload.UserID
+  //       );
+  //       let json = await response.json();
+  //       if (json != "fail") {
+  //         json = JSON.parse(json);
+  //       } else {
+  //         json = [];
+  //       }
+  //       return {
+  //         type: GitAction.GotProductByStatus,
+  //         payload: json,
+  //       };
+  //     } catch (error) {
+  //       alert('getAllProductsByStatus: ' + error);
+  //       return {
+  //         type: GitAction.GotProductByStatus,
+  //         payload: [],
+  //       };
+  //     }
+  //   });
 
-  SalesOrder_Add = (action$) =>
-    action$.ofType(GitAction.SendSalesOrder).switchMap(async ({ payload }) => {
+  // SalesOrder_Add = (action$) =>
+  //   action$.ofType(GitAction.SendSalesOrder).switchMap(async ({ payload }) => {
 
-      try {
-        const response = await fetch(
-          "https://tourism.denoo.my/MCITCApi/api/MCITC/" +
-          "Product_ReplyPurchaseOrderWithSaleOrder?PRODUCTPURCHASEORDERID=" +
-          payload.ProductPurchaseOrderID +
-          "&SALEORDERNO=" +
-          payload.salesOrderNo +
-          "&SALEORDERFILE=" +
-          payload.file +
-          "&REMARK=" +
-          payload.remark
-        );
+  //     try {
+  //       const response = await fetch(
+  //         "https://tourism.denoo.my/MCITCApi/api/MCITC/" +
+  //         "Product_ReplyPurchaseOrderWithSaleOrder?PRODUCTPURCHASEORDERID=" +
+  //         payload.ProductPurchaseOrderID +
+  //         "&SALEORDERNO=" +
+  //         payload.salesOrderNo +
+  //         "&SALEORDERFILE=" +
+  //         payload.file +
+  //         "&REMARK=" +
+  //         payload.remark
+  //       );
 
-        let json = await response.json();
-        if (json != "fail") {
-          json = JSON.parse(json);
-        } else {
-          json = [];
-        }
+  //       let json = await response.json();
+  //       if (json != "fail") {
+  //         json = JSON.parse(json);
+  //       } else {
+  //         json = [];
+  //       }
 
-        return {
-          type: GitAction.SentSalesOrder,
-          payload: json,
-        };
-      } catch (error) {
-        alert('SentSalesOrder: ' + error);
-        return {
-          type: GitAction.SentSalesOrder,
-          payload: [],
-        };
-      }
-    });
+  //       return {
+  //         type: GitAction.SentSalesOrder,
+  //         payload: json,
+  //       };
+  //     } catch (error) {
+  //       alert('SentSalesOrder: ' + error);
+  //       return {
+  //         type: GitAction.SentSalesOrder,
+  //         payload: [],
+  //       };
+  //     }
+  //   });
 
 
   ///////////////////////////////////////////////////  Quotation ///////////////////////////////////////////////////
 
-  Quotation_Add = (action$) =>
-    action$.ofType(GitAction.AddProductQuotation).switchMap(async ({ payload }) => {
+  // Quotation_Add = (action$) =>
+  //   action$.ofType(GitAction.AddProductQuotation).switchMap(async ({ payload }) => {
 
-      try {
-        const response = await fetch(
-          "https://tourism.denoo.my/MCITCApi/api/MCITC/" +
-          "Product_AddQuotation?PRODUCTIDS=" +
-          payload.ProductIDs +
-          "&PRODUCTQUANTITYS=" +
-          payload.ProductQuantities +
-          "&PRODUCTPRICES=" +
-          payload.ProductPrices +
-          "&SUPPLIERID=1"
-        );
+  //     try {
+  //       const response = await fetch(
+  //         "https://tourism.denoo.my/MCITCApi/api/MCITC/" +
+  //         "Product_AddQuotation?PRODUCTIDS=" +
+  //         payload.ProductIDs +
+  //         "&PRODUCTQUANTITYS=" +
+  //         payload.ProductQuantities +
+  //         "&PRODUCTPRICES=" +
+  //         payload.ProductPrices +
+  //         "&SUPPLIERID=1"
+  //       );
 
-        let json = await response.json();
-        if (json != "fail") {
-          json = JSON.parse(json);
-        } else {
-          json = [];
-        }
-        return {
-          type: GitAction.AddedProductQuotation,
-          payload: json,
-        };
-      } catch (error) {
-        alert('AddedProductQuotation: ' + error);
-        return {
-          type: GitAction.AddedProductQuotation,
-          payload: [],
-        };
-      }
-    });
+  //       let json = await response.json();
+  //       if (json != "fail") {
+  //         json = JSON.parse(json);
+  //       } else {
+  //         json = [];
+  //       }
+  //       return {
+  //         type: GitAction.AddedProductQuotation,
+  //         payload: json,
+  //       };
+  //     } catch (error) {
+  //       alert('AddedProductQuotation: ' + error);
+  //       return {
+  //         type: GitAction.AddedProductQuotation,
+  //         payload: [],
+  //       };
+  //     }
+  //   });
 
 
-  Quotation_View = (action$) =>
-    action$.ofType(GitAction.GetProductQuotation).switchMap(async ({ payload }) => {
+  // Quotation_View = (action$) =>
+  //   action$.ofType(GitAction.GetProductQuotation).switchMap(async ({ payload }) => {
 
-      console.log()
-      try {
-        const response = await fetch(
-          "https://tourism.denoo.my/MCITCApi/api/MCITC/" +
-          "Product_ViewQuotation?USERID=" +
-          payload
-        );
+  //     console.log()
+  //     try {
+  //       const response = await fetch(
+  //         "https://tourism.denoo.my/MCITCApi/api/MCITC/" +
+  //         "Product_ViewQuotation?USERID=" +
+  //         payload
+  //       );
 
-        let json = await response.json();
-        if (json != "fail") {
-          json = JSON.parse(json);
-        } else {
-          json = [];
-        }
-        return {
-          type: GitAction.GotProductQuotation,
-          payload: json,
-        };
-      } catch (error) {
-        alert('GotProductQuotation: ' + error);
-        return {
-          type: GitAction.GotProductQuotation,
-          payload: [],
-        };
-      }
-    });
+  //       let json = await response.json();
+  //       if (json != "fail") {
+  //         json = JSON.parse(json);
+  //       } else {
+  //         json = [];
+  //       }
+  //       return {
+  //         type: GitAction.GotProductQuotation,
+  //         payload: json,
+  //       };
+  //     } catch (error) {
+  //       alert('GotProductQuotation: ' + error);
+  //       return {
+  //         type: GitAction.GotProductQuotation,
+  //         payload: [],
+  //       };
+  //     }
+  //   });
 
-  Quotation_Delete = (action$) =>
-    action$.ofType(GitAction.DeleteQuotation).switchMap(async ({ payload }) => {
+  // Quotation_Delete = (action$) =>
+  //   action$.ofType(GitAction.DeleteQuotation).switchMap(async ({ payload }) => {
 
-      try {
-        const response = await fetch(
-          "https://tourism.denoo.my/MCITCApi/api/MCITC/" +
-          "Product_DeleteQuotation?PRODUCTQUOTATIONID=" + payload.QuotationID
-        );
+  //     try {
+  //       const response = await fetch(
+  //         "https://tourism.denoo.my/MCITCApi/api/MCITC/" +
+  //         "Product_DeleteQuotation?PRODUCTQUOTATIONID=" + payload.QuotationID
+  //       );
 
-        let json = await response.json();
-        if (json != "fail") {
-          json = JSON.parse(json);
-        } else {
-          json = [];
-        }
-        return {
-          type: GitAction.DeletedQuotation,
-          payload: json,
-        };
-      } catch (error) {
-        alert('DeletedQuotation: ' + error);
-        return {
-          type: GitAction.DeletedQuotation,
-          payload: [],
-        };
-      }
-    });
+  //       let json = await response.json();
+  //       if (json != "fail") {
+  //         json = JSON.parse(json);
+  //       } else {
+  //         json = [];
+  //       }
+  //       return {
+  //         type: GitAction.DeletedQuotation,
+  //         payload: json,
+  //       };
+  //     } catch (error) {
+  //       alert('DeletedQuotation: ' + error);
+  //       return {
+  //         type: GitAction.DeletedQuotation,
+  //         payload: [],
+  //       };
+  //     }
+  //   });
 
 
   ///////////////////////////////////////////////////  sidebar configurations ///////////////////////////////////////////////////

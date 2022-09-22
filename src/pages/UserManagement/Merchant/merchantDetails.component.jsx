@@ -514,7 +514,7 @@ class DisplayTable extends Component {
             <div className="col-3" style={{ width: "20%" }}>
               <img
                 height={60}
-                src={product.ProductImage !== null ? JSON.parse(product.ProductImages)[0] : Logo}
+                src={product.ProductImage === null ? JSON.parse(product.ProductImages)[0] : Logo}
                 onError={(e) => { e.target.onerror = null; e.target.src = Logo }}
                 alt={product.ProductName}
               />
