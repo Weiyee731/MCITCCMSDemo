@@ -64,6 +64,12 @@ const Aside = ({ rtl, toggled, handleToggleSidebar, sidebarItems }) => {
     else resetLogonUser()
   }
 
+  const checkHost = () => {
+    if (localStorage.getItem("projectURL") !== undefined && localStorage.getItem("projectURL") === "CMS.myemporia.my")
+      return true
+    else return false
+  }
+
   return (
     <ProSidebar
       image={false} // can set the image background under this option
@@ -89,15 +95,29 @@ const Aside = ({ rtl, toggled, handleToggleSidebar, sidebarItems }) => {
             isArrayNotEmpty(sidebarItems) && sidebarItems.map((item, index) => {
               return (
                 typeof item.submenus === "undefined" || item.submenus === null ?
-                  <MenuItem
-                    key={item.title}
-                    prefix={typeof item.prefix !== "undefined" && item.prefix !== null ? item.prefix : null}
-                    icon={typeof item.icon !== "undefined" && item.icon !== null ? <span className={MaterialIconStyle}>{item.icon}</span> : ""}
-                    suffix={typeof item.suffix !== "undefined" && item.suffix !== null ? item.suffix : null}
-                    onClick={() => item.to.includes(":") ? window.location.hostname === "localhost" ? window.location.href = "http://localhost:3000" : window.location.href = "https://triviix.com/Emporia/" : ""}
-                  >
-                    {item.title} {!isStringNullOrEmpty(item.to) ? <Link to={item.to} /> : ""}
-                  </MenuItem>
+
+                  checkHost() === true ?
+                    <MenuItem
+                      key={item.title}
+                      prefix={typeof item.prefix !== "undefined" && item.prefix !== null ? item.prefix : null}
+                      icon={typeof item.icon !== "undefined" && item.icon !== null ? <span className={MaterialIconStyle}>{item.icon}</span> : ""}
+                      suffix={typeof item.suffix !== "undefined" && item.suffix !== null ? item.suffix : null}
+                      onClick={() => item.to.includes(":") ? window.location.hostname === "localhost" ?
+                        window.location.href = "http://localhost:3000/Emporia/" : window.location.href = "https://triviix.com/Emporia/"
+                        : ""}
+                    >
+                      {item.title} {!isStringNullOrEmpty(item.to) ? <Link to={item.to} /> : ""}
+                    </MenuItem>
+                    :
+                    !item.to.includes(":") &&
+                    <MenuItem
+                      key={item.title}
+                      prefix={typeof item.prefix !== "undefined" && item.prefix !== null ? item.prefix : null}
+                      icon={typeof item.icon !== "undefined" && item.icon !== null ? <span className={MaterialIconStyle}>{item.icon}</span> : ""}
+                      suffix={typeof item.suffix !== "undefined" && item.suffix !== null ? item.suffix : null}
+                    >
+                      {item.title} {!isStringNullOrEmpty(item.to) ? <Link to={item.to} /> : ""}
+                    </MenuItem>
                   :
                   <SubMenuItems key={'submenu-' + item.title} item={item} MaterialIconStyle={MaterialIconStyle} />
 

@@ -35,7 +35,7 @@ import TableCell from '@mui/material/TableCell';
 function mapStateToProps(state) {
   return {
     productCategories: state.counterReducer["productCategories"],
-    productInfo: state.counterReducer["productsByID"],  
+    productInfo: state.counterReducer["productsByID"],
     reviews: state.counterReducer["reviews"],
     variationStock: state.counterReducer["variationStock"],
     reviewReturn: state.counterReducer["reviewReturn"],
@@ -725,9 +725,9 @@ class ViewProductGeneralInfo extends Component {
                         <TableComponents
                           tableTopRight={
                             <div className="d-flex">
-                              <Tooltip title="View All Product Stocks">
+                              <Tooltip title="View All Variation Stocks">
                                 <IconButton size="medium" sx={{ color: "#0074ea", marginRight: 1 }}>
-                                  <Link className="nav-link" to={{ pathname: url.stockDetails(0) }}>
+                                  <Link className="nav-link" to={{ pathname: "/viewStockDetailList/0-" + this.props.match.params.productId }}>
                                     <PageviewIcon />
                                   </Link>
                                 </IconButton>

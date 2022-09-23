@@ -167,18 +167,20 @@ class Dashboard extends Component {
         let credential = ""
         let path = ""
 
+
         if (window.location.hostname === "localhost")
             path = window.location.pathname !== "/" && window.location.pathname.split("/")
         else
             path = window.location.hostname !== "/" && window.location.hostname.split("/");
 
-        console.log("pathhh", path)
-        console.log("pathhh", path[2])
 
-        if (path !== undefined && path.length > 0 && path[1] !== "" && path[1].toUpperCase() === "CMS.MYEMPORIA.MY" && path[2] !== undefined && path[2] !== "") {
+        if (path !== undefined && path.length > 0 && path[1] !== "" && path[1] !== undefined && path[1].toUpperCase() === "CMS.MYEMPORIA.MY" && path[2] !== undefined && path[2] !== "") {
             credential = path[path.length - 1];
-            let username = decryptData(credential.split("_")[0])
-            let password = decryptData(credential.split("_")[1])
+            let username = decryptData(credential.split("_")[0].replace('xMl3Jk', '+' ).replace('Por21Ld', '/').replace('Ml32', '='))
+            let password = decryptData(credential.split("_")[1].replace('xMl3Jk', '+' ).replace('Por21Ld', '/').replace('Ml32', '='))
+
+            console.log(username)
+            console.log(password)
 
             if (username !== "" && password !== "")
                 this.OnSubmitLogin(username, password)

@@ -65,6 +65,8 @@ const ViewReviewDetails = (props) => {
 
     let userReviewFormat = (reviewItem, index) => {
         let checkReply = JSON.parse(state.ProductReviewDetail).filter((x) => x.replyParentID === reviewItem.ProductReviewID)
+        if (data.selectedCommentReply.length === 0)
+            handleComment(reviewItem)
         return (
             <>
                 <ListItem key={index} button style={{ borderBottom: '1px solid rgba(33, 33, 33, 0.3)' }} onClick={() => { handleComment(reviewItem) }}   >
@@ -84,6 +86,7 @@ const ViewReviewDetails = (props) => {
             </>
         )
     }
+
 
     return (
 
@@ -174,6 +177,7 @@ const ViewReviewDetails = (props) => {
                     }
 
                     <div className="col-11">
+                        {data.selectedCommentReply.length === 0 && <label style={{ color: "red", padding: "10pt" }}>Please select a comment to reply</label>}
                         <TextField
                             id="filled-textarea"
                             label="Multiline Placeholder"
@@ -190,9 +194,10 @@ const ViewReviewDetails = (props) => {
                             onChange={(e) => handleOnChange(e)}
                         />
                     </div>
+                    {console.log("data", data)}
                     <div className="col-1">
                         <IconButton className="icon" disabled={data.replyComment !== "" && data.selectedCommentReply.length !== 0 ? false : true}>
-                            <SendIcon style={{ color: "wheat" }} onClick={() => handleAddReview(data.selectedCommentReply, state.ProductReviewID)} />
+                            <SendIcon style={{ color: data.replyComment !== "" && data.selectedCommentReply.length !== 0 ? "green" : "grey" }} onClick={() => handleAddReview(data.selectedCommentReply, state.ProductReviewID)} />
                         </IconButton>
                     </div>
                 </div>

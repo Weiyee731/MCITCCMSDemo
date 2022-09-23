@@ -594,6 +594,13 @@ export class GitAction {
     };
   }
 
+  static ResetProductCategoryAction = "RESET-PRODUCTCATEGORY-ACTION";
+  static CallResetProductCategoryAction() {
+    return {
+      type: GitAction.ResetProductCategoryAction,
+    };
+  }
+
   static GetProductCategory = "GET-PRODUCTCATEGORY";
   static GotProductCategory = "GOT-PRODUCTCATEGORY";
   static CallAllProductCategory(prodData) {

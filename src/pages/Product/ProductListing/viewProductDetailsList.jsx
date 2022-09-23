@@ -2193,32 +2193,33 @@ class ProductDetailsComponent extends Component {
             skuWithoutID.push(x.sku)
         })
 
-        if (ValueWithID.length > 0) {
-            this.props.CallUpdateProductVariationDetail({
-                ProductVariationDetailID: optionID,
-                Customizable: CustomizableWithID,
-                Value: ValueWithID,
-                stock: stockWithID,
-                sku: skuWithID,
-                price: priceWithID,
-                UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID
-            })
-        }
 
-        if (ValueWithoutID.length > 0) {
-            this.props.CallAddProductVariationDetail({
-                ProductVariation: selectedVariationID,
-                ProductID: ProductID,
-                Customizable: CustomizableWithoutID,
-                Value: ValueWithoutID,
-                stock: stockWithoutID,
-                sku: skuWithoutID,
-                price: priceWithoutID,
-                UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID
-            })
-        }
+        // if (ValueWithID.length > 0) {
+        //     this.props.CallUpdateProductVariationDetail({
+        //         ProductVariationDetailID: optionID,
+        //         Customizable: CustomizableWithID,
+        //         Value: ValueWithID,
+        //         stock: stockWithID,
+        //         sku: skuWithID,
+        //         price: priceWithID,
+        //         UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+        //     })
+        // }
 
-        this.setState({ isSubmissionVariationChecking: true })
+        // if (ValueWithoutID.length > 0) {
+        //     this.props.CallAddProductVariationDetail({
+        //         ProductVariation: selectedVariationID,
+        //         ProductID: ProductID,
+        //         Customizable: CustomizableWithoutID,
+        //         Value: ValueWithoutID,
+        //         stock: stockWithoutID,
+        //         sku: skuWithoutID,
+        //         price: priceWithoutID,
+        //         UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+        //     })
+        // }
+
+        // this.setState({ isSubmissionVariationChecking: true })
     }
 
     onSubmitProductSpecification = (ProductID) => {
@@ -3347,9 +3348,10 @@ class ProductDetailsComponent extends Component {
         let checkOption = variation1.length > 0 ? variation1.filter((x) => x.errorOption === true || x.optionName === "") : []
         let checkPrice = variation1.length > 0 ? variation1.filter((x) => x.errorPrice === true || x.price === "") : []
         let checkSKU = variation1.length > 0 ? variation1.filter((x) => x.errorSKU === true || x.sku === "") : []
-        let checkStock = variation1.length > 0 ? variation1.filter((x) => x.errorStock === true || x.stock === "") : []
+        // let checkStock = variation1.length > 0 ? variation1.filter((x) => x.errorStock === true || x.stock === "") : []
 
-        if (checkOption.length > 0 || checkPrice.length > 0 || checkSKU.length > 0 || checkStock.length > 0)
+        // if (checkOption.length > 0 || checkPrice.length > 0 || checkSKU.length > 0 || checkStock.length > 0)
+        if (checkOption.length > 0 || checkPrice.length > 0 || checkSKU.length > 0)
             return 1
         else return 0
     }
@@ -3420,7 +3422,7 @@ class ProductDetailsComponent extends Component {
                     ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
                 }
                 this.props.CallUpdateProduct(object)
-                this.onSubmitProductVariation(this.state.ProductID)
+                // this.onSubmitProductVariation(this.state.ProductID)
                 this.onSubmitProductSpecification(this.state.ProductID)
                 this.uploadFile(this.state.ProductID)
                 this.setState({ isSubmit: true })
@@ -3803,6 +3805,7 @@ class ProductDetailsComponent extends Component {
     }
 
     render() {
+
         const { isOnViewState } = this.props  //this props used to indicate it is on the state of viewing product details or it is adding product
         const { description } = this.state
 
@@ -5069,29 +5072,6 @@ class ProductDetailsComponent extends Component {
                                     <p className="Heading">Product Variation</p>
                                     {!this.state.variation1On && !this.state.variation2On ? (
                                         <div>
-                                            {/* <InputGroup className="InputField">
-                                                <InputGroupAddon type="prepend">
-                                                    <InputGroupText className="groupText">
-                                                        RM
-                                                    </InputGroupText>
-                                                </InputGroupAddon>
-                                                <FormInput
-                                                    value={this.state.price}
-                                                    invalid={this.state.priceEmpty}
-                                                    onChange={this.handleChange.bind(this, "Price")}
-                                                    placeholder="Price"
-                                                    type="number"
-                                                    step=".10"
-                                                    onFocus={this.setHint.bind(this, "ProductPrice")}
-                                                    disabled={this.state.toBeEdited ? false : true}
-                                                    onBlur={() =>
-                                                        this.setState({
-                                                            FocusOn: false,
-                                                        })
-                                                    }
-                                                />
-                                            </InputGroup> */}
-
                                             <TextField type="number" size="small"
                                                 inputProps={{ min: "0", step: "0.10" }}
                                                 onFocus={this.setHint.bind(this, "ProductPrice")}
@@ -5115,7 +5095,7 @@ class ProductDetailsComponent extends Component {
                                                     Price has to be filled and not less than 0.
                                                 </p>
                                             ) : null}
-                                            <div className="Margin ItemContainer">
+                                            {/* <div className="Margin ItemContainer">
                                                 <TextField
                                                     id="standard-start-adornment"
                                                     label="Stock"
@@ -5144,9 +5124,12 @@ class ProductDetailsComponent extends Component {
                                                         Stock has to be filled and not less than 0.
                                                     </p>
                                                 ) : null}
-                                            </div>
+                                            </div> */}
                                         </div>
                                     ) : null}
+
+                                    {console.log("variation1On", this.state.variation1On)}
+                                    {console.log("variation1On state", this.state)}
 
                                     {this.state.variation1On && this.state.toBeEdited && (
                                         <div className="VariantMain">
@@ -5245,13 +5228,6 @@ class ProductDetailsComponent extends Component {
                                                     </Button> : null}
                                             </div>
                                             <br />
-                                            {/* {this.state.toBeEdited ?
-                        <CloseIcon
-                          className="DeleteVariantButton"
-                          color="secondary"
-                          onClick={this.onDeleteVariant.bind(this, -1, "variant1", "")}
-                        ></CloseIcon>
-                        : null} */}
                                         </div>
                                     )}
                                     {this.state.toBeEdited === false ?
@@ -5291,14 +5267,6 @@ class ProductDetailsComponent extends Component {
                                             }
                                         </>
                                         : null}
-
-                                    {/* {this.state.variation1On ? (
-                                        <table className="TableMain">
-                                            <tr className="trHeading">
-                                                <td className="tdHeading">
-                                                    {this.state.variation1Name ? this.state.variation1Name : "Variation 1 Name"}
-                                                </td>
-                                                 */}
                                     <hr />
                                     {!this.state.variation1On && this.state.toBeEdited && (
                                         <div className="ItemContainer">
@@ -5312,145 +5280,6 @@ class ProductDetailsComponent extends Component {
                                         </div>
                                     )}
 
-
-                                    {/* <hr />
-                <p className="FontType1">Wholesale Prices</p> */}
-                                    {/* {!this.state.wholeSaleOn ? (
-                  <div className="ItemContainer">
-                    <Button
-                      variant="outlined"
-                      className="AddButton"
-                      onClick={this.addProductVariant.bind(this, "priceTier")}
-                    >
-                      Add Price Tiers
-                    </Button>
-                  </div>
-                ) : null} */}
-                                    {/* {this.state.wholeSaleOn ? (
-                  <div className="wholeSale">
-                    <div>
-                      {[...Array(this.state.wholeSaleOptions)].map((e, i) => (
-                        <div className="wholeSaleRows  align-items-center">
-                          <RemoveCircleOutlineIcon
-                            className="deleteButtonWholeSale"
-                            color="secondary"
-                            className="deleteButtonWholeSale"
-                            onClick={this.onDeleteVariant.bind(
-                              this,
-                              i,
-                              "wholeSaleOption"
-                            )}
-                          />
-                          <span className="VariantText deleteButtonWholeSale">
-                            {"Price Tier " + (i + 1)}
-                          </span>
-                          <div className="PriceList">
-                            <div className="MiddleDiv">
-                              <TextField
-                                label="Min"
-                                variant="outlined"
-                                className="MiddleText"
-                                onFocus={this.setHint.bind(
-                                  this,
-                                  "WholeSaleMin"
-                                )}
-                                onBlur={() =>
-                                  this.setState({
-                                    FocusOn: false,
-                                  })
-                                }
-                                InputLabelProps={{
-                                  shrink: "true",
-                                }}
-                                type="number"
-                                onChange={this.handleChangeOptions.bind(
-                                  this,
-                                  "wholeSaleMin",
-                                  i
-                                )}
-                                value={this.state.priceTierList[i].min}
-                                error={this.state.priceTierList[i].errorMin}
-                                size="small"
-                              />
-                            </div>
-                            <div className="MiddleDiv">
-                              <TextField
-                                InputLabelProps={{
-                                  shrink: "true",
-                                }}
-                                className="MiddleText"
-                                variant="outlined"
-                                label="Max"
-                                type="number"
-                                onFocus={this.setHint.bind(
-                                  this,
-                                  "WholeSaleMax"
-                                )}
-                                onBlur={() =>
-                                  this.setState({
-                                    FocusOn: false,
-                                  })
-                                }
-                                onChange={this.handleChangeOptions.bind(
-                                  this,
-                                  "wholeSaleMax",
-                                  i
-                                )}
-                                value={this.state.priceTierList[i].max}
-                                error={this.state.priceTierList[i].errorMax}
-                                size="small"
-                              />
-                            </div>
-                            <InputGroup className="mb-2 MiddleText">
-                              <InputGroupAddon type="prepend">
-                                <InputGroupText className="groupText">
-                                  RM
-                                </InputGroupText>
-                              </InputGroupAddon>
-                              <FormInput
-                                type="number"
-                                step=".10"
-                                placeholder="Price"
-                                onFocus={this.setHint.bind(
-                                  this,
-                                  "WholeSalePrice"
-                                )}
-                                onBlur={() =>
-                                  this.setState({
-                                    FocusOn: false,
-                                  })
-                                }
-                                onChange={this.handleChangeOptions.bind(
-                                  this,
-                                  "wholeSalePrice",
-                                  i
-                                )}
-                                value={this.state.priceTierList[i].price}
-                                invalid={this.state.priceTierList[i].errorPrice}
-                              />
-                            </InputGroup>
-                          </div>
-                        </div>
-                      ))}
-                      <div className="AddButtonContainer">
-                        <Button
-                          variant="outlined"
-                          className="AddButton"
-                          onClick={this.addOptions.bind(this, "priceTier")}
-                        >
-                          Add Price Tier
-                        </Button>
-                      </div>
-                    </div>
-
-                    <br />
-                    <CloseIcon
-                      className="CloseButton"
-                      color="secondary"
-                      onClick={this.onDeleteVariant.bind(this, -1, "wholeSale")}
-                    />
-                  </div>
-                ) : null} */}
                                 </CardContent>
                             </Card>
                             <br />
@@ -5461,33 +5290,10 @@ class ProductDetailsComponent extends Component {
                                         <p className="Heading">Product Variations Pricing</p>
                                         // <p className="FontType1">Product Variations Pricing</p>
                                     ) : null}
-                                    {this.state.variation1On ? (
+                                    {this.state.variation1On && this.state.variation1.options.length > 1 ? (
                                         <div className="VariantMain">
                                             <div className="ItemContainer">
                                                 <div className="VariantContainer">
-
-                                                    {/* <InputGroup className="ItemContainer">
-                                                        <InputGroupAddon type="prepend">
-                                                            <InputGroupText className="groupText">
-                                                                RM
-                                                            </InputGroupText>
-                                                        </InputGroupAddon>
-                                                        <FormInput
-                                                            onChange={this.handleChange.bind(this, "Price")}
-                                                            value={this.state.price}
-                                                            // invalid={this.state.priceEmpty}
-                                                            placeholder="Price"
-                                                            type="number"
-                                                            step=".10"
-                                                            onFocus={this.setHint.bind(this, "VariationPrice")}
-                                                            onBlur={() =>
-                                                                this.setState({
-                                                                    FocusOn: false,
-                                                                })
-                                                            }
-                                                            disabled={!this.state.toBeEdited}
-                                                        />
-                                                    </InputGroup> */}
                                                     <TextField type="number" size="small"
                                                         inputProps={{ min: "0", step: "0.10" }}
                                                         onFocus={this.setHint.bind(this, "VariationPrice")}
@@ -5506,31 +5312,6 @@ class ProductDetailsComponent extends Component {
                                                         }} required />
                                                 </div>
                                             </div>
-                                            {/* <div className="StockField">
-                                                <TextField
-                                                    id="standard-start-adornment"
-                                                    label="Stock"
-                                                    variant="outlined"
-                                                    className="InputField2"
-                                                    InputLabelProps={{
-                                                        shrink: "true",
-                                                    }}
-                                                    InputProps={{
-                                                        readOnly: !this.state.toBeEdited,
-                                                    }}
-                                                    type="number"
-                                                    onChange={this.handleChange.bind(this, "stock")}
-                                                    // error={this.state.stockEmpty}
-                                                    onFocus={this.setHint.bind(this, "VariationStock")}
-                                                    onBlur={() =>
-                                                        this.setState({
-                                                            FocusOn: false,
-                                                        })
-                                                    }
-                                                    value={this.state.stock}
-                                                    size="small"
-                                                />
-                                            </div> */}
                                             <div className="StockField">
                                                 <TextField
                                                     id="standard-start-adornment"

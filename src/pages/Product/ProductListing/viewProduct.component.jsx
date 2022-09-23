@@ -243,7 +243,7 @@ class ViewProductComponent extends Component {
             </Box>
           </div>
         </div>
-        {console.log("WINDIW", window.location.pathname)}
+        {console.log("WINDIW",DataList)}
 
         <TableComponents
           // table settings 

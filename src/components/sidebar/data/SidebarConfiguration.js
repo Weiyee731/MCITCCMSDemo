@@ -103,7 +103,7 @@ const sidebar_items = [
             },
             {
                 to: "/category",
-                title: "Produc Category",
+                title: "Product Category",
                 icon: <Shop2Rounded />,
             },
         ]

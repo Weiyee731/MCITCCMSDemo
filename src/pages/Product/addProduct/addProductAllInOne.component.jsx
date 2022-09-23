@@ -4802,7 +4802,8 @@ class AddProductComponent extends Component {
                     <p className="Heading">Product Variations Pricing</p>
                     // <p className="FontType1">Variations Information</p>
                   ) : null}
-                  {this.state.variation1On ? (
+
+                  {this.state.variation1On && this.state.variation1.options.length > 1 ? (
                     <div className="VariantMain">
                       <div className="ItemContainer">
                         <div className="VariantContainer">

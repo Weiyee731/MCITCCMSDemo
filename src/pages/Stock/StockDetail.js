@@ -112,6 +112,8 @@ const INITIAL_STATE = {
     ProductVariationSKU: "",
 
     isOpenStockModal: false,
+    ProductID: "",
+    ProductName: ""
 
 }
 
@@ -133,27 +135,39 @@ class StockDetail extends Component {
             page: '1',
             ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
         });
-        this.props.CallViewProductVariationStockDetails({ 
-            ProductVariationDetailID: this.props.match.params.ProductVariationDetailID,
-            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
-         })
         this.props.CallViewAllProductVariationStock({
             ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
             ProductID: 0,
             ProductPerPage: 999,
             Page: 1
         })
+        this.props.CallViewProductVariationStockDetails({
+            ProductVariationDetailID: this.checkDetailID(),
+            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
+        })
     }
 
     componentDidMount() {
+        if (this.props.match.params.ProductVariationDetailID !== undefined) {
+            let ProductVariationDetailID = this.props.match.params.ProductVariationDetailID.split("-")
+            if (ProductVariationDetailID.length > 1 && !isNaN(ProductVariationDetailID[1])) {
+                this.setState({ ProductID: ProductVariationDetailID[1] })
+            }
+        }
+
         if (this.props.variationStockDetails !== null && this.props.variationStockDetails.length > 0 && this.state.isStockListSet === false) {
             // this.DataState = this.props.variationStock.length > 0 && this.props.variationStock.filter((data) => data.ProductVariationStockID === this.props.match.params.ProductVariationDetailID)
-            this.setState({ stockListData: this.props.variationStockDetails, isStockListSet: true })
+            if (this.checkDetailID() === "0" && this.state.ProductID !== "") {
+                let listing = this.props.variationStockDetails
+                let filteredListing = []
+                filteredListing = listing.length > 0 && listing.filter((x) => parseInt(x.ProductID) === parseInt(this.state.ProductID))
+                this.setState({ stockListData: filteredListing, isStockListSet: true, ProductName: filteredListing.length > 0 ? filteredListing[0].ProductName : "" })
+            } else
+                this.setState({ stockListData: this.props.variationStockDetails, isStockListSet: true })
         }
     }
 
     componentDidUpdate(prevProps, prevState) {
-
         if (this.props.variationAction.length > 0 && this.props.variationAction[0].ReturnVal === "1") {
             this.props.CallResetProductVariationStock()
             toast.success("Stock is update")
@@ -161,7 +175,15 @@ class StockDetail extends Component {
 
         if (this.props.variationStockDetails !== null && this.props.variationStockDetails.length > 0 && this.state.isStockListSet === false) {
             // this.DataState = this.props.variationStock.length > 0 && this.props.variationStock.filter((data) => data.ProductVariationStockID === this.props.match.params.ProductVariationDetailID)
-            this.setState({ stockListData: this.props.variationStockDetails, isStockListSet: true })
+            // this.setState({ stockListData: this.props.variationStockDetails, isStockListSet: true })
+            if (this.checkDetailID() === "0" && this.state.ProductID !== "") {
+                let listing = this.props.variationStockDetails
+                let filteredListing = []
+                filteredListing = listing.length > 0 && listing.filter((x) => parseInt(x.ProductID) === parseInt(this.state.ProductID))
+                this.setState({ stockListData: filteredListing, isStockListSet: true, ProductName: filteredListing.length > 0 ? filteredListing[0].ProductName : "" })
+
+            } else
+                this.setState({ stockListData: this.props.variationStockDetails, isStockListSet: true })
         }
     }
 
@@ -329,7 +351,15 @@ class StockDetail extends Component {
         }
     }
 
+    checkDetailID = () => {
+        let ProductVariationDetailID = this.props.match.params.ProductVariationDetailID
+        if (ProductVariationDetailID !== undefined) {
+            return ProductVariationDetailID.split("-")[0]
+        }
+    }
+
     render() {
+
         const TextFieldData = (type, variant, title, name, stateValue, error, index) => {
             return (
                 <div className="col-12 col-md-12" style={{ paddingBottom: "10px" }}>
@@ -433,58 +463,64 @@ class StockDetail extends Component {
                     </div>
 
                     <div className="w-100 container-fluid">
-                        <TableComponents
-                            tableTopRight={
-                                <div className="row" style={{ display: "flex" }}>
-                                    <Tooltip title="Add Stock">
-                                        <IconButton size="small" sx={{ color: "#0074ea", marginRight: 4 }} onClick={() => <>
-                                            {history.push("/addStock")}
-                                            {window.location.reload(false)}
-                                        </>}>
-                                            <GroupAddIcon />
-                                        </IconButton>
-                                    </Tooltip>
-                                </div>
-                            }
+                        {
+                            this.state.stockListData.length > 0 && this.state.stockListData[0].ReturnVal !== "0" ?
 
-                            tableTopLeft={
-                                parseInt(this.props.match.params.ProductVariationDetailID) === 0 ? <h4>All Product List</h4> :
-                                    this.props.variationStock !== null && this.props.variationStock.length > 0 ?
-                                        this.props.variationStock.filter((x) => parseInt(x.ProductVariationDetailID) === parseInt(this.props.match.params.ProductVariationDetailID)).map((data) => {
-                                            return (
-                                                <div className="d-flex">
-                                                    <h4 onClick={() => window.location = url.inventoryProduct(data.ProductID)}>{data.ProductName}</h4>
-                                                    <label onClick={() => window.location = url.inventoryProduct(data.ProductID)} style={{ color: "blue", paddingTop: "9px", paddingLeft: "10px", fontSize: "10px" }}>Click to view Product Info</label>
-                                                </div>
-                                            )
-                                        }) : ""
-                            }
-                            tableOptions={{
-                                dense: true,
-                                tableOrderBy: 'asc',
-                                sortingIndex: "fat",
-                                stickyTableHeader: false,
-                                stickyTableHeight: 300,
-                                elevation: 1
-                            }}
-                            paginationOptions={[10, 20, 30, { label: 'All', value: -1 }]}
-                            tableHeaders={headCells}
-                            tableRows={{
-                                renderTableRows: this.renderTableRows,
-                                checkbox: true,
-                                checkboxColor: "primary",
-                                onRowClickSelect: false
-                            }}
-                            Data={this.state.stockListData}
-                            onSelectRow={(e) => this.setState({ selectedListID: e })}
-                            onSelectAllRows={(e) => this.setState({ selectedListID: e })}
-                            onTableRowClick={this.onTableRowClick}
-                            SelectionActionButtons={<Tooltip title="Delete">
-                                <IconButton aria-label="delete" onClick={() => { this.onDelete() }}   >
-                                    <DeleteIcon />
-                                </IconButton>
-                            </Tooltip>}
-                        />
+                                <TableComponents
+                                    tableTopRight={
+                                        <div className="row" style={{ display: "flex" }}>
+                                            <Tooltip title="Add Stock">
+                                                <IconButton size="small" sx={{ color: "#0074ea", marginRight: 4 }} onClick={() => <>
+                                                    {history.push("/addStock")}
+                                                    {window.location.reload(false)}
+                                                </>}>
+                                                    <GroupAddIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </div>
+                                    }
+
+                                    tableTopLeft={
+                                        parseInt(this.checkDetailID()) === 0 ? this.state.ProductName === "" ? <h4>All Product Variation List</h4> : <h4>{this.state.ProductName} Variation List</h4> :
+                                            this.props.variationStock !== null && this.props.variationStock.length > 0 ?
+                                                this.props.variationStock.filter((x) => parseInt(x.ProductVariationDetailID) === parseInt(this.checkDetailID())).map((data) => {
+                                                    return (
+                                                        <div className="d-flex">
+                                                            <h4 onClick={() => window.location = url.inventoryProduct(data.ProductID)}>{data.ProductName}</h4>
+                                                            <label onClick={() => window.location = url.inventoryProduct(data.ProductID)} style={{ color: "blue", paddingTop: "9px", paddingLeft: "10px", fontSize: "10px" }}>Click to view Product Info</label>
+                                                        </div>
+                                                    )
+                                                }) : ""
+                                    }
+                                    tableOptions={{
+                                        dense: true,
+                                        tableOrderBy: 'asc',
+                                        sortingIndex: "fat",
+                                        stickyTableHeader: false,
+                                        stickyTableHeight: 300,
+                                        elevation: 1
+                                    }}
+                                    paginationOptions={[10, 20, 30, { label: 'All', value: -1 }]}
+                                    tableHeaders={headCells}
+                                    tableRows={{
+                                        renderTableRows: this.renderTableRows,
+                                        checkbox: true,
+                                        checkboxColor: "primary",
+                                        onRowClickSelect: false
+                                    }}
+                                    Data={this.state.stockListData}
+                                    onSelectRow={(e) => this.setState({ selectedListID: e })}
+                                    onSelectAllRows={(e) => this.setState({ selectedListID: e })}
+                                    onTableRowClick={this.onTableRowClick}
+                                    SelectionActionButtons={<Tooltip title="Delete">
+                                        <IconButton aria-label="delete" onClick={() => { this.onDelete() }}   >
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </Tooltip>}
+                                />
+                                :
+                                <label>There is no variation data for this variation ID.</label>
+                        }
                     </div>
 
                     <AlertDialog

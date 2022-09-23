@@ -1,6 +1,8 @@
 
 const project = localStorage.getItem("project")
 const projectURL = localStorage.getItem("projectURL") 
+console.log("window.location", window)
+const loginProjectURL = window.location.hostname === "localhost" ? window.location.pathname.split("/")[1] : window.location.hostname.split("/")[1]
 // const projectURL = "CMS.MCITC.my"
 export const ServerConfiguration = {
 
@@ -8,7 +10,7 @@ export const ServerConfiguration = {
 
     ServerUrl: "https://" + projectURL + "/eCommerceCMS/api/",
     // LoginUrl: "https:/" + projectURL + "/eCommerceCMS/api/",
-    LoginUrl: "https://" + projectURL + "/eCommerceCMS/api/",
+    LoginUrl: "https://" + loginProjectURL + "/eCommerceCMS/api/",
     LiveServerLoginUrl: "https:/eCommerceCMS/api/",
     LiveServerUrl: "http://localhost/TourismManagementAPI/TourismApi/api/TourismApi/",
     mediaUrl: "http://localhost/TourismManagementAPI/TourismApi/api/TourismApi/",

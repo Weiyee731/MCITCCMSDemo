@@ -24,23 +24,28 @@ import Tooltip from "@material-ui/core/Tooltip";
 import DeleteIcon from '@mui/icons-material/Delete';
 import MaterialTable from "material-table";
 import { toast } from "react-toastify";
+import { isArrayNotEmpty } from "../../tools/Helpers";
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 function mapStateToProps(state) {
   return {
     productCategories: state.counterReducer["productCategories"], // with sub hierarchy item
+    categories: state.counterReducer["categories"], // with sub hierarchy item
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    CallAllProductCategoryListing: () =>
-      dispatch(GitAction.CallAllProductCategoryListing()),
+    CallAllProductCategoryListing: (prodData) =>
+      dispatch(GitAction.CallAllProductCategoryListing(prodData)),
     CallAddProductCategory: (prod) =>
       dispatch(GitAction.CallAddProductCategory(prod)),
     CallUpdateProductCategory: (prod) =>
       dispatch(GitAction.CallUpdateProductCategory(prod)),
     CallDeleteProductCategory: (prodData) =>
       dispatch(GitAction.CallDeleteProductCategory(prodData)),
+    CallResetProductCategoryAction: () =>
+      dispatch(GitAction.CallResetProductCategoryAction()),
   };
 }
 
@@ -249,7 +254,9 @@ const DeletableTableToolbar = (props) => {
 
   const { numSelected } = props;
   const onDeleteProductCategory = () => {
-    props.ProductCategoryProps.CallDeleteProductCategory(props.selectedData);
+
+    console.log("propsprops", props)
+    // props.ProductCategoryProps.CallDeleteProductCategory(props.selectedData);
   };
 
   return (
@@ -477,6 +484,8 @@ class DisplayTable extends Component {
     this.isSelected = this.isSelected.bind(this);
   }
 
+
+
   handleRequestSort = (event, property) => {
     const isAsc = this.state.orderBy === property && this.state.order === "asc";
     this.setState({ order: isAsc ? "desc" : "asc" });
@@ -528,6 +537,8 @@ class DisplayTable extends Component {
 
   addRowData = (newrow, tableContent) => {
     const alphaNumbericRegex = /[a-zA-z0-9#@-_.]/;
+
+    console.log("addRowData", newrow)
     if (newrow.name) {
       newrow.name = newrow.name.trim();
       if (newrow.name !== "" && alphaNumbericRegex.test(newrow.name)) {
@@ -542,9 +553,10 @@ class DisplayTable extends Component {
         let returnVal = this.props.ProductCategoryProps.CallAddProductCategory(
           formData
         );
+        console.log("thissss", this.props)
         if (returnVal.type === "ADD-PRODUCTCATEGORY") {
           toast.success("Product Category Added.");
-          window.location.reload(false);
+          // window.location.reload(false);
         }
       } else
         toast.error(
@@ -559,25 +571,32 @@ class DisplayTable extends Component {
     let updateData = {
       ProductCategoryID: row.ProductCategoryID,
       ProductCategory: row.ProductCategory,
+      UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
     };
     let returnVal = this.props.ProductCategoryProps.CallUpdateProductCategory(
       updateData
     );
-    toast.success(row.ProductCategory + " is updated.");
-    window.location.reload(false);
+    if (returnVal.type === "UPDATE-PRODUCTCATEGORY") {
+      toast.success(row.ProductCategory + " is updated.");
+      // window.location.reload(false);
+    }
   };
 
   deleteRowData = (deletedRow, item) => {
+
+    console.log("CallDeleteProductCategory", deletedRow)
     let returnVal = this.props.ProductCategoryProps.CallDeleteProductCategory(
-      deletedRow.ProductCategoryID
+      {
+        ProductCategoryID: deletedRow.ProductCategoryID,
+        UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+      }
     );
 
-    toast.success("The " + deletedRow.ProductCategory + " has been removed.");
-    window.location.reload(false);
+    // toast.success("The " + deletedRow.ProductCategory + " has been removed.");
+    // window.location.reload(false);
   };
 
   bindSubCategory = (row) => {
-    console.log(row)
     let ParentProductCategoryID = row.ProductCategoryID;
     let ParentProductHierarchyID = row.HierarchyID ? row.HierarchyID : 0;
     try {
@@ -587,6 +606,8 @@ class DisplayTable extends Component {
       // toast.error( "error: " + error);
       row = [];
     }
+
+    console.log('row', row)
 
     return (
       <div style={{ padding: "2%" }}>
@@ -603,23 +624,26 @@ class DisplayTable extends Component {
             paging: false,
             search: false,
           }}
-          detailPanel={(rowData) => {
-            return this.bindSubCategory(rowData);
-          }}
+          detailPanel={[{
+            render: rowData => rowData.HierarchyID < 3 ? this.bindSubCategory(rowData) : null
+          }]}
+          
           editable={{
-            onRowAdd: (newData) =>
-              new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  var newArr = {
-                    parent: ParentProductCategoryID,
-                    name: newData.ProductCategory,
-                    hierarchy: ParentProductHierarchyID + 1,
-                  };
-                  // setData([...data, newData]);
-                  this.addRowData(newArr, [...row]);
-                  resolve();
-                }, 1000);
-              }),
+            onRowAdd: !isArrayNotEmpty(row) || (isArrayNotEmpty(row) && row[0].HierarchyID < 4) ? (newData) => new Promise((resolve, reject) => {
+              setTimeout(() => {
+                var newArr = {
+                  parent: ParentProductCategoryID,
+                  name: newData.ProductCategory,
+                  hierarchy: ParentProductHierarchyID + 1,
+                };
+                // setData([...data, newData]);
+                this.addRowData(newArr, [...row]);
+                resolve();
+              }, 1000);
+            })
+              : null
+            ,
+
             onRowUpdate: (newData, oldData) =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {
@@ -631,19 +655,28 @@ class DisplayTable extends Component {
                   resolve();
                 }, 1000);
               }),
+
             onRowDelete: (oldData) =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {
-                  const dataDelete = [...row];
-                  const index = oldData.tableData.id;
-                  dataDelete.slice(index, 1);
-                  // setData([...dataDelete]);
-                  this.deleteRowData(oldData, [...dataDelete]);
-                  resolve();
+
+                  if (oldData.HierarchyItem !== undefined) {
+                    toast.warning("Unable to delete this category.You may need to delete it sub category first")
+                    setTimeout(() => {
+                      window.location.reload(false)
+                    }, 4000);
+                  } else {
+                    const dataDelete = [...row];
+                    const index = oldData.tableData.id;
+                    dataDelete.slice(index, 1);
+                    // setData([...dataDelete]);
+                    this.deleteRowData(oldData, [...dataDelete]);
+                    resolve();
+                  }
                 }, 1000);
-              }),
+              })
           }}
-        ></MaterialTable>
+        />
       </div>
     );
   };
@@ -730,10 +763,9 @@ class DisplayTable extends Component {
                   onRowAdd: (newData) =>
                     new Promise((resolve, reject) => {
                       setTimeout(() => {
-                        // console.log(row)
                         var newArr = {
                           parent: 0,
-                          name: newData.ProductCategory, 
+                          name: newData.ProductCategory,
                           hierarchy: 1,
                         };
                         // setData([...data, newData]);
@@ -748,7 +780,7 @@ class DisplayTable extends Component {
                         // const index = oldData.tableData.id;
                         // dataUpdate[index] = newData;
                         // // setData([...dataUpdate]);
-                        // this.updateRowData(newData);
+                        this.updateRowData(newData);
                         resolve();
                       }, 1000);
                     })
@@ -796,6 +828,13 @@ class ViewProductCategoriesComponent extends Component {
       parent: [],
     };
     this.props.CallAllProductCategoryListing();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.categories !== undefined && this.props.categories.length > 0 && this.props.categories[0].ReturnVal === 1) {
+      this.props.CallResetProductCategoryAction()
+      this.props.CallAllProductCategoryListing()
+    }
   }
 
   render() {

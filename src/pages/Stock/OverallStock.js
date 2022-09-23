@@ -791,7 +791,7 @@ class Stock extends Component {
                         <div className="col-10 d-inline-flex">
                             <SearchBar
                                 id=""
-                                placeholder="Enter Product SKU, Product Name or Store to search"
+                                placeholder="Product Name or Store to search"
                                 buttonOnClick={() => this.onSearch("", "")}
                                 onChange={(e) => this.searchSpace(e.target.value)}
                                 className="searchbar-input mb-auto"
@@ -805,7 +805,7 @@ class Stock extends Component {
                     <div className="w-100 container-fluid">
                         <TableComponents
                             tableTopLeft={
-                                <h3 style={{ fontWeight: 600 }}>Stock List2333</h3>}
+                                <h3 style={{ fontWeight: 600 }}>Stock List</h3>}
                             tableTopRight={
                                 <div className="d-flex">
                                     <Tooltip title="View All Product Stocks">

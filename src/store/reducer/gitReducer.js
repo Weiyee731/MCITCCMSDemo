@@ -567,6 +567,13 @@ export function counterReducer(state = INITIAL_STATE, action) {
         categories: action.payload,
       });
 
+
+    case GitAction.ResetProductCategoryAction:
+      return Object.assign({}, state, {
+        loading: false,
+        categories: []
+      });
+
     case GitAction.GetProductCategoryListing:
       return Object.assign({}, state, { loading: true });
     case GitAction.GotProductCategoryListing:
