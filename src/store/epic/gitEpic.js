@@ -1338,11 +1338,6 @@ export class GitEpic {
 
   ProductCategory_Update = (action$) =>
     action$.ofType(GitAction.UpdateProductCategory).switchMap(async ({ payload }) => {
-
-      console.log(url + project + "/" +
-        "Product_UpdateProductCategory?PRODUCTCATEGORYID=" + payload.ProductCategoryID +
-        "&PRODUCTCATEGORY=" + payload.ProductCategory +
-        "&USERID=" + payload.UserID)
       try {
         const response = await fetch(
           url + project + "/" +
@@ -1351,9 +1346,7 @@ export class GitEpic {
           "&USERID=" + payload.UserID
         );
         let json = await response.json();
-        console.log("jsonjson1", json)
         json = JSON.parse(json);
-        console.log("jsonjson", json)
         return {
           type: GitAction.UpdatedProductCategory,
           payload: json,

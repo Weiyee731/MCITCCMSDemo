@@ -6,7 +6,7 @@ import createHistory from 'history/createBrowserHistory'
 
 // Share Component
 import SearchBar from "../../../components/SearchBar/SearchBar"
-import { url } from "../../../tools/Helpers";
+import { url, isNumber } from "../../../tools/Helpers";
 import Logo from "../../../assets/logos/logo.png";
 
 // UI Component
@@ -60,6 +60,13 @@ const tableHeadCells = [
     label: "Product Name",
   },
   {
+    id: "ProductVariationSKU",
+    align: 'left',
+    numeric: false,
+    disablePadding: false,
+    label: "Product Variation SKU",
+  },
+  {
     id: "ProductPrice",
     align: 'left',
     numeric: false,
@@ -110,7 +117,13 @@ class ViewProductComponent extends Component {
           />
         </TableCell>
         <TableCell align="left"> {data.ProductName} </TableCell>
+        <TableCell align="left"> {data.ProductVariation !== null && data.ProductVariation !== undefined && JSON.parse(data.ProductVariation).map((x) => {
+          return (
+            <><label>{x.ProductVariationSKU}</label><br /></>
+          )
+        })} </TableCell>
         <TableCell align="left">{data.ProductPrice}</TableCell>
+
       </>
     )
   }
@@ -135,6 +148,7 @@ class ViewProductComponent extends Component {
   searchSpace = (value) => {
     this.setState({ searchKeywords: value })
     this.state.filteredProduct.splice(0, this.state.filteredProduct.length)
+    let filteredListing = []
 
     let DataSet = JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? this.props.allstocks :
       JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 && this.props.allstocks !== undefined ? this.props.allstocks.filter((x) => parseInt(x.MerchantID) === parseInt(localStorage.getItem("loginUser")[0].UserID)) : []
@@ -144,9 +158,20 @@ class ViewProductComponent extends Component {
         value.toLowerCase()
       )
     ).map((filteredItem) => {
-      this.state.filteredProduct.push(filteredItem);
+      filteredListing.push(filteredItem);
     })
-    this.setState({ isFiltered: true })
+
+    DataSet.length > 0 && DataSet.map((x) => {
+      x.ProductVariation !== null && x.ProductVariation !== undefined && JSON.parse(x.ProductVariation).filter((searchedItem) =>
+        searchedItem.ProductVariationSKU !== null && searchedItem.ProductVariationSKU.toLowerCase().includes(
+          value.toLowerCase()
+        )
+      ).map((filteredItem) => {
+        filteredListing.push(x);
+      })
+    })
+    let removeDuplicate = filteredListing.length > 0 ? filteredListing.filter((ele, ind) => ind === filteredListing.findIndex(elem => elem.ProductID === ele.ProductID)) : []
+    this.setState({ isFiltered: true, filteredProduct: removeDuplicate })
   }
 
   filterMerchantListing = (e) => {
@@ -216,7 +241,7 @@ class ViewProductComponent extends Component {
           <div className="col-10">
             <SearchBar
               id=""
-              placeholder="Search By Product SKU, Product Name or Store to search"
+              placeholder="Search By Product SKU, Product Name to search"
               buttonOnClick={() => this.onSearch("", "")}
               onChange={(e) => this.searchSpace(e.target.value)}
               className="searchbar-input mb-auto"
@@ -243,7 +268,6 @@ class ViewProductComponent extends Component {
             </Box>
           </div>
         </div>
-        {console.log("WINDIW",DataList)}
 
         <TableComponents
           // table settings 
