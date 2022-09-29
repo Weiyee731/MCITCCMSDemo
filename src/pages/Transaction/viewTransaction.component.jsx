@@ -319,7 +319,7 @@ function Row(props) {
 
             <TableBody>
                 <TableRow>
-                    
+
                     <TableCell style={{ width: "10%" }}>
                         <Checkbox
                             checked={
@@ -1151,12 +1151,12 @@ function Row(props) {
                                                 }
                                             </>
                                         </div>
-                                        {row.OrderProductDetail.length > 0 && row.OrderProductDetail !== null &&  getTrackingLength(JSON.parse(row.OrderProductDetail)).length > 0 && getTrackingLength(JSON.parse(row.OrderProductDetail))
+                                        {row.OrderProductDetail.length > 0 && row.OrderProductDetail !== null && getTrackingLength(JSON.parse(row.OrderProductDetail)).length > 0 && getTrackingLength(JSON.parse(row.OrderProductDetail))
                                             .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
                                             .map((track, index) => {
                                                 return (
                                                     <div className="row" style={{ borderTop: "4px solid #fff", paddingTop: "5px", paddingBottom: "5px" }}>
-                                                        {row.OrderProductDetail.length > 0 && row.OrderProductDetail !== null  ? JSON.parse(row.OrderProductDetail)
+                                                        {row.OrderProductDetail.length > 0 && row.OrderProductDetail !== null ? JSON.parse(row.OrderProductDetail)
                                                             .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
                                                             .map((product, i) => (
                                                                 <>
@@ -1276,10 +1276,14 @@ class DisplayTable extends Component {
     };
 
     handleChangePage = (event, newPage) => {
+
+        console.log("handleChangePage", newPage)
         this.setState({ page: newPage });
     };
 
     handleChangeRowsPerPage = (event) => {
+
+        console.log("handleChangeRowsPerPage", event.target.value)
         this.setState({ rowsPerPage: parseInt(event.target.value, 10) });
         this.setState({ page: 0 });
     };
@@ -1328,6 +1332,8 @@ class DisplayTable extends Component {
         })
 
         let removeDeplicate = this.state.filteredProduct.filter((ele, ind) => ind === this.state.filteredProduct.findIndex(elem => elem.OrderID === ele.OrderID))
+        if (removeDeplicate.length < 5)
+            console.log("removeDeplicate YES")
         this.setState({ isFiltered: true, filteredProduct: removeDeplicate })
     }
 
@@ -1363,6 +1369,11 @@ class DisplayTable extends Component {
             top: 20,
             width: 1,
         };
+
+        if (Math.floor(this.props.Data.length / this.state.rowsPerPage) <= this.state.page && this.props.searchInd === true) {
+            this.setState({ page: 0 });
+            this.props.setSearchInd()
+        }
 
         return (
             <div >
@@ -1439,6 +1450,9 @@ class DisplayTable extends Component {
                                         <p className="fadedText">No Orders to Display</p>
                                     )}
                                 </TableContainer>
+                                {console.log("thissdsaa", this.props.Data.length < 5)}
+                                {console.log("thissdsaa rowsPerPage", this.state.rowsPerPage)}
+                                {console.log("thissdsaa page", this.state.page)}
                                 <TablePagination
                                     rowsPerPageOptions={[5, 10, 25]}
                                     component="div"
@@ -1504,6 +1518,7 @@ class ViewTransactionsComponent extends Component {
             searchKeywords: "",
             isFiltered: false,
             filteredProduct: [],
+            isSearch: false
         };
     }
 
@@ -1590,7 +1605,7 @@ class ViewTransactionsComponent extends Component {
         })
 
         let removeDeplicate = this.state.filteredProduct.filter((ele, ind) => ind === this.state.filteredProduct.findIndex(elem => elem.OrderID === ele.OrderID))
-        this.setState({ isFiltered: true, filteredProduct: removeDeplicate })
+        this.setState({ isFiltered: true, filteredProduct: removeDeplicate, isSearch: true })
     }
 
 
@@ -1669,6 +1684,8 @@ class ViewTransactionsComponent extends Component {
                                     this.state.filteredProduct.filter((ele, ind) => ind === this.state.filteredProduct.findIndex(elem => elem.OrderID === ele.OrderID))
                             }
                             ProductProps={this.props}
+                            searchInd={this.state.isSearch}
+                            setSearchInd={() => this.setState({ isSearch: false })}
                             history={this.props.history}
                             tabsHidden={this.state.tabsHidden}
                             setTabsHidden={this.setTabsHidden}

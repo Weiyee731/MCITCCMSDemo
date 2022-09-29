@@ -10,6 +10,7 @@ import { isStringNullOrEmpty, convertDateTimeToDDMMYY, isArrayNotEmpty, convertD
 import TableComponents from "../../components/TableComponents/TableComponents";
 import AlertDialog from "../../components/ModalComponent/ModalComponent";
 import Logo from "../../assets/logos/logo.png";
+import Scanner from "../../assets/BarcodeScanner.gif";
 import { ArrowRoundedLeft8x13Svg } from '../../assets/svg';
 import "./OverallStock.css";
 
@@ -772,17 +773,24 @@ class AddStock extends Component {
                         <div className="container" style={{ padding: "10px" }}>
                             {
                                 this.state.isDataEdit ? "" :
-                                    <SearchBar
-                                        id=""
-                                        inputRef={input => input && input.focus()}
-                                        autoFocus={true}
-                                        placeholder="Enter Product SKU"
-                                        buttonOnClick={() => this.onSearch("", "")}
-                                        onChange={(e) => this.searchSpace(e.target.value)}
-                                        className="searchbar-input mb-auto"
-                                        tooltipText="Search with current data"
-                                        value={this.state.searchKeywords}
-                                    />
+                                    <div className="row">
+                                        <div className="col-9" style={{ paddingTop: "20px" }} >
+                                            <SearchBar
+                                                id=""
+                                                inputRef={input => input && input.focus()}
+                                                autoFocus={true}
+                                                placeholder="Enter Product SKU"
+                                                buttonOnClick={() => this.onSearch("", "")}
+                                                onChange={(e) => this.searchSpace(e.target.value)}
+                                                className="searchbar-input mb-auto"
+                                                tooltipText="Search with current data"
+                                                value={this.state.searchKeywords}
+                                            />
+                                        </div>
+                                        <div className="col-3" >
+                                            <img src={Scanner} alt="loading..." height="100px" width="180px" />
+                                        </div>
+                                    </div>
                             }
                             <hr />
                             {
