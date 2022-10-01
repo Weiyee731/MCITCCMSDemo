@@ -52,11 +52,11 @@ const sidebar_items = [
                 title: "Product Endorsement",
                 icon: "assignment_turned_in",
             },
-            {
-                to: "/promotionList",
-                title: "Product Promotion",
-                icon: "assignment_turned_in",
-            },
+            // {
+            //     to: "/promotionList",
+            //     title: "Product Promotion",
+            //     icon: "assignment_turned_in",
+            // },
         ]
     },
     {
@@ -64,23 +64,23 @@ const sidebar_items = [
         title: "Transaction",
         icon: "money",
     },
-    {
-        to: "",
-        title: "User Management",
-        icon: <AssignmentIndIcon />,
-        submenus: [
-            {
-                to: "/viewMerchants",
-                title: "Merchant",
-                icon: <AssignmentIndIcon />,
-            },
-            {
-                to: "/viewUser",
-                title: "User",
-                icon: <AssignmentIndIcon />,
-            },
-        ]
-    },
+    // {
+    //     to: "",
+    //     title: "User Management",
+    //     icon: <AssignmentIndIcon />,
+    //     submenus: [
+    //         {
+    //             to: "/viewMerchants",
+    //             title: "Merchant",
+    //             icon: <AssignmentIndIcon />,
+    //         },
+    //         {
+    //             to: "/viewUser",
+    //             title: "User",
+    //             icon: <AssignmentIndIcon />,
+    //         },
+    //     ]
+    // },
     {
         to: "/viewShopProfile",
         title: "Shop Profile",
@@ -108,23 +108,23 @@ const sidebar_items = [
             },
         ]
     },
-    {
-        to: "",
-        title: "Report",
-        icon: <AssignmentIndIcon />,
-        submenus: [
-            {
-                to: "/viewPurchaseOrderList",
-                title: "Purchase Order Listing",
-                icon: <AssignmentIndIcon />,
-            },
-            {
-                to: "/viewQuotationList",
-                title: "Quotation Listing",
-                icon: <AssignmentIndIcon />,
-            },
-        ]
-    },
+    // {
+    //     to: "",
+    //     title: "Report",
+    //     icon: <AssignmentIndIcon />,
+    //     submenus: [
+    //         {
+    //             to: "/viewPurchaseOrderList",
+    //             title: "Purchase Order Listing",
+    //             icon: <AssignmentIndIcon />,
+    //         },
+    //         {
+    //             to: "/viewQuotationList",
+    //             title: "Quotation Listing",
+    //             icon: <AssignmentIndIcon />,
+    //         },
+    //     ]
+    // },
     {
         to: "https://myemporia.my",
         title: "Back to Market Place",

@@ -103,7 +103,7 @@ const Aside = ({ rtl, toggled, handleToggleSidebar, sidebarItems }) => {
                       icon={typeof item.icon !== "undefined" && item.icon !== null ? <span className={MaterialIconStyle}>{item.icon}</span> : ""}
                       suffix={typeof item.suffix !== "undefined" && item.suffix !== null ? item.suffix : null}
                       onClick={() => item.to.includes(":") ? window.location.hostname === "localhost" ?
-                        window.location.href = "http://localhost:3000/Emporia/" : window.location.href = "https://triviix.com/Emporia/"
+                        window.location.href = "http://localhost:3000/" : window.location.href = "https://myemporia.my/"
                         : ""}
                     >
                       {item.title} {!isStringNullOrEmpty(item.to) ? <Link to={item.to} /> : ""}

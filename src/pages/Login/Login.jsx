@@ -173,11 +173,18 @@ class Dashboard extends Component {
         else
             path = window.location.hostname !== "/" && window.location.hostname.split("/");
 
+            console.log("path", path)
+
 
         if (path !== undefined && path.length > 0 && path[1] !== "" && path[1] !== undefined && path[1].toUpperCase() === "CMS.MYEMPORIA.MY" && path[2] !== undefined && path[2] !== "") {
             credential = path[path.length - 1];
-            let username = decryptData(credential.split("_")[0].replace('xMl3Jk', '+' ).replace('Por21Ld', '/').replace('Ml32', '='))
-            let password = decryptData(credential.split("_")[1].replace('xMl3Jk', '+' ).replace('Por21Ld', '/').replace('Ml32', '='))
+
+            console.log("credential", credential.split("_"))
+
+            console.log(credential.split("_")[0].replace(/p1L2u3S/g, '+' ).replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '='))
+            console.log(credential.split("_")[1].replace(/p1L2u3S/g, '+' ).replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '='))
+            let username = decryptData(credential.split("_")[0].replace(/p1L2u3S/g, '+' ).replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '='))
+            let password = decryptData(credential.split("_")[1].replace(/p1L2u3S/g, '+' ).replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '='))
 
             console.log(username)
             console.log(password)
