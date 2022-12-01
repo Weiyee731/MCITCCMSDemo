@@ -1,2065 +1,2000 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-self-assign */
-import { Observable } from "rxjs";
-import { ActionsObservable } from "redux-observable";
+import 'rxjs'
+
 import { GitAction } from "../action/gitAction";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { ServerConfiguration } from "../serverConf";
-
-
-/**
- * ** IMPORTANT! Never do any file uploads or save data to the local storage here!! This Git EPIC is highly focus on call APIs to communicate to the server 
- * 
- * ** you can set your server url by switch the option as below 
- */
-//           options          //
-//   1. testing server url    //
-//   2. live server url       // 
+const { filter, map } = require('rxjs/operators');
 const url = ServerConfiguration.ServerUrl;
 const loginUrl = ServerConfiguration.LoginUrl;
 const LiveServerLoginUrl = ServerConfiguration.LiveServerLoginUrl;
 
 const project = window.localStorage.getItem("project")
-// const project = "MCITC"
-// const project = window.location.pathname.split(".")[1]
 
 export class GitEpic {
   ///////////////////////////////////////////////////  user account credentials ///////////////////////////////////////////////////
 
-
   User_Login = action$ =>
-    action$.ofType(GitAction.Login).switchMap(async ({ payload }) => {
-      console.log(loginUrl + payload.ProjectDomainName + "/" +
-        "User_Login?username=" +
-        payload.username +
-        "&password=" +
-        payload.password +
-        "&ProjectDomainName=" +
-        payload.ProjectDomainName)
-      try {
-        const response = await fetch(
-          loginUrl + payload.ProjectDomainName + "/" +
-          "User_Login?username=" +
-          payload.username +
-          "&password=" +
-          payload.password +
-          "&ProjectDomainName=" +
-          payload.ProjectDomainName
-        );
-
-        let json = await response.json();
-        json = JSON.parse(json)
-        return {
-          type: GitAction.LoginSuccess,
-          payload: json,
-        };
+    action$.pipe(filter(action => action.type === GitAction.Login), map(action => {
+      return dispatch => {
+        try {
+          return fetch(loginUrl + action.payload.ProjectDomainName + "/" +
+            "User_Login?username=" +
+            action.payload.username +
+            "&password=" +
+            action.payload.password +
+            "&ProjectDomainName=" +
+            action.payload.ProjectDomainName)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.LoginSuccess, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.LoginSuccess, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: User_Login. Please check on URL")
+          return dispatch({ type: GitAction.LoginSuccess, payload: [] });
+        }
       }
-      catch (error) {
-        toast.error("Error Code: User_Login. Please check on URL")
-        return {
-          type: GitAction.LoginSuccess,
-          payload: [],
-        };
-      }
-    });
-
-
+    }));
 
   User_LoginServer = action$ =>
-    action$.ofType(GitAction.LoginServer).switchMap(async ({ payload }) => {
-      console.log(LiveServerLoginUrl + payload.ProjectDomainName + "/" +
-        "User_Login?username=" +
-        payload.username +
-        "&password=" +
-        payload.password +
-        "&ProjectDomainName=" +
-        payload.ProjectDomainName)
-      try {
-        const response = await fetch(
-          LiveServerLoginUrl + payload.ProjectDomainName + "/" +
-          "User_Login?username=" +
-          payload.username +
-          "&password=" +
-          payload.password +
-          "&ProjectDomainName=" +
-          payload.ProjectDomainName
-        );
-
-        let json = await response.json();
-        json = JSON.parse(json)
-        return {
-          type: GitAction.LoginServerSuccess,
-          payload: json,
-        };
+    action$.pipe(filter(action => action.type === GitAction.LoginServer), map(action => {
+      return dispatch => {
+        try {
+          return fetch(LiveServerLoginUrl + action.payload.ProjectDomainName + "/" +
+            "User_Login?username=" +
+            action.payload.username +
+            "&password=" +
+            action.payload.password +
+            "&ProjectDomainName=" +
+            action.payload.ProjectDomainName)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.LoginServerSuccess, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.LoginServerSuccess, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: User_LoginServer. Please check on URL")
+          return dispatch({ type: GitAction.LoginServerSuccess, payload: [] });
+        }
       }
-      catch (error) {
-        toast.error("Error Code: User_Login. Please check on URL")
-        return {
-          type: GitAction.LoginServerSuccess,
-          payload: [],
-        };
-      }
-    });
-
+    }));
 
   User_Logout = action$ =>
-    action$.ofType(GitAction.Logout).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "User_Logout?UserId=" + payload.UserId
-        );
-
-        let json = await response.json();
-        json = JSON.parse(json)
-        return {
-          type: GitAction.LoggedOutSuccess,
-          payload: json,
-        };
+    action$.pipe(filter(action => action.type === GitAction.Logout), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "User_Logout?UserId=" + action.payload.UserId)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.LoggedOutSuccess, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.LoggedOutSuccess, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: User_Logout. Please check on URL")
+          return dispatch({ type: GitAction.LoggedOutSuccess, payload: [] });
+        }
       }
-      catch (error) {
-        toast.error("Error Code: User_Logout")
-        return {
-          type: GitAction.LoggedOutSuccess,
-          payload: [],
-        };
-      }
-    });
+    }));
 
   User_Register = action$ =>
-    action$.ofType(GitAction.RegisterUser).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "User_Register?" +
-          "userFirstName=" + payload.userFirstName +
-          "&userLastName=" + payload.userLastName +
-          "&username=" + payload.username +
-          "&userEmail=" + payload.userEmail +
-          "&password=" + payload.password
-        );
-
-        let json = await response.json();
-        json = JSON.parse(json)
-        return {
-          type: GitAction.UserRegistered,
-          payload: json,
-        };
-      }
-      catch (error) {
-        toast.error("Error Code: RegisterUser")
-        return {
-          type: GitAction.UserRegistered,
-          payload: [],
-        };
-      }
-    });
-
-  User_ViewProfile = (action$) =>
-    action$.ofType(GitAction.GetUserProfile).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "User_ProfileListByType?TYPE=" + payload.TYPE +
-          "&TYPEVALUE=" + payload.TYPEVALUE +
-          "&USERID=" + payload.USERID +
-          "&UserRoleID=" + payload.USERROLEID +
-          "&LISTPERPAGE=" + payload.LISTPERPAGE +
-          "&PAGE=" + payload.PAGE +
-          "&ProjectID=" + payload.ProjectID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.GotUserProfile,
-          payload: json,
-        };
-      } catch (error) {
-        alert('getUserProfile: ' + error);
-        return {
-          type: GitAction.GotUserProfile,
-          payload: [],
-        };
-      }
-    });
-
-  User_UpdateProfileStatus = (action$) =>
-    action$.ofType(GitAction.UpdateUserStatus).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "User_UpdateProfileStatus?USERID=" + payload.USERID +
-          "&USERSTATUS=" + payload.USERSTATUS
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        if (json.map((val) => val.ReturnVal === 1)) {
-          toast.success("Updated Successful");
-        }
-        return {
-          type: GitAction.UpdatedUserStatus,
-          payload: json,
-        };
-      } catch (error) {
-        alert('UpdateUserProfileStatus: ' + error);
-        return {
-          type: GitAction.UpdatedUserStatus,
-          payload: [],
-        };
-      }
-    });
-
-  Shop_UpdateDetails = (action$) =>
-    action$.ofType(GitAction.UpdateShopDetail).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "User_UpdateShopDetail?USERID=" + payload.USERID +
-          "&SHOPNAME=" + payload.SHOPNAME +
-          "&SHOPDESC=" + payload.SHOPDESC +
-          "&SHOPPOSCODE=" + payload.SHOPPOSCODE +
-          "&SHOPCITY=" + payload.SHOPCITY +
-          "&SHOPSTATE=" + payload.SHOPSTATE +
-          "&SHOPCOUNTRYID=" + payload.SHOPCOUNTRYID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        if (json.map((val) => val.ReturnVal === 1)) {
-          toast.success("Upload Successful");
-        }
-        return {
-          type: GitAction.UpdatedShopDetail,
-          payload: json,
-        };
-      } catch (error) {
-        alert('UpdatedShopDetail: ' + error);
-        return {
-          type: GitAction.UpdatedShopDetail,
-          payload: [],
-        };
-      }
-    });
-
-  Shop_UpdateProfileImage = (action$) =>
-    action$.ofType(GitAction.UpdateProfileImage).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "User_UserUpdatePhoto?USERID=" +
-          payload.USERID +
-          "&TYPE=" +
-          payload.TYPE +
-          "&USERPROFILEIMAGE=" +
-          payload.USERPROFILEIMAGE
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-
-        if (json.map((val) => val.ReturnVal === 1)) {
-          toast.success("Upload Successful");
-        }
-        return {
-          type: GitAction.UpdatedProfileImage,
-          payload: json,
-        };
-      } catch (error) {
-        alert('updateProfileImage: ' + error);
-        return {
-          type: GitAction.UpdatedProfileImage,
-          payload: [],
-        };
-      }
-    });
-
-  ///////////////////////////////////////////////////  Order  ///////////////////////////////////////////////////
-  Order_Add = (action$) =>
-    action$.ofType(GitAction.AddOrder).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Order_AddOrder?USERID=" + payload.UserID +
-          "&USERADDRESSID=" + payload.UserAddressID +
-          "&PROMOTIONID=0&PROMOTIONCODEID=0&PAYMENTMETHODID=" + payload.PaymentMethodID +
-          "&USERPAYMENTMETHODID=" + payload.UserPaymentMethodID +
-          "&ORDERTOTALAMOUNT=" + payload.OrderTotalAmount +
-          "&ORDERPAIDAMOUNT=" + payload.OrderPaidAmount +
-          "&PRODUCTID=" + payload.ProductID +
-          "&PRODUCTQUANTITY=" + payload.ProductQuantity +
-          "&PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailID +
-          "&TRACKINGSTATUSID=" + payload.TrackingStatusID +
-          "&PickUpInd=" + payload.PickUpInd +
-          "&ProjectID=" + payload.ProjectID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        if (json[0].ReturnVal === 1) {
-          toast.success("Order is successfully created ORDERID : " + json[0].OrderID);
-        }
+    action$.pipe(filter(action => action.type === GitAction.RegisterUser), map(action => {
+      return dispatch => {
         try {
-          const response_1 = await fetch(
-            url +
-            "Product_DeleteProductCart?USERCARTID=" +
-            payload.UserCartID
-          );
-          let json_1 = await response_1.json();
-          json_1 = json_1
-          return {
-            type: GitAction.AddedOrder,
-            payload: json,
-          };
+          return fetch(url + project + "/" +
+            "User_Register?" +
+            "userFirstName=" + action.payload.userFirstName +
+            "&userLastName=" + action.payload.userLastName +
+            "&username=" + action.payload.username +
+            "&userEmail=" + action.payload.userEmail +
+            "&password=" + action.payload.password)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.UserRegistered, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.UserRegistered, payload: [] });
+              }
+            });
         } catch (error) {
-          alert('deleteProductCart: ' + error);
-          return {
-            type: GitAction.AddedOrder,
-            payload: [],
-          };
+          toast.error("Error Code: User_Register. Please check on URL")
+          return dispatch({ type: GitAction.UserRegistered, payload: [] });
         }
       }
-      catch (error) {
-        alert('AddOrder: ' + error);
-        return {
-          type: GitAction.AddedOrder,
-          payload: [],
-        };
+    }));
+
+  User_ViewProfile = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetUserProfile), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "User_ProfileListByType?TYPE=" + action.payload.TYPE +
+            "&TYPEVALUE=" + action.payload.TYPEVALUE +
+            "&USERID=" + action.payload.USERID +
+            "&UserRoleID=" + action.payload.USERROLEID +
+            "&LISTPERPAGE=" + action.payload.LISTPERPAGE +
+            "&PAGE=" + action.payload.PAGE +
+            "&ProjectID=" + action.payload.ProjectID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotUserProfile, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotUserProfile, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: User_ViewProfile. Please check on URL")
+          return dispatch({ type: GitAction.GotUserProfile, payload: [] });
+        }
       }
-    });
+    }));
 
-  ///////////////////////////////////////////////////  Order  ///////////////////////////////////////////////////
-
-  Order_ViewAll = (action$) =>
-    action$.ofType(GitAction.GetTransactions).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Order_ViewOrder?TRACKINGSTATUS=" + payload.TrackingStatus +
-          "&ProjectID=" + payload.ProjectID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.GotTransactions,
-          payload: json,
-        };
-      } catch (error) {
-        alert('getAllTransactions: ' + error);
-        return {
-          type: GitAction.GotTransactions,
-          payload: []
-        };
+  User_UpdateProfileStatus = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.UpdateUserStatus), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "User_UpdateProfileStatus?USERID=" + action.payload.USERID +
+            "&USERSTATUS=" + action.payload.USERSTATUS)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.UpdatedUserStatus, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.UpdatedUserStatus, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: User_UpdateProfileStatus. Please check on URL")
+          return dispatch({ type: GitAction.UpdatedUserStatus, payload: [] });
+        }
       }
-    });
+    }));
 
-  Order_UpdateUserDetails = (action$) =>
-    action$.ofType(GitAction.OrderUserDetailsUpdate).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Order_UpdateOrderUserDetails?OrderID=" + payload.OrderID +
-          "&FirstName=" + payload.FirstName +
-          "&LastName=" + payload.LastName +
-          "&UserContactNo=" + payload.UserContactNo +
-          "&PickUpInd=" + payload.PickUpInd +
-          "&UserEmailAddress=" + payload.UserEmailAddress +
-          "&UserAddressLine1=" + payload.UserAddressLine1 +
-          "&UserAddressLine2=" + payload.UserAddressLine2 +
-          "&UserPoscode=" + payload.UserPoscode +
-          "&UserState=" + payload.UserState +
-          "&UserCity=" + payload.UserCity +
-          "&CountryID=" + payload.CountryID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
+  ///////////////////////////////////////////////////  Shop  ///////////////////////////////////////////////////
 
-        return {
-          type: GitAction.OrderUserDetailsUpdated,
-          payload: json,
-        };
+  Shop_UpdateDetails = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.UpdateShopDetail), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "User_UpdateShopDetail?USERID=" + action.payload.USERID +
+            "&SHOPNAME=" + action.payload.SHOPNAME +
+            "&SHOPDESC=" + action.payload.SHOPDESC +
+            "&SHOPPOSCODE=" + action.payload.SHOPPOSCODE +
+            "&SHOPCITY=" + action.payload.SHOPCITY +
+            "&SHOPSTATE=" + action.payload.SHOPSTATE +
+            "&SHOPCOUNTRYID=" + action.payload.SHOPCOUNTRYID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.UpdatedUserStatus, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.UpdatedUserStatus, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Shop_UpdateDetails. Please check on URL")
+          return dispatch({ type: GitAction.UpdatedUserStatus, payload: [] });
+        }
       }
-      catch (error) {
-        alert('OrderUserDetailsUpdate: ' + error);
-        return {
-          type: GitAction.OrderUserDetailsUpdated,
-          payload: [],
-        };
-      }
-    });
+    }));
 
-  Transaction_ViewStatus = (action$) =>
-    action$.ofType(GitAction.GetTransactionStatus).switchMap(async () => {
-      console.log(url + project + "/" +
-        "Order_ViewOrderStatus")
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Order_ViewOrderStatus"
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.GotTransactionStatus,
-          payload: json,
-        };
-      } catch (error) {
-        alert('getAllTransactionStatus: ' + error);
-        return {
-          type: GitAction.GotTransactionStatus,
-          payload: []
-        };
+  Shop_UpdateProfileImage = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.UpdateProfileImage), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "User_UpdateShopDetail?USERID=" + action.payload.USERID +
+            "&SHOPNAME=" + action.payload.SHOPNAME +
+            "&SHOPDESC=" + action.payload.SHOPDESC +
+            "&SHOPPOSCODE=" + action.payload.SHOPPOSCODE +
+            "&SHOPCITY=" + action.payload.SHOPCITY +
+            "&SHOPSTATE=" + action.payload.SHOPSTATE +
+            "&SHOPCOUNTRYID=" + action.payload.SHOPCOUNTRYID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.UpdatedProfileImage, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.UpdatedProfileImage, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: User_UpdateProfileStatus. Please check on URL")
+          return dispatch({ type: GitAction.UpdatedProfileImage, payload: [] });
+        }
       }
-    });
-
-  Order_UpdateTrackingNumber = (action$) =>
-    action$.ofType(GitAction.updateTrackingNumber).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Order_UpdateTrackingNumber?ORDERTRACKINGNUMBER=" + payload.ORDERTRACKINGNUMBER +
-          "&LOGISTICID=" + payload.LOGISTICID +
-          "&ORDERPRODUCTDETAILSID=" + payload.ORDERPRODUCTDETAILSID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        if (json[0].ReturnVal === 1)
-          toast.success("Logistic Data is successfully Updated")
-        return {
-          type: GitAction.updatedTrackingNumber,
-          payload: json,
-        };
-      } catch (error) {
-        alert('getDeliverableList: ' + error);
-        return {
-          type: GitAction.updatedTrackingNumber,
-          payload: [],
-        };
-      }
-    });
-
+    }));
 
   ///////////////////////////////////////////////////  Address  ///////////////////////////////////////////////////
 
-  Address_ViewAll = (action$) =>
-    action$.ofType(GitAction.GetAllAddress).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "User_ViewAllAddressBook?ProjectID=" + payload.ProjectID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.GotAllAddress,
-          payload: json,
-        };
-      } catch (error) {
-        alert('Err code GotAllAddress: ' + error);
-        return {
-          type: GitAction.GotAllAddress,
-          payload: [],
-        };
-      }
-    });
-
-
-  ///////////////////////////////////////////////////  Merchant  ///////////////////////////////////////////////////
-
-  Merchants_ViewProfile = (action$) =>
-    action$.ofType(GitAction.GetMerchants).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "User_ProfileListByType?TYPE=" + payload.type +
-          "&TYPEVALUE=" + payload.typeValue +
-          "&USERID=" + payload.USERID +
-          "&UserRoleID=" + payload.userRoleID +
-          "&LISTPERPAGE=" + payload.productPage +
-          "&PAGE=" + payload.page +
-          "&ProjectID=" + payload.ProjectID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        if (json !== "fail") {
-        } else {
-          json = [];
+  Address_ViewAll = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetAllAddress), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "User_ViewAllAddressBook?ProjectID=" + action.payload.ProjectID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotAllAddress, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotAllAddress, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: User_UpdateProfileStatus. Please check on URL")
+          return dispatch({ type: GitAction.GotAllAddress, payload: [] });
         }
-        return {
-          type: GitAction.GotMerchants,
-          payload: json,
-        };
-      } catch (error) {
-        alert('getAllMerchants: ' + error);
-        return {
-          type: GitAction.GotMerchants,
-          payload: [],
-        };
       }
-    });
+    }));
 
-  Merchants_ViewAllOrder = (action$) =>
-    action$.ofType(GitAction.GetMerchantOrders).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Order_ViewOrderByUserID?TRACKINGSTATUS=" +
-          payload.trackingStatus +
-          "&USERID=" +
-          payload.UserID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.GotMerchantOrders,
-          payload: json,
-        };
-      } catch (error) {
-        alert('getAllMerchantOrders: ' + error);
-        return {
-          type: GitAction.GotMerchantOrders,
-          payload: [],
-        };
-      }
-    });
+  ///////////////////////////////////////////////////  Order  ///////////////////////////////////////////////////
 
-  ///////////////////////////////////////////////////  Products  ///////////////////////////////////////////////////
-
-  Product_Add = (action$) =>
-    action$.ofType(GitAction.AddProduct).switchMap(async ({ payload }) => {
-      console.log("window.localStorage.getItem()", window.localStorage.getItem("project"))
-      console.log("localStorage.getItem()", localStorage.getItem("project"))
-      console.log(url + project + "/Product_AddProductByPost")
-      return fetch(
-        url + project + "/Product_AddProductByPost"
-        , {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            PRODUCTNAME: payload.name,
-            PROJECTID: payload.ProjectID,
-            MERCHANTID: payload.productSupplier,
-            PRODUCTDESC: payload.description,
-            PRODUCTCATEGORYID: payload.productCategory,
-            PRODUCTHEIGHT: payload.height,
-            PRODUCTWIDTH: payload.width,
-            PRODUCTDEPTH: payload.depth,
-            PRODUCTWEIGHT: payload.weight,
-            PRODUCTSKU: payload.sku,
-            PRODUCTBRAND: payload.brand,
-
-            PRODUCTMODEL: payload.model,
-            PRODUCTTAG: payload.tags,
-            USERID: payload.UserID
-          })
-        }
-      )
-        .then(response => response.json())
-        .then(json => {
-          json = json;
-          return {
-            type: GitAction.AddedProduct,
-            payload: json,
-          };
-        })
-        .catch(error => alert('addProduct: ' + error));
-    });
-
-
-  Product_Update = (action$) =>
-    action$.ofType(GitAction.UpdateProduct).switchMap(async ({ payload }) => {
-
-      return fetch(
-        url + project + "/Product_UpdateProductByPost"
-        , {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            PRODUCTID: payload.ProductID,
-            PRODUCTNAME: payload.name,
-            PROJECTID: payload.ProjectID,
-            MERCHANTID: payload.productSupplier,
-            PRODUCTDESC: payload.description,
-            PRODUCTCATEGORYID: payload.productCategory,
-            PRODUCTHEIGHT: payload.height,
-            PRODUCTWIDTH: payload.width,
-            PRODUCTDEPTH: payload.depth,
-            PRODUCTWEIGHT: payload.weight,
-            PRODUCTSKU: payload.sku,
-            PRODUCTBRAND: payload.brand,
-
-            PRODUCTMODEL: payload.model,
-            PRODUCTTAG: payload.tags,
-            USERID: payload.UserID
-          })
-        }
-      )
-        .then(response => response.json())
-        .then(json => {
-          json = json;
-          // if (json !== "fail") {
-          //   json = json;
-          //   // toast.success("Successfully update stock. Fetching the latest data..", { autoClose: 3000 })
-          // } else {
-          //   json = [];
-          // }
-          return {
-            type: GitAction.UpdatedProduct,
-            payload: json,
-          };
-        })
-        .catch(error => alert('UpdateProduct: ' + error));
-    });
-
-  Product_Delete = (action$) =>
-    action$.ofType(GitAction.DeleteProduct).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_DeleteProducts?ProductIDs=" + payload.ProductID +
-          "&USERID=" + payload.UserID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.DeletedProduct,
-          payload: json,
-        };
-      } catch (error) {
-        alert('deleteProduct: ' + error);
-        return {
-          type: GitAction.DeletedProduct,
-          payload: [],
-        };
-      }
-    });
-
-  Product_ViewAll = (action$) =>
-    action$.ofType(GitAction.GetProduct).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_ItemListByType?Type=" + payload.type +
-          "&TypeValue=" + payload.typeValue +
-          "&USERID=" + payload.userId +
-          "&PRODUCTPERPAGE=" + payload.productPage +
-          "&PAGE=" + payload.page +
-          "&ProjectID=" + payload.ProjectID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.GotProduct,
-          payload: json,
-        };
-      } catch (error) {
-        alert('getAllProducts: ' + error);
-        return {
-          type: GitAction.GotProduct,
-          payload: [],
-        };
-      }
-    });
-
-  Product_ViewListing = (action$) =>
-    action$.ofType(GitAction.GetProductListing).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_ItemListByType?Type=" + payload.type +
-          "&TypeValue=" + payload.typeValue +
-          "&USERID=" + payload.userId +
-          "&PRODUCTPERPAGE=" + payload.productPage +
-          "&PAGE=" + payload.page +
-          "&ProjectID=" + payload.ProjectID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.GotProductListing,
-          payload: json,
-        };
-      } catch (error) {
-        alert('getProductsListing: ' + error);
-        return {
-          type: GitAction.GotProductListing,
-          payload: [],
-        };
-      }
-    });
-
-  Product_ViewDetail = (action$) =>
-    action$.ofType(GitAction.GetProductDetail).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_ItemDetailByProductID?ProductID=" + payload.productId +
-          "&USERID=" + payload.userId +
-          "&ProjectID=" + payload.ProjectID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.GotProductDetail,
-          payload: json,
-        };
-      } catch (error) {
-        alert('getProductDetail: ' + error);
-        return {
-          type: GitAction.GotProductDetail,
-          payload: [],
-        };
-      }
-    });
-
-  Product_Endorse = (action$) =>
-    action$.ofType(GitAction.EndorseProduct).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_EndorseProducts?ProductIDs=" + payload.ProductID +
-          "&USERID=" + payload.UserID);
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.ProductEndorsed,
-          payload: json,
-        };
-      } catch (error) {
-        alert('endorseProduct: ' + error);
-        return {
-          type: GitAction.ProductEndorsed,
-          payload: [],
-        };
-      }
-    });
-
-  Product_CheckDuplicateName = (action$) =>
-    action$.ofType(GitAction.CheckProduct).switchMap(async ({ payload }) => {
-      try {
-        const resposne = await fetch(
-          url + project + "/" +
-          "Product_CheckDuplication?PRODUCTNAME=" + payload.ProductName +
-          "&ProjectID=" + payload.ProjectID
-        );
-        let json = await resposne.json();
-        if (json !== "fail") {
-          json = JSON.parse(json);
-        } else {
-          json = [];
-        }
-        return {
-          type: GitAction.ProductChecked,
-          payload: json,
-        };
-      } catch (error) {
-        alert('checkProduct: ' + error);
-        return {
-          type: GitAction.ProductChecked,
-          payload: [],
-        };
-      }
-    });
-
-
-  Product_CheckDuplicateSKU = (action$) =>
-    action$.ofType(GitAction.CheckProductSKU).switchMap(async ({ payload }) => {
-      try {
-        const resposne = await fetch(
-          url + project + "/" +
-          "Product_CheckDuplicationBySKU?PRODUCTSKU=" + payload.ProductSKU +
-          "&USERID=" + payload.UserID +
-          "&PROJECTID=" + payload.ProjectID
-        );
-        let json = await resposne.json();
-        if (json !== "fail") {
-          json = JSON.parse(json);
-        } else {
-          json = [];
-        }
-        return {
-          type: GitAction.ProductCheckedSKU,
-          payload: json,
-        };
-      } catch (error) {
-        alert('checkProductSKU: ' + error);
-        return {
-          type: GitAction.ProductCheckedSKU,
-          payload: [],
-        };
-      }
-    });
-
-
-  ///////////////////////////////////////////////////  Product Variation  ///////////////////////////////////////////////////
-  ProductVariation_Add = (action$) =>
-    action$.ofType(GitAction.AddProductVariation).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_AddProductVariation?PRODUCTVARIATION=" + payload.ProductVariation +
-          "&PRODUCTCATEGORYID=" + payload.ProductCategoryID +
-          "&CUSTOMIZABLE=" + payload.CustomizableIndicator +
-          "&USERID=" + payload.UserID
-        );
-        let json = await response.json();
-        if (json !== "fail") {
-          json = JSON.parse(json);
-        } else {
-          json = [];
-        }
-        return {
-          type: GitAction.AddedProductVariation,
-          payload: json,
-        };
-      } catch (error) {
-        alert('addProductVariation: ' + error);
-        return {
-          type: GitAction.AddedProductVariation,
-          payload: [],
-        };
-      }
-    });
-
-  ProductVariation_Update = (action$) =>
-    action$.ofType(GitAction.UpdateProductVariation).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_UpdateProductVariation?PRODUCTVARIATIONID=" + payload.ProductVariationID +
-          "&PRODUCTVARIATION=" + payload.ProductVariation +
-          "&PRODUCTCATEGORYID=" + payload.ProductCategoryID +
-          "&CUSTOMIZABLE=" + payload.Customizable +
-          "&USERID=" + payload.UserID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.UpdatedProductVariation,
-          payload: json,
-        };
-      } catch (error) {
-        alert('updateProductVariation: ' + error);
-        return {
-          type: GitAction.UpdatedProductVariation,
-          payload: [],
-        };
-      }
-    });
-
-  ProductVariation_Delete = (action$) =>
-    action$.ofType(GitAction.DeleteProductVariation).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_DeleteProductVariation?PRODUCTVARIATIONID=" + payload.ProductVariationID +
-          "&USERID=" + payload.UserID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        if (json !== "fail") {
-        } else {
-          json = [];
-        }
-        return {
-          type: GitAction.DeletedProductVariation,
-          payload: json,
-        };
-      } catch (error) {
-        alert('deleteProductVariation: ' + error);
-        return {
-          type: GitAction.DeletedProductVariation,
-          payload: [],
-        };
-      }
-    });
-
-  ///////////////////////////////////////////////////  Product Variation Details  ///////////////////////////////////////////////////
-
-  ProductVariationDetail_Add = (action$) =>
-    action$.ofType(GitAction.AddProductVariationDetail).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_AddProductVariationDetail?PRODUCTVARIATIONID=" + payload.ProductVariation +
-          "&PRODUCTID=" + payload.ProductID +
-          "&CUSTOMIZABLE=" + payload.Customizable +
-          "&VALUE=" + payload.Value +
-          "&PRODUCTSTOCK=" + payload.stock +
-          "&PRODUCTVARIATIONSKU=" + payload.sku +
-          "&PRODUCTVARIATIONPRICE=" + payload.price +
-          "&USERID=" + payload.UserID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-
-        return {
-          type: GitAction.AddedProductVariationDetail,
-          payload: json,
-        };
-      } catch (error) {
-        alert('addProductVariationDetail: ' + error);
-        return {
-          type: GitAction.AddedProductVariationDetail,
-          payload: [],
-        };
-      }
-    });
-
-  ProductVariationDetail_Update = (action$) =>
-    action$.ofType(GitAction.UpdateProductVariationDetail).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_UpdateProductVariationDetails?PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailID +
-          "&CUSTOMIZABLE=" + payload.Customizable +
-          "&VALUE=" + payload.Value +
-          "&PRODUCTSTOCK=" + payload.stock +
-          "&PRODUCTVARIATIONSKU=" + payload.sku +
-          "&PRODUCTVARIATIONPRICE=" + payload.price +
-          "&USERID=" + payload.UserID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-
-        return {
-          type: GitAction.UpdatedProductVariationDetail,
-          payload: json,
-        };
-      } catch (error) {
-        alert('UpdateProductVariationDetail: ' + error);
-        return {
-          type: GitAction.UpdatedProductVariationDetail,
-          payload: [],
-        };
-      }
-    });
-
-  ProductVariationDetail_Delete = (action$) =>
-    action$.ofType(GitAction.DeleteProductVariationDetail).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_DeleteProductVariationDetails?PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailID +
-          "&USERID=" + payload.UserID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.DeletedProductVariationDetail,
-          payload: json,
-        };
-      } catch (error) {
-        alert('deleteProductVariationDetail: ' + error);
-        return {
-          type: GitAction.DeletedProductVariationDetail,
-          payload: [],
-        };
-      }
-    });
-
-  ProductVariationDetail_ViewAllByCategoryID = (action$) =>
-    action$.ofType(GitAction.GetProductVariationByCategoryID).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_ViewProductVariationByCategoryID?PRODUCTCATEGORYID=" + payload
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.GotProductVariationByCategoryID,
-          payload: json,
-        };
-      } catch (error) {
-        alert('getAllProductVariationByCategoryID: ' + error);
-        return {
-          type: GitAction.GotProductVariationByCategoryID,
-          payload: [],
-        };
-      }
-    });
-
-
-  ///////////////////////////////////////////////////  Product Stock  ///////////////////////////////////////////////////
-
-  ProductVariationStock_Add = (action$) =>
-    action$.ofType(GitAction.AddProductVariationStock).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_AddProductVariationStock?COINTAINERID=" + payload.ContainerID +
-          "&USERID=" + payload.UserID +
-          "&PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailsID +
-          "&PRODUCTSTOCK=" + payload.ProductStock +
-          "&PRODUCTVARIATIONCOST=" + payload.ProductVariationCost +
-          "&GRIDSTORAGEID=" + payload.GridStorageID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        if (json[0].ReturnVal === 1)
-          toast.success("Variation stock added successfully")
-
-        return {
-          type: GitAction.AddedProductVariationStock,
-          payload: json,
-        };
-      } catch (error) {
-        alert('AddProductVariationStock: ' + error);
-        return {
-          type: GitAction.AddedProductVariationStock,
-          payload: [],
-        };
-      }
-    });
-
-  ProductVariationStock_View = (action$) =>
-    action$.ofType(GitAction.ViewProductVariationStock).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_ItemListWithVariation?PROJECTID=" + payload.ProjectID +
-          "&PRODUCTPERPAGE=" + payload.ProductPerPage +
-          "&PAGE=" + payload.Page
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.ViewedProductVariationStock,
-          payload: json,
-        };
-      } catch (error) {
-        alert('ViewProductVariationStock: ' + error);
-        return {
-          type: GitAction.ViewedProductVariationStock,
-          payload: [],
-        };
-      }
-    });
-
-  ProductVariationStock_ViewAll = (action$) =>
-    action$.ofType(GitAction.ViewProductVariationStockWithID).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_ItemListWithProductVariationStock?PROJECTID=" + payload.ProjectID +
-          "&PRODUCTID=" + payload.ProductID +
-          "&PRODUCTPERPAGE=" + payload.ProductPerPage +
-          "&PAGE=" + payload.Page
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.ViewedProductVariationStockWithID,
-          payload: json,
-        };
-      } catch (error) {
-        alert('ViewProductVariationStockWithID: ' + error);
-        return {
-          type: GitAction.ViewedProductVariationStockWithID,
-          payload: [],
-        };
-      }
-    });
-
-  // List All added Variation Stock
-  ProductVariationStock_ViewWithVariationDetailsID = (action$) =>
-    action$.ofType(GitAction.ViewProductVariationStockWithVariationDetailsID).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_ItemListWithProductVariationStockDetailList?PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailID
-          + "&PROJECTID=" + payload.ProjectID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.ViewedProductVariationStockWithVariationDetailsID,
-          payload: json,
-        };
-      } catch (error) {
-        alert('ViewProductVariationStockWithVariationDetailsID: ' + error);
-        return {
-          type: GitAction.ViewedProductVariationStockWithVariationDetailsID,
-          payload: [],
-        };
-      }
-    });
-
-  ProductVariationStock_UpdateDetails = (action$) =>
-    action$.ofType(GitAction.UpdateProductVariationStockDetails).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_UpdateProductVariationStock?PRODUCTVARIATIONSTOCKID=" + payload.ProductVariationStockID +
-          "&USERID=" + payload.UserID +
-          "&APPROVEDBY=" + payload.ApprovedBy +
-          "&PRODUCTSTOCK=" + payload.ProductStock +
-          "&PRODUCTVARIATIONCOST=" + payload.ProductVariationCost +
-          "&GRIDSTORAGEID=" + payload.GridStorage
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.UpdatedProductVariationStockDetails,
-          payload: json,
-        };
-      } catch (error) {
-        alert('UpdateProductVariationStockDetails: ' + error);
-        return {
-          type: GitAction.UpdatedProductVariationStockDetails,
-          payload: [],
-        };
-      }
-    });
-
-  ProductVariationStock_Delete = (action$) =>
-    action$.ofType(GitAction.DeleteProductVariationStock).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_DeleteProductVariationStock?PRODUCTVARIATIONSTOCKID=" + payload.ProductVariationStockID +
-          "&USERID=" + payload.UserID +
-          "&APPROVEDBY=" + payload.ApprovedBy
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.DeletedProductVariationStock,
-          payload: json,
-        };
-      } catch (error) {
-        alert('DeletedProductVariationStock: ' + error);
-        return {
-          type: GitAction.DeletedProductVariationStock,
-          payload: [],
-        };
-      }
-    });
-
-
-  ///////////////////////////////////////////////////  Product Specification Details  ///////////////////////////////////////////////////
-
-  ProductSpecsDetail_Add = (action$) =>
-    action$.ofType(GitAction.AddProductSpecsDetail).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_AddProductSpecificationDetail?PRODUCTVARIATIONID=" + payload.ProductVariation +
-          "&PRODUCTID=" + payload.ProductID +
-          "&PRODUCTSPECIFICATIONVALUE=" + payload.value +
-          "&USERID=" + payload.UserID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.AddedProductSpecsDetail,
-          payload: json,
-        };
-      } catch (error) {
-        alert('addProductSpecsDetail: ' + error);
-        return {
-          type: GitAction.AddedProductSpecsDetail,
-          payload: [],
-        };
-      }
-    });
-
-  ProductSpecsDetail_Update = (action$) =>
-    action$.ofType(GitAction.UpdateProductSpecsDetail).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_UpdateProductSpecificationDetail?PRODUCTVARIATIONID=" + payload.ProductVariation +
-          "&PRODUCTID=" + payload.ProductID +
-          "&PRODUCTSPECIFICATIONVALUE=" + payload.value +
-          "&PRODUCTSPECIFICATIONDETAILID=" + payload.specificationDetailID +
-          "&USERID=" + payload.UserID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.UpdatedProductSpecsDetail,
-          payload: json,
-        };
-      } catch (error) {
-        alert('UpdateProductSpecsDetail: ' + error);
-        return {
-          type: GitAction.UpdatedProductSpecsDetail,
-          payload: [],
-        };
-      }
-    });
-
-  ProductSpecsDetail_Delete = (action$) =>
-    action$.ofType(GitAction.DeleteProductSpecsDetail).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_DeleteProductSpecificationDetail?PRODUCTSPECIFICATIONDETAILID=" + payload.specificationDetailID +
-          "&USERID=" + payload.UserID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.DeletedProductSpecsDetail,
-          payload: json,
-        };
-      } catch (error) {
-        alert('DeleteProductSpecsDetail: ' + error);
-        return {
-          type: GitAction.DeletedProductSpecsDetail,
-          payload: [],
-        };
-      }
-    });
-
-
-  ///////////////////////////////////////////////////  Product Media ///////////////////////////////////////////////////
-
-  ProductMedia_Add = (action$) =>
-    action$.ofType(GitAction.AddProductMedia).switchMap(async ({ payload }) => {
-      try {
-        const resposne = await fetch(
-          url + project + "/" +
-          "Product_AddProductMedia?" +
-          "PRODUCTID=" + payload.ProductID +
-          "&PRODUCTVARIATIONDETAILID=" + payload.variationID +
-          "&PRODUCTSLIDEORDER=" + payload.sliderOrder +
-          "&TYPE=" + payload.mediaType +
-          "&WIDTH=" + payload.imageWidth +
-          "&HEIGHT=" + payload.imageHeight +
-          "&IMAGENAME=" + payload.imageName +
-          "&USERID=" + payload.UserID
-        );
-        let json = await resposne.json();
-        // json = JSON.parse(json);
-        return {
-          type: GitAction.ProductMediaAdded,
-          payload: json,
-        };
-      } catch (error) {
-        alert('AddProductMedia: ' + error);
-        return {
-          type: GitAction.ProductMediaAdded,
-          payload: [],
-        };
-      }
-    });
-
-  ProductMedia_Delete = (action$) =>
-    action$.ofType(GitAction.deleteProductMedia).switchMap(async ({ payload }) => {
-      try {
-        const resposne = await fetch(
-          url + project + "/" +
-          "Product_DeleteProductMedia?" +
-          "PRODUCTMEDIAID=" + payload.imageID +
-          "&USERID=" + payload.UserID
-        );
-        let json = await resposne.json();
-        json = JSON.parse(json);
-
-        return {
-          type: GitAction.deletedProductMedia,
-          payload: json,
-        };
-      } catch (error) {
-        return {
-          type: GitAction.deletedProductMedia,
-          payload: [],
-        };
-      }
-    });
-
-  ///////////////////////////////////////////////////  Product Category ///////////////////////////////////////////////////
-
-  // ProductCategory_Add = (action$) =>
-  //   action$.ofType(GitAction.AddProductCategory).switchMap(async ({ payload }) => {
+  // Order_Add = (action$) =>
+  //   action$.ofType(GitAction.AddOrder).switchMap(async ({ payload }) => {
   //     try {
-  //       console.log(url + project + "/" +
-  //       "Product_AddProductCategory?PRODUCTCATEGORY=" + payload.ProductCategory +
-  //       "&PRODUCTCATEGORYIMAGE=" + payload.ProductCategoryImage +
-  //       "&HIERARCHYID=" + payload.HierarchyID +
-  //       "&PARENTPRODUCTCATEGORYID=" + payload.ParentProductCategoryID +
-  //       "&PROJECTID=" + payload.ProjectID + 
-  //       "&USERID=" + payload.UserID)
   //       const response = await fetch(
   //         url + project + "/" +
-  //         "Product_AddProductCategory?PRODUCTCATEGORY=" + payload.ProductCategory +
-  //         "&PRODUCTCATEGORYIMAGE=" + payload.ProductCategoryImage +
-  //         "&HIERARCHYID=" + payload.HierarchyID +
-  //         "&PARENTPRODUCTCATEGORYID=" + payload.ParentProductCategoryID +
-  //         "&PROJECTID=" + payload.ProjectID + 
-  //         "&USERID=" + payload.UserID
+  //         "Order_AddOrder?USERID=" + payload.UserID +
+  //         "&USERADDRESSID=" + payload.UserAddressID +
+  //         "&PROMOTIONID=0&PROMOTIONCODEID=0&PAYMENTMETHODID=" + payload.PaymentMethodID +
+  //         "&USERPAYMENTMETHODID=" + payload.UserPaymentMethodID +
+  //         "&ORDERTOTALAMOUNT=" + payload.OrderTotalAmount +
+  //         "&ORDERPAIDAMOUNT=" + payload.OrderPaidAmount +
+  //         "&PRODUCTID=" + payload.ProductID +
+  //         "&PRODUCTQUANTITY=" + payload.ProductQuantity +
+  //         "&PRODUCTVARIATIONDETAILID=" + payload.ProductVariationDetailID +
+  //         "&TRACKINGSTATUSID=" + payload.TrackingStatusID +
+  //         "&PickUpInd=" + payload.PickUpInd +
+  //         "&ProjectID=" + payload.ProjectID
   //       );
   //       let json = await response.json();
   //       json = JSON.parse(json);
+  //       if (json[0].ReturnVal === 1) {
+  //         toast.success("Order is successfully created ORDERID : " + json[0].OrderID);
+  //       }
+  //       try {
+  //         const response_1 = await fetch(
+  //           url +
+  //           "Product_DeleteProductCart?USERCARTID=" +
+  //           payload.UserCartID
+  //         );
+  //         let json_1 = await response_1.json();
+  //         json_1 = json_1
+  //         return {
+  //           type: GitAction.AddedOrder,
+  //           payload: json,
+  //         };
+  //       } catch (error) {
+  //         alert('deleteProductCart: ' + error);
+  //         return {
+  //           type: GitAction.AddedOrder,
+  //           payload: [],
+  //         };
+  //       }
+  //     }
+  //     catch (error) {
+  //       alert('AddOrder: ' + error);
   //       return {
-  //         type: GitAction.AddedProductCategory,
-  //         payload: json,
-  //       };
-  //     } catch (error) {
-  //       alert('addProductCategory: ' + error);
-  //       return {
-  //         type: GitAction.AddedProductCategory,
+  //         type: GitAction.AddedOrder,
   //         payload: [],
   //       };
   //     }
   //   });
 
-  ProductCategory_Add = (action$) =>
-    action$.ofType(GitAction.AddProductCategory).switchMap(({ payload }) => {
-      return fetch(
-        url + project + "/" +
-        "Product_AddProductCategory?PRODUCTCATEGORY=" + payload.ProductCategory +
-        "&PRODUCTCATEGORYIMAGE=" + payload.ProductCategoryImage +
-        "&HIERARCHYID=" + payload.HierarchyID +
-        "&PARENTPRODUCTCATEGORYID=" + payload.ParentProductCategoryID +
-        "&PROJECTID=" + payload.ProjectID +
-        "&USERID=" + payload.UserID
-      )
-        .then((response) => response.json())
-        .then((json) => {
-          if (json != "fail") {
-            json = JSON.parse(json);
-          } else {
-            json = [];
-          }
-          return {
-            type: GitAction.AddedProductCategory,
-            payload: json,
-          };
-        })
-        .catch((error) => toast.error(JSON.stringify(error)));
-    });
-
-  ProductCategory_Update = (action$) =>
-    action$.ofType(GitAction.UpdateProductCategory).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_UpdateProductCategory?PRODUCTCATEGORYID=" + payload.ProductCategoryID +
-          "&PRODUCTCATEGORY=" + payload.ProductCategory +
-          "&USERID=" + payload.UserID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.UpdatedProductCategory,
-          payload: json,
-        };
-      } catch (error) {
-        alert('updateProductCategory: ' + error);
-        return {
-          type: GitAction.UpdatedProductCategory,
-          payload: [],
-        };
+  Order_ViewAll = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetTransactions), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Order_ViewOrder?TRACKINGSTATUS=" + action.payload.TrackingStatus +
+            "&ProjectID=" + action.payload.ProjectID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotTransactions, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotTransactions, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Order_ViewAll. Please check on URL")
+          return dispatch({ type: GitAction.GotTransactions, payload: [] });
+        }
       }
-    });
+    }));
 
-  ProductCategory_Delete = (action$) =>
-    action$.ofType(GitAction.DeleteProductCategory).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_DeleteProductCategory?PRODUCTCATEGORYID=" + payload.ProductCategoryID +
-          "&USERID=" + payload.UserID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.DeletedProductCategory,
-          payload: json,
-        };
-      } catch (error) {
-        alert('deleteProductCategory: ' + error);
-        return {
-          type: GitAction.DeletedProductCategory,
-          payload: [],
-        };
+  Order_UpdateUserDetails = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.OrderUserDetailsUpdate), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Order_UpdateOrderUserDetails?OrderID=" + action.payload.OrderID +
+            "&FirstName=" + action.payload.FirstName +
+            "&LastName=" + action.payload.LastName +
+            "&UserContactNo=" + action.payload.UserContactNo +
+            "&PickUpInd=" + action.payload.PickUpInd +
+            "&UserEmailAddress=" + action.payload.UserEmailAddress +
+            "&UserAddressLine1=" + action.payload.UserAddressLine1 +
+            "&UserAddressLine2=" + action.payload.UserAddressLine2 +
+            "&UserPoscode=" + action.payload.UserPoscode +
+            "&UserState=" + action.payload.UserState +
+            "&UserCity=" + action.payload.UserCity +
+            "&CountryID=" + action.payload.CountryID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.OrderUserDetailsUpdated, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.OrderUserDetailsUpdated, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Order_UpdateUserDetails. Please check on URL")
+          return dispatch({ type: GitAction.OrderUserDetailsUpdated, payload: [] });
+        }
       }
-    });
+    }));
 
-  ProductCategory_ViewAll = (action$) =>
-    action$.ofType(GitAction.GetProductCategory).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_CategoryListByAll?ProjectID=" + payload.ProjectID
-        );
-        let json = await response.json();
-
-        return {
-          type: GitAction.GotProductCategory,
-          payload: JSON.parse(json),
-        };
-      } catch (error) {
-        alert('getAllCategories: ' + error);
-        return {
-          type: GitAction.GotProductCategory,
-          payload: [],
-        };
+  Transaction_ViewStatus = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetTransactionStatus), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Order_ViewOrderStatus")
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotTransactionStatus, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotTransactionStatus, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Transaction_ViewStatus. Please check on URL")
+          return dispatch({ type: GitAction.GotTransactionStatus, payload: [] });
+        }
       }
-    });
+    }));
 
-
-  ProductCategory_ViewAllWithParent = (action$) =>
-    action$.ofType(GitAction.GetProductCategoryListing).switchMap(async (payload) => {
-
-      console.log(url + project + "/" +
-        "Product_CategoryListing?ProjectID=" + payload)
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_CategoryListing?ProjectID=" + payload.ProjectID
-        );
-        let json = await response.json();
-        return {
-          type: GitAction.GotProductCategoryListing,
-          payload: JSON.parse(json),
-        };
-      } catch (error) {
-        alert('getAllCategoriesListing123: ' + error);
-        return {
-          type: GitAction.GotProductCategoryListing,
-          payload: [],
-        };
+  Order_UpdateTrackingNumber = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.updateTrackingNumber), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Order_UpdateTrackingNumber?ORDERTRACKINGNUMBER=" + action.payload.ORDERTRACKINGNUMBER +
+            "&LOGISTICID=" + action.payload.LOGISTICID +
+            "&ORDERPRODUCTDETAILSID=" + action.payload.ORDERPRODUCTDETAILSID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.updatedTrackingNumber, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.updatedTrackingNumber, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Order_UpdateTrackingNumber. Please check on URL")
+          return dispatch({ type: GitAction.updatedTrackingNumber, payload: [] });
+        }
       }
-    });
+    }));
+
+  ///////////////////////////////////////////////////  Merchant  ///////////////////////////////////////////////////
+
+  Merchants_ViewProfile = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetMerchants), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "User_ProfileListByType?TYPE=" + action.payload.type +
+            "&TYPEVALUE=" + action.payload.typeValue +
+            "&USERID=" + action.ayload.USERID +
+            "&UserRoleID=" + action.payload.userRoleID +
+            "&LISTPERPAGE=" + action.payload.productPage +
+            "&PAGE=" + action.payload.page +
+            "&ProjectID=" + action.payload.ProjectID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotMerchants, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotMerchants, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Merchants_ViewProfile. Please check on URL")
+          return dispatch({ type: GitAction.GotMerchants, payload: [] });
+        }
+      }
+    }));
+
+  Merchants_ViewAllOrder = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetMerchantOrders), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Order_ViewOrderByUserID?TRACKINGSTATUS=" +
+            action.payload.trackingStatus +
+            "&USERID=" +
+            action.payload.UserID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotMerchantOrders, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotMerchantOrders, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Merchants_ViewAllOrder. Please check on URL")
+          return dispatch({ type: GitAction.GotMerchantOrders, payload: [] });
+        }
+      }
+    }));
+
+  ///////////////////////////////////////////////////  Products  ///////////////////////////////////////////////////
+
+  Product_Add = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.AddProduct), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/Product_AddProductByPost"
+            , {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                PRODUCTNAME: action.payload.name,
+                PROJECTID: action.payload.ProjectID,
+                MERCHANTID: action.payload.productSupplier,
+                PRODUCTDESC: action.payload.description,
+                PRODUCTCATEGORYID: action.payload.productCategory,
+                PRODUCTHEIGHT: action.payload.height,
+                PRODUCTWIDTH: action.payload.width,
+                PRODUCTDEPTH: action.payload.depth,
+                PRODUCTWEIGHT: action.payload.weight,
+                PRODUCTSKU: action.payload.sku,
+                PRODUCTBRAND: action.payload.brand,
+                PRODUCTMODEL: action.payload.model,
+                PRODUCTTAG: action.payload.tags,
+                USERID: action.payload.UserID
+              })
+            })
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.AddedProduct, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.AddedProduct, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Product_Add. Please check on URL")
+          return dispatch({ type: GitAction.AddedProduct, payload: [] });
+        }
+      }
+    }));
+
+  Product_Update = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.AddProduct), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/Product_UpdateProductByPost"
+            , {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                PRODUCTID: action.payload.ProductID,
+                PRODUCTNAME: action.payload.name,
+                PROJECTID: action.payload.ProjectID,
+                MERCHANTID: action.payload.productSupplier,
+                PRODUCTDESC: action.payload.description,
+                PRODUCTCATEGORYID: action.payload.productCategory,
+                PRODUCTHEIGHT: action.payload.height,
+                PRODUCTWIDTH: action.payload.width,
+                PRODUCTDEPTH: action.payload.depth,
+                PRODUCTWEIGHT: action.payload.weight,
+                PRODUCTSKU: action.payload.sku,
+                PRODUCTBRAND: action.payload.brand,
+                PRODUCTMODEL: action.payload.model,
+                PRODUCTTAG: action.payload.tags,
+                USERID: action.payload.UserID
+              })
+            })
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.UpdatedProduct, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.UpdatedProduct, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Product_Update. Please check on URL")
+          return dispatch({ type: GitAction.UpdatedProduct, payload: [] });
+        }
+      }
+    }));
+
+  Product_Delete = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.DeleteProduct), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_DeleteProducts?ProductIDs=" + action.payload.ProductID +
+            "&USERID=" + action.payload.UserID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.DeletedProduct, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.DeletedProduct, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Product_Delete. Please check on URL")
+          return dispatch({ type: GitAction.DeletedProduct, payload: [] });
+        }
+      }
+    }));
+
+  Product_ViewAll = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetProduct), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_ItemListByType?Type=" + action.payload.type +
+            "&TypeValue=" + action.payload.typeValue +
+            "&USERID=" + action.payload.userId +
+            "&PRODUCTPERPAGE=" + action.payload.productPage +
+            "&PAGE=" + action.payload.page +
+            "&ProjectID=" + action.payload.ProjectID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotProduct, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotProduct, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Product_ViewAll. Please check on URL")
+          return dispatch({ type: GitAction.GotProduct, payload: [] });
+        }
+      }
+    }));
+
+  Product_ViewListing = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetProductListing), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_ItemListByType?Type=" + action.payload.type +
+            "&TypeValue=" + action.payload.typeValue +
+            "&USERID=" + action.payload.userId +
+            "&PRODUCTPERPAGE=" + action.payload.productPage +
+            "&PAGE=" + action.ayload.page +
+            "&ProjectID=" + action.payload.ProjectID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotProductListing, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotProductListing, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Product_ViewListing. Please check on URL")
+          return dispatch({ type: GitAction.GotProductListing, payload: [] });
+        }
+      }
+    }));
+
+  Product_ViewDetail = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetProductDetail), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_ItemDetailByProductID?ProductID=" + action.payload.productId +
+            "&USERID=" + action.payload.userId +
+            "&ProjectID=" + action.payload.ProjectID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotProductDetail, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotProductDetail, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Product_ViewDetail. Please check on URL")
+          return dispatch({ type: GitAction.GotProductDetail, payload: [] });
+        }
+      }
+    }));
+
+  Product_Endorse = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.EndorseProduct), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_EndorseProducts?ProductIDs=" + action.payload.ProductID +
+            "&USERID=" + action.payload.UserID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.ProductEndorsed, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.ProductEndorsed, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Product_Endorse. Please check on URL")
+          return dispatch({ type: GitAction.ProductEndorsed, payload: [] });
+        }
+      }
+    }));
+
+  Product_CheckDuplicateName = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.CheckProduct), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_CheckDuplication?PRODUCTNAME=" + action.payload.ProductName +
+            "&ProjectID=" + action.payload.ProjectID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.ProductChecked, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.ProductChecked, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Product_Endorse. Please check on URL")
+          return dispatch({ type: GitAction.ProductChecked, payload: [] });
+        }
+      }
+    }));
+
+  Product_CheckDuplicateSKU = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.CheckProductSKU), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_CheckDuplicationBySKU?PRODUCTSKU=" + action.payload.ProductSKU +
+            "&USERID=" + action.payload.UserID +
+            "&PROJECTID=" + action.payload.ProjectID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.ProductCheckedSKU, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.ProductCheckedSKU, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Product_Endorse. Please check on URL")
+          return dispatch({ type: GitAction.ProductCheckedSKU, payload: [] });
+        }
+      }
+    }));
+
+  ///////////////////////////////////////////////////  Product Variation  ///////////////////////////////////////////////////
+
+  ProductVariation_Add = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.AddProductVariation), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_AddProductVariation?PRODUCTVARIATION=" + action.payload.ProductVariation +
+            "&PRODUCTCATEGORYID=" + action.payload.ProductCategoryID +
+            "&CUSTOMIZABLE=" + action.payload.CustomizableIndicator +
+            "&USERID=" + action.payload.UserID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.AddedProductVariation, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.AddedProductVariation, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductVariation_Add. Please check on URL")
+          return dispatch({ type: GitAction.AddedProductVariation, payload: [] });
+        }
+      }
+    }));
+
+  ProductVariation_Update = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.UpdateProductVariation), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_UpdateProductVariation?PRODUCTVARIATIONID=" + action.payload.ProductVariationID +
+            "&PRODUCTVARIATION=" + action.payload.ProductVariation +
+            "&PRODUCTCATEGORYID=" + action.payload.ProductCategoryID +
+            "&CUSTOMIZABLE=" + action.payload.Customizable +
+            "&USERID=" + action.payload.UserID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.UpdatedProductVariation, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.UpdatedProductVariation, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductVariation_Update. Please check on URL")
+          return dispatch({ type: GitAction.UpdatedProductVariation, payload: [] });
+        }
+      }
+    }));
+
+  ProductVariation_Delete = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.DeleteProductVariation), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_DeleteProductVariation?PRODUCTVARIATIONID=" + action.payload.ProductVariationID +
+            "&USERID=" + action.payload.UserID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.DeletedProductVariation, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.DeletedProductVariation, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductVariation_Delete. Please check on URL")
+          return dispatch({ type: GitAction.DeletedProductVariation, payload: [] });
+        }
+      }
+    }));
+
+
+
+  ///////////////////////////////////////////////////  Product Variation Details  ///////////////////////////////////////////////////
+
+  ProductVariationDetail_Add = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.AddProductVariationDetail), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_AddProductVariationDetail?PRODUCTVARIATIONID=" + action.payload.ProductVariation +
+            "&PRODUCTID=" + action.payload.ProductID +
+            "&CUSTOMIZABLE=" + action.payload.Customizable +
+            "&VALUE=" + action.payload.Value +
+            "&PRODUCTSTOCK=" + action.payload.stock +
+            "&PRODUCTVARIATIONSKU=" + action.payload.sku +
+            "&PRODUCTVARIATIONPRICE=" + action.payload.price +
+            "&USERID=" + action.payload.UserID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.AddedProductVariationDetail, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.AddedProductVariationDetail, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductVariation_Delete. Please check on URL")
+          return dispatch({ type: GitAction.AddedProductVariationDetail, payload: [] });
+        }
+      }
+    }));
+
+  ProductVariationDetail_Update = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.UpdateProductVariationDetail), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_UpdateProductVariationDetails?PRODUCTVARIATIONDETAILID=" + action.payload.ProductVariationDetailID +
+            "&CUSTOMIZABLE=" + action.payload.Customizable +
+            "&VALUE=" + action.payload.Value +
+            "&PRODUCTSTOCK=" + action.payload.stock +
+            "&PRODUCTVARIATIONSKU=" + action.payload.sku +
+            "&PRODUCTVARIATIONPRICE=" + action.payload.price +
+            "&USERID=" + action.payload.UserID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.UpdatedProductVariationDetail, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.UpdatedProductVariationDetail, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductVariationDetail_Update. Please check on URL")
+          return dispatch({ type: GitAction.UpdatedProductVariationDetail, payload: [] });
+        }
+      }
+    }));
+
+  ProductVariationDetail_Delete = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.DeleteProductVariationDetail), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_DeleteProductVariationDetails?PRODUCTVARIATIONDETAILID=" + action.payload.ProductVariationDetailID +
+            "&USERID=" + action.payload.UserID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.DeletedProductVariationDetail, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.DeletedProductVariationDetail, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductVariationDetail_Delete. Please check on URL")
+          return dispatch({ type: GitAction.DeletedProductVariationDetail, payload: [] });
+        }
+      }
+    }));
+
+  ProductVariationDetail_ViewAllByCategoryID = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetProductVariationByCategoryID), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_ViewProductVariationByCategoryID?PRODUCTCATEGORYID=" + action.payload)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotProductVariationByCategoryID, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotProductVariationByCategoryID, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductVariationDetail_ViewAllByCategoryID. Please check on URL")
+          return dispatch({ type: GitAction.GotProductVariationByCategoryID, payload: [] });
+        }
+      }
+    }));
+
+
+  ///////////////////////////////////////////////////  Product Stock  ///////////////////////////////////////////////////
+
+  ProductVariationStock_Add = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.AddProductVariationStock), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_AddProductVariationStock?COINTAINERID=" + action.payload.ContainerID +
+            "&USERID=" + action.payload.UserID +
+            "&PRODUCTVARIATIONDETAILID=" + action.payload.ProductVariationDetailsID +
+            "&PRODUCTSTOCK=" + action.payload.ProductStock +
+            "&PRODUCTVARIATIONCOST=" + action.payload.ProductVariationCost +
+            "&GRIDSTORAGEID=" + action.payload.GridStorageID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.AddedProductVariationStock, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.AddedProductVariationStock, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductVariationStock_Add. Please check on URL")
+          return dispatch({ type: GitAction.AddedProductVariationStock, payload: [] });
+        }
+      }
+    }));
+
+  ProductVariationStock_View = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.ViewProductVariationStock), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_ItemListWithVariation?PROJECTID=" + action.payload.ProjectID +
+            "&PRODUCTPERPAGE=" + action.payload.ProductPerPage +
+            "&PAGE=" + action.payload.Page)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.ViewedProductVariationStock, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.ViewedProductVariationStock, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductVariationStock_View. Please check on URL")
+          return dispatch({ type: GitAction.ViewedProductVariationStock, payload: [] });
+        }
+      }
+    }));
+
+  ProductVariationStock_ViewAll = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.ViewProductVariationStockWithID), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_ItemListWithProductVariationStock?PROJECTID=" + action.payload.ProjectID +
+            "&PRODUCTID=" + action.payload.ProductID +
+            "&PRODUCTPERPAGE=" + action.payload.ProductPerPage +
+            "&PAGE=" + action.payload.Page)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.ViewedProductVariationStockWithID, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.ViewedProductVariationStockWithID, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductVariationStock_ViewAll. Please check on URL")
+          return dispatch({ type: GitAction.ViewedProductVariationStockWithID, payload: [] });
+        }
+      }
+    }));
+
+  ProductVariationStock_ViewWithVariationDetailsID = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.ViewProductVariationStockWithVariationDetailsID), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_ItemListWithProductVariationStockDetailList?PRODUCTVARIATIONDETAILID=" + action.payload.ProductVariationDetailID
+            + "&PROJECTID=" + action.payload.ProjectID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.ViewedProductVariationStockWithVariationDetailsID, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.ViewedProductVariationStockWithVariationDetailsID, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductVariationStock_ViewWithVariationDetailsID. Please check on URL")
+          return dispatch({ type: GitAction.ViewedProductVariationStockWithVariationDetailsID, payload: [] });
+        }
+      }
+    }));
+
+  ProductVariationStock_UpdateDetails = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.UpdateProductVariationStockDetails), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_UpdateProductVariationStock?PRODUCTVARIATIONSTOCKID=" + action.payload.ProductVariationStockID +
+            "&USERID=" + action.payload.UserID +
+            "&APPROVEDBY=" + action.payload.ApprovedBy +
+            "&PRODUCTSTOCK=" + action.payload.ProductStock +
+            "&PRODUCTVARIATIONCOST=" + action.payload.ProductVariationCost +
+            "&GRIDSTORAGEID=" + action.payload.GridStorage)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.UpdatedProductVariationStockDetails, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.UpdatedProductVariationStockDetails, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductVariationStock_ViewWithVariationDetailsID. Please check on URL")
+          return dispatch({ type: GitAction.UpdatedProductVariationStockDetails, payload: [] });
+        }
+      }
+    }));
+
+  ProductVariationStock_Delete = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.DeleteProductVariationStock), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_DeleteProductVariationStock?PRODUCTVARIATIONSTOCKID=" + action.payload.ProductVariationStockID +
+            "&USERID=" + action.payload.UserID +
+            "&APPROVEDBY=" + action.payload.ApprovedBy)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.DeletedProductVariationStock, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.DeletedProductVariationStock, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductVariationStock_Delete. Please check on URL")
+          return dispatch({ type: GitAction.DeletedProductVariationStock, payload: [] });
+        }
+      }
+    }));
+
+
+  ///////////////////////////////////////////////////  Product Specification Details  //////////////////////////////////////////////////
+
+  ProductSpecsDetail_Add = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.AddProductSpecsDetail), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_AddProductSpecificationDetail?PRODUCTVARIATIONID=" + action.payload.ProductVariation +
+            "&PRODUCTID=" + action.payload.ProductID +
+            "&PRODUCTSPECIFICATIONVALUE=" + action.payload.value +
+            "&USERID=" + action.payload.UserID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.AddedProductSpecsDetail, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.AddedProductSpecsDetail, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductSpecsDetail_Add. Please check on URL")
+          return dispatch({ type: GitAction.AddedProductSpecsDetail, payload: [] });
+        }
+      }
+    }));
+
+  ProductSpecsDetail_Update = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.UpdateProductSpecsDetail), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_UpdateProductSpecificationDetail?PRODUCTVARIATIONID=" + action.payload.ProductVariation +
+            "&PRODUCTID=" + action.payload.ProductID +
+            "&PRODUCTSPECIFICATIONVALUE=" + action.payload.value +
+            "&PRODUCTSPECIFICATIONDETAILID=" + action.payload.specificationDetailID +
+            "&USERID=" + action.payload.UserID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.UpdatedProductSpecsDetail, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.UpdatedProductSpecsDetail, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductSpecsDetail_Update. Please check on URL")
+          return dispatch({ type: GitAction.UpdatedProductSpecsDetail, payload: [] });
+        }
+      }
+    }));
+
+  ProductSpecsDetail_Delete = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.DeleteProductSpecsDetail), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_DeleteProductSpecificationDetail?PRODUCTSPECIFICATIONDETAILID=" + action.payload.specificationDetailID +
+            "&USERID=" + action.payload.UserID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.DeletedProductSpecsDetail, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.DeletedProductSpecsDetail, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductSpecsDetail_Delete. Please check on URL")
+          return dispatch({ type: GitAction.DeletedProductSpecsDetail, payload: [] });
+        }
+      }
+    }));
+
+  ///////////////////////////////////////////////////  Product Media ///////////////////////////////////////////////////
+
+  ProductMedia_Add = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.AddProductMedia), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_AddProductMedia?" +
+            "PRODUCTID=" + action.payload.ProductID +
+            "&PRODUCTVARIATIONDETAILID=" + action.payload.variationID +
+            "&PRODUCTSLIDEORDER=" + action.payload.sliderOrder +
+            "&TYPE=" + action.payload.mediaType +
+            "&WIDTH=" + action.payload.imageWidth +
+            "&HEIGHT=" + action.payload.imageHeight +
+            "&IMAGENAME=" + action.payload.imageName +
+            "&USERID=" + action.payload.UserID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.ProductMediaAdded, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.ProductMediaAdded, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductMedia_Add. Please check on URL")
+          return dispatch({ type: GitAction.ProductMediaAdded, payload: [] });
+        }
+      }
+    }));
+
+  ProductMedia_Delete = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.deleteProductMedia), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_DeleteProductMedia?" +
+            "PRODUCTMEDIAID=" + action.payload.imageID +
+            "&USERID=" + action.payload.UserID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.deletedProductMedia, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.deletedProductMedia, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductMedia_Delete. Please check on URL")
+          return dispatch({ type: GitAction.deletedProductMedia, payload: [] });
+        }
+      }
+    }));
+
+  ///////////////////////////////////////////////////  Product Category ///////////////////////////////////////////////////
+
+  ProductCategory_Add = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.AddProductCategory), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_AddProductCategory?PRODUCTCATEGORY=" + action.payload.ProductCategory +
+            "&PRODUCTCATEGORYIMAGE=" + action.payload.ProductCategoryImage +
+            "&HIERARCHYID=" + action.payload.HierarchyID +
+            "&PARENTPRODUCTCATEGORYID=" + action.payload.ParentProductCategoryID +
+            "&PROJECTID=" + action.payload.ProjectID +
+            "&USERID=" + action.payload.UserID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.AddedProductCategory, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.AddedProductCategory, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductCategory_Add. Please check on URL")
+          return dispatch({ type: GitAction.AddedProductCategory, payload: [] });
+        }
+      }
+    }));
+
+  ProductCategory_Update = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.UpdateProductCategory), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_UpdateProductCategory?PRODUCTCATEGORYID=" + action.payload.ProductCategoryID +
+            "&PRODUCTCATEGORY=" + action.payload.ProductCategory +
+            "&USERID=" + action.payload.UserID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.UpdatedProductCategory, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.UpdatedProductCategory, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductCategory_Update. Please check on URL")
+          return dispatch({ type: GitAction.UpdatedProductCategory, payload: [] });
+        }
+      }
+    }));
+
+  ProductCategory_Delete = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.DeleteProductCategory), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_DeleteProductCategory?PRODUCTCATEGORYID=" + action.payload.ProductCategoryID +
+            "&USERID=" + action.payload.UserID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.DeletedProductCategory, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.DeletedProductCategory, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductCategory_Delete. Please check on URL")
+          return dispatch({ type: GitAction.DeletedProductCategory, payload: [] });
+        }
+      }
+    }));
+
+  ProductCategory_ViewAll = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetProductCategory), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_CategoryListByAll?ProjectID=" + action.payload.ProjectID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotProductCategory, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotProductCategory, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductCategory_ViewAll. Please check on URL")
+          return dispatch({ type: GitAction.GotProductCategory, payload: [] });
+        }
+      }
+    }));
+
+  ProductCategory_ViewAllWithParent = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetProductCategoryListing), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_CategoryListing?ProjectID=" + action.payload)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotProductCategoryListing, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotProductCategoryListing, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductCategory_ViewAllWithParent. Please check on URL")
+          return dispatch({ type: GitAction.GotProductCategoryListing, payload: [] });
+        }
+      }
+    }));
 
 
   ///////////////////////////////////////////////////  Product Review ///////////////////////////////////////////////////
 
-  ProductReview_ViewByID = (action$) =>
-    action$.ofType(GitAction.GetProductReviewByProductID).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_ViewReviewByProductID?PRODUCTID=" +
-          payload.ProductID +
-          "&PARENTPRODUCTREVIEWID=" +
-          payload.ParentProductReviewID
-        );
-        let json = await response.json();
-        return {
-          type: GitAction.GotProductReviewByProductID,
-          payload: json,
-        };
-      } catch (error) {
-        alert('viewProductReviewByProductID: ' + error);
-        return {
-          type: GitAction.GotProductReviewByProductID,
-          payload: [],
-        };
-      }
-    });
-
-  ProductReview_Add = (action$) =>
-    action$.ofType(GitAction.addProductReview).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Product_AddReview?PARENTPRODUCTREVIEWID=" + payload.parentProductReviewID
-          + "&PRODUCTID=" + payload.productID
-          + "&USERID=" + payload.UserID
-          + "&PRODUCTREVIEWRATING=" + payload.productReviewRating
-          + "&PRODUCTREVIEWCOMMENT=" + payload.productReviewComment
-          + "&REPLYPARENTID=" + payload.replyParentID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        if (json[0].ReturnVal === 1) {
-          toast.success("Sucessfully send a review");
-        }
+  ProductReview_ViewByID = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetProductReviewByProductID), map(action => {
+      return dispatch => {
         try {
-          const response_1 = await fetch(
-            url + project + "/" +
-            "Product_ViewReviewByProductID?PRODUCTID=" + payload.productID +
-            "&PARENTPRODUCTREVIEWID=0"
-          );
-          let json_1 = await response_1.json();
-          return {
-            type: GitAction.addedProductReview,
-            payload: json_1,
-            payload2: json,
-          };
+          return fetch(url + project + "/" +
+            "Product_ViewReviewByProductID?PRODUCTID=" +
+            action.payload.ProductID +
+            "&PARENTPRODUCTREVIEWID=" +
+            action.payload.ParentProductReviewID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotProductReviewByProductID, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotProductReviewByProductID, payload: [] });
+              }
+            });
         } catch (error) {
-          alert('viewProductReviewByProductID: ' + error);
-          return {
-            type: GitAction.addedProductReview,
-            payload: [],
-          };
+          toast.error("Error Code: ProductReview_ViewByID. Please check on URL")
+          return dispatch({ type: GitAction.GotProductReviewByProductID, payload: [] });
         }
-      } catch (error) {
-        alert('addProductReview: ' + error);
-        return {
-          type: GitAction.addedProductReview,
-          payload: [],
-        };
       }
-    });
+    }));
+
+  // ProductReview_Add = (action$) =>
+  //   action$.ofType(GitAction.addProductReview).switchMap(async ({ payload }) => {
+  //     try {
+  //       const response = await fetch(
+  //         url + project + "/" +
+  //         "Product_AddReview?PARENTPRODUCTREVIEWID=" + payload.parentProductReviewID
+  //         + "&PRODUCTID=" + payload.productID
+  //         + "&USERID=" + payload.UserID
+  //         + "&PRODUCTREVIEWRATING=" + payload.productReviewRating
+  //         + "&PRODUCTREVIEWCOMMENT=" + payload.productReviewComment
+  //         + "&REPLYPARENTID=" + payload.replyParentID
+  //       );
+  //       let json = await response.json();
+  //       json = JSON.parse(json);
+  //       if (json[0].ReturnVal === 1) {
+  //         toast.success("Sucessfully send a review");
+  //       }
+  //       try {
+  //         const response_1 = await fetch(
+  //           url + project + "/" +
+  //           "Product_ViewReviewByProductID?PRODUCTID=" + payload.productID +
+  //           "&PARENTPRODUCTREVIEWID=0"
+  //         );
+  //         let json_1 = await response_1.json();
+  //         return {
+  //           type: GitAction.addedProductReview,
+  //           payload: json_1,
+  //           payload2: json,
+  //         };
+  //       } catch (error) {
+  //         alert('viewProductReviewByProductID: ' + error);
+  //         return {
+  //           type: GitAction.addedProductReview,
+  //           payload: [],
+  //         };
+  //       }
+  //     } catch (error) {
+  //       alert('addProductReview: ' + error);
+  //       return {
+  //         type: GitAction.addedProductReview,
+  //         payload: [],
+  //       };
+  //     }
+  //   });
 
   ///////////////////////////////////////////////////  Promotion  ///////////////////////////////////////////////////
 
-  Promotion_ViewAll = (action$) =>
-    action$.ofType(GitAction.GetPromotion).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Promo_ViewPromotion?ACTIVEIND=" + payload.Ind +
-          "&ProjectID=" + payload.ProjectID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.GotPromotion,
-          payload: json,
-        };
-      } catch (error) {
-        alert('getAllPromotion: ' + error);
-        return {
-          type: GitAction.GotPromotion,
-          payload: [],
-        };
+  Promotion_ViewAll = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetProductReviewByProductID), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Promo_ViewPromotion?ACTIVEIND=" + action.payload.Ind +
+            "&ProjectID=" + action.payload.ProjectID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotPromotion, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotPromotion, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Promotion_ViewAll. Please check on URL")
+          return dispatch({ type: GitAction.GotPromotion, payload: [] });
+        }
       }
-    });
+    }));
 
-  Promotion_Add = (action$) =>
-    action$.ofType(GitAction.AddPromotion).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Promo_AddPromotion?PROMOTIONTITLE=" + payload.PromotionTitle +
-          "&PROMOTIONDESC=" + payload.PromotionDesc +
-          "&PROMOTIONSTARTDATE=" + payload.PromotionStartDate +
-          "&PROMOTIONDISCOUNTPERCENTAGE=" + payload.DiscountPercentage +
-          "&BANNERIMAGE=" + payload.BannerImage +
-          "&SLIDEORDER=" + payload.SlideOrder +
-          "&PROMOTIONENDDATE=" + payload.PromotionEndDate +
-          "&PRODUCTID=" + payload.ProductID +
-          "&ProjectID=" + payload.ProjectID
-        );
-
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.AddedPromotion,
-          payload: json,
-        };
-      } catch (error) {
-        alert('AddPromotion: ' + error);
-        return {
-          type: GitAction.AddedPromotion,
-          payload: []
-        };
+  Promotion_Add = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.AddPromotion), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Promo_AddPromotion?PROMOTIONTITLE=" + action.payload.PromotionTitle +
+            "&PROMOTIONDESC=" + action.payload.PromotionDesc +
+            "&PROMOTIONSTARTDATE=" + action.payload.PromotionStartDate +
+            "&PROMOTIONDISCOUNTPERCENTAGE=" + action.payload.DiscountPercentage +
+            "&BANNERIMAGE=" + action.payload.BannerImage +
+            "&SLIDEORDER=" + action.payload.SlideOrder +
+            "&PROMOTIONENDDATE=" + action.payload.PromotionEndDate +
+            "&PRODUCTID=" + action.payload.ProductID +
+            "&ProjectID=" + action.payload.ProjectID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.AddedPromotion, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.AddedPromotion, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductReview_ViewByID. Please check on URL")
+          return dispatch({ type: GitAction.AddedPromotion, payload: [] });
+        }
       }
-    });
+    }));
 
-  Promotion_Update = (action$) =>
-    action$.ofType(GitAction.UpdatePromotion).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Promo_UpdatePromotion?PROMOTIONID=" + payload.PromotionID +
-          "&PROMOTIONTITLE=" + payload.PromotionTitle +
-          "&PROMOTIONDESC=" + payload.PromotionDesc +
-          "&BANNERIMAGE=" + payload.BannerImage +
-          "&SLIDEORDER=" + payload.SlideOrder +
-          "&PROMOTIONSTARTDATE=" + payload.promoStart +
-          "&PROMOTIONENDDATE=" + payload.promoEnd +
-          "&PROMOTIONITEMID=" + payload.ProductID +
-          "&PROMOTIONDISCOUNTPERCENTAGE=" + payload.DiscountPercentage // {98,99,100}
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.UpdatedPromotion,
-          payload: json,
-        };
-      } catch (error) {
-        alert('UpdatePromotion: ' + error);
-        return {
-          type: GitAction.UpdatedPromotion,
-          payload: []
-        };
+  Promotion_Update = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.UpdatePromotion), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Promo_UpdatePromotion?PROMOTIONID=" + action.payload.PromotionID +
+            "&PROMOTIONTITLE=" + action.payload.PromotionTitle +
+            "&PROMOTIONDESC=" + action.payload.PromotionDesc +
+            "&BANNERIMAGE=" + action.payload.BannerImage +
+            "&SLIDEORDER=" + action.payload.SlideOrder +
+            "&PROMOTIONSTARTDATE=" + action.payload.promoStart +
+            "&PROMOTIONENDDATE=" + action.payload.promoEnd +
+            "&PROMOTIONITEMID=" + action.payload.ProductID +
+            "&PROMOTIONDISCOUNTPERCENTAGE=" + action.payload.DiscountPercentage)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.UpdatedPromotion, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.UpdatedPromotion, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductReview_ViewByID. Please check on URL")
+          return dispatch({ type: GitAction.UpdatedPromotion, payload: [] });
+        }
       }
-    });
+    }));
 
-  Promotion_Delete = (action$) =>
-    action$.ofType(GitAction.DeletePromotion).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Promo_DeletePromotion?PROMOTIONID=" + payload.PromotionID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.DeletedPromotion,
-          payload: json,
-        };
-      } catch (error) {
-        alert('DeletePromotion: ' + error);
-        return {
-          type: GitAction.DeletedPromotion,
-          payload: []
-        };
+  Promotion_Delete = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.DeletePromotion), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Promo_DeletePromotion?PROMOTIONID=" + action.payload.PromotionID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.DeletedPromotion, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.DeletedPromotion, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductReview_ViewByID. Please check on URL")
+          return dispatch({ type: GitAction.DeletedPromotion, payload: [] });
+        }
       }
-    });
-
+    }));
 
   ///////////////////////////////////////////////////  General   ///////////////////////////////////////////////////
 
-  CourierService_ViewAll = (action$) =>
-    action$.ofType(GitAction.GetCourierService).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "User_ViewCourierService"
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.GotCourierService,
-          payload: json,
-        };
-
-      } catch (error) {
-        alert('getAllCourierService: ' + error);
-        return {
-          type: GitAction.GotCourierService,
-          payload: [],
-        };
+  CourierService_ViewAll = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetCourierService), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "User_ViewCourierService")
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotCourierService, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotCourierService, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: CourierService_ViewAll. Please check on URL")
+          return dispatch({ type: GitAction.GotCourierService, payload: [] });
+        }
       }
-    });
+    }));
 
-  Country_ViewAll = (action$) =>
-    action$.ofType(GitAction.GetCountry).switchMap(async () => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "General_CountryList"
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.GotCountry,
-          payload: json,
-        };
-      } catch (error) {
-        alert('getCountry: ' + error);
-        return {
-          type: GitAction.GotCountry,
-          payload: [],
-        };
+  Country_ViewAll = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetCountry), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "General_CountryList")
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotCountry, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotCountry, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Country_ViewAll. Please check on URL")
+          return dispatch({ type: GitAction.GotCountry, payload: [] });
+        }
       }
-    });
-
-
+    }));
 
   ///////////////////////////////////////////////////  ShopLot  ///////////////////////////////////////////////////
 
-  Shoplot_ShopListing = (action$) =>
-    action$.ofType(GitAction.GetShopListing).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Storage_ShoplotList?PROJECTID=" + payload.ProjectID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-
-        return {
-          type: GitAction.GotShopListing,
-          payload: json,
-        };
-      } catch (error) {
-        alert('GotShopListing: ' + error);
-        return {
-          type: GitAction.GotShopListing,
-          payload: [],
-        };
+  Shoplot_ShopListing = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetShopListing), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Storage_ShoplotList?PROJECTID=" + action.payload.ProjectID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotShopListing, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotShopListing, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Country_ViewAll. Please check on URL")
+          return dispatch({ type: GitAction.GotShopListing, payload: [] });
+        }
       }
-    });
+    }));
 
-  Shoplot_ShopListingByID = (action$) =>
-    action$.ofType(GitAction.GetShopListingByID).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Storage_ShoplotListByShoplotID?SHOPLOTID=" + payload.ShoplotID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
 
-        return {
-          type: GitAction.GotShopListingByID,
-          payload: json,
-        };
-      } catch (error) {
-        alert('GotShopListingByID: ' + error);
-        return {
-          type: GitAction.GotShopListingByID,
-          payload: [],
-        };
+  Shoplot_ShopListingByID = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetShopListingByID), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Storage_ShoplotListByShoplotID?SHOPLOTID=" + action.payload.ShoplotID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotShopListingByID, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotShopListingByID, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Country_ViewAll. Please check on URL")
+          return dispatch({ type: GitAction.GotShopListingByID, payload: [] });
+        }
       }
-    });
+    }));
 
-  Shoplot_AddShoplot = (action$) =>
-    action$.ofType(GitAction.AddShoplot).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Storage_AddShoplot?SHOPLOTNAME=" + payload.ShoplotName +
-          "&CONTACTNO=" + payload.ContactNo +
-          "&SHOPLOTBLOCK=" + payload.ShoplotBlock +
-          "&STORAGEBLOCKID=" + payload.StorageBlockID +
-          "&PROJECTID=" + payload.ProjectID +
-          "&SHOPLOTPOLYGONSTRING=" + payload.ShoplotPolygon +
-          "&LONGITUDE=" + payload.Longitude +
-          "&LATITUDE=" + payload.Latitude
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-
-        return {
-          type: GitAction.AddedShoplot,
-          payload: json,
-        };
-      } catch (error) {
-        alert('AddedShoplot: ' + error);
-        return {
-          type: GitAction.AddedShoplot,
-          payload: [],
-        };
+  Shoplot_AddShoplot = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.AddShoplot), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Storage_AddShoplot?SHOPLOTNAME=" + action.payload.ShoplotName +
+            "&CONTACTNO=" + action.payload.ContactNo +
+            "&SHOPLOTBLOCK=" + action.payload.ShoplotBlock +
+            "&STORAGEBLOCKID=" + action.payload.StorageBlockID +
+            "&PROJECTID=" + action.payload.ProjectID +
+            "&SHOPLOTPOLYGONSTRING=" + action.payload.ShoplotPolygon +
+            "&LONGITUDE=" + action.payload.Longitude +
+            "&LATITUDE=" + action.payload.Latitude)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.AddedShoplot, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.AddedShoplot, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Shoplot_AddShoplot. Please check on URL")
+          return dispatch({ type: GitAction.AddedShoplot, payload: [] });
+        }
       }
-    });
+    }));
 
-  Shoplot_UpdateShoplot = (action$) =>
-    action$.ofType(GitAction.UpdateShoplot).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Storage_UpdateShoplot?SHOPLOTNAME=" + payload.ShoplotName +
-          "&SHOPLOTID=" + payload.ShoplotID +
-          "&CONTACTNO=" + payload.ContactNo +
-          "&SHOPLOTBLOCK=" + payload.ShoplotBlock +
-          "&STORAGEBLOCKID=" + payload.StorageBlockID +
-          "&SHOPLOTPOLYGONSTRING=" + payload.ShoplotPolygon
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-
-        return {
-          type: GitAction.UpdatedShoplot,
-          payload: json,
-        };
-      } catch (error) {
-        alert('UpdatedShoplot: ' + error);
-        return {
-          type: GitAction.UpdatedShoplot,
-          payload: [],
-        };
+  Shoplot_UpdateShoplot = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.UpdateShoplot), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Storage_UpdateShoplot?SHOPLOTNAME=" + action.payload.ShoplotName +
+            "&SHOPLOTID=" + action.payload.ShoplotID +
+            "&CONTACTNO=" + action.payload.ContactNo +
+            "&SHOPLOTBLOCK=" + action.payload.ShoplotBlock +
+            "&STORAGEBLOCKID=" + action.payload.StorageBlockID +
+            "&SHOPLOTPOLYGONSTRING=" + action.payload.ShoplotPolygon)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.UpdatedShoplot, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.UpdatedShoplot, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Shoplot_UpdateShoplot. Please check on URL")
+          return dispatch({ type: GitAction.UpdatedShoplot, payload: [] });
+        }
       }
-    });
+    }));
 
-  Shoplot_DeleteShoplot = (action$) =>
-    action$.ofType(GitAction.DeleteShoplot).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Storage_DeleteShoplot?SHOPLOTID=" + payload.ShoplotID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-
-        return {
-          type: GitAction.DeletedShoplot,
-          payload: json,
-        };
-      } catch (error) {
-        alert('DeletedShoplot: ' + error);
-        return {
-          type: GitAction.DeletedShoplot,
-          payload: [],
-        };
+  Shoplot_DeleteShoplot = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.DeleteShoplot), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Storage_DeleteShoplot?SHOPLOTID=" + action.payload.ShoplotID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.DeletedShoplot, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.DeletedShoplot, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Shoplot_DeleteShoplot. Please check on URL")
+          return dispatch({ type: GitAction.DeletedShoplot, payload: [] });
+        }
       }
-    });
+    }));
 
-  Storage_AddShoplotCoordinate = (action$) =>
-    action$.ofType(GitAction.AddShoplotCoordinateListing).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Storage_AddShoplotCoordinate?SHOPLOTID=" + payload.ShoplotID
-          + "&LONGITUDE=" + payload.Longitude
-          + "&LATITUDE=" + payload.Latitude
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-        return {
-          type: GitAction.AddedShoplotCoordinateListing,
-          payload: json,
-        };
-      } catch (error) {
-        alert('AddedShoplotCoordinateListing: ' + error);
-        return {
-          type: GitAction.AddedShoplotCoordinateListing,
-          payload: [],
-        };
+  ///////////////////////////////////////////////////  Shoplot Coordinate  ///////////////////////////////////////////////////
+
+  Storage_AddShoplotCoordinate = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.AddShoplotCoordinateListing), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Storage_AddShoplotCoordinate?SHOPLOTID=" + action.payload.ShoplotID
+            + "&LONGITUDE=" + action.payload.Longitude
+            + "&LATITUDE=" + action.payload.Latitude)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.AddedShoplotCoordinateListing, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.AddedShoplotCoordinateListing, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Storage_AddShoplotCoordinate. Please check on URL")
+          return dispatch({ type: GitAction.AddedShoplotCoordinateListing, payload: [] });
+        }
       }
-    });
+    }));
 
-  Storage_UpdateShoplotCoordinate = (action$) =>
-    action$.ofType(GitAction.UpdateShoplotCoordinateListing).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Storage_UpdateShoplotCoordinate?SHOPLOTID=" + payload.ShoplotID
-          + "&LONGITUDE=" + payload.Longitude
-          + "&LATITUDE=" + payload.Latitude
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-
-        return {
-          type: GitAction.UpdatedShoplotCoordinateListing,
-          payload: json,
-        };
-      } catch (error) {
-        alert('UpdatedShoplotCoordinateListing: ' + error);
-        return {
-          type: GitAction.UpdatedShoplotCoordinateListing,
-          payload: [],
-        };
+  Storage_UpdateShoplotCoordinate = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.UpdateShoplotCoordinateListing), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Storage_UpdateShoplotCoordinate?SHOPLOTID=" + action.payload.ShoplotID
+            + "&LONGITUDE=" + action.payload.Longitude
+            + "&LATITUDE=" + action.payload.Latitude)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.UpdatedShoplotCoordinateListing, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.UpdatedShoplotCoordinateListing, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Storage_UpdateShoplotCoordinate. Please check on URL")
+          return dispatch({ type: GitAction.UpdatedShoplotCoordinateListing, payload: [] });
+        }
       }
-    });
+    }));
 
   ///////////////////////////////////////////////////  Block List ///////////////////////////////////////////////////
 
-  Shoplot_BlockListing = (action$) =>
-    action$.ofType(GitAction.GetBlockListing).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Storage_BlockList?PROJECTID=" + payload.ProjectID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-
-        return {
-          type: GitAction.GotBlockListing,
-          payload: json,
-        };
-      } catch (error) {
-        alert('GotBlockListing: ' + error);
-        return {
-          type: GitAction.GotBlockListing,
-          payload: [],
-        };
+  Shoplot_BlockListing = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetBlockListing), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Storage_BlockList?PROJECTID=" + action.payload.ProjectID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotBlockListing, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotBlockListing, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Shoplot_BlockListing. Please check on URL")
+          return dispatch({ type: GitAction.GotBlockListing, payload: [] });
+        }
       }
-    });
+    }));
 
-  Storage_AddBlock = (action$) =>
-    action$.ofType(GitAction.AddBlockListing).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Storage_AddBlock?PROJECTID=" + payload.ProjectID
-          + "&BLOCKNAME=" + payload.BlockName
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-
-        return {
-          type: GitAction.AddedBlockListing,
-          payload: json,
-        };
-      } catch (error) {
-        alert('AddedBlockListing: ' + error);
-        return {
-          type: GitAction.AddedBlockListing,
-          payload: [],
-        };
+  Storage_AddBlock = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.AddBlockListing), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Storage_AddBlock?PROJECTID=" + action.payload.ProjectID
+            + "&BLOCKNAME=" + action.payload.BlockName)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.AddedBlockListing, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.AddedBlockListing, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Storage_AddBlock. Please check on URL")
+          return dispatch({ type: GitAction.AddedBlockListing, payload: [] });
+        }
       }
-    });
+    }));
 
-  Storage_UpdateBlock = (action$) =>
-    action$.ofType(GitAction.UpdateBlockListing).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Storage_UpdateBlock?STORAGEBLOCKID=" + payload.StorageBlockID +
-          "&BLOCKNAME=" + payload.BlockName
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-
-        return {
-          type: GitAction.UpdatedBlockListing,
-          payload: json,
-        };
-      } catch (error) {
-        alert('UpdatedBlockListing: ' + error);
-        return {
-          type: GitAction.UpdatedBlockListing,
-          payload: [],
-        };
+  Storage_UpdateBlock = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.UpdateBlockListing), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Storage_UpdateBlock?STORAGEBLOCKID=" + action.payload.StorageBlockID +
+            "&BLOCKNAME=" + action.payload.BlockName)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.UpdatedBlockListing, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.UpdatedBlockListing, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Storage_UpdateBlock. Please check on URL")
+          return dispatch({ type: GitAction.UpdatedBlockListing, payload: [] });
+        }
       }
-    });
+    }));
 
-  Storage_DeleteBlock = (action$) =>
-    action$.ofType(GitAction.DeleteBlockListing).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Storage_DeleteBlock?STORAGEBLOCKID=" + payload.StorageBlockID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-
-        return {
-          type: GitAction.DeletedBlockListing,
-          payload: json,
-        };
-      } catch (error) {
-        alert('DeletedBlockListing: ' + error);
-        return {
-          type: GitAction.DeletedBlockListing,
-          payload: [],
-        };
+  Storage_DeleteBlock = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.DeleteBlockListing), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Storage_DeleteBlock?STORAGEBLOCKID=" + action.payload.StorageBlockID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.DeletedBlockListing, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.DeletedBlockListing, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Storage_DeleteBlock. Please check on URL")
+          return dispatch({ type: GitAction.DeletedBlockListing, payload: [] });
+        }
       }
-    });
+    }));
 
   ///////////////////////////////////////////////////  Grid  ///////////////////////////////////////////////////
 
-  Storage_GridStorageList = (action$) =>
-    action$.ofType(GitAction.GetStorage).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Storage_GridStorageList?PROJECTID=" + payload.ProjectID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-
-        return {
-          type: GitAction.GotStorage,
-          payload: json,
-        };
-      } catch (error) {
-        alert('GetStorage: ' + error);
-        return {
-          type: GitAction.GotStorage,
-          payload: [],
-        };
+  Storage_GridStorageList = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetStorage), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Storage_GridStorageList?PROJECTID=" + action.payload.ProjectID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotStorage, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotStorage, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Storage_DeleteBlock. Please check on URL")
+          return dispatch({ type: GitAction.GotStorage, payload: [] });
+        }
       }
-    });
+    }));
 
-  Storage_AddGrid = (action$) =>
-    action$.ofType(GitAction.AddGridListing).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Storage_AddGrid?PROJECTID=" + payload.ProjectID
-          + "&GRIDSTORAGECODE=" + payload.GridStorageCode
-          + "&SHOPLOTID=" + payload.ShoplotID
-          + "&SHOPLOTNAME=" + payload.ShoplotName
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-
-        return {
-          type: GitAction.AddedGridListing,
-          payload: json,
-        };
-      } catch (error) {
-        alert('AddGridListing: ' + error);
-        return {
-          type: GitAction.AddedGridListing,
-          payload: [],
-        };
+  Storage_AddGrid = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.AddGridListing), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Storage_AddGrid?PROJECTID=" + action.payload.ProjectID
+            + "&GRIDSTORAGECODE=" + action.payload.GridStorageCode
+            + "&SHOPLOTID=" + action.payload.ShoplotID
+            + "&SHOPLOTNAME=" + action.payload.ShoplotName)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.AddedGridListing, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.AddedGridListing, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Storage_AddGrid. Please check on URL")
+          return dispatch({ type: GitAction.AddedGridListing, payload: [] });
+        }
       }
-    });
+    }));
 
-  Storage_UpdateGrid = (action$) =>
-    action$.ofType(GitAction.UpdateGridListing).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Storage_UpdateGrid?GRIDSTORAGEID=" + payload.GridStorageID
-          + "&GRIDSTORAGECODE=" + payload.GridStorageCode
-          + "&SHOPLOTID=" + payload.ShoplotID
-          + "&SHOPLOTNAME=" + payload.ShoplotName
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-
-        return {
-          type: GitAction.UpdatedGridListing,
-          payload: json,
-        };
-      } catch (error) {
-        alert('UpdatedGridListing: ' + error);
-        return {
-          type: GitAction.UpdatedGridListing,
-          payload: [],
-        };
+  Storage_UpdateGrid = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.UpdateGridListing), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Storage_UpdateGrid?GRIDSTORAGEID=" + action.payload.GridStorageID
+            + "&GRIDSTORAGECODE=" + action.payload.GridStorageCode
+            + "&SHOPLOTID=" + action.payload.ShoplotID
+            + "&SHOPLOTNAME=" + action.payload.ShoplotName)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.UpdatedGridListing, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.UpdatedGridListing, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Storage_UpdateGrid. Please check on URL")
+          return dispatch({ type: GitAction.UpdatedGridListing, payload: [] });
+        }
       }
-    });
+    }));
 
-  Storage_DeleteGrid = (action$) =>
-    action$.ofType(GitAction.DeleteGridListing).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "Storage_DeleteGrid?GRIDSTORAGEID=" + payload.GridStorageID
-        );
-        let json = await response.json();
-        json = JSON.parse(json);
-
-        return {
-          type: GitAction.DeletedGridListing,
-          payload: json,
-        };
-      } catch (error) {
-        alert('DeletedGridListing: ' + error);
-        return {
-          type: GitAction.DeletedGridListing,
-          payload: [],
-        };
+  Storage_DeleteGrid = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.DeleteGridListing), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Storage_DeleteGrid?GRIDSTORAGEID=" + action.payload.GridStorageID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.DeletedGridListing, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.DeletedGridListing, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Storage_DeleteGrid. Please check on URL")
+          return dispatch({ type: GitAction.DeletedGridListing, payload: [] });
+        }
       }
-    });
+    }));
 
   ///////////////////////////////////////////////////  sidebar configurations ///////////////////////////////////////////////////
-  User_ViewPage = action$ =>
-    action$.ofType(GitAction.FetchSidebar).switchMap(async ({ payload }) => {
-      try {
-        const response = await fetch(
-          url + project + "/" +
-          "User_ViewPage?" +
-          "ROLEGROUPID=" + payload.ROLEGROUPID +
-          "&USERID=" + payload.USERID
-        );
 
-        let json = await response.json();
-        json = JSON.parse(json)
-        return {
-          type: GitAction.SidebarFetched,
-          payload: json,
-        };
+  User_ViewPage = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.FetchSidebar), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "User_ViewPage?" +
+            "ROLEGROUPID=" + action.payload.ROLEGROUPID +
+            "&USERID=" + action.payload.USERID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.SidebarFetched, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.SidebarFetched, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: User_ViewPage. Please check on URL")
+          return dispatch({ type: GitAction.SidebarFetched, payload: [] });
+        }
       }
-      catch (error) {
-        toast.error("Error Code: FetchSidebar")
-        return {
-          type: GitAction.SidebarFetched,
-          payload: [],
-        };
-      }
-    });
+    }));
 
 
   ///////////////////////////////////////////////////  Purchase Order  ///////////////////////////////////////////////////

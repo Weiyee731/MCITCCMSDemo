@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from "react-redux";
 import { GitAction } from "../../../store/action/gitAction";
 import createHistory from 'history/createBrowserHistory'
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import { toast } from "react-toastify";
 
 import { Link } from "react-router-dom";
@@ -10,7 +10,7 @@ import "./ProductInfo.css";
 import { isStringNullOrEmpty } from "../../../tools/Helpers";
 import Logo from "../../../assets/logos/logo.png";
 import CategoryHierachy from "../../../components/share/categoryHierachy";
-import IconButton from '@material-ui/core/IconButton';
+import IconButton from '@mui/material/IconButton';
 import { ArrowRoundedLeft8x13Svg, ArrowRoundedRight8x13Svg } from '../../../assets/svg';
 
 import TableCell from '@mui/material/TableCell';

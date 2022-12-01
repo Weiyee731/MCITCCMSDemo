@@ -10,9 +10,9 @@ import {
     TableBody,
     Button,
     FormHelperText,
-} from "@material-ui/core";
+} from "@mui/material";
 import { GitAction } from "../../store/action/gitAction";
-import TextField from "@material-ui/core/TextField";
+import TextField from "@mui/material/TextField";
 import Dropzone from "react-dropzone";
 // import { browserHistory } from "react-router";
 function mapStateToProps(state) {

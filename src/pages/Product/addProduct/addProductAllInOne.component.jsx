@@ -12,22 +12,22 @@ import { convertDateTimeToString, getFileExtension, getFileTypeByExtension, isSt
 import "./addProduct.component.css";
 
 // UI Components
-import { Card, CardContent } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
+import { Card, CardContent } from "@mui/material";
+import Button from "@mui/material/Button";
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import MaterialTable from "material-table";
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from "@mui/icons-material/Close";
-import IconButton from "@material-ui/core/IconButton";
-import MenuItem from "@material-ui/core/MenuItem";
+import IconButton from "@mui/material/IconButton";
+import MenuItem from "@mui/material/MenuItem";
 import OutlinedInput from '@mui/material/OutlinedInput';
-import Stepper from "@material-ui/core/Stepper";
-import Step from "@material-ui/core/Step";
-import StepLabel from "@material-ui/core/StepLabel";
-import StepContent from "@material-ui/core/StepContent";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import StepContent from "@mui/material/StepContent";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { Fade } from "shards-react";
+// import { Fade } from "shards-react";
 import InfoIcon from '@mui/icons-material/Info';
 import { styled } from '@mui/material/styles';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
@@ -35,12 +35,12 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import InputAdornment from '@mui/material/InputAdornment';
 import { toast } from "react-toastify";
 import { HashLink } from "react-router-hash-link";
-import LinearProgress from "@material-ui/core/LinearProgress";
+import LinearProgress from "@mui/material/LinearProgress";
 import PropTypes from "prop-types";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 import SearchIcon from "@mui/icons-material/Search";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import Autocomplete from "@mui/material/Autocomplete";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from '@mui/material/FormControl';
@@ -5542,7 +5542,7 @@ class AddProductComponent extends Component {
                 </div>
               </CardContent>
             </Card>
-            <Fade in={this.state.FocusOn}>
+            {/* <Fade in={this.state.FocusOn}>
               <br />
               <Card className="HintsCard">
                 <CardContent>
@@ -5566,7 +5566,7 @@ class AddProductComponent extends Component {
                   </div>
                 </CardContent>
               </Card>
-            </Fade>
+            </Fade> */}
             <ModalPopOut open={this.state.isOverFileSize} title="File Size Error" showAction={false}>
               <div className="container-fluid">
                 <div className="container">

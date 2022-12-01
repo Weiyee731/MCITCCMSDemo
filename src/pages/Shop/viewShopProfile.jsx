@@ -15,11 +15,11 @@ import { Link, matchPath, Redirect, Switch, Route } from "react-router-dom";
 import {
     Card,
     Divider,
-} from "@material-ui/core";
-import CardContent from "@material-ui/core/CardContent";
-import FormControl from "@material-ui/core/FormControl";
-import TextField from "@material-ui/core/TextField";
-import Select from "@material-ui/core/Select";
+} from "@mui/material";
+import CardContent from "@mui/material/CardContent";
+import FormControl from "@mui/material/FormControl";
+import TextField from "@mui/material/TextField";
+import Select from "@mui/material/Select";
 import axios from "axios";
 // import moment from 'moment';
 

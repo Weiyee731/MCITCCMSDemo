@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import {
   TableCell,
-} from "@material-ui/core";
+} from "@mui/material";
 import { GitAction } from "../../../store/action/gitAction";
 
 // Share Components
@@ -11,10 +11,10 @@ import SearchBar from "../../../components/SearchBar/SearchBar"
 import MerchantDetails from "./merchantDetails.component";
 
 // UI Components
-import Paper from "@material-ui/core/Paper";
+import Paper from "@mui/material/Paper";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { TabContext, TabPanel } from '@material-ui/lab';
+import { TabContext, TabPanel } from '@mui/lab';
 
 
 function mapStateToProps(state) {

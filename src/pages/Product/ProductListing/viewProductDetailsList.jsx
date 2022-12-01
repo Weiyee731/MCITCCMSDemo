@@ -9,34 +9,34 @@ import Dropzone from "react-dropzone";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { HashLink } from "react-router-hash-link";
-import { Card, CardContent } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
+import { Card, CardContent } from "@mui/material";
+import Button from "@mui/material/Button";
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import MaterialTable from "material-table";
 import AddIcon from '@mui/icons-material/Add';
 import InfoIcon from '@mui/icons-material/Info';
 import CloseIcon from "@mui/icons-material/Close";
-import IconButton from "@material-ui/core/IconButton";
-import MenuItem from "@material-ui/core/MenuItem";
-import LinearProgress from "@material-ui/core/LinearProgress";
+import IconButton from "@mui/material/IconButton";
+import MenuItem from "@mui/material/MenuItem";
+import LinearProgress from "@mui/material/LinearProgress";
 import PropTypes from "prop-types";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 import SearchIcon from "@mui/icons-material/Search";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import Autocomplete from "@mui/material/Autocomplete";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import { FormInput } from "shards-react";
-import Stepper from "@material-ui/core/Stepper";
-import Step from "@material-ui/core/Step";
-import StepLabel from "@material-ui/core/StepLabel";
-import StepContent from "@material-ui/core/StepContent";
+// import { FormInput } from "shards-react";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import StepContent from "@mui/material/StepContent";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { Fade } from "shards-react";
+// import { Fade } from "shards-react";
 import { styled } from '@mui/material/styles';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
@@ -5236,7 +5236,7 @@ class ProductDetailsComponent extends Component {
                                                 <div>
                                                     <div className="VariantOption align-items-center">
                                                         <div className="col-3">
-                                                            <FormInput
+                                                            {/* <FormInput
                                                                 variant="outlined"
                                                                 disabled="true"
                                                                 size="small"
@@ -5246,15 +5246,15 @@ class ProductDetailsComponent extends Component {
                                                                         return (x.ProductVariation)
                                                                     })
                                                                 }
-                                                            />
+                                                            /> */}
                                                         </div>
                                                         <div className="col-9" style={{ paddingLeft: "10px" }}>
-                                                            <FormInput
+                                                            {/* <FormInput
                                                                 variant="outlined"
                                                                 disabled="true"
                                                                 size="small"
                                                                 value={this.state.variation1.options[i].optionName}
-                                                            />
+                                                            /> */}
                                                         </div>
                                                     </div>
                                                     {this.state.variation1.options[i].errorOption && this.state.toBeEdited && (
@@ -6126,7 +6126,7 @@ class ProductDetailsComponent extends Component {
                                     </div>
                                 </CardContent>
                             </Card>
-                            <Fade in={this.state.FocusOn}>
+                            {/* <Fade in={this.state.FocusOn}>
                                 <br />
 
                                 {this.state.toBeEdited ? <Card className="HintsCard">
@@ -6151,7 +6151,7 @@ class ProductDetailsComponent extends Component {
                                         </div>
                                     </CardContent>
                                 </Card> : null}
-                            </Fade>
+                            </Fade> */}
                         </div>
                     </div>
 

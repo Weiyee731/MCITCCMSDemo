@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { TableCell } from "@material-ui/core";
+import { TableCell } from "@mui/material";
 import { GitAction } from "../../../store/action/gitAction";
 import { toast } from "react-toastify";
 
@@ -12,8 +12,8 @@ import Logo from "../../../assets/logos/logo.png";
 import SearchBar from "../../../components/SearchBar/SearchBar"
 
 // UI Components
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 import Endorse from '@mui/icons-material/DomainVerification';
 
 function mapStateToProps(state) {

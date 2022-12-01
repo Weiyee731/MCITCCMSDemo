@@ -7,14 +7,14 @@ import {
     TableCell,
     TableHead,
     TableRow,
-} from "@material-ui/core";
-import Button from "@material-ui/core/Button";
+} from "@mui/material";
+import Button from "@mui/material/Button";
 import { GitAction } from "../../store/action/gitAction";
 import "../../app/App.scss";
 import PromotionDetailsComponent from "./promotionDetails.component";
 
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 import Logo from "../../assets/logos/logo.png";
 import TableComponents from "../../components/TableComponents/TableComponents";
 import SearchBar from "../../components/SearchBar/SearchBar"

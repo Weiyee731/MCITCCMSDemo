@@ -1,9 +1,12 @@
-import { combineReducers, createStore, applyMiddleware } from "redux";
-import { combineEpics, createEpicMiddleware } from "redux-observable";
+import 'rxjs'
+import { createStore, combineReducers, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk'
+import { createEpicMiddleware, combineEpics } from 'redux-observable'
 import { counterReducer } from "./reducer/gitReducer"; //reducers
-import { GitEpic, gitEpic } from "./epic/gitEpic"; //epics
+import { gitEpic } from "./epic/gitEpic"; //epics
 
 const rootEpic = combineEpics(
+  // User account credentials
   gitEpic.User_Login,
   gitEpic.User_LoginServer,
   gitEpic.User_Logout,
@@ -19,8 +22,8 @@ const rootEpic = combineEpics(
   // Address
   gitEpic.Address_ViewAll,
 
-  // Order
-  gitEpic.Order_Add,
+  // // Order
+  // gitEpic.Order_Add,
   gitEpic.Order_ViewAll,
   gitEpic.Order_UpdateUserDetails,
   gitEpic.Transaction_ViewStatus,
@@ -30,7 +33,7 @@ const rootEpic = combineEpics(
   gitEpic.Merchants_ViewProfile,
   gitEpic.Merchants_ViewAllOrder,
 
-  // Product
+  // // Product
   gitEpic.Product_Add,
   gitEpic.Product_Update,
   gitEpic.Product_Delete,
@@ -78,7 +81,7 @@ const rootEpic = combineEpics(
 
   // Product Review
   gitEpic.ProductReview_ViewByID,
-  gitEpic.ProductReview_Add,
+  // gitEpic.ProductReview_Add,
 
   //Promotion
   gitEpic.Promotion_ViewAll,
@@ -114,18 +117,15 @@ const rootEpic = combineEpics(
   gitEpic.Storage_UpdateGrid,
   gitEpic.Storage_DeleteGrid,
 
-  // gitEpic.PurchaseOrder_UpdateStatus,
-  // gitEpic.PurchaseOrder_ViewAll,
-  // gitEpic.PurchaseOrder_Delete,
-  // gitEpic.ProductListing_ByStatus,
-
-  // gitEpic.SalesOrder_Add,
-  // gitEpic.Quotation_Add,
-  // gitEpic.Quotation_View,
-  // gitEpic.Quotation_Delete,
 );
 
+const epicMiddleware = createEpicMiddleware();
 const rootReducer = combineReducers({ counterReducer });
-const epicMiddleware = createEpicMiddleware(rootEpic);
-const createStoreWithMiddleware = applyMiddleware(epicMiddleware)(createStore);
-export default createStoreWithMiddleware(rootReducer);
+const middleware = [
+  thunk,
+  epicMiddleware
+]
+const initialState = {};
+const store = createStore(rootReducer,initialState, applyMiddleware(...middleware))
+epicMiddleware.run(rootEpic);
+export default store

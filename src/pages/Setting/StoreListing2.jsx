@@ -29,33 +29,13 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
 import GroupAddIcon from '@mui/icons-material/Add';
-import Badge from '@mui/material/Badge';
 import { toast } from "react-toastify";
 import TextField from '@mui/material/TextField';
 import PageviewIcon from '@mui/icons-material/Pageview';
 import FormHelperText from '@mui/material/FormHelperText';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button } from "@mui/material";
-import InputAdornment from '@mui/material/InputAdornment';
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-
-import { MapContainer, TileLayer, FeatureGroup } from 'react-leaflet';
-import { EditControl } from "react-leaflet-draw"
-import { useState, useCallback } from 'react';
-
-import { render } from 'react-dom';
-// import ReactMapGL from 'react-map-gl';
-// import DrawControl from './draw-control';
-// import ControlPanel from './control-panel';
-
-// import "leaflet-draw/dist/leaftlet.draw.css"
-// import '../../../node_modules/leaflet/dist/leaflet.css';
-
-// node_modules/leaflet-draw/dist/leaflet.draw.css
-// import "../../../node_modules/leaflet-draw/dist/leaflet.draw.css"
-// import "leaflet/dist/leaftlet.css"
-// import { useRef } from "react";
-
 import GoogleMaps from "../../components/GoogleMap/GoogleMapForPolygonCreation";
 import RoomIcon from '@mui/icons-material/Room';
 import InfoIcon from '@mui/icons-material/Info';

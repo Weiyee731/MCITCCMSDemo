@@ -1,50 +1,49 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Card, CardContent } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import FormHelperText from "@material-ui/core/FormHelperText";
+import { Card, CardContent } from "@mui/material";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import FormHelperText from "@mui/material/FormHelperText";
 import { GitAction } from "../../store/action/gitAction";
 //----------------------------------Table Things---------------------------------------------------
-import { Table, TableBody, TableCell, TableRow } from "@material-ui/core";
-import { lighten, makeStyles } from "@material-ui/core/styles";
-import Checkbox from "@material-ui/core/Checkbox";
+import { Table, TableBody, TableCell, TableRow } from "@mui/material";
+import Checkbox from "@mui/material/Checkbox";
 import PropTypes from "prop-types";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import Tooltip from "@material-ui/core/Tooltip";
-import IconButton from "@material-ui/core/IconButton";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
 import AddIcon from '@mui/icons-material/Add';
-import Paper from "@material-ui/core/Paper";
-import TableContainer from "@material-ui/core/TableContainer";
-import TablePagination from "@material-ui/core/TablePagination";
-import Input from "@material-ui/core/Input";
+import Paper from "@mui/material/Paper";
+import TableContainer from "@mui/material/TableContainer";
+import TablePagination from "@mui/material/TablePagination";
+import Input from "@mui/material/Input";
 import Logo from "../../assets/logos/logo.png";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
-import TableHead from "@material-ui/core/TableHead";
+import TableSortLabel from "@mui/material/TableSortLabel";
+import TableHead from "@mui/material/TableHead";
 // import SearchBox from "../../components/SearchBox/SearchBox";
-import InputLabel from "@material-ui/core/InputLabel";
+import InputLabel from "@mui/material/InputLabel";
 import DeleteIcon from '@mui/icons-material/Delete';
 //------------------------------------------------------------------- DatePicker-----------------------------------------------
 // import DatePicker from 'react-date-picker'
 // import moment from "moment";
 
 // -------------------------------------------------ADD PRODUCT THINGS--------------------------------------------------------
-import Grid from "@material-ui/core/Grid";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import Divider from "@material-ui/core/Divider";
-import InputAdornment from "@material-ui/core/InputAdornment";
+import Grid from "@mui/material/Grid";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import Divider from "@mui/material/Divider";
+import InputAdornment from "@mui/material/InputAdornment";
 // import SearchIcon from "@material-ui/icons/Search";
-import CardHeader from "@material-ui/core/CardHeader";
+import CardHeader from "@mui/material/CardHeader";
 // import { browserHistory } from "react-router";
 import createHistory from 'history/createBrowserHistory'
 import { ThreeSixtyTwoTone, ThumbUpSharp } from "@mui/icons-material";
 // import Pagination from "../../components/shared/Pagination";
-import Dialog from '@material-ui/core/Dialog';
-import AppBar from '@material-ui/core/AppBar';
+import Dialog from '@mui/material/Dialog';
+import AppBar from '@mui/material/AppBar';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';

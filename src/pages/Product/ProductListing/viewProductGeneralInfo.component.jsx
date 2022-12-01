@@ -23,9 +23,9 @@ import TableComponents from "../../../components/TableComponents/TableComponents
 
 // UI Purpose
 import ReplyIcon from '@mui/icons-material/Reply';
-import IconButton from '@material-ui/core/IconButton';
-import Rating from "@material-ui/lab/Rating";
-import Button from "@material-ui/core/Button";
+import IconButton from '@mui/material/IconButton';
+import Rating from "@mui/material/Rating";
+import Button from "@mui/material/Button";
 import Tooltip from '@mui/material/Tooltip';
 import GroupAddIcon from '@mui/icons-material/Add';
 import PageviewIcon from '@mui/icons-material/Pageview';

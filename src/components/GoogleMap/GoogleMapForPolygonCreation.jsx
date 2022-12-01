@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import {
-    Map,
-    GoogleApiWrapper,
-    InfoWindow,
-    Marker,
-    Polygon,
-} from "google-maps-react";
+// import {
+//     Map,
+//     GoogleApiWrapper,
+//     InfoWindow,
+//     Marker,
+//     Polygon,
+// } from "google-maps-react";
 import { toast } from "react-toastify";
 export class GoogleMaps extends Component {
 
@@ -178,7 +178,7 @@ export class GoogleMaps extends Component {
 
         return (
             <div>
-                <Map
+                {/* <Map
                     onClick={this.props.toView === undefined && onMapClicked}
                     google={this.props.google}
                     zoom={this.props.zoom ? this.props.zoom : 16}
@@ -222,12 +222,13 @@ export class GoogleMaps extends Component {
                             <h4>{this.state.selectedPlace.name}</h4>
                         </div>
                     </InfoWindow>
-                </Map>
+                </Map> */}
             </div>
 
         )
     }
 }
-export default GoogleApiWrapper({
-    apiKey: "AIzaSyBtEc6iXwj2A_A-ft-GagAqEmJA4pYgidE",
-})(GoogleMaps);
+// export default GoogleApiWrapper({
+//     apiKey: "AIzaSyBtEc6iXwj2A_A-ft-GagAqEmJA4pYgidE",
+// })(GoogleMaps);
+export default GoogleMaps

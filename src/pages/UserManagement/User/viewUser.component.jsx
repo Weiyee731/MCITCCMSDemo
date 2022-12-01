@@ -6,7 +6,7 @@ import {
     TableCell,
     TableHead,
     TableRow,
-} from "@material-ui/core";
+} from "@mui/material";
 import { GitAction } from "../../../store/action/gitAction";
 
 // Share Components

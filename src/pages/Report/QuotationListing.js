@@ -11,9 +11,9 @@ import Dropzone from "react-dropzone";
 import { connect } from "react-redux";
 import { GitAction } from "../../store/action/gitAction";
 import TableCell from '@mui/material/TableCell';
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import AppBar from "@material-ui/core/AppBar";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import AppBar from "@mui/material/AppBar";
 
 import ProductPurchaseOrderDetailsComponent from './ProductPurchaseOrderDetailsComponent';
 
