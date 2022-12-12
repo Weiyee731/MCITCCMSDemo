@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { ServerConfiguration } from "../serverConf";
 const { filter, map } = require('rxjs/operators');
-const url = ServerConfiguration.ServerUrl;
+const url = ServerConfiguration.DevServerUrl;
 const loginUrl = ServerConfiguration.LoginUrl;
 const LiveServerLoginUrl = ServerConfiguration.LiveServerLoginUrl;
 
