@@ -425,10 +425,11 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.GetMerchants), map(action => {
       return dispatch => {
         try {
+          
           return fetch(url + project + "/" +
             "User_ProfileListByType?TYPE=" + action.payload.type +
             "&TYPEVALUE=" + action.payload.typeValue +
-            "&USERID=" + action.ayload.USERID +
+            "&USERID=" + action.payload.USERID +
             "&UserRoleID=" + action.payload.userRoleID +
             "&LISTPERPAGE=" + action.payload.productPage +
             "&PAGE=" + action.payload.page +
@@ -630,7 +631,7 @@ export class GitEpic {
             "&TypeValue=" + action.payload.typeValue +
             "&USERID=" + action.payload.userId +
             "&PRODUCTPERPAGE=" + action.payload.productPage +
-            "&PAGE=" + action.ayload.page +
+            "&PAGE=" + action.payload.page +
             "&ProjectID=" + action.payload.ProjectID)
             .then(response => response.json())
             .then(json => {
@@ -1435,11 +1436,11 @@ export class GitEpic {
   ///////////////////////////////////////////////////  Promotion  ///////////////////////////////////////////////////
 
   Promotion_ViewAll = action$ =>
-    action$.pipe(filter(action => action.type === GitAction.GetProductReviewByProductID), map(action => {
+    action$.pipe(filter(action => action.type === GitAction.GetPromotion), map(action => {
       return dispatch => {
         try {
           return fetch(url + project + "/" +
-            "Promo_ViewPromotion?ACTIVEIND=" + action.payload.Ind +
+            "Promo_ViewPromotion?ACTIVEIND=" + action.payload.ProductID +
             "&ProjectID=" + action.payload.ProjectID)
             .then(response => response.json())
             .then(json => {
