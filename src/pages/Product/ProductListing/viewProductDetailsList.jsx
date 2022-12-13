@@ -3515,8 +3515,7 @@ class ProductDetailsComponent extends Component {
         //check url sent from database since it says 404 not found
         // var productImages = this.props.productInfo.length > 0 && this.props.productInfo[0].ProductImages !== null ? JSON.parse(this.props.productInfo[0].ProductImages) : "";
         var productImages = this.props.productInfo.length > 0 && this.props.productInfo[0].ProductImages !== null ?
-            JSON.parse(this.props.productInfo[0].ProductImages).filter((x) => x.ProductMediaUrl.includes("/products/" + this.props.productInfo[0].ProductID + "/")) : "";
-
+            JSON.parse(this.props.productInfo[0].ProductImages).filter((x) => x.ProductMediaUrl.includes("/products/" + this.props.productInfo[0].ProductID)) : "";
         var fileInfo = [];
         var url = [];
         var ImageId = [];
@@ -5127,9 +5126,6 @@ class ProductDetailsComponent extends Component {
                                             </div> */}
                                         </div>
                                     ) : null}
-
-                                    {console.log("variation1On", this.state.variation1On)}
-                                    {console.log("variation1On state", this.state)}
 
                                     {this.state.variation1On && this.state.toBeEdited && (
                                         <div className="VariantMain">

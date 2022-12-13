@@ -926,7 +926,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotProductVariationByCategoryID, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotProductVariationByCategoryID, payload: [] });
               }
             });
@@ -1377,7 +1377,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotProductReviewByProductID, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotProductReviewByProductID, payload: [] });
               }
             });
@@ -1448,7 +1448,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotPromotion, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotPromotion, payload: [] });
               }
             });

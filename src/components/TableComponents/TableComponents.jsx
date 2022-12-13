@@ -387,13 +387,16 @@ export default function TableComponents(props) {
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }} elevation={elevation}>
-                <EnhancedTableToolbar
-                    selectedRows={selected}
-                    tableTopLeft={tableTopLeft}
-                    tableTopRight={tableTopRight}
-                    SelectionActionButtons={props.SelectionActionButtons}
-                    SelectionExtraInfo={props.SelectionExtraInfo}
-                />
+                {
+                    tableTopLeft !== "empty" &&
+                    <EnhancedTableToolbar
+                        selectedRows={selected}
+                        tableTopLeft={tableTopLeft}
+                        tableTopRight={tableTopRight}
+                        SelectionActionButtons={props.SelectionActionButtons}
+                        SelectionExtraInfo={props.SelectionExtraInfo}
+                    />
+                }
                 <TableContainer sx={(stickyTableHeader) ? { maxHeight: stickyTableHeight } : { maxHeight: '100%' }}>
                     <Table
                         stickyHeader={stickyTableHeader}

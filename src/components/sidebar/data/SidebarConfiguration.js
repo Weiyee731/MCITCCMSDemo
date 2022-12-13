@@ -92,6 +92,11 @@ const sidebar_items = [
         icon: "inventory",
     },
     {
+        to: "/PromotionListing",
+        title: "Promotion",
+        icon: "inventory",
+    },
+    {
         to: "",
         title: "Setting",
         icon: <Settings />,

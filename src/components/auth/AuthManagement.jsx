@@ -60,6 +60,7 @@ export const resetLogonUser = () => {
     localStorage.removeItem("loginUser")
     localStorage.removeItem("sidebarItem");
     localStorage.removeItem("DataSetDraft");
+    localStorage.removeItem("promotionList");
 
     if (window.location.hostname === "localhost")
         window.location.href = "/" + projectURL + "/"

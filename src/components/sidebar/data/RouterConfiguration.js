@@ -65,7 +65,8 @@ import ProductCategory from "../../../pages/ProductCategory/viewProductCategorie
 import ShoplotDetailListing from "../../../pages/Setting/StoreDetailListing";
 import ProductPurchaseOrder from "../../../pages/Report/ProductPurchaseOrder";
 import QuotationListing from "../../../pages/Report/QuotationListing";
-
+import { PromotionDetails } from "../../../pages/Promotion/PromotionDetails";
+import { PromotionListing } from "../../../pages/Promotion/PromotionListing";
 
 const routes = [
     // {
@@ -222,9 +223,22 @@ const routes = [
         element: <EditShopProfile />,
     },
     {
-        path: "/viewShopProfile",
+        path: "/PromotionDetails/:promotionID",
         exact: true,
-        element: <EditShopProfile />,
+        element: (props) => (
+            <>
+                <PromotionDetails
+                    {...props}
+                    layout="standard"
+                    productId={props.match.params.promotionID}
+                />
+            </>
+        ),
+    },
+    {
+        path: "/PromotionListing",
+        exact: true,
+        element: <PromotionListing />,
     },
     {
         path: "/promotionList",
@@ -271,7 +285,7 @@ const routes = [
         exact: true,
         element: <ProductCategory />,
     },
-    
+
     {
         path: "/viewShoplotDetailList/:shoplotID",
         exact: true,
