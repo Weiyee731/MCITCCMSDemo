@@ -60,7 +60,7 @@ import NewStock from "../../../pages/Stock/addStock";
 import StockDetail from "../../../pages/Stock/StockDetail";
 
 import ShoplotListing from "../../../pages/Setting/StoreListing";
-import ProductCategory from "../../../pages/ProductCategory/viewProductCategories.component";
+import {ProductCategory} from "../../../pages/ProductCategory/viewProductCategories.component";
 
 import ShoplotDetailListing from "../../../pages/Setting/StoreDetailListing";
 import ProductPurchaseOrder from "../../../pages/Report/ProductPurchaseOrder";

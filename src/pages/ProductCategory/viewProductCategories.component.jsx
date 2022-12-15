@@ -1,855 +1,565 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-} from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { GitAction } from "../../store/action/gitAction";
 import "../../app/App.scss";
-import PropTypes from "prop-types";
-import clsx from "clsx";
-import { makeStyles } from "@mui/styles";
-import TableContainer from "@mui/material/TableContainer";
-import TablePagination from "@mui/material/TablePagination";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import Checkbox from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
 import DeleteIcon from '@mui/icons-material/Delete';
-import MaterialTable from "material-table";
 import { toast } from "react-toastify";
 import { isArrayNotEmpty } from "../../tools/Helpers";
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { Paper, Typography, TableRow, Box, TableHead, TextField, TableSortLabel, TableContainer, Tooltip, TableCell, TableBody, Table, IconButton, Collapse, TablePagination } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DoneIcon from '@mui/icons-material/Done';
+import CloseIcon from '@mui/icons-material/Close';
+import AddIcon from '@mui/icons-material/Add';
+import LoadingPanel from "../../tools/LoadingPanel";
 
-function mapStateToProps(state) {
-  return {
-    productCategories: state.counterReducer["productCategories"], // with sub hierarchy item
-    categories: state.counterReducer["categories"], // with sub hierarchy item
-  };
-}
+export const ProductCategory = (props) => {
+  const { categories, productCategories } = useSelector(state => ({
+    productCategories: state.counterReducer.productCategories,
+    categories: state.counterReducer.categories
+  }));
 
-function mapDispatchToProps(dispatch) {
-  return {
-    CallAllProductCategoryListing: (prodData) =>
-      dispatch(GitAction.CallAllProductCategoryListing(prodData)),
-    CallAddProductCategory: (prod) =>
-      dispatch(GitAction.CallAddProductCategory(prod)),
-    CallUpdateProductCategory: (prod) =>
-      dispatch(GitAction.CallUpdateProductCategory(prod)),
-    CallDeleteProductCategory: (prodData) =>
-      dispatch(GitAction.CallDeleteProductCategory(prodData)),
-    CallResetProductCategoryAction: () =>
-      dispatch(GitAction.CallResetProductCategoryAction()),
-  };
-}
+  const dispatch = useDispatch()
+  const [isHierachySet, setHierachy] = useState(false)
+  const [categoryListingDetails, setListingDetails] = useState([])
 
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
+  useEffect(() => {
+    dispatch(GitAction.CallAllProductCategoryListing())
+  }, [])
 
-function getComparator(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: "100%",
-  },
-  paper: {
-    width: "100%",
-    margin: "auto",
-    padding: "1%",
-    // paddingRight: "1%",
-    marginTop: "15px",
-  },
-  table: {
-    // margin: "20px",
-    minWidth: 750,
-  },
-  visuallyHidden: {
-    border: 0,
-    clip: "rect(0 0 0 0)",
-    height: 1,
-    margin: -1,
-    overflow: "hidden",
-    padding: 0,
-    position: "absolute",
-    top: 20,
-    width: 1,
-  },
-  highlight:
-    theme.palette.type === "light"
-      ? {
-        color: theme.palette.secondary.main,
-        // backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+  useEffect(() => {
+    let listing = []
+    if (isArrayNotEmpty(productCategories) && isHierachySet === false) {
+      let mainListing = {
+        HierarchyID: "",
+        ProductCategory: "",
+        Tag: "",
+        ProductCategoryID: "",
+        isOpen: false,
+        isEdit: false,
+        SubDetails: []
       }
-      : {
-        color: theme.palette.text.primary,
-        backgroundColor: theme.palette.secondary.dark,
-      },
-  title: {
-    flex: "1 1 100%",
-  },
-}));
+      productCategories.map((main, index) => {
+        mainListing = {
+          HierarchyID: main.HierarchyID,
+          ProductCategory: main.ProductCategory,
+          ProductCategoryID: main.ProductCategoryID,
+          Tag: main.Tag,
+          isOpen: false,
+          isEdit: false,
+          SubDetails: []
+        }
+        main.HierarchyItem !== undefined && main.HierarchyItem != "[]" && JSON.parse(main.HierarchyItem).map((details, detailsIndex) => {
+          let detailsList = {
+            HierarchyID: details.HierarchyID,
+            ProductCategoryID: details.ProductCategoryID,
+            ProductCategory: details.ProductCategory,
+            Tag: details.Tag,
+            isOpen: false,
+            isEdit: false,
+            SubDetails: []
+          }
+          details.HierarchyItem !== undefined && details.HierarchyItem != "[]" && JSON.parse(details.HierarchyItem).map((subdetails) => {
+            let subDetailsList = {
+              HierarchyID: subdetails.HierarchyID,
+              ProductCategoryID: subdetails.ProductCategoryID,
+              ProductCategory: subdetails.ProductCategory,
+              Tag: subdetails.Tag,
+              isOpen: false,
+              isEdit: false,
+            }
+            detailsList.SubDetails.push(subDetailsList)
+          })
+          mainListing.SubDetails.push(detailsList)
+        })
+        listing.push(mainListing)
+      })
+      setListingDetails(listing)
+      setHierachy(true)
+    }
 
-const headCells = [
-  {
-    id: "ProductCategoryName",
-    numeric: false,
-    disablePadding: false,
-    label: "Product Category Name",
-  },
-  {
-    id: "HierarchyID",
-    numeric: false,
-    disablePadding: false,
-    label: "Hierarchy Level",
-  },
-  {
-    id: "ParentProductCategoryID",
-    numeric: false,
-    disablePadding: false,
-    label: "Parent Product Category",
-  },
-  {
-    id: "Tag",
-    numeric: false,
-    disablePadding: false,
-    label: "Tags",
-  },
-];
+  }, [productCategories])
 
-function DeletableTableHead(props) {
-  const {
-    classes,
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-  } = props;
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
+  useEffect(() => {
+    dispatch(GitAction.CallAllProductCategoryListing())
+    setHierachy(false)
+  }, [categories])
 
-  return (
-    <TableHead>
-      <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{ "aria-label": "select all product categories" }}
-          />
+  const headerLayout = () => {
+    return (
+      <TableHead>
+        <TableRow>
+          <TableCell width="5%" />
+          <TableCell width="15%">Action</TableCell>
+          <TableCell width="45%" align="left">Product Category</TableCell>
+          <TableCell width="35%" align="left">Tag</TableCell>
+        </TableRow>
+      </TableHead>
+    )
+  }
+
+  const clickCollapseOpen = (data, mainIndex, subindex, subdetailIndex) => {
+    let listingData = [...categoryListingDetails]
+    if (data.HierarchyID === 1) {
+      listingData[mainIndex].isOpen = !listingData[mainIndex].isOpen
+    }
+
+    if (data.HierarchyID === 2) {
+      listingData[mainIndex].SubDetails[subindex].isOpen = !listingData[mainIndex].SubDetails[subindex].isOpen
+    }
+    setListingDetails(listingData)
+  }
+
+  const checkCollapseOpen = (data, mainIndex, subindex, subdetailIndex) => {
+    let listingData = [...categoryListingDetails]
+    let isOpen = false
+    if (isArrayNotEmpty(listingData)) {
+      if (data.HierarchyID === 1) {
+        if (listingData[mainIndex] !== undefined)
+          isOpen = listingData[mainIndex].isOpen
+      }
+
+      if (data.HierarchyID === 2) {
+        if (listingData[mainIndex].SubDetails[subindex] !== undefined)
+          isOpen = listingData[mainIndex].SubDetails[subindex].isOpen
+      }
+    }
+    return isOpen
+  }
+
+  const submitData = (type, HierarchyID, parentCategoryID, categoryID, Category) => {
+
+    if (categoryID === "") {
+      let propsData = {
+        ProductCategoryImage: "NULL",
+        ProductCategory: Category,
+        HierarchyID: HierarchyID,
+        ParentProductCategoryID: parentCategoryID,
+        ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+        UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+      }
+      dispatch(GitAction.CallAddProductCategory(propsData))
+    } else {
+
+      if (type === "delete") {
+        let propsData = {
+          ProductCategoryID: categoryID,
+          UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+        }
+        dispatch(GitAction.CallDeleteProductCategory(propsData))
+      }
+      else {
+        let propsData = {
+          ProductCategoryID: categoryID,
+          ProductCategory: Category,
+          UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+        }
+        dispatch(GitAction.CallUpdateProductCategory(propsData))
+      }
+    }
+  }
+
+  const clickIsEdit = (data, type, mainIndex, subindex, subdetailIndex) => {
+    let listingData = [...categoryListingDetails]
+
+    if (data.HierarchyID === 1) {
+      let listing = listingData[mainIndex]
+
+      if (type === "cancel") {
+        listingData = listingData.filter((x) => x.ProductCategoryID !== "")
+        listing.isEdit = !listing.isEdit
+      }
+
+      if (type === "done") {
+        if (listing.ProductCategory !== "") {
+          submitData(type, listing.HierarchyID, 0, listing.ProductCategoryID, listing.ProductCategory)
+          listing.isEdit = !listing.isEdit
+        } else {
+          toast.warning("Product Category is required")
+        }
+      }
+
+      if (type === "delete") {
+        submitData(type, listing.HierarchyID, 0, listing.ProductCategoryID, listing.ProductCategory)
+        listing.isEdit = !listing.isEdit
+      }
+
+      if (type === "edit")
+        listing.isEdit = !listing.isEdit
+
+
+    }
+
+    if (data.HierarchyID === 2) {
+      let listing = listingData[mainIndex].SubDetails[subindex]
+
+      if (type === "cancel") {
+        let filterHierachy = listingData[mainIndex].SubDetails.filter((x) => x.ProductCategoryID !== "")
+        listingData[mainIndex].SubDetails = filterHierachy
+        listing.isEdit = !listing.isEdit
+      }
+
+      if (type === "done") {
+        if (listing.ProductCategory !== "") {
+          submitData(type, listing.HierarchyID, listingData[mainIndex].ProductCategoryID, listing.ProductCategoryID, listing.ProductCategory)
+          listing.isEdit = !listing.isEdit
+        } else {
+          toast.warning("Product Category is required")
+        }
+      }
+
+      if (type === "delete") {
+        submitData(type, listing.HierarchyID, listingData[mainIndex].ProductCategoryID, listing.ProductCategoryID, listing.ProductCategory)
+        listing.isEdit = !listing.isEdit
+      }
+
+      if (type === "edit")
+        listing.isEdit = !listing.isEdit
+    }
+
+    if (data.HierarchyID === 3) {
+      let listing = listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex]
+
+      if (type === "cancel") {
+        let filterHierachy = listingData[mainIndex].SubDetails[subindex].SubDetails.filter((x) => x.ProductCategoryID !== "")
+        listingData[mainIndex].SubDetails[subindex].SubDetails = filterHierachy
+        listing.isEdit = !listing.isEdit
+      }
+
+      if (type === "done") {
+        if (listing.ProductCategory !== "") {
+          submitData(type, listing.HierarchyID, listingData[mainIndex].SubDetails[subindex].ProductCategoryID, listing.ProductCategoryID, listing.ProductCategory)
+          listing.isEdit = !listing.isEdit
+        } else {
+          toast.warning("Product Category is required")
+        }
+      }
+
+      if (type === "delete") {
+        submitData(type, listing.HierarchyID, listingData[mainIndex].SubDetails[subindex].ProductCategoryID, listing.ProductCategoryID, listing.ProductCategory)
+        listing.isEdit = !listing.isEdit
+      }
+
+      if (type === "edit")
+        listing.isEdit = !listing.isEdit
+    }
+
+
+
+    setListingDetails(listingData)
+  }
+
+  const checkEdit = (data, mainIndex, subindex, subdetailIndex) => {
+    let listingData = [...categoryListingDetails]
+    let isEdit = false
+
+    if (isArrayNotEmpty(listingData)) {
+      if (data.HierarchyID === 1) {
+        if (listingData[mainIndex] !== undefined)
+          isEdit = listingData[mainIndex].isEdit
+      }
+
+      if (data.HierarchyID === 2) {
+        if (listingData[mainIndex].SubDetails[subindex] !== undefined)
+          isEdit = listingData[mainIndex].SubDetails[subindex].isEdit
+      }
+
+      if (data.HierarchyID === 3) {
+
+        if (listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex] !== undefined)
+          isEdit = listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex].isEdit
+      }
+    }
+    return isEdit
+  }
+
+  const handleChanges = (type, value, data, mainIndex, subindex, subdetailIndex) => {
+    let listingData = [...categoryListingDetails]
+    switch (type) {
+      case "Category":
+        if (data.HierarchyID === 1) {
+          listingData[mainIndex].ProductCategory = value
+        }
+
+        if (data.HierarchyID === 2) {
+          listingData[mainIndex].SubDetails[subindex].ProductCategory = value
+        }
+
+        if (data.HierarchyID === 3) {
+          listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex].ProductCategory = value
+        }
+        break;
+
+      case "Tag":
+        if (data.HierarchyID === 1) {
+          listingData[mainIndex].Tag = value
+        }
+
+        if (data.HierarchyID === 2) {
+          listingData[mainIndex].SubDetails[subindex].Tag = value
+        }
+
+        if (data.HierarchyID === 3) {
+          listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex].Tag = value
+        }
+        break;
+
+      default:
+        break;
+    }
+    setListingDetails(listingData)
+  }
+
+
+  const handleNewCategory = (hierachy, index, subIndex) => {
+    let listingData = [...categoryListingDetails]
+
+    let mainListing = {
+      HierarchyID: "",
+      ProductCategory: "",
+      Tag: "",
+      ProductCategoryID: "",
+      isOpen: false,
+      isEdit: true,
+      SubDetails: []
+    }
+
+    switch (hierachy) {
+      case 1:
+        mainListing.HierarchyID = 1
+        listingData = [...listingData, mainListing]
+        break;
+
+      case 2:
+        mainListing.HierarchyID = 2
+        listingData[index].SubDetails.push(mainListing)
+        break;
+
+      case 3:
+        mainListing.HierarchyID = 3
+        listingData[index].SubDetails[subIndex].SubDetails.push(mainListing)
+        break;
+
+      default:
+        break;
+    }
+    setListingDetails(listingData)
+  }
+
+  const CollapseLayout = (data, index, subindex, subdetailIndex) => {
+    return (
+      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+        <TableCell>
+          {
+            data.HierarchyID < 3 &&
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => clickCollapseOpen(data, index, subindex, subdetailIndex)}
+            >
+              {checkCollapseOpen(data, index, subindex, subdetailIndex) ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          }
+
         </TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            padding={headCell.disablePadding ? "none" : "default"}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <span className={classes.visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </span>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
+        <TableCell component="th" scope="row">
+          {
+            checkEdit(data, index, subindex, subdetailIndex) ?
+              <>
+                <IconButton onClick={() => clickIsEdit(data, "done", index, subindex, subdetailIndex)}><DoneIcon /></IconButton>
+                <IconButton onClick={() => clickIsEdit(data, "cancel", index, subindex, subdetailIndex)}><CloseIcon /></IconButton>
+                {
+                  data.ProductCategoryID !== "" &&
+                  <IconButton onClick={() => clickIsEdit(data, "delete", index, subindex, subdetailIndex)}><DeleteIcon /></IconButton>
+                }
+              </>
+              :
+              <IconButton onClick={() => clickIsEdit(data, "edit", index, subindex, subdetailIndex)}><EditIcon /></IconButton>
+          }
+        </TableCell>
+        <TableCell align="left">
+          {
+            checkEdit(data, index, subindex, subdetailIndex) ?
+              <>
+                <TextField
+                  fullWidth
+                  hiddenLabel
+                  id="filled-hidden-label-small"
+                  defaultValue={data.ProductCategory}
+                  variant="filled"
+                  placeholder="Product Category"
+                  onChange={(e) => {
+                    handleChanges("Category", e.target.value, data, index, subindex, subdetailIndex)
+                  }}
+                  size="small"
+                />
+                {data.ProductCategory === "" && <Typography style={{ color: "red" }}>Product Category is required</Typography>}
+              </>
+              :
+              <Typography>{data.ProductCategory}</Typography>
+          }
 
-function DisplayTableHead(props) {
-  const { order, orderBy, onRequestSort } = props;
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
-  const classes = useStyles();
-  return (
-    <TableHead>
-      <TableRow>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            padding={headCell.disablePadding ? "none" : "default"}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <span className={classes.visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </span>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
 
-DeletableTableHead.propTypes = {
-  classes: PropTypes.object.isRequired,
-  numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-};
-
-DisplayTableHead.propTypes = {
-  classes: PropTypes.object.isRequired,
-  numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-};
-
-const DeletableTableToolbar = (props) => {
-  const classes = useStyles();
-
-  const { numSelected } = props;
-  const onDeleteProductCategory = () => {
-
-    console.log("propsprops", props)
-    // props.ProductCategoryProps.CallDeleteProductCategory(props.selectedData);
-  };
+        </TableCell>
+        <TableCell align="left">
+          {
+            checkEdit(data, index, subindex, subdetailIndex) ?
+              <TextField
+                fullWidth
+                hiddenLabel
+                id="filled-hidden-label-small"
+                defaultValue={data.Tag}
+                variant="filled"
+                placeholder="Tag"
+                onChange={(e) => {
+                  handleChanges("Tag", e.target.value, data, index, subindex, subdetailIndex)
+                }}
+                size="small"
+              />
+              :
+              <Typography>{data.Tag}</Typography>
+          }
+        </TableCell>
+      </TableRow >
+    )
+  }
 
   return (
-    <Toolbar
-      className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0,
-      })}
-    >
-      {numSelected > 0 ? (
-        <Typography
-          className={classes.title}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography
-          className={classes.title}
-          // variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          Please select the product categories that you want to delete.
-        </Typography>
-      )}
-
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton
-            aria-label="delete"
-            onClick={() => {
-              onDeleteProductCategory();
-            }}
-          >
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        ""
-      )}
-    </Toolbar>
-  );
-};
-
-const DisplayTableToolbar = (props) => {
-  const classes = useStyles();
-  const { numSelected } = props;
-
-  return <Toolbar className={clsx(classes.root)}></Toolbar>;
-};
-
-DeletableTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-};
-
-DisplayTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-};
-
-function DeletableTable(props) {
-  const classes = useStyles();
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("calories");
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
-  };
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = props.Data.map((n) => n.ProductCategory);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-
-    setSelected(newSelected);
-  };
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const handleChangeDense = (event) => {
-    setDense(event.target.checked);
-  };
-
-  const isSelected = (name) => selected.indexOf(name) !== -1;
-
-  const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, props.Data.length - page * rowsPerPage);
-
-  return (
-    <div>
-      <Paper className={classes.paper}>
-        <DeletableTableToolbar
-          numSelected={selected.length}
-          selectedData={selected}
-          ProductCategoryProps={props.ProductCategoryProps}
-        />
-        <TableContainer>
-          <Table
-            className={classes.table}
-            aria-labelledby="tableTitle"
-            size={dense ? "small" : "medium"}
-            aria-label="enhanced table"
-          >
-            <DeletableTableHead
-              classes={classes}
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={props.Data.length}
-            />
-            <TableBody>
-              {stableSort(props.Data, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.ProductCategoryID);
-                  // const isItemSelected = isSelectedID(row.ProductID);
-                  const labelId = `enhanced-table-checkbox-${index}`;
-
+    <div style={{ width: "100%" }}>
+      <h3>Product Category List</h3>
+      <TableContainer component={Paper}>
+        <div className="row" style={{ padding: "10px" }}>
+          <div className="col">
+            <Typography variant="h6" gutterBottom component="div">
+              Product Category
+            </Typography>
+          </div>
+          <div className="col" style={{ textAlign: "right" }}>
+            <IconButton>
+              <AddIcon onClick={() => handleNewCategory(1, 0, 0)} />
+            </IconButton>
+          </div>
+        </div>
+        <Table aria-label="collapsible table">
+          {headerLayout()}
+          {
+            isHierachySet === true ?
+              <TableBody>
+                {categoryListingDetails.length > 0 && categoryListingDetails.map((data, index) => {
                   return (
-                    <TableRow
-                      hover
-                      onClick={(event) =>
-                        handleClick(event, row.ProductCategoryID)
-                      }
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.ProductID}
-                      selected={isItemSelected}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          inputProps={{ "aria-labelledby": labelId }}
-                        />
-                      </TableCell>
-                      <TableCell align="left">{row.ProductCategory}</TableCell>
-                      <TableCell align="left">{row.HierarchyID}</TableCell>
-                      <TableCell align="left">
-                        {row.ParentProductCategoryID}
-                      </TableCell>
-                      <TableCell align="left">{row.Tag}</TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        {/* <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={props.Data.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        /> */}
-      </Paper>
+                    <>
+                      {CollapseLayout(data, index, 0, 0)}
+                      <TableRow>
+                        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                          <Collapse in={checkCollapseOpen(data, index, 0, 0)} timeout="auto" unmountOnExit>
+                            <Box sx={{ margin: 1 }}>
+                              <div className="row">
+                                <div className="col">
+                                  <Typography variant="h6" gutterBottom component="div">
+                                    Sub Category
+                                  </Typography>
+                                </div>
+                                <div className="col" style={{ textAlign: "right" }}>
+                                  <IconButton>
+                                    <AddIcon onClick={() => handleNewCategory(2, index, 0)} />
+                                  </IconButton>
+                                </div>
+                              </div>
+                              {
+                                data.SubDetails.length > 0 ?
+                                  <Table size="small" aria-label="purchases">
+                                    {headerLayout()}
+                                    <TableBody>
+                                      {
+                                        data.SubDetails.length > 0 && data.SubDetails.map((details, detailIndex) => {
+                                          return (
+                                            <>
+                                              {CollapseLayout(details, index, detailIndex, 0)}
+                                              <TableRow>
+                                                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                                                  <Collapse in={checkCollapseOpen(details, index, detailIndex, 0)} timeout="auto" unmountOnExit>
+                                                    {
+
+                                                      <Box sx={{ margin: 1 }}>
+                                                        <div className="row" >
+                                                          <div className="col">
+                                                            <Typography variant="h6" gutterBottom component="div">
+                                                              Sub Category
+                                                            </Typography>
+                                                          </div>
+                                                          <div className="col" style={{ textAlign: "right" }}>
+                                                            <IconButton>
+                                                              <AddIcon onClick={() => handleNewCategory(3, index, detailIndex)} />
+                                                            </IconButton>
+                                                          </div>
+                                                        </div>
+                                                        {
+                                                          details.SubDetails.length > 0 ?
+                                                            <Table size="small" aria-label="purchases">
+                                                              {headerLayout()}
+
+                                                              <TableBody>
+                                                                {
+                                                                  details.SubDetails.length > 0 && details.SubDetails.map((subdetails, subdetailIndex) => {
+                                                                    return (
+                                                                      <>
+                                                                        {CollapseLayout(subdetails, index, detailIndex, subdetailIndex)}
+                                                                        <TableRow>
+                                                                          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                                                                            <Collapse in={checkCollapseOpen(subdetails, index, detailIndex, 0)} timeout="auto" unmountOnExit>
+                                                                              <Box sx={{ margin: 1 }}>
+                                                                                <Typography variant="h6" gutterBottom component="div">
+                                                                                  Sub Category3
+                                                                                </Typography>
+                                                                                <Table size="small" aria-label="purchases">
+                                                                                  {headerLayout()}
+                                                                                  <TableBody>
+                                                                                    {CollapseLayout(subdetails, index, detailIndex, subdetailIndex)}
+                                                                                  </TableBody>
+                                                                                </Table>
+                                                                              </Box>
+                                                                            </Collapse>
+                                                                          </TableCell>
+                                                                        </TableRow>
+                                                                      </>
+                                                                    )
+                                                                  })
+                                                                }
+                                                              </TableBody>
+                                                            </Table>
+                                                            :
+                                                            <Typography>There is no subcategory in this hierachy</Typography>
+                                                        }
+                                                      </Box>
+                                                    }
+                                                  </Collapse>
+                                                </TableCell>
+                                              </TableRow>
+                                            </>
+                                          )
+                                        })
+                                      }
+                                    </TableBody>
+                                  </Table>
+                                  :
+                                  <Typography>There is no subcategory in this hierachy</Typography>
+                              }
+                            </Box>
+                          </Collapse>
+                        </TableCell>
+                      </TableRow>
+                    </>
+                  )
+                }
+                )}
+              </TableBody>
+              :
+              <LoadingPanel />
+          }
+        </Table>
+      </TableContainer>
     </div>
   );
 }
 
-class DisplayTable extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      order: "asc",
-      orderBy: "productName",
-      selected: [],
-      page: 0,
-      dense: false,
-      rowsPerPage: 5,
-      detailsShown: false,
-      deleteActive: false,
-    };
-
-    this.ToggleDeletable = this.ToggleDeletable.bind(this);
-    this.handleRequestSort = this.handleRequestSort.bind(this);
-    this.onRowClick = this.onRowClick.bind(this);
-    this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
-    this.handleChangePage = this.handleChangePage.bind(this);
-    this.handleChangeDense = this.handleChangeDense.bind(this);
-    this.isSelected = this.isSelected.bind(this);
-  }
-
-
-
-  handleRequestSort = (event, property) => {
-    const isAsc = this.state.orderBy === property && this.state.order === "asc";
-    this.setState({ order: isAsc ? "desc" : "asc" });
-    this.setState({ orderBy: property });
-  };
-
-  onRowClick = (event, row) => {
-    this.setState({
-      ProductCategoryID: row.ProductCategoryID,
-      ProductCategory: row.ProductCategory,
-      ParentProductCategoryID: row.ParentProductCategoryID,
-      Tags: row.Tag,
-      HierarchyLevel: row.HierarchyID,
-    });
-
-    if (this.state.detailsShown) {
-      this.setState({
-        detailsShown: false,
-      });
-    } else {
-      this.setState({
-        detailsShown: true,
-      });
-    }
-  };
-
-  handleChangePage = (event, newPage) => {
-    this.setState({ page: newPage });
-  };
-
-  handleChangeRowsPerPage = (event) => {
-    this.setState({ rowsPerPage: parseInt(event.target.value, 10) });
-    this.setState({ page: 0 });
-  };
-
-  handleChangeDense = (event) => {
-    this.setState({ dense: event.target.checked });
-  };
-
-  isSelected = (name) => {
-    // this.state.selected.indexOf(name) !== -1;
-  };
-
-  ToggleDeletable() {
-    this.setState((prevState, props) => {
-      return { deleteActive: !prevState.deleteActive };
-    });
-  }
-
-  addRowData = (newrow, tableContent) => {
-    const alphaNumbericRegex = /[a-zA-z0-9#@-_.]/;
-
-    console.log("addRowData", newrow)
-    if (newrow.name) {
-      newrow.name = newrow.name.trim();
-      if (newrow.name !== "" && alphaNumbericRegex.test(newrow.name)) {
-        let formData = {
-          ProductCategory: newrow.name,
-          ProductCategoryImage: "NULL",
-          HierarchyID: newrow.hierarchy,
-          ParentProductCategoryID: newrow.parent,
-          ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
-          UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
-        };
-        let returnVal = this.props.ProductCategoryProps.CallAddProductCategory(
-          formData
-        );
-        console.log("thissss", this.props)
-        if (returnVal.type === "ADD-PRODUCTCATEGORY") {
-          toast.success("Product Category Added.");
-          // window.location.reload(false);
-        }
-      } else
-        toast.error(
-          "Name for the Product Category must contains alphanumeric characters"
-        );
-    } else {
-      toast.error("Name for the Product Category is required.");
-    }
-  };
-
-  updateRowData = (row) => {
-    let updateData = {
-      ProductCategoryID: row.ProductCategoryID,
-      ProductCategory: row.ProductCategory,
-      UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
-    };
-    let returnVal = this.props.ProductCategoryProps.CallUpdateProductCategory(
-      updateData
-    );
-    if (returnVal.type === "UPDATE-PRODUCTCATEGORY") {
-      toast.success(row.ProductCategory + " is updated.");
-      // window.location.reload(false);
-    }
-  };
-
-  deleteRowData = (deletedRow, item) => {
-
-    console.log("CallDeleteProductCategory", deletedRow)
-    let returnVal = this.props.ProductCategoryProps.CallDeleteProductCategory(
-      {
-        ProductCategoryID: deletedRow.ProductCategoryID,
-        UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
-      }
-    );
-
-    // toast.success("The " + deletedRow.ProductCategory + " has been removed.");
-    // window.location.reload(false);
-  };
-
-  bindSubCategory = (row) => {
-    let ParentProductCategoryID = row.ProductCategoryID;
-    let ParentProductHierarchyID = row.HierarchyID ? row.HierarchyID : 0;
-    try {
-      row = JSON.parse(row.HierarchyItem);
-      row = row && row.length > 0 ? row : [];
-    } catch (error) {
-      // toast.error( "error: " + error);
-      row = [];
-    }
-
-    console.log('row', row)
-
-    return (
-      <div style={{ padding: "2%" }}>
-        <MaterialTable
-          title={row.ProductCategory}
-          columns={[
-            {
-              title: "Sub Category",
-              field: "ProductCategory",
-            },
-          ]}
-          data={row}
-          options={{
-            paging: false,
-            search: false,
-          }}
-          detailPanel={[{
-            render: rowData => rowData.HierarchyID < 3 ? this.bindSubCategory(rowData) : null
-          }]}
-          
-          editable={{
-            onRowAdd: !isArrayNotEmpty(row) || (isArrayNotEmpty(row) && row[0].HierarchyID < 4) ? (newData) => new Promise((resolve, reject) => {
-              setTimeout(() => {
-                var newArr = {
-                  parent: ParentProductCategoryID,
-                  name: newData.ProductCategory,
-                  hierarchy: ParentProductHierarchyID + 1,
-                };
-                // setData([...data, newData]);
-                this.addRowData(newArr, [...row]);
-                resolve();
-              }, 1000);
-            })
-              : null
-            ,
-
-            onRowUpdate: (newData, oldData) =>
-              new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  const dataUpdate = [...row];
-                  const index = oldData.tableData.id;
-                  dataUpdate[index] = newData;
-                  // setData([...dataUpdate]);
-                  this.updateRowData(newData);
-                  resolve();
-                }, 1000);
-              }),
-
-            onRowDelete: (oldData) =>
-              new Promise((resolve, reject) => {
-                setTimeout(() => {
-
-                  if (oldData.HierarchyItem !== undefined) {
-                    toast.warning("Unable to delete this category.You may need to delete it sub category first")
-                    setTimeout(() => {
-                      window.location.reload(false)
-                    }, 4000);
-                  } else {
-                    const dataDelete = [...row];
-                    const index = oldData.tableData.id;
-                    dataDelete.slice(index, 1);
-                    // setData([...dataDelete]);
-                    this.deleteRowData(oldData, [...dataDelete]);
-                    resolve();
-                  }
-                }, 1000);
-              })
-          }}
-        />
-      </div>
-    );
-  };
-
-  render() {
-    const { classes } = this.props;
-    const emptyRows =
-      this.state.rowsPerPage -
-      Math.min(
-        this.state.rowsPerPage,
-        this.props.Data.length - this.state.page * this.state.rowsPerPage
-      );
-
-    // this.props.Data.map((d, i) => {
-    //   d.ProductCategoryImage = (
-    //     <div>
-    //       <img
-    //         height={50}
-    //         alt= {(d.ProductCategoryName) ? d.ProductCategoryName : 'Product Category'}
-    //         src={d.ProductCategoryImage ? d.ProductCategoryImage : ""}
-    //       />
-    //     </div>
-    //   );
-    // });
-
-    const divStyle = {
-      width: "100%",
-      margin: "auto",
-      padding: "1%",
-      // paddingRight: "1%",
-      marginTop: "15px",
-    };
-
-    const table = {
-      // margin: "20px",
-      minWidth: 750,
-    };
-
-    const classes2 = {
-      border: 0,
-      clip: "rect(0 0 0 0)",
-      height: 1,
-      margin: -1,
-      overflow: "hidden",
-      padding: 0,
-      position: "absolute",
-      top: 20,
-      width: 1,
-    };
-
-
-
-    return (
-      <div style={{ width: "100%" }}>
-        {/* <DisplayTable
-          Data={this.props.variations}
-          VariationProps={this.props}
-        ></DisplayTable> */}
-        <div style={{ margin: "2%" }}>
-          <div>
-            <h1>Product Category List</h1>
-            <div style={{ margin: "1%" }}>
-              <MaterialTable
-                title="Product Category"
-                columns={[
-                  {
-                    title: "Product Category",
-                    field: "ProductCategory",
-                  },
-                  {
-                    title: "Tag",
-                    field: "Tag",
-                  },
-                ]}
-                data={this.props.ProductCategoryProps.productCategories}
-                options={{
-                  paging: true,
-                  search: false,
-                }}
-                detailPanel={(rowData) => {
-                  return this.bindSubCategory(rowData);
-                }}
-                editable={{
-                  onRowAdd: (newData) =>
-                    new Promise((resolve, reject) => {
-                      setTimeout(() => {
-                        var newArr = {
-                          parent: 0,
-                          name: newData.ProductCategory,
-                          hierarchy: 1,
-                        };
-                        // setData([...data, newData]);
-                        this.addRowData(newArr, [...this.props.ProductCategoryProps.productCategories]);
-                        resolve();
-                      }, 1000);
-                    }),
-                  onRowUpdate: (newData, oldData) =>
-                    new Promise((resolve, reject) => {
-                      setTimeout(() => {
-                        // const dataUpdate = [...row];
-                        // const index = oldData.tableData.id;
-                        // dataUpdate[index] = newData;
-                        // // setData([...dataUpdate]);
-                        this.updateRowData(newData);
-                        resolve();
-                      }, 1000);
-                    })
-                }}
-              ></MaterialTable>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-}
-
-class ViewProductCategoriesComponent extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      fixedHeader: true,
-      fixedFooter: true,
-      stripedRows: false,
-      showRowHover: false,
-      selectable: true,
-      multiSelectable: false,
-      enableSelectAll: false,
-      deselectOnClickaway: true,
-      showCheckboxes: true,
-      selection: [],
-      selectAll: false,
-      height: "300px",
-      detailsShown: false,
-      index: null,
-      ProductCategoryID: null,
-      ProductCategory: null,
-      ParentProductCategoryID: null,
-      Tags: null,
-      HierarchyLevel: null,
-      productStatus: "Endorsed",
-      backPage: "viewProduct",
-      anchorEl: null,
-      selectedItem: "Choose a Category",
-      menuPosition: null,
-      buttonDisabled: true,
-      // to navigate it sub category
-      parent: [],
-    };
-    this.props.CallAllProductCategoryListing();
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.categories !== undefined && this.props.categories.length > 0 && this.props.categories[0].ReturnVal === 1) {
-      this.props.CallResetProductCategoryAction()
-      this.props.CallAllProductCategoryListing()
-    }
-  }
-
-  render() {
-    return (
-      <div style={{ width: "100%" }}>
-        <DisplayTable
-          Data={this.props.productCategories}
-          ProductCategoryProps={this.props}
-        ></DisplayTable>
-      </div>
-    );
-  }
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ViewProductCategoriesComponent);

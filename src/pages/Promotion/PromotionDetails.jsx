@@ -5,7 +5,7 @@ import { GitAction } from "../../store/action/gitAction";
 import { ArrowRoundedLeft8x13Svg } from '../../assets/svg';
 import { Link } from "react-router-dom";
 import Button from "@mui/material/Button";
-import { convertDateTimeToDDMMYYYY, isArrayNotEmpty, getFileExtension, getFileTypeByExtension, isStringNullOrEmpty } from "../../tools/Helpers"
+import { isArrayNotEmpty, isStringNullOrEmpty } from "../../tools/Helpers"
 import { Typography, Card, CardContent, CardHeader, OutlinedInput, InputAdornment, FormHelperText, MenuItem, FormControl, Box, InputLabel, Select, TextField, IconButton } from "@mui/material";
 import AlertDialog from "../../components/ModalComponent/ModalComponent";
 import SearchBar from "../../components/SearchBar/SearchBar"
@@ -15,7 +15,6 @@ import Checkbox from '@mui/material/Checkbox';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Switch from '@mui/material/Switch';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, FormControlLabel } from '@mui/material';
-import { Details } from "@mui/icons-material";
 import { toast } from "react-toastify";
 
 export const PromotionDetails = (props) => {

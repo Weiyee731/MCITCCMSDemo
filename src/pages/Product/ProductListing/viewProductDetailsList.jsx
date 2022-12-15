@@ -13,7 +13,7 @@ import { Card, CardContent } from "@mui/material";
 import Button from "@mui/material/Button";
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
-import MaterialTable from "material-table";
+// import MaterialTable from "material-table";
 import AddIcon from '@mui/icons-material/Add';
 import InfoIcon from '@mui/icons-material/Info';
 import CloseIcon from "@mui/icons-material/Close";
@@ -124,164 +124,164 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-function ProductModificableVariationTable(props) {
-    const { useState } = React;
+// function ProductModificableVariationTable(props) {
+//     const { useState } = React;
 
-    const productVariation = {};
-    const [data] = useState(props.ProductData);
-    props.ProductData.map((row, i) => {
-        const { ProductVariation } = row;
-        productVariation[i + 1] = ProductVariation;
-    });
+//     const productVariation = {};
+//     const [data] = useState(props.ProductData);
+//     props.ProductData.map((row, i) => {
+//         const { ProductVariation } = row;
+//         productVariation[i + 1] = ProductVariation;
+//     });
 
-    const [columns] = useState([
-        {
-            title: "Product Variation",
-            field: "ProductVariation",
-            lookup: productVariation,
-        },
-        {
-            title: "Value",
-            field: "Value",
-        },
-    ]);
-    columns[0].lookup = productVariation;
-    const [data2, setData2] = useState([
-        {
-            Value: "S",
-        },
-        {
-            Value: "M",
-        },
-    ]);
-    const [data3, setData3] = useState([
-        {
-            Value: "Black",
-        },
-        {
-            Value: "White",
-        },
-        {
-            Value: "Red",
-        },
-    ]);
+//     const [columns] = useState([
+//         {
+//             title: "Product Variation",
+//             field: "ProductVariation",
+//             lookup: productVariation,
+//         },
+//         {
+//             title: "Value",
+//             field: "Value",
+//         },
+//     ]);
+//     columns[0].lookup = productVariation;
+//     const [data2, setData2] = useState([
+//         {
+//             Value: "S",
+//         },
+//         {
+//             Value: "M",
+//         },
+//     ]);
+//     const [data3, setData3] = useState([
+//         {
+//             Value: "Black",
+//         },
+//         {
+//             Value: "White",
+//         },
+//         {
+//             Value: "Red",
+//         },
+//     ]);
 
-    return (
-        <MaterialTable
-            title="Variations"
-            options={{
-                paging: false,
-                search: false,
-            }}
-            columns={columns}
-            data={data}
-            detailPanel={(rowData) => {
-                return (
-                    <div style={{ padding: "10px 50px 10px 50px", backgroundColor: "" }}>
-                        <MaterialTable
-                            title={columns[1].lookup[data[0].ProductVariation]}
-                            columns={[
-                                {
-                                    title: "Value",
-                                    field: "Value",
-                                },
-                            ]}
-                            data={data2}
-                            options={{
-                                paging: false,
-                                search: false,
-                            }}
-                            editable={{
-                                onRowAdd: (newData) =>
-                                    new Promise((resolve) => {
-                                        setTimeout(() => {
-                                            setData2([...data2, newData]);
+//     return (
+//         <MaterialTable
+//             title="Variations"
+//             options={{
+//                 paging: false,
+//                 search: false,
+//             }}
+//             columns={columns}
+//             data={data}
+//             detailPanel={(rowData) => {
+//                 return (
+//                     <div style={{ padding: "10px 50px 10px 50px", backgroundColor: "" }}>
+//                         <MaterialTable
+//                             title={columns[1].lookup[data[0].ProductVariation]}
+//                             columns={[
+//                                 {
+//                                     title: "Value",
+//                                     field: "Value",
+//                                 },
+//                             ]}
+//                             data={data2}
+//                             options={{
+//                                 paging: false,
+//                                 search: false,
+//                             }}
+//                             editable={{
+//                                 onRowAdd: (newData) =>
+//                                     new Promise((resolve) => {
+//                                         setTimeout(() => {
+//                                             setData2([...data2, newData]);
 
-                                            resolve();
-                                        }, 1000);
-                                    }),
-                                onRowUpdate: (newData, oldData) =>
-                                    new Promise((resolve) => {
-                                        setTimeout(() => {
-                                            const dataUpdate = [...data2];
-                                            const index = oldData.tableData.id;
-                                            dataUpdate[index] = newData;
-                                            setData2([...dataUpdate]);
+//                                             resolve();
+//                                         }, 1000);
+//                                     }),
+//                                 onRowUpdate: (newData, oldData) =>
+//                                     new Promise((resolve) => {
+//                                         setTimeout(() => {
+//                                             const dataUpdate = [...data2];
+//                                             const index = oldData.tableData.id;
+//                                             dataUpdate[index] = newData;
+//                                             setData2([...dataUpdate]);
 
-                                            resolve();
-                                        }, 1000);
-                                    }),
-                                onRowDelete: (oldData) =>
-                                    new Promise((resolve) => {
-                                        setTimeout(() => {
-                                            const dataDelete = [...data2];
-                                            const index = oldData.tableData.id;
-                                            dataDelete.splice(index, 1);
-                                            setData2([...dataDelete]);
+//                                             resolve();
+//                                         }, 1000);
+//                                     }),
+//                                 onRowDelete: (oldData) =>
+//                                     new Promise((resolve) => {
+//                                         setTimeout(() => {
+//                                             const dataDelete = [...data2];
+//                                             const index = oldData.tableData.id;
+//                                             dataDelete.splice(index, 1);
+//                                             setData2([...dataDelete]);
 
-                                            resolve();
-                                        }, 1000);
-                                    }),
-                            }}
-                            detailPanel={(rowData) => {
-                                return (
-                                    <div style={{ padding: "10px 50px 10px 50px" }}>
-                                        <MaterialTable
-                                            title="Colors"
-                                            columns={[
-                                                {
-                                                    title: "Value",
-                                                    field: "Value",
-                                                },
-                                            ]}
-                                            data={data3}
-                                            options={{
-                                                paging: false,
-                                                search: false,
-                                            }}
-                                            editable={{
-                                                onRowAdd: (newData) =>
-                                                    new Promise((resolve) => {
-                                                        setTimeout(() => {
-                                                            setData3([...data3, newData]);
+//                                             resolve();
+//                                         }, 1000);
+//                                     }),
+//                             }}
+//                             detailPanel={(rowData) => {
+//                                 return (
+//                                     <div style={{ padding: "10px 50px 10px 50px" }}>
+//                                         <MaterialTable
+//                                             title="Colors"
+//                                             columns={[
+//                                                 {
+//                                                     title: "Value",
+//                                                     field: "Value",
+//                                                 },
+//                                             ]}
+//                                             data={data3}
+//                                             options={{
+//                                                 paging: false,
+//                                                 search: false,
+//                                             }}
+//                                             editable={{
+//                                                 onRowAdd: (newData) =>
+//                                                     new Promise((resolve) => {
+//                                                         setTimeout(() => {
+//                                                             setData3([...data3, newData]);
 
-                                                            resolve();
-                                                        }, 1000);
-                                                    }),
-                                                onRowUpdate: (newData, oldData) =>
-                                                    new Promise((resolve) => {
-                                                        setTimeout(() => {
-                                                            const dataUpdate = [...data3];
-                                                            const index = oldData.tableData.id;
-                                                            dataUpdate[index] = newData;
-                                                            setData3([...dataUpdate]);
+//                                                             resolve();
+//                                                         }, 1000);
+//                                                     }),
+//                                                 onRowUpdate: (newData, oldData) =>
+//                                                     new Promise((resolve) => {
+//                                                         setTimeout(() => {
+//                                                             const dataUpdate = [...data3];
+//                                                             const index = oldData.tableData.id;
+//                                                             dataUpdate[index] = newData;
+//                                                             setData3([...dataUpdate]);
 
-                                                            resolve();
-                                                        }, 1000);
-                                                    }),
-                                                onRowDelete: (oldData) =>
-                                                    new Promise((resolve) => {
-                                                        setTimeout(() => {
-                                                            const dataDelete = [...data3];
-                                                            const index = oldData.tableData.id;
-                                                            dataDelete.splice(index, 1);
-                                                            setData3([...dataDelete]);
+//                                                             resolve();
+//                                                         }, 1000);
+//                                                     }),
+//                                                 onRowDelete: (oldData) =>
+//                                                     new Promise((resolve) => {
+//                                                         setTimeout(() => {
+//                                                             const dataDelete = [...data3];
+//                                                             const index = oldData.tableData.id;
+//                                                             dataDelete.splice(index, 1);
+//                                                             setData3([...dataDelete]);
 
-                                                            resolve();
-                                                        }, 1000);
-                                                    }),
-                                            }}
-                                        />
-                                    </div>
-                                );
-                            }}
-                        />
-                    </div>
-                );
-            }}
-        />
-    );
-}
+//                                                             resolve();
+//                                                         }, 1000);
+//                                                     }),
+//                                             }}
+//                                         />
+//                                     </div>
+//                                 );
+//                             }}
+//                         />
+//                     </div>
+//                 );
+//             }}
+//         />
+//     );
+// }
 
 function LinearProgressWithLabel(props) {
     return (

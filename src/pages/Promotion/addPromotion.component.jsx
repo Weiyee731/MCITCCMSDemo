@@ -25,18 +25,11 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import InputAdornment from "@mui/material/InputAdornment";
-// import SearchIcon from "@material-ui/icons/Search";
 import CardHeader from "@mui/material/CardHeader";
 import InputLabel from "@mui/material/InputLabel";
-//------------------------------------------------------------------- DatePicker-----------------------------------------------
-// import DatePicker from 'react-date-picker'
 
-// import moment from "moment";
 //---------------------------------- ADD IMAGE THINGS ---------------------------------------------------
-// import { DropzoneArea } from "material-ui-dropzone";
-// import Dropzone from "react-dropzone";
 import axios from "axios";
-import CloseIcon from "@mui/icons-material/Close";
 import { GitAction } from "../../store/action/gitAction";
 import "../../app/App.scss";
 import createHistory from 'history/createBrowserHistory'

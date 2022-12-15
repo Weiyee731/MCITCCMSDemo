@@ -21,12 +21,8 @@ import Input from "@mui/material/Input";
 import Logo from "../../assets/logos/logo.png";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import TableHead from "@mui/material/TableHead";
-// import SearchBox from "../../components/SearchBox/SearchBox";
 import InputLabel from "@mui/material/InputLabel";
 import DeleteIcon from '@mui/icons-material/Delete';
-//------------------------------------------------------------------- DatePicker-----------------------------------------------
-// import DatePicker from 'react-date-picker'
-// import moment from "moment";
 
 // -------------------------------------------------ADD PRODUCT THINGS--------------------------------------------------------
 import Grid from "@mui/material/Grid";
@@ -36,12 +32,9 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import InputAdornment from "@mui/material/InputAdornment";
-// import SearchIcon from "@material-ui/icons/Search";
 import CardHeader from "@mui/material/CardHeader";
-// import { browserHistory } from "react-router";
 import createHistory from 'history/createBrowserHistory'
 import { ThreeSixtyTwoTone, ThumbUpSharp } from "@mui/icons-material";
-// import Pagination from "../../components/shared/Pagination";
 import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
 import DialogActions from '@mui/material/DialogActions';
