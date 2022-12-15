@@ -92,8 +92,8 @@ export const ProductCategory = (props) => {
         <TableRow>
           <TableCell width="5%" />
           <TableCell width="15%">Action</TableCell>
-          <TableCell width="45%" align="left">Product Category</TableCell>
-          <TableCell width="35%" align="left">Tag</TableCell>
+          <TableCell width="40%" align="left">Product Category</TableCell>
+          <TableCell width="30%" align="left">Tag</TableCell>
         </TableRow>
       </TableHead>
     )
@@ -187,8 +187,6 @@ export const ProductCategory = (props) => {
 
       if (type === "edit")
         listing.isEdit = !listing.isEdit
-
-
     }
 
     if (data.HierarchyID === 2) {
@@ -244,9 +242,6 @@ export const ProductCategory = (props) => {
       if (type === "edit")
         listing.isEdit = !listing.isEdit
     }
-
-
-
     setListingDetails(listingData)
   }
 
@@ -278,31 +273,28 @@ export const ProductCategory = (props) => {
     let listingData = [...categoryListingDetails]
     switch (type) {
       case "Category":
-        if (data.HierarchyID === 1) {
+        if (data.HierarchyID === 1)
           listingData[mainIndex].ProductCategory = value
-        }
 
-        if (data.HierarchyID === 2) {
+        if (data.HierarchyID === 2)
           listingData[mainIndex].SubDetails[subindex].ProductCategory = value
-        }
 
-        if (data.HierarchyID === 3) {
+        if (data.HierarchyID === 3)
           listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex].ProductCategory = value
-        }
+
         break;
 
       case "Tag":
-        if (data.HierarchyID === 1) {
+        if (data.HierarchyID === 1)
           listingData[mainIndex].Tag = value
-        }
 
-        if (data.HierarchyID === 2) {
+
+        if (data.HierarchyID === 2)
           listingData[mainIndex].SubDetails[subindex].Tag = value
-        }
 
-        if (data.HierarchyID === 3) {
+
+        if (data.HierarchyID === 3)
           listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex].Tag = value
-        }
         break;
 
       default:
@@ -428,7 +420,7 @@ export const ProductCategory = (props) => {
   return (
     <div style={{ width: "100%" }}>
       <h3>Product Category List</h3>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} style={{ overflow: "hidden" }}>
         <div className="row" style={{ padding: "10px" }}>
           <div className="col">
             <Typography variant="h6" gutterBottom component="div">
