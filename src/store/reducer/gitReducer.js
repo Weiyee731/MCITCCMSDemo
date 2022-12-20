@@ -58,6 +58,8 @@ const INITIAL_STATE = {
 
   // Promotion
   promotions: [],
+  promotionByID: [],
+  promoAction: [],
   addPromo: [],
 
   // Stock
@@ -638,30 +640,64 @@ export function counterReducer(state = INITIAL_STATE, action) {
         promotions: action.payload,
       });
 
+    case GitAction.GetPromotionByID:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotPromotionByID:
+      return Object.assign({}, state, {
+        loading: false,
+        promotionByID: action.payload,
+      });
+
     case GitAction.AddPromotion:
       return Object.assign({}, state, { loading: true });
     case GitAction.AddedPromotion:
       return Object.assign({}, state, {
         loading: false,
-        addPromo: action.payload,
+        promoAction: action.payload,
       });
 
-    case GitAction.ClearAddPromo:
-      return Object.assign({}, state, { addPromo: [], });
+
+    case GitAction.UpdatePromotionInd:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.UpdatedPromotionInd:
+      return Object.assign({}, state, {
+        loading: false,
+        promoAction: action.payload,
+      });
+
+
+    // case GitAction.ClearAddPromo:
+    //   return Object.assign({}, state, { promoAction: [], });
 
     case GitAction.UpdatePromotion:
       return Object.assign({}, state, { loading: true });
     case GitAction.UpdatedPromotion:
-      var newPromoObj = Object.assign({}, state);
-      newPromoObj.loading = false;
-      return newPromoObj;
+      return Object.assign({}, state, {
+        loading: false,
+        promoAction: action.payload,
+      });
 
     case GitAction.DeletePromotion:
       return Object.assign({}, state, { loading: true });
     case GitAction.DeletedPromotion:
-      var newPromoObj = Object.assign({}, state);
-      newPromoObj.loading = false;
-      return newPromoObj;
+      return Object.assign({}, state, {
+        loading: false,
+        promoAction: action.payload,
+      });
+
+    // case GitAction.UpdatePromotion:
+    //   return Object.assign({}, state, { loading: true });
+    // case GitAction.UpdatedPromotion:
+    //   var newPromoObj = Object.assign({}, state);
+    //   newPromoObj.loading = false;
+    //   return newPromoObj;
+
+    // case GitAction.DeletePromotion:
+    //   return Object.assign({}, state, { loading: true });
+    // case GitAction.DeletedPromotion:
+    //   var newPromoObj = Object.assign({}, state);
+    //   newPromoObj.loading = false;
+    //   return newPromoObj;
 
 
     ///////////////////////////////////////////////////  General  ///////////////////////////////////////////////////

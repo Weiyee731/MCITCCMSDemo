@@ -6,7 +6,7 @@ import { ArrowRoundedLeft8x13Svg } from '../../assets/svg';
 import { Link } from "react-router-dom";
 import Button from "@mui/material/Button";
 import { isArrayNotEmpty, isStringNullOrEmpty } from "../../tools/Helpers"
-import { Typography, Card, CardContent, CardHeader, OutlinedInput, InputAdornment, FormHelperText, MenuItem, FormControl, Box, InputLabel, Select, TextField, IconButton } from "@mui/material";
+import { Typography, Card, CardContent, OutlinedInput, InputAdornment, FormHelperText, MenuItem, FormControl, Box, InputLabel, Select, TextField, IconButton } from "@mui/material";
 import AlertDialog from "../../components/ModalComponent/ModalComponent";
 import SearchBar from "../../components/SearchBar/SearchBar"
 import Logo from "../../assets/logos/logo.png";
@@ -14,24 +14,34 @@ import TableComponents from "../../components/TableComponents/TableComponents";
 import Checkbox from '@mui/material/Checkbox';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Switch from '@mui/material/Switch';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, FormControlLabel } from '@mui/material';
+import { Table, TableBody, TableCell, TableRow, FormControlLabel } from '@mui/material';
 import { toast } from "react-toastify";
+import Dropzone from "react-dropzone";
+import CloseIcon from '@mui/icons-material/Close';
+import AddIcon from '@mui/icons-material/Add';
+import axios from "axios";
+import moment from 'moment';
 
 export const PromotionDetails = (props) => {
-    const { products, } = useSelector(state => ({
-        products: state.counterReducer.products
+    const { products, promotionByID, promoAction } = useSelector(state => ({
+        products: state.counterReducer.products,
+        promoAction: state.counterReducer.promoAction,
+        promotionByID: state.counterReducer.promotionByID
     }));
 
     const dispatch = useDispatch()
     const TitleStyle = { fontWeight: "bold", fontSize: "14pt" }
     const SubtitleStyle = { fontSize: "12pt", color: "gray" }
-    const LabelStyle = { fontSize: "13pt" }
     const [promotionName, setPromotionName] = useState("")
+    const [promotionBanner, setPromotionBanner] = useState([])
+    const [promotionDesc, setPromotionDesc] = useState("")
+    const [deletedProduct, setDeleteProduct] = useState([])
     const [selectionRange, handleselectionRange] = useState({
         startDate: "",
         endDate: "",
         isDateError: false,
     })
+    const [isPromotionSubmit, setSubmitPromotion] = useState(false)
     const [isModalOpen, setModalOpen] = useState(false)
     const [promotionID, setPromotionID] = useState("")
     const [isActive, setActive] = useState(true)
@@ -40,7 +50,6 @@ export const PromotionDetails = (props) => {
     const [filteredListing, setFilteredListing] = useState([])
     const [selectedList, setSelectedList] = useState([])
     const [confirmList, setConfirmList] = useState([])
-    const [localPromotion, setLocalPromotion] = useState([])
     const [selectedConfirmList, setSelectedConfirmList] = useState([])
     const [batchData, setBatchData] = useState({
         discountPercent: "",
@@ -68,6 +77,7 @@ export const PromotionDetails = (props) => {
             let pathId = pathname.split("/")[pathlength - 1]
             if (pathId != 0) {
                 setPromotionID(pathId)
+                dispatch(GitAction.CallViewPromotionByID({ PromotionID: pathId }))
             }
         }
 
@@ -82,32 +92,70 @@ export const PromotionDetails = (props) => {
     }, [])
 
     useEffect(() => {
-        if (promotionID !== "") {
-            if (localStorage.getItem("promotionList") !== null && isPromotionEdit === false) {
-                JSON.parse(localStorage.getItem("promotionList")).filter((x) => x.PromotionId == promotionID).map((details) => {
-                    setPromotionName(details.PromotionName)
-                    handleselectionRange({
-                        startDate: details.PromotionStartDate,
-                        endDate: details.PromotionEndDate,
-                        isDateError: false
-                    })
-                    setConfirmList(details.PromotionDetails)
-                    setSelectedList(details.PromotionDetails)
-                    setActive(details.isActive !== undefined ? details.isActive : true)
-                    setPromotionEdit(true)
-                })
-            }
-
-            let localData = []
-            if (localStorage.getItem("promotionList") !== undefined && localStorage.getItem("promotionList") !== null) {
-                if (isArrayNotEmpty(JSON.parse(localStorage.getItem("promotionList"))))
-                    localData = JSON.parse(localStorage.getItem("promotionList"))
-                else
-                    localData.push(JSON.parse(localStorage.getItem("promotionList")))
-            }
-
+        if (isPromotionSubmit === true) {
+            dispatch(GitAction.CallClearPromotion())
+            toast.success("Successfully Update")
+            setTimeout(
+                window.location.href = "/PromotionListing"
+                , 3000
+            );
         }
-    }, [products])
+    }, [promoAction])
+
+    useEffect(() => {
+        if (isArrayNotEmpty(promotionByID) && isPromotionEdit === false) {
+            let details = promotionByID[0]
+            let PromoDetail = []
+            details.PromotionDetail !== undefined && JSON.parse(details.PromotionDetail).map((promo) => {
+                let detailListing = []
+                let ProductPurchaselimit = ""
+                let itemID = ""
+
+                promo.ProductVariation !== undefined && JSON.parse(promo.ProductVariation).map((data) => {
+                    detailListing = [...detailListing, {
+                        discountPercent: data.ProductDiscount,
+                        isDiscountError: false,
+                        discountPrice: parseFloat(data.ProductVariationPrice * (data.ProductDiscount / 100)).toFixed(2),
+                        stockLimitType: data.ProductStockLimit == 99999 ? "No Limit" : "Set Limit",
+                        stockLimitQty: data.ProductStockLimit,
+                        isStockLimitError: data.ProductStockLimit != 99999 ? isNaN(data.ProductStockLimit) ? true : false : false,
+                        isEnable: data.ActiveInd == 1 ? true : false,
+                        ProductStockAmount: data.ProductStockAmount,
+                        ProductVariation: data.ProductVariation,
+                        ProductVariationDetailID: data.ProductVariationDetailID,
+                        ProductVariationPrice: data.ProductVariationPrice,
+                        ProductVariationSKU: data.ProductVariationSKU,
+                        ProductVariationValue: data.ProductVariationValue,
+                        PromotionItemID: data.PromotionItemID
+                    }]
+                    ProductPurchaselimit = data.ProductPurchaselimit
+                    itemID = data.PromotionItemID
+                })
+                PromoDetail = [...PromoDetail, {
+                    ...promo,
+                    promotionID: details.PromotionID,
+                    purchaseLimit: ProductPurchaselimit,
+                    purchaseLimitType: ProductPurchaselimit == 99999 ? "No Limit" : "Set Limit",
+                    isPurchaseLimitError: ProductPurchaselimit != 99999 ? isNaN(ProductPurchaselimit) ? true : false : false,
+                    PromotionItemID: itemID,
+                    detailListing
+                }]
+            })
+            setPromotionName(details.PromotionTitle)
+            setPromotionBanner(details.BannerImage)
+            setPromotionDesc(details.PromotionDesc)
+            handleselectionRange({
+                startDate: moment(details.BeginDate).format("YYYY-MM-DDTHH:mm:ss"),
+                endDate: moment(details.EndDate).format("YYYY-MM-DDTHH:mm:ss"),
+                isDateError: false
+            })
+            setConfirmList(PromoDetail)
+            setSelectedList(PromoDetail)
+            setActive(details.ActiveInd == 1 ? true : false)
+            setPromotionEdit(true)
+            setPromotionBanner(details.BannerImage)
+        }
+    }, [promotionByID])
 
     const tableHeadCells = [
         {
@@ -328,14 +376,22 @@ export const PromotionDetails = (props) => {
 
     const deleteConfirmList = (deleteData) => {
         let listing = confirmList
+        let deletedListing = deletedProduct
+
         if (listing.length > 0) {
             if (deleteData.length > 0)
                 deleteData.map((y) => {
+                    listing.filter((x) => x.ProductID == y.ProductID && y.promotionID !== undefined).map((x) => {
+                        deletedListing = [...deletedListing, x]
+                    })
                     listing = listing.filter((x) => x.ProductID != y.ProductID)
+                    setDeleteProduct(deletedListing)
                 })
-            else
+            else {
+                listing.filter((x) => x.ProductID == deleteData.ProductID && deleteData.promotionID !== undefined).map((x) => { deletedListing = [...deletedListing, x] })
                 listing = listing.filter((x) => x.ProductID != deleteData.ProductID)
-
+                setDeleteProduct(deletedListing)
+            }
         }
         setConfirmList(listing)
         setSelectedList(listing)
@@ -388,10 +444,21 @@ export const PromotionDetails = (props) => {
             stockError: [],
         }
 
+        let deletedProductID = []
+
+
+        const getBannerImage = () => {
+            var today = new Date();
+            var date = today.getFullYear() + '' + (today.getMonth() + 1) + '' + today.getDate();
+            var time = today.getHours() + "" + today.getMinutes() + "" + today.getSeconds();
+            var BannerImage = date + '_' + time + "_" + promotionName;
+            return BannerImage
+        }
         if (isArrayNotEmpty(confirmList)) {
             confirmList.map((data, index) => {
-                if (data.purchaseLimitType !== "No Limit" && data.purchaseLimit === "" && data.purchaseLimit < 0)
-                    isError.purchaseError.push(index)
+                if (data.purchaseLimitType !== "No Limit")
+                    if (data.purchaseLimit === "" || data.purchaseLimit < 0)
+                        isError.purchaseError.push(index)
 
                 isArrayNotEmpty(data.detailListing) && data.detailListing.map((details, detailsIndex) => {
                     if (details.isEnable === true) {
@@ -401,11 +468,12 @@ export const PromotionDetails = (props) => {
                                 detailsIndex: detailsIndex
                             })
 
-                        if (details.stockLimitType !== "No Limit" && details.stockLimitQty === "" && details.stockLimitQty > 0)
-                            isError.stockError.push({
-                                listingIndex: index,
-                                detailsIndex: detailsIndex
-                            })
+                        if (details.stockLimitType !== "No Limit")
+                            if (details.stockLimitQty === "" || details.stockLimitQty > 0)
+                                isError.stockError.push({
+                                    listingIndex: index,
+                                    detailsIndex: detailsIndex
+                                })
                     }
                 })
             })
@@ -417,43 +485,153 @@ export const PromotionDetails = (props) => {
         if (selectionRange.startDate == "" || selectionRange.endDate == "" || selectionRange.isDateError == true)
             isError.dateError.push(true)
 
-        if (!isArrayNotEmpty(isError.nameError) && !isArrayNotEmpty(isError.dateError) && !isArrayNotEmpty(isError.purchaseError) && !isArrayNotEmpty(isError.discountError) && !isArrayNotEmpty(isError.stockError)) {
-            let localData = []
-            if (localStorage.getItem("promotionList") !== undefined && localStorage.getItem("promotionList") !== null) {
-                if (isArrayNotEmpty(JSON.parse(localStorage.getItem("promotionList"))))
-                    localData = JSON.parse(localStorage.getItem("promotionList"))
-                else
-                    localData.push(JSON.parse(localStorage.getItem("promotionList")))
-            }
+        if (isArrayNotEmpty(deletedProduct)) {
+            deletedProduct.map((x) => {
+                deletedProductID.push(x.PromotionItemID)
+            })
+        }
 
-            if (promotionID !== "") {
-                localData.length > 0 && localData.map((detailData, index) => {
-                    if (detailData.PromotionId == promotionID) {
-                        localData[index].PromotionName = promotionName
-                        localData[index].PromotionStartDate = selectionRange.startDate
-                        localData[index].PromotionEndDate = selectionRange.endDate
-                        localData[index].PromotionDetails = confirmList
-                        localData[index].isActive = isActive
-                    }
+        if (!isArrayNotEmpty(isError.nameError) && !isArrayNotEmpty(isError.dateError) && !isArrayNotEmpty(isError.purchaseError) && !isArrayNotEmpty(isError.discountError) && !isArrayNotEmpty(isError.stockError)) {
+
+            // if (localStorage.getItem("promotionList") !== undefined && localStorage.getItem("promotionList") !== null) {
+            //     if (isArrayNotEmpty(JSON.parse(localStorage.getItem("promotionList"))))
+            //         localData = JSON.parse(localStorage.getItem("promotionList"))
+            //     else
+            //         localData.push(JSON.parse(localStorage.getItem("promotionList")))
+            // }
+
+            let productIDList = []
+            let PromotionItemID = []
+            let productDiscountList = []
+            let productVariationDetailIDList = []
+            let productStockLimitList = []
+            let productPurchaseLimitList = []
+            let activeIndList = []
+
+            confirmList.map((x) => {
+                isArrayNotEmpty(x.detailListing) && x.detailListing.map((details) => {
+                    productIDList.push(x.ProductID)
+                    PromotionItemID.push(x.PromotionItemID !== undefined ? x.PromotionItemID : 0)
+                    productPurchaseLimitList.push(x.purchaseLimitType === "No Limit" ? 99999 : x.purchaseLimit)
+                    productDiscountList.push(details.discountPercent)
+                    productVariationDetailIDList.push(details.ProductVariationDetailID)
+                    productStockLimitList.push(details.stockLimitType === "No Limit" ? 99999 : details.stockLimitQty)
+                    activeIndList.push(details.isEnable)
                 })
-            } else {
-                let propsData = {
-                    PromotionId: localData.length + 1,
-                    PromotionName: promotionName,
-                    PromotionStartDate: selectionRange.startDate,
-                    PromotionEndDate: selectionRange.endDate,
-                    PromotionDetails: confirmList,
-                    isActive: isActive
+            })
+
+            if (promotionID == "") {
+
+                if (promotionBanner.length > 0) {
+
+                    let fileExtLength = promotionBanner[0].path.split(".").length
+                    let fileExt = promotionBanner[0].path.split(".")[fileExtLength - 1]
+                    let propsData = {
+                        PromotionTitle: promotionName,
+                        ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+                        BannerImage: getBannerImage() + "." + fileExt,
+                        PromotionDesc: promotionDesc === "" ? "-" : promotionDesc,
+                        PromotionStartDate: moment(selectionRange.startDate).format("YYYY-MM-DD HH:mm:ss"),
+                        PromotionEndDate: moment(selectionRange.endDate).format("YYYY-MM-DD HH:mm:ss"),
+                        SlideOrder: 1,
+                        ProductID: productIDList,
+                        ProductDiscount: productDiscountList,
+                        ProductStockLimit: productStockLimitList,
+                        ProductPurchaseLimit: productPurchaseLimitList,
+                        ProductVariationDetailID: productVariationDetailIDList,
+                        ActiveInd: activeIndList
+                    }
+                    const formData = new FormData();
+                    formData.append("imageFile", promotionBanner[0]);
+                    formData.append("imageName", getBannerImage());
+                    let url = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/uploadpromotion.php"
+                    axios.post(url, formData, {}).then(res => {
+                        if (res.status === 200) {
+                            dispatch(GitAction.CallAddPromotion(propsData))
+                            setSubmitPromotion(true)
+                        }
+                        else {
+                            toast.error("Res Status error.");
+                        }
+                    });
+
+                } else {
+                    toast.warning("Valid Promotion Data is required")
                 }
-                localData.push(propsData)
             }
-            localStorage.setItem("promotionList", JSON.stringify(localData));
-            window.location.href = "/PromotionListing"
-            window.reload("false")
+            else {
+                if (promotionBanner !== "") {
+                    if (isArrayNotEmpty(promotionBanner)) {
+                        let fileExtLength = promotionBanner[0].path.split(".").length
+                        let fileExt = promotionBanner[0].path.split(".")[fileExtLength - 1]
+                        let propsData = {
+                            PromotionID: promotionID,
+                            PromotionTitle: promotionName,
+                            PromotionDesc: promotionDesc === "" ? "-" : promotionDesc,
+                            BannerImage: getBannerImage() + "." + fileExt,
+                            SlideOrder: 1,
+                            PromotionStartDate: moment(selectionRange.startDate).format("YYYY-MM-DD HH:mm:ss"),
+                            PromotionEndDate: moment(selectionRange.endDate).format("YYYY-MM-DD HH:mm:ss"),
+                            DeletedPromotionProductID: isArrayNotEmpty(deletedProductID) ? deletedProductID : "-",
+                            UpdatedPromotionProductID: PromotionItemID,
+                            ProductID: productIDList,
+                            ProductDiscount: productDiscountList,
+                            ProductStockLimit: productStockLimitList,
+                            ProductVariationDetailID: productVariationDetailIDList,
+                            ProductPurchaseLimit: productPurchaseLimitList,
+                            ActiveInd: activeIndList
+                        }
+                        const formData = new FormData();
+                        formData.append("imageFile", promotionBanner[0]);
+                        formData.append("imageName", getBannerImage());
+                        let url = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/uploadpromotion.php"
+                        axios.post(url, formData, {}).then(res => {
+                            if (res.status === 200) {
+                                dispatch(GitAction.CallUpdatePromotion(propsData))
+                                setSubmitPromotion(true)
+                            }
+                            else {
+                                toast.error("Res Status error.");
+                            }
+                        });
+                    } else {
+                        let bannerlength = promotionBanner.split("/").length
+                        let propsData = {
+                            PromotionID: promotionID,
+                            PromotionTitle: promotionName,
+                            PromotionDesc: promotionDesc === "" ? "-" : promotionDesc,
+                            BannerImage: promotionBanner.split("/")[bannerlength - 1],
+                            SlideOrder: 1,
+                            PromotionStartDate: moment(selectionRange.startDate).format("YYYY-MM-DD HH:mm:ss"),
+                            PromotionEndDate: moment(selectionRange.endDate).format("YYYY-MM-DD HH:mm:ss"),
+                            DeletedPromotionProductID: isArrayNotEmpty(deletedProductID) ? deletedProductID : "-",
+                            UpdatedPromotionProductID: PromotionItemID,
+                            ProductID: productIDList,
+                            ProductDiscount: productDiscountList,
+                            ProductStockLimit: productStockLimitList,
+                            ProductVariationDetailID: productVariationDetailIDList,
+                            ProductPurchaseLimit: productPurchaseLimitList,
+                            ActiveInd: activeIndList
+                        }
+                        dispatch(GitAction.CallUpdatePromotion(propsData))
+                        setSubmitPromotion(true)
+                    }
+                } else {
+                    toast.warning("Valid Promotion Data is required")
+                }
+            }
         } else
             toast.warning("Valid Promotion Data is required")
 
         setErrorData(isError)
+    }
+
+    const updateStatus = (activeInd) => {
+        setActive(activeInd)
+        dispatch(GitAction.CallUpdatePromotionStatus({
+            PromotionID: promotionID,
+            ActiveInd: activeInd === true ? 1 : 0
+        }))
     }
 
     const renderTableRows = (data, index) => {
@@ -512,6 +690,7 @@ export const PromotionDetails = (props) => {
                                             label=""
                                             value={batchData.discountPercent}
                                             type="number"
+                                            disabled={isActive ? false : true}
                                             onChange={(e) => setBatchData({
                                                 ...batchData,
                                                 discountPercent: e.target.value,
@@ -534,6 +713,7 @@ export const PromotionDetails = (props) => {
                                             labelId="demo-simple-select-stockLimitType"
                                             id="demo-simple-select"
                                             value={batchData.stockLimitType}
+                                            disabled={isActive ? false : true}
                                             onChange={(e) => setBatchData({
                                                 ...batchData,
                                                 stockLimitType: e.target.value
@@ -554,6 +734,7 @@ export const PromotionDetails = (props) => {
                                                 label=""
                                                 type="number"
                                                 value={batchData.stockLimitQty}
+                                                disabled={isActive ? false : true}
                                                 onChange={(e) => setBatchData({
                                                     ...batchData,
                                                     stockLimitQty: e.target.value,
@@ -571,6 +752,7 @@ export const PromotionDetails = (props) => {
                                             labelId="demo-simple-select-purchaseLimitType"
                                             id="demo-simple-select"
                                             value={batchData.purchaseLimitType}
+                                            disabled={isActive ? false : true}
                                             onChange={(e) => setBatchData({
                                                 ...batchData,
                                                 purchaseLimitType: e.target.value
@@ -591,6 +773,7 @@ export const PromotionDetails = (props) => {
                                                 label=""
                                                 value={batchData.purchaseLimit}
                                                 type="number"
+                                                disabled={isActive ? false : true}
                                                 onChange={(e) =>
                                                     setBatchData({
                                                         ...batchData,
@@ -607,11 +790,13 @@ export const PromotionDetails = (props) => {
                         <div className="col-4" style={{ textAlign: "right" }}>
                             <Button variant="contained"
                                 style={{ margin: "10px", backgroundColor: "primary" }}
+                                disabled={isActive ? false : true}
                                 onClick={() => updateALLConfirmList()}>
                                 {selectedConfirmList.length === 0 ? "Update All" : "Update Selected"}
                             </Button>
                             <Button variant="contained"
                                 style={{ backgroundColor: "#C70039" }}
+                                disabled={isActive ? false : true}
                                 onClick={() => selectedConfirmList.length === 0 ? deleteConfirmList(confirmList) : deleteConfirmList(selectedConfirmList)}>
                                 {selectedConfirmList.length === 0 ? "Delete All" : "Delete Selected"}
                             </Button>
@@ -685,6 +870,7 @@ export const PromotionDetails = (props) => {
                                             <TableCell padding="checkbox">
                                                 <Checkbox
                                                     checked={checkExisting(selectedConfirmList, data)}
+                                                    disabled={isActive ? false : true}
                                                     onClick={(event) => setCheckBoxListing(event, data, "CONFIRMLIST")}
                                                 />
                                             </TableCell>
@@ -717,6 +903,7 @@ export const PromotionDetails = (props) => {
                                                                 labelId="demo-simple-select-stockLimitType"
                                                                 id="demo-simple-select"
                                                                 value={data.purchaseLimitType}
+                                                                disabled={isActive ? false : true}
                                                                 onChange={(e) => {
                                                                     let newArr = confirmList
                                                                     newArr[index].purchaseLimitType = e.target.value
@@ -738,6 +925,7 @@ export const PromotionDetails = (props) => {
                                                                     type="number"
                                                                     placeholder="Stock Limit"
                                                                     value={data.purchaseLimit}
+                                                                    disabled={isActive ? false : true}
                                                                     onChange={(e) => {
                                                                         let newArr = confirmList
                                                                         newArr[index].purchaseLimit = e.target.value
@@ -775,6 +963,7 @@ export const PromotionDetails = (props) => {
                                                                         disabled={!x.isEnable}
                                                                         type="number"
                                                                         style={{ opacity: x.isEnable ? "100%" : "50%" }}
+                                                                        disabled={isActive ? false : true}
                                                                         onChange={(e) => {
                                                                             let newArr = confirmList
                                                                             newArr[index].detailListing[detailIndex].discountPrice = e.target.value
@@ -798,6 +987,7 @@ export const PromotionDetails = (props) => {
                                                                         disabled={!x.isEnable}
                                                                         type="number"
                                                                         style={{ opacity: x.isEnable ? "100%" : "50%" }}
+                                                                        disabled={isActive ? false : true}
                                                                         onChange={(e) => {
                                                                             let newArr = confirmList
                                                                             newArr[index].detailListing[detailIndex].discountPercent = e.target.value
@@ -826,6 +1016,7 @@ export const PromotionDetails = (props) => {
                                                                         value={x.stockLimitType}
                                                                         disabled={!x.isEnable}
                                                                         style={{ opacity: x.isEnable ? "100%" : "50%" }}
+                                                                        disabled={isActive ? false : true}
                                                                         onChange={(e) => {
                                                                             let newArr = confirmList
                                                                             newArr[index].detailListing[detailIndex].stockLimitType = e.target.value
@@ -903,7 +1094,7 @@ export const PromotionDetails = (props) => {
                     <div className="col" style={{ textAlign: "right", padding: "10px" }}>
                         <FormControlLabel
                             control={
-                                <Switch size="medium" checked={isActive} onChange={(e) => { setActive(e.target.checked) }} />
+                                <Switch size="medium" checked={isActive} onChange={(e) => { updateStatus(e.target.checked) }} />
                             }
                             style={{
                                 backgroundColor: "#e9ecef", borderRadius: "10px", padding: "10px", fontWeight: "bold"
@@ -915,74 +1106,164 @@ export const PromotionDetails = (props) => {
             </div>
 
             <hr />
-            <Card>
-                <CardContent>
+
+            <Card style={{ opacity: isActive ? "100%" : "60%" }}>
+                <CardContent >
                     <Typography style={TitleStyle}>Basic Promotion Information</Typography>
                     <div className="row">
-                        <div className="col-xl-2 col-lg-3 col-md-3 col-s-12 col-xs-12">
-                            Promotion Name:
+                        <div className="col-8" style={{ paddingTop: "10px" }}>
+                            <div className="row">
+                                <div className="col-xl-2 col-lg-3 col-md-3 col-s-12 col-xs-12">
+                                    Promotion Name:
+                                </div>
+                                <div className="col-xl-10 col-lg-9 col-md-9 col-s-12 col-xs-12">
+                                    <FormControl fullWidth size="small" variant="outlined">
+                                        <OutlinedInput
+                                            id="outlined-adornment-name"
+                                            label=""
+                                            value={promotionName}
+                                            disabled={isActive ? false : true}
+                                            onChange={(e) => setPromotionName(e.target.value)}
+                                            endAdornment={<InputAdornment position="end"> {promotionName.length}/50</InputAdornment>}
+                                            inputProps={{
+                                                'aria-label': 'name',
+                                                maxLength: 50
+                                            }}
+                                            required
+                                        />
+                                    </FormControl>
+                                    {errorData.nameError[0] === true && <FormHelperText style={{ color: "red" }}>Promotion Name is required</FormHelperText>}
+                                </div>
+                            </div>
+                            <div className="row" style={{ paddingTop: "10px" }}>
+                                <div className="col-xl-2 col-lg-3 col-md-3 col-s-12 col-xs-12">
+                                    Promotion Description:
+                                </div>
+                                <div className="col-xl-10 col-lg-9 col-md-9 col-s-12 col-xs-12">
+                                    <FormControl fullWidth size="small" variant="outlined">
+                                        <OutlinedInput
+                                            id="outlined-adornment-name"
+                                            label=""
+                                            disabled={isActive ? false : true}
+                                            value={promotionDesc}
+                                            onChange={(e) => setPromotionDesc(e.target.value)}
+                                            inputProps={{
+                                                'aria-label': 'name',
+                                                maxLength: 50
+                                            }}
+                                        />
+                                    </FormControl>
+                                </div>
+                            </div>
+                            <div className="row" style={{ paddingTop: "10px" }}>
+                                <div className="col-xl-2 col-lg-3 col-md-3 col-s-12 col-xs-12">
+                                    Promotion Period:
+                                </div>
+                                <div className="col-xl-5 col-lg-4 col-md-4 col-s-6 col-xs-12">
+                                    <FormControl fullWidth size="small" variant="outlined">
+                                        <OutlinedInput
+                                            id="outlined-adornment-startdate"
+                                            type="datetime-local"
+                                            label=""
+                                            value={selectionRange.startDate}
+                                            disabled={isActive ? false : true}
+                                            onChange={(e) => handleselectionRange({
+                                                ...selectionRange,
+                                                startDate: e.target.value,
+                                                isDateError: selectionRange.endDate < e.target.value ? true : false
+                                            })}
+                                        />
+                                    </FormControl>
+                                    {errorData.dateError[0] === true && <FormHelperText style={{ color: "red" }}>Valid Promotion Period is required</FormHelperText>}
+                                </div>
+                                <div className="col-xl-5 col-lg-4 col-md-4 col-s-6 col-xs-12">
+                                    <FormControl fullWidth size="small" variant="outlined">
+                                        <OutlinedInput
+                                            id="outlined-adornment-endDate"
+                                            type="datetime-local"
+                                            label=""
+                                            value={selectionRange.endDate}
+                                            disabled={isActive ? false : true}
+                                            onChange={(e) => handleselectionRange({
+                                                ...selectionRange,
+                                                endDate: e.target.value,
+                                                isDateError: selectionRange.startDate > e.target.value ? true : false
+                                            })}
+                                        />
+                                    </FormControl>
+                                    {selectionRange.isDateError === true &&
+                                        <FormHelperText style={{ color: "red" }}>Please select valid date range</FormHelperText>}
+                                </div>
+                            </div>
                         </div>
-                        <div className="col-xl-6 col-lg-6 col-md-8 col-s-12 col-xs-12">
-                            <FormControl fullWidth size="small" variant="outlined">
-                                <OutlinedInput
-                                    id="outlined-adornment-name"
-                                    label=""
-                                    value={promotionName}
-                                    onChange={(e) => setPromotionName(e.target.value)}
-                                    endAdornment={<InputAdornment position="end"> {promotionName.length}/50</InputAdornment>}
-                                    inputProps={{
-                                        'aria-label': 'name',
-                                        maxLength: 50
-                                    }}
-                                    required
-                                />
-                            </FormControl>
-                            {errorData.nameError[0] === true && <FormHelperText style={{ color: "red" }}>Promotion Name is required</FormHelperText>}
+                        <div className="col-4">
+                            <Dropzone onDrop={acceptedFiles => setPromotionBanner(acceptedFiles)} disabled={isActive ? false : true}>
+                                {({
+                                    getRootProps,
+                                    getInputProps,
+                                    isDragActive,
+                                    isDragReject,
+                                }) => (
+                                    <div
+                                        {...getRootProps({
+                                            className: "dropzone",
+                                        })}
+                                        style={{
+                                            borderColor: isDragActive
+                                                ? isDragReject
+                                                    ? "#fc5447"
+                                                    : "#a0d100"
+                                                : "#b8b8b8",
+                                            color: isDragActive
+                                                ? isDragReject
+                                                    ? "#a31702"
+                                                    : "#507500"
+                                                : "#828282",
+
+                                            width: "100%",
+                                            height: "100%",
+                                        }}
+                                    >
+                                        {
+                                            promotionBanner.length > 0 ?
+                                                <>
+                                                    <div className="row">
+                                                        <div className="col" style={{ textAlign: "right", paddingRight: "0px" }}>
+                                                            <img
+                                                                className="DropZoneImage"
+                                                                src={isPromotionEdit === true && promotionBanner[0].name === undefined ? promotionBanner : promotionBanner[0].name !== undefined && URL.createObjectURL(promotionBanner[0])}
+                                                                alt=""
+                                                            />
+                                                        </div>
+                                                        <div className="col" style={{ textAlign: "left", paddingLeft: "0px" }}>
+                                                            <IconButton
+                                                                onClick={() => setPromotionBanner([])}
+                                                                disabled={isActive ? false : true}
+                                                            >
+                                                                <CloseIcon
+                                                                    className="DropZoneImageDeleteButtonIcon"
+                                                                    color="secondary"
+                                                                />
+                                                            </IconButton>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                                :
+                                                <>
+                                                    <input {...getInputProps()} />
+                                                    <AddIcon fontSize="large" className="DropZoneAddIcon" />
+                                                </>
+                                        }
+                                    </div>
+                                )}
+                            </Dropzone>
                         </div>
                     </div>
-                    <div className="row" style={{ paddingTop: "10px" }}>
-                        <div className="col-xl-2 col-lg-3 col-md-3 col-s-12 col-xs-12">
-                            Promotion Period:
-                        </div>
-                        <div className="col-xl-3 col-lg-3 col-md-3 col-s-6 col-xs-12">
-                            <FormControl fullWidth size="small" variant="outlined">
-                                <OutlinedInput
-                                    id="outlined-adornment-startdate"
-                                    type="datetime-local"
-                                    label=""
-                                    value={selectionRange.startDate}
-                                    onChange={(e) => handleselectionRange({
-                                        ...selectionRange,
-                                        startDate: e.target.value,
-                                        isDateError: selectionRange.endDate < e.target.value ? true : false
-                                    })}
-                                />
-                            </FormControl>
-                            {errorData.dateError[0] === true && <FormHelperText style={{ color: "red" }}>Valid Promotion Period is required</FormHelperText>}
-                        </div>
-                        <div className="col-xl-3 col-lg-3 col-md-3 col-s-6 col-xs-12">
-                            <FormControl fullWidth size="small" variant="outlined">
-                                <OutlinedInput
-                                    id="outlined-adornment-endDate"
-                                    type="datetime-local"
-                                    label=""
-                                    value={selectionRange.endDate}
-                                    onChange={(e) => handleselectionRange({
-                                        ...selectionRange,
-                                        endDate: e.target.value,
-                                        isDateError: selectionRange.startDate > e.target.value ? true : false
-                                    })}
-                                />
-                            </FormControl>
-                            {selectionRange.isDateError === true &&
-                                <FormHelperText style={{ color: "red" }}>Please select valid date range</FormHelperText>}
-                        </div>
 
-                    </div>
-                </CardContent>
-            </Card>
+                </CardContent >
+            </Card >
 
-            <div style={{ paddingTop: "20px" }}>
+            <div style={{ paddingTop: "20px" }} style={{ opacity: isActive ? "100%" : "60%" }}>
                 <Card>
                     <CardContent>
                         <div className="row">
@@ -992,7 +1273,7 @@ export const PromotionDetails = (props) => {
                             </div>
                             <div className="col">
                                 <div style={{ textAlign: "right", padding: "10px" }}>
-                                    <Button variant="outlined" color="primary" onClick={() => setModalOpen(true)}>
+                                    <Button variant="outlined" color="primary" onClick={() => setModalOpen(true)} disabled={isActive ? false : true}>
                                         Add Product
                                     </Button>
                                 </div>
@@ -1006,6 +1287,7 @@ export const PromotionDetails = (props) => {
                                 <div style={{ textAlign: "right" }}>
                                     <Button variant="contained"
                                         style={{ margin: "5px", backgroundColor: "primary" }}
+                                        disabled={isActive ? false : true}
                                         onClick={() => verifySubmitData()}
                                     >Confirm</Button>
                                 </div>
@@ -1081,7 +1363,7 @@ export const PromotionDetails = (props) => {
                     </div>
                 </div>
             </AlertDialog >
-        </div>
+        </div >
 
     )
 }

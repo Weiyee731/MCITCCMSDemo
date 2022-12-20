@@ -85,6 +85,8 @@ const rootEpic = combineEpics(
 
   //Promotion
   gitEpic.Promotion_ViewAll,
+  gitEpic.Promotion_UpdateStatusInd,
+  gitEpic.Promotion_ViewByPromotionID,
   gitEpic.Promotion_Add,
   gitEpic.Promotion_Update,
   gitEpic.Promotion_Delete,

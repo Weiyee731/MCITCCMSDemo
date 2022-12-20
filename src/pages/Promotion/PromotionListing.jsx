@@ -5,15 +5,18 @@ import SearchBar from "../../components/SearchBar/SearchBar"
 import { GitAction } from "../../store/action/gitAction";
 import Button from "@mui/material/Button";
 import { convertDateTimeToString112Format, isArrayNotEmpty, getFileExtension, getFileTypeByExtension, isStringNullOrEmpty } from "../../tools/Helpers"
-import { FormControl, InputLabel, TableCell, OutlinedInput, IconButton, Tooltip } from '@mui/material';
+import { FormControl, InputLabel, TableCell, OutlinedInput, IconButton, Tooltip, FormControlLabel } from '@mui/material';
 import Logo from "../../assets/logos/logo.png";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { toast } from "react-toastify";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import Switch from '@mui/material/Switch';
+
 
 export const PromotionListing = (props) => {
-    const { products, } = useSelector(state => ({
-        products: state.counterReducer.products
+    const { promotions, promoAction } = useSelector(state => ({
+        promotions: state.counterReducer.promotions,
+        promoAction: state.counterReducer.promoAction
     }));
 
     const dispatch = useDispatch()
@@ -22,6 +25,10 @@ export const PromotionListing = (props) => {
     const [filteredListing, setFilteredListing] = useState([])
     const [selectedList, setSelectedList] = useState([])
     const [promotionList, setPromotionList] = useState([])
+    const [isPromoListSet, setPromo] = useState(false)
+    const [isPromoSubmit, setSubmitPromo] = useState(false)
+    const [isStatusSubmit, setSubmitStatus] = useState(false)
+    const [isActive, setActive] = useState(true)
 
     const searchSpace = (data) => {
         setSearchKeywords(data)
@@ -29,7 +36,7 @@ export const PromotionListing = (props) => {
         let DataSet = promotionList
 
         DataSet.length > 0 && DataSet.filter((searchedItem) =>
-            searchedItem.PromotionName !== null && searchedItem.PromotionName.toLowerCase().includes(
+            searchedItem.PromotionTitle !== null && searchedItem.PromotionTitle.toLowerCase().includes(
                 data.toLowerCase()
             )
         ).map((filteredItem) => {
@@ -40,17 +47,40 @@ export const PromotionListing = (props) => {
     }
 
     useEffect(() => {
-        if (localStorage.getItem("promotionList") !== null) {
-            setPromotionList(JSON.parse(localStorage.getItem("promotionList")))
+
+        if (isPromoListSet === false && isArrayNotEmpty(promotions)) {
+            setPromotionList(promotions)
+            setPromo(isPromoListSet)
         }
+    }, [promotions])
+
+    useEffect(() => {
+        dispatch(GitAction.CallViewPromotion({
+            ActiveInd: -1,
+            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+        }))
     }, [])
+
+    useEffect(() => {
+        if (isPromoSubmit || isStatusSubmit) {
+            dispatch(GitAction.CallClearPromotion())
+            dispatch(GitAction.CallViewPromotion({
+                ActiveInd: -1,
+                ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+            }))
+            if (isPromoSubmit)
+                toast.success("Successfully Delete")
+            setSubmitPromo(false)
+            setPromo(false)
+        }
+    }, [promoAction])
 
     const tableHeadCells = [
         {
-            id: "PromotionName",
+            id: "PromotionTitle",
             align: 'left',
             disablePadding: false,
-            label: "Promotion Name",
+            label: "Promotion Title",
         },
         {
             id: "ProductName",
@@ -70,10 +100,30 @@ export const PromotionListing = (props) => {
             disablePadding: false,
             label: "Product Period",
         },
+        {
+            id: "PromotionStatusInd",
+            align: 'left',
+            disablePadding: false,
+            label: "Is Active",
+        },
     ];
 
+    const updateStatus = (activeInd, promotionID) => {
+        dispatch(GitAction.CallUpdatePromotionStatus({
+            PromotionID: promotionID,
+            ActiveInd: activeInd === true ? 1 : 0
+        }))
+        setSubmitStatus(true)
+    }
+
     const onDelete = () => {
-        if (selectedList.length > 0) {
+        if (isArrayNotEmpty(selectedList)) {
+            let promotionID = []
+            selectedList.map((x) => {
+                promotionID.push(x.PromotionID)
+            })
+            dispatch(GitAction.CallDeletePromotion({ PromotionID: promotionID }))
+            setSubmitPromo(true)
             setSelectedList([])
         } else {
             toast.error("Please select at least 1 promotion to delete")
@@ -84,23 +134,24 @@ export const PromotionListing = (props) => {
         let currentDate = convertDateTimeToString112Format(new Date())
         let isActive = type === "color" ? "grey" : "Expired"
 
-        if (currentDate > convertDateTimeToString112Format(startDate) && currentDate < convertDateTimeToString112Format(endDate))
+        if (currentDate >= convertDateTimeToString112Format(startDate) && currentDate <= convertDateTimeToString112Format(endDate))
             isActive = type === "color" ? "green" : "On Going"
         if (currentDate < convertDateTimeToString112Format(startDate) && currentDate < convertDateTimeToString112Format(endDate))
             isActive = type === "color" ? "orange" : "Upcoming"
-
         return isActive
     }
     const renderTableRows = (data, index) => {
 
-        console.log("dsaasda", data)
+        const propPage = (ID) => {
+            window.location.href = "/PromotionDetails/" + ID
+        }
         if (data !== undefined) {
             return (
                 <>
-                    <TableCell align="left" style={{ fontWeight: "bold" }}>{data.PromotionName}</TableCell>
-                    <TableCell align="left" >
+                    <TableCell align="left" style={{ fontWeight: "bold" }} onClick={() => propPage(data.PromotionID)}>{data.PromotionTitle}</TableCell>
+                    <TableCell align="left" onClick={() => propPage(data.PromotionID)} >
                         {
-                            data.PromotionDetails !== undefined && data.PromotionDetails.length > 0 && data.PromotionDetails.map((x) => {
+                            data.PromotionDetail !== undefined && JSON.parse(data.PromotionDetail).map((x) => {
                                 return (
                                     <img height={60}
                                         alt={x.ProductImage}
@@ -118,12 +169,21 @@ export const PromotionListing = (props) => {
                             })
                         }
                     </TableCell>
-                    <TableCell align="left">
-                        <Button variant="contained" size="sm" style={{ backgroundColor: data.isActive !== false ? checkPromotionPeriod(data.PromotionStartDate, data.PromotionEndDate, "color",) : "grey", fontWeight: "bold" }}>
-                            {data.isActive !== false ? checkPromotionPeriod(data.PromotionStartDate, data.PromotionEndDate, "period") : "Inactive"}
+                    <TableCell align="left" onClick={() => propPage(data.PromotionID)}>
+                        <Button variant="contained" size="sm" style={{ backgroundColor: data.ActiveInd == 1 ? checkPromotionPeriod(data.BeginDate, data.EndDate, "color",) : "grey", fontWeight: "bold" }}>
+                            {data.ActiveInd == 1 ? checkPromotionPeriod(data.BeginDate, data.EndDate, "period") : "Inactive"}
                         </Button>
                     </TableCell>
-                    <TableCell align="left" >{data.PromotionStartDate !== undefined && data.PromotionEndDate !== undefined && data.PromotionStartDate.split("T")[0] + " " + data.PromotionStartDate.split("T")[1] + " to " + data.PromotionEndDate.split("T")[0] + " " + data.PromotionEndDate.split("T")[1]}</TableCell>
+                    <TableCell align="left" onClick={() => propPage(data.PromotionID)} >{data.BeginDate !== undefined && data.EndDate !== undefined && data.BeginDate + " to " + data.EndDate}</TableCell>
+                    <TableCell align="left" >
+                        <FormControlLabel
+                            control={
+                                <Switch size="medium" checked={data.ActiveInd == 1 ? true : false} onChange={(e) => { updateStatus(e.target.checked, data.PromotionID) }} />
+                            }
+                            label={data.ActiveInd == 1 ? "ACTIVE" : "INACTIVE"}
+                        />
+                    </TableCell>
+
                 </>
             )
         }
@@ -159,7 +219,7 @@ export const PromotionListing = (props) => {
                 tableOptions={{
                     dense: true,                // optional, default is false
                     tableOrderBy: 'asc',        // optional, default is asc
-                    sortingIndex: "PromotionName",        // require, it must the same as the desired table header
+                    sortingIndex: "PromotionTitle",        // require, it must the same as the desired table header
                     stickyTableHeader: false,    // optional, default is true
                 }}
                 paginationOptions={[8, 15, 20, { label: 'All', value: -1 }]} // optional, by default it will hide the table pagination. You should set settings for pagination options as in array, eg.: [5, 100, 250, { label: 'All', value: -1 }]
@@ -172,10 +232,10 @@ export const PromotionListing = (props) => {
                 }}
                 selectedIndexKey={"ProductID"}                    // required, as follow the data targetting key of the row, else the data will not be chosen when checkbox is click. 
 
-                Data={isFilter ? filteredListing : promotionList.length > 0 ? promotionList : []}                                  // required, the data that listing in the table
+                Data={isFilter ? filteredListing : isArrayNotEmpty(promotionList) ? promotionList : []}                                  // required, the data that listing in the table
                 onSelectRow={(e) => setSelectedList(e)}
                 onSelectAllRows={(e) => setSelectedList(e)}
-                onTableRowClick={(e, row) => window.location.href = "/PromotionDetails/" + row.PromotionId}       // optional, onTableRowClick = (event, row) => { }. The function should follow the one shown, as it will return the data from the selected row
+                // onTableRowClick={(e, row) => window.location.href = "/PromotionDetails/" + row.PromotionID}       // optional, onTableRowClick = (event, row) => { }. The function should follow the one shown, as it will return the data from the selected row
                 SelectionActionButtons={
                     <Tooltip title="Delete">
                         <IconButton aria-label="delete" onClick={() => { onDelete() }}   >

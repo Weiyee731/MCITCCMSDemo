@@ -263,6 +263,7 @@ function Row(props) {
     const [trackingNumber, setTrackingNumber] = React.useState("");
     const [existingTrackingData, setTrackingData] = React.useState([]);
     const [newUserDetails, setUserDetails] = React.useState([]);
+    const [projectType, setProjectType] = React.useState("Farm2U");
 
     // Check Particular Product
     const handleSelectedProduct = (product, index) => {
@@ -316,10 +317,8 @@ function Row(props) {
     //View the listing with without tracking number
     const orderListing = (product, i) => {
         return (
-
             <TableBody>
                 <TableRow>
-
                     <TableCell style={{ width: "10%" }}>
                         <Checkbox
                             checked={
@@ -333,22 +332,45 @@ function Row(props) {
                     <TableCell style={{ width: "10%" }}>
                         <img
                             height={60}
-                            src={product.ProductImages !== null ? JSON.parse(product.ProductImages)[0] : Logo}
+                            src={product.ProductImages !== "[]" && product.ProductImages !== undefined ? JSON.parse(product.ProductImages)[0] : Logo}
                             onError={(e) => { e.target.onerror = null; e.target.src = Logo }}
                             alt={product.ProductName}
                         />
                     </TableCell>
-                    <TableCell style={{ width: "50%" }}>
-                        <div style={{ fontWeight: "bold", fontSize: "13px" }}>  {product.ProductName} </div>
-                        <div style={{ fontSize: "11px" }}>  Variation : {product.ProductVariationValue}  </div>
-                        <div style={{ fontSize: "11px" }}>  SKU : {product.SKU}  </div>
-                        <div style={{ fontSize: "11px" }}>  Dimension : {product.ProductDimensionWidth}m (W) X {product.ProductDimensionHeight}m (H) X {product.ProductDimensionDeep}m (L) </div>
-                        <div style={{ fontSize: "11px" }}>  Weight : {product.ProductWeight} kg   </div>
-                    </TableCell>
-                    <TableCell style={{ width: "5%" }}> X {product.ProductQuantity}</TableCell>
-                    <TableCell style={{ width: "20%" }}>
-                        <div style={{ fontWeight: "bold" }}>   Total : RM {(product.ProductQuantity * product.ProductVariationPrice).toFixed(2)}</div>
-                    </TableCell>
+                    {
+                        projectType !== "Farm2U" ?
+                            <>
+                                <TableCell style={{ width: "50%" }}>
+                                    <div style={{ fontWeight: "bold", fontSize: "13px" }}>  {product.ProductName} </div>
+                                    <div style={{ fontSize: "11px" }}>  Variation : {product.ProductVariationValue} kg </div>
+                                    <div style={{ fontSize: "11px" }}>  Total Price : RM {(product.ProductQuantity * product.ProductVariationPrice).toFixed(2)}  </div>
+                                    <div style={{ fontSize: "11px", fontWeight: "bold" }}>  Total Order Quantity : {product.ProductQuantity} </div>
+                                    <div style={{ fontSize: "11px", fontWeight: "bold" }}>  Pending Deliver Quantity : {product.PendingDeliveryQty !== undefined ? product.PendingDeliveryQty : product.ProductQuantity} </div>
+                                </TableCell>
+                                <TableCell style={{ width: "10%" }}>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        type="number"
+                                        InputProps={{ inputProps: { min: 1, max: product.PendingDeliveryQty !== undefined ? product.PendingDeliveryQty : product.ProductQuantity } }}
+                                    />
+                                </TableCell>
+                            </>
+                            :
+                            <>
+                                <TableCell style={{ width: "50%" }}>
+                                    <div style={{ fontWeight: "bold", fontSize: "13px" }}>  {product.ProductName} </div>
+                                    <div style={{ fontSize: "11px" }}>  Variation : {product.ProductVariationValue}  </div>
+                                    <div style={{ fontSize: "11px" }}>  SKU : {product.SKU}  </div>
+                                    <div style={{ fontSize: "11px" }}>  Dimension : {product.ProductDimensionWidth}m (W) X {product.ProductDimensionHeight}m (H) X {product.ProductDimensionDeep}m (L) </div>
+                                    <div style={{ fontSize: "11px" }}>  Weight : {product.ProductWeight} kg   </div>
+                                </TableCell>
+                                <TableCell style={{ width: "5%" }}> X {product.ProductQuantity}</TableCell>
+                                <TableCell style={{ width: "20%" }}>
+                                    <div style={{ fontWeight: "bold" }}>   Total : RM {(product.ProductQuantity * product.ProductVariationPrice).toFixed(2)}</div>
+                                </TableCell>
+                            </>
+                    }
                 </TableRow>
             </TableBody>
         )
@@ -931,6 +953,86 @@ function Row(props) {
             return 0
     }
 
+
+    const eCommerceLayout = () => {
+        return (
+            <>
+                <div size="small" aria-label="products">
+                    {JSON.parse(row.OrderProductDetail).filter((x) => x.LogisticID === null || x.LogisticID === 0)
+                        .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
+                        .length > 0 ?
+                        <TableCell>
+                            <Checkbox
+                                checked={selectedProductDetailsID.length === 0 ? false :
+                                    selectedRowID.length === selectedProductDetailsID.length ? true : false
+                                }
+                                onClick={() => handleSelectAllProduct(row, index)}
+                            />
+                        </TableCell> : ""}
+                    <>
+                        {
+                            row.OrderProductDetail ?
+                                <>
+                                    {JSON.parse(row.OrderProductDetail)
+                                        .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
+                                        .map((product, i) => (
+                                            <>
+                                                {
+
+                                                    product.LogisticID === null ?
+                                                        selectedProductDetailsID.length > 0 && selectedProductDetailsID.filter(x => x === product.OrderProductDetailID).length > 0 &&
+                                                        orderListing(product, i)
+                                                        :
+                                                        product.LogisticID === 0 &&
+                                                        selectedProductDetailsID.length > 0 && selectedProductDetailsID.filter(x => x === product.OrderProductDetailID).length > 0 &&
+                                                        orderListing(product, i)
+                                                }
+                                            </>
+                                        ))
+                                    }
+                                    {selectedProductDetailsID.length > 0 && trackingView()}
+                                    {row.OrderProductDetail.length > 0 && row.OrderProductDetail !== null && JSON.parse(row.OrderProductDetail)
+                                        .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
+                                        .map((product, i) => (
+                                            <>
+                                                {
+                                                    selectedProductDetailsID.length > 0 && selectedProductDetailsID.filter(x => x === product.OrderProductDetailID).length > 0 ? "" :
+                                                        product.LogisticID === null ? orderListing(product, i) :
+                                                            product.LogisticID === 0 && orderListing(product, i)
+                                                }
+                                            </>
+                                        ))
+                                    }
+                                </>
+                                : null
+                        }
+                    </>
+                </div>
+                {row.OrderProductDetail.length > 0 && row.OrderProductDetail !== null && getTrackingLength(JSON.parse(row.OrderProductDetail)).length > 0 && getTrackingLength(JSON.parse(row.OrderProductDetail))
+                    .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
+                    .map((track, index) => {
+                        return (
+                            <div className="row" style={{ borderTop: "4px solid #fff", paddingTop: "5px", paddingBottom: "5px" }}>
+                                {row.OrderProductDetail.length > 0 && row.OrderProductDetail !== null ? JSON.parse(row.OrderProductDetail)
+                                    .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
+                                    .map((product, i) => (
+                                        <>
+                                            {
+                                                product.TrackingNumber === track.TrackingNumber && product.LogisticID === track.LogisticID &&
+                                                <>{confirmListing(product, i)}
+                                                </>
+                                            }
+                                        </>
+                                    ))
+                                    : null}
+                                {confirmListingTracking(track, index, JSON.parse(row.OrderProductDetail).filter((x) => x.LogisticID !== null && x.LogisticID !== 0))}
+                            </div>
+                        )
+                    })}
+            </>
+        )
+    }
+
     return (
         <React.Fragment>
             <>
@@ -1091,88 +1193,71 @@ function Row(props) {
                                     row.UserAddressLine1 !== null && row.PickUpInd === 1 && checkExistingUserDetails(row) !== 0 && checkExistingUserDetails(row).filter((x) => x.Method === "Delivery").length > 0 &&
                                     addressList(row, row)
                                 }
-
                                 {
                                     row.UserAddressLine1 !== null && row.PickUpInd === 0 && checkExistingUserDetails(row) !== 0 && checkExistingUserDetails(row).filter((x) => x.Method === "Delivery").length > 0 &&
                                     addressList(row, row)
                                 }
-
                                 <p className="subHeading">Products Ordered</p>
-                                {row.OrderProductDetail ? (
-                                    <>
-                                        <div size="small" aria-label="products">
-                                            {JSON.parse(row.OrderProductDetail).filter((x) => x.LogisticID === null || x.LogisticID === 0)
-                                                .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
-                                                .length > 0 ?
-                                                <TableCell>
-                                                    <Checkbox
-                                                        checked={selectedProductDetailsID.length === 0 ? false :
-                                                            selectedRowID.length === selectedProductDetailsID.length ? true : false
-                                                        }
-                                                        onClick={() => handleSelectAllProduct(row, index)}
-                                                    />
-                                                </TableCell> : ""}
-                                            <>
-                                                {
-                                                    row.OrderProductDetail ?
-                                                        <>
-                                                            {JSON.parse(row.OrderProductDetail)
-                                                                .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
-                                                                .map((product, i) => (
-                                                                    <>
-                                                                        {
 
-                                                                            product.LogisticID === null ?
-                                                                                selectedProductDetailsID.length > 0 && selectedProductDetailsID.filter(x => x === product.OrderProductDetailID).length > 0 &&
-                                                                                orderListing(product, i)
-                                                                                :
-                                                                                product.LogisticID === 0 &&
-                                                                                selectedProductDetailsID.length > 0 && selectedProductDetailsID.filter(x => x === product.OrderProductDetailID).length > 0 &&
-                                                                                orderListing(product, i)
-                                                                        }
-                                                                    </>
-                                                                ))
+                                {row.OrderProductDetail ? (
+
+                                    projectType !== "Farm2U" ?
+                                        <>
+                                            <div size="small" aria-label="products">
+                                                {JSON.parse(row.OrderProductDetail).filter((x) => x.LogisticID === null || x.LogisticID === 0)
+                                                    .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
+                                                    .length > 0 ?
+                                                    <TableCell>
+                                                        <Checkbox
+                                                            checked={selectedProductDetailsID.length === 0 ? false :
+                                                                selectedRowID.length === selectedProductDetailsID.length ? true : false
                                                             }
-                                                            {selectedProductDetailsID.length > 0 && trackingView()}
-                                                            {row.OrderProductDetail.length > 0 && row.OrderProductDetail !== null && JSON.parse(row.OrderProductDetail)
-                                                                .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
-                                                                .map((product, i) => (
-                                                                    <>
-                                                                        {
-                                                                            selectedProductDetailsID.length > 0 && selectedProductDetailsID.filter(x => x === product.OrderProductDetailID).length > 0 ? "" :
-                                                                                product.LogisticID === null ? orderListing(product, i) :
-                                                                                    product.LogisticID === 0 && orderListing(product, i)
-                                                                        }
-                                                                    </>
-                                                                ))
-                                                            }
-                                                        </>
-                                                        : null
-                                                }
-                                            </>
-                                        </div>
-                                        {row.OrderProductDetail.length > 0 && row.OrderProductDetail !== null && getTrackingLength(JSON.parse(row.OrderProductDetail)).length > 0 && getTrackingLength(JSON.parse(row.OrderProductDetail))
-                                            .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
-                                            .map((track, index) => {
-                                                return (
-                                                    <div className="row" style={{ borderTop: "4px solid #fff", paddingTop: "5px", paddingBottom: "5px" }}>
-                                                        {row.OrderProductDetail.length > 0 && row.OrderProductDetail !== null ? JSON.parse(row.OrderProductDetail)
-                                                            .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
-                                                            .map((product, i) => (
-                                                                <>
-                                                                    {
-                                                                        product.TrackingNumber === track.TrackingNumber && product.LogisticID === track.LogisticID &&
-                                                                        <>{confirmListing(product, i)}
+                                                            onClick={() => handleSelectAllProduct(row, index)}
+                                                        />
+                                                    </TableCell> : ""}
+                                                <>
+                                                    {
+                                                        row.OrderProductDetail ?
+                                                            <>
+                                                                {JSON.parse(row.OrderProductDetail)
+                                                                    .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
+                                                                    .map((product, i) => (
+                                                                        <>
+                                                                            {
+
+                                                                                product.LogisticID === null ?
+                                                                                    selectedProductDetailsID.length > 0 && selectedProductDetailsID.filter(x => x === product.OrderProductDetailID).length > 0 &&
+                                                                                    orderListing(product, i)
+                                                                                    :
+                                                                                    product.LogisticID === 0 &&
+                                                                                    selectedProductDetailsID.length > 0 && selectedProductDetailsID.filter(x => x === product.OrderProductDetailID).length > 0 &&
+                                                                                    orderListing(product, i)
+                                                                            }
                                                                         </>
-                                                                    }
-                                                                </>
-                                                            ))
-                                                            : null}
-                                                        {confirmListingTracking(track, index, JSON.parse(row.OrderProductDetail).filter((x) => x.LogisticID !== null && x.LogisticID !== 0))}
-                                                    </div>
-                                                )
-                                            })}
-                                    </>
+                                                                    ))
+                                                                }
+                                                                {selectedProductDetailsID.length > 0 && trackingView()}
+                                                                {row.OrderProductDetail.length > 0 && row.OrderProductDetail !== null && JSON.parse(row.OrderProductDetail)
+                                                                    .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
+                                                                    .map((product, i) => (
+                                                                        <>
+                                                                            {
+                                                                                selectedProductDetailsID.length > 0 && selectedProductDetailsID.filter(x => x === product.OrderProductDetailID).length > 0 ? "" :
+                                                                                    product.LogisticID === null ? orderListing(product, i) :
+                                                                                        product.LogisticID === 0 && orderListing(product, i)
+                                                                            }
+                                                                        </>
+                                                                    ))
+                                                                }
+                                                            </>
+                                                            : null
+                                                    }
+                                                </>
+                                            </div>
+                                        </>
+                                        :
+                                        eCommerceLayout()
+
 
                                 ) : (
                                     <p className="fadedText">No Products To Display</p>
@@ -1450,9 +1535,6 @@ class DisplayTable extends Component {
                                         <p className="fadedText">No Orders to Display</p>
                                     )}
                                 </TableContainer>
-                                {console.log("thissdsaa", this.props.Data.length < 5)}
-                                {console.log("thissdsaa rowsPerPage", this.state.rowsPerPage)}
-                                {console.log("thissdsaa page", this.state.page)}
                                 <TablePagination
                                     rowsPerPageOptions={[5, 10, 25]}
                                     component="div"

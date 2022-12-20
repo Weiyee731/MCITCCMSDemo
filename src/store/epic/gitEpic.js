@@ -425,7 +425,7 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.GetMerchants), map(action => {
       return dispatch => {
         try {
-          
+
           return fetch(url + project + "/" +
             "User_ProfileListByType?TYPE=" + action.payload.type +
             "&TYPEVALUE=" + action.payload.typeValue +
@@ -1440,8 +1440,8 @@ export class GitEpic {
       return dispatch => {
         try {
           return fetch(url + project + "/" +
-            "Promo_ViewPromotion?ACTIVEIND=" + action.payload.ProductID +
-            "&ProjectID=" + action.payload.ProjectID)
+            "Promo_ViewPromotion?ACTIVEIND=" + action.payload.ActiveInd +
+            "&PROJECTID=" + action.payload.ProjectID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -1459,20 +1459,47 @@ export class GitEpic {
       }
     }));
 
+  Promotion_ViewByPromotionID = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetPromotionByID), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Promo_ViewPromotionByID?PromotionID=" + action.payload.PromotionID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotPromotionByID, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                // toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotPromotionByID, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Promotion_ViewByPromotionID. Please check on URL")
+          return dispatch({ type: GitAction.GotPromotionByID, payload: [] });
+        }
+      }
+    }));
+
   Promotion_Add = action$ =>
     action$.pipe(filter(action => action.type === GitAction.AddPromotion), map(action => {
       return dispatch => {
         try {
           return fetch(url + project + "/" +
             "Promo_AddPromotion?PROMOTIONTITLE=" + action.payload.PromotionTitle +
+            "&PROJECTID=" + + action.payload.ProjectID +
             "&PROMOTIONDESC=" + action.payload.PromotionDesc +
             "&PROMOTIONSTARTDATE=" + action.payload.PromotionStartDate +
-            "&PROMOTIONDISCOUNTPERCENTAGE=" + action.payload.DiscountPercentage +
             "&BANNERIMAGE=" + action.payload.BannerImage +
             "&SLIDEORDER=" + action.payload.SlideOrder +
             "&PROMOTIONENDDATE=" + action.payload.PromotionEndDate +
             "&PRODUCTID=" + action.payload.ProductID +
-            "&ProjectID=" + action.payload.ProjectID)
+            "&PRODUCTDISCOUNT=" + action.payload.ProductDiscount +
+            "&PRODUCTSTOCKLIMIT=" + action.payload.ProductStockLimit +
+            "&PRODUCTVARIATIONDETAILID=" + action.payload.ProductVariationDetailID +
+            "&PRODUCTPURCHASELIMIT=" + action.payload.ProductPurchaseLimit +
+            "&ACTIVEIND=" + action.payload.ActiveInd)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -1490,6 +1517,7 @@ export class GitEpic {
       }
     }));
 
+
   Promotion_Update = action$ =>
     action$.pipe(filter(action => action.type === GitAction.UpdatePromotion), map(action => {
       return dispatch => {
@@ -1500,10 +1528,16 @@ export class GitEpic {
             "&PROMOTIONDESC=" + action.payload.PromotionDesc +
             "&BANNERIMAGE=" + action.payload.BannerImage +
             "&SLIDEORDER=" + action.payload.SlideOrder +
-            "&PROMOTIONSTARTDATE=" + action.payload.promoStart +
-            "&PROMOTIONENDDATE=" + action.payload.promoEnd +
-            "&PROMOTIONITEMID=" + action.payload.ProductID +
-            "&PROMOTIONDISCOUNTPERCENTAGE=" + action.payload.DiscountPercentage)
+            "&PROMOTIONSTARTDATE=" + action.payload.PromotionStartDate +
+            "&PROMOTIONENDDATE=" + action.payload.PromotionEndDate +
+            "&DELETEDPROMOTIONPRODUCTID=" + action.payload.DeletedPromotionProductID +
+            "&PRODUCTID=" + action.payload.ProductID +
+            "&UPDATEDPROMOTIONPRODUCTID=" + action.payload.UpdatedPromotionProductID +
+            "&PRODUCTDISCOUNT=" + action.payload.ProductDiscount +
+            "&PRODUCTSTOCKLIMIT=" + action.payload.ProductStockLimit +
+            "&PRODUCTVARIATIONDETAILID=" + action.payload.ProductVariationDetailID +
+            "&PRODUCTPURCHASELIMIT=" + action.payload.ProductPurchaseLimit +
+            "&ACTIVEIND=" + action.payload.ActiveInd)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -1515,11 +1549,36 @@ export class GitEpic {
               }
             });
         } catch (error) {
-          toast.error("Error Code: ProductReview_ViewByID. Please check on URL")
+          toast.error("Error Code: UpdatePromotion. Please check on URL")
           return dispatch({ type: GitAction.UpdatedPromotion, payload: [] });
         }
       }
     }));
+
+  Promotion_UpdateStatusInd = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.UpdatePromotionInd), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Promo_UpdatePromotionActiveInd?PROMOTIONID=" + action.payload.PromotionID +
+            "&ACTIVEIND=" + action.payload.ActiveInd)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.UpdatedPromotionInd, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.UpdatedPromotionInd, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: ProductReview_ViewByID. Please check on URL")
+          return dispatch({ type: GitAction.DeletedPromotion, payload: [] });
+        }
+      }
+    }));
+
 
   Promotion_Delete = action$ =>
     action$.pipe(filter(action => action.type === GitAction.DeletePromotion), map(action => {

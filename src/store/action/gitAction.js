@@ -643,6 +643,17 @@ export class GitAction {
     };
   }
 
+
+  static GetPromotionByID = "GET-PROMOTION-BYID";
+  static GotPromotionByID = "GOT-PROMOTION-BYID";
+  static CallViewPromotionByID(promoData) {
+    return {
+      type: GitAction.GetPromotionByID,
+      payload: promoData,
+    };
+  }
+
+
   static AddPromotion = "ADD-PROMOTION";
   static AddedPromotion = "ADDED-PROMOTION";
   static ClearAddPromo = "CLEAR-ADD-PROMOTION";
@@ -663,6 +674,15 @@ export class GitAction {
   static CallUpdatePromotion(promoData) {
     return {
       type: GitAction.UpdatePromotion,
+      payload: promoData,
+    };
+  }
+
+  static UpdatePromotionInd = "UPDATE-PROMOTION-IND";
+  static UpdatedPromotionInd = "UPDATED-PROMOTION-IND";
+  static CallUpdatePromotionStatus(promoData) {
+    return {
+      type: GitAction.UpdatePromotionInd,
       payload: promoData,
     };
   }
