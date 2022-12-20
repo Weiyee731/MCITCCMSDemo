@@ -1263,7 +1263,7 @@ export const PromotionDetails = (props) => {
                 </CardContent >
             </Card >
 
-            <div style={{ paddingTop: "20px" }} style={{ opacity: isActive ? "100%" : "60%" }}>
+            <div style={{ paddingTop: "20px", opacity: isActive ? "100%" : "60%" }}>
                 <Card>
                     <CardContent>
                         <div className="row">
