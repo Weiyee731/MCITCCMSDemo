@@ -12,6 +12,7 @@ import {
     InputLabel, Checkbox, TableContainer, OutlinedInput, FormControl, TableCell, TableBody, Table, IconButton, Collapse,
     TablePagination, Tabs, Tab,
 } from '@mui/material';
+import CancelIcon from '@mui/icons-material/Cancel';
 import EditIcon from '@mui/icons-material/Edit';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
@@ -58,6 +59,9 @@ export const OrderManagement = (props) => {
 
     const dispatch = useDispatch()
     const [value, setValue] = useState(0);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+
     const [isOrderSet, setOrder] = useState(false)
     const [isOrderSelected, setSelectedList] = useState(false)
     const [OrderListing, setOrderListing] = useState(false)
@@ -124,16 +128,17 @@ export const OrderManagement = (props) => {
 
     const headerLayout = () => {
         return (
-            <TableHead>
+            <TableHead style={{ backgroundColor: "#f8f9fa" }}>
                 <TableRow>
                     <TableCell width="5%" />
-                    <TableCell width="5%"></TableCell>
+                    {value + 1 === 1 && <TableCell width="5%"></TableCell>}
                     <TableCell width="10%" style={HeaderStyle} >Order Date</TableCell>
-                    <TableCell width="15%" align="left" style={HeaderStyle}  >Order ID</TableCell>
+                    <TableCell width="10%" align="left" style={HeaderStyle}  >Order ID</TableCell>
                     <TableCell width="15%" align="left" style={HeaderStyle} >Customer</TableCell>
                     <TableCell width="15%" align="left" style={HeaderStyle} >Contact</TableCell>
                     <TableCell width="15%" align="left" style={HeaderStyle} >Status</TableCell>
                     <TableCell width="10%" align="left" style={HeaderStyle} >Total</TableCell>
+                    {value + 1 === 1 && <TableCell width="10%" align="left" style={HeaderStyle}>Action</TableCell>}
                 </TableRow>
             </TableHead>
         )
@@ -247,7 +252,6 @@ export const OrderManagement = (props) => {
     const submitDelivery = () => {
         let listing = checkSelectedListing(OrderListing)
         let error = false
-        console.log("OrderDeliverySetting.deliveryMan", OrderDeliverySetting.deliveryMan)
         if (OrderDeliverySetting.deliveryMan == "" || OrderDeliverySetting.isDeliverymanError == true) {
             error = true
             setOrderDeliverySetting({
@@ -304,10 +308,13 @@ export const OrderManagement = (props) => {
                         {checkCollapseOpen(index) ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
-                <TableCell> <Checkbox color="primary"
-                    checked={data.isCheckBoxSelected}
-                    onClick={() => setCheckBoxListing(data, index, 0, 0, 1)}
-                /></TableCell>
+                {value + 1 === 1 &&
+                    <TableCell>
+                        <Checkbox color="primary"
+                            checked={data.isCheckBoxSelected}
+                            onClick={() => setCheckBoxListing(data, index, 0, 0, 1)} />
+                    </TableCell>
+                }
                 <TableCell component="th" scope="row">{data.CreatedDate !== undefined && moment(data.CreatedDate).format("DD-MM-YYYY")}</TableCell>
                 <TableCell align="left"> {data.OrderName}</TableCell>
                 <TableCell align="left">{data.UserFullName}</TableCell>
@@ -318,6 +325,16 @@ export const OrderManagement = (props) => {
                     {/* </Button> */}
                 </TableCell>
                 <TableCell align="left">{isNaN(data.OrderTotalAmount) === false && parseFloat(data.OrderTotalAmount).toFixed(2)}</TableCell>
+                {
+                    value + 1 === 1 &&
+                    <TableCell align="left">
+                        <IconButton>
+                            <Button disabled style={{ backgroundColor: "RED" }}>
+                                <CancelIcon /> Cancel
+                            </Button>
+                        </IconButton>
+                    </TableCell>
+                }
             </TableRow >
         )
     }
@@ -368,7 +385,6 @@ export const OrderManagement = (props) => {
                             })}
                         </Select>
                     </FormControl>
-                    {console.log("isDeliverymanError", OrderDeliverySetting)}
                     {OrderDeliverySetting.isDeliverymanError && <FormHelperText style={{ color: "red" }}>Deliveryman is required</FormHelperText>}
                 </div>
                 <div className="col-xl-3 col-lg-3 col-md-3 col-s-3 col-xs-3">
@@ -424,7 +440,9 @@ export const OrderManagement = (props) => {
                         <div className="col-2"></div>
                         <div className="col-2">  <Typography style={TitleStyle} > Product Variation</Typography></div>
                         <div className="col-2">  <Typography style={TitleStyle} > Order Details</Typography></div>
-                        <div className="col-2">  <Typography style={TitleStyle} > Delivery Quantity</Typography></div>
+                        {value + 1 === 1 &&
+                            <div className="col-2">  <Typography style={TitleStyle} > Delivery Quantity</Typography></div>
+                        }
                     </div>
                     <hr />
                     {
@@ -433,11 +451,13 @@ export const OrderManagement = (props) => {
                                 <div className="row">
                                     <div className="col-2">
                                         <div className="row">
-                                            <div className="col-1">
-                                                <Checkbox color="primary"
-                                                    checked={details.isCheckBoxSelected}
-                                                    onClick={() => setCheckBoxListing(data, index, details, subindex, 2)} />
-                                            </div>
+                                            {value + 1 === 1 &&
+                                                <div className="col-1">
+                                                    <Checkbox color="primary"
+                                                        checked={details.isCheckBoxSelected}
+                                                        onClick={() => setCheckBoxListing(data, index, details, subindex, 2)} />
+                                                </div>
+                                            }
                                             <div className="col" style={{ textAlign: "center" }}>
                                                 <img
                                                     height={60}
@@ -458,31 +478,33 @@ export const OrderManagement = (props) => {
                                         <div style={{ fontSize: "11px", fontWeight: "bold" }}>  Total Order Quantity : {details.ProductQuantity} </div>
                                         <div style={{ fontSize: "11px", fontWeight: "bold" }}>  Pending Deliver Quantity : {details.PendingDeliveryQty !== undefined ? details.PendingDeliveryQty : details.ProductQuantity} </div>
                                     </div>
-                                    <div className="col-2">
-                                        <FormControl fullWidth size="small" variant="outlined">
-                                            <OutlinedInput
-                                                id={"outlined-adornment-Quantity-" + subindex}
-                                                label=""
-                                                value={details.deliveryQuantity}
-                                                type="number"
-                                                onChange={(e) => {
-                                                    let newArr = OrderListing
-                                                    let max = details.PendingDeliveryQty !== undefined ? details.PendingDeliveryQty : details.ProductQuantity
-                                                    if (e.target.value <= max && e.target.value >= 0) {
-                                                        newArr[index].orderDetails[subindex].deliveryQuantity = e.target.value
-                                                        newArr[index].orderDetails[subindex].isDeliveryQuantityError = false
-                                                    } else {
-                                                        newArr[index].orderDetails[subindex].isDeliveryQuantityError = true
-                                                    }
-                                                    setOrderListing([...newArr]);
-                                                }}
-                                                inputProps={{ 'aria-label': 'UserContactNo', inputProps: { min: 1, max: details.PendingDeliveryQty != undefined ? details.PendingDeliveryQty : details.ProductQuantity } }}
-                                                required
-                                            />
-                                        </FormControl>
-                                        {details.isDeliveryQuantityError && <FormHelperText style={{ color: "red" }}>Insert valid Delivery Quantity</FormHelperText>}
-                                        {details.isCheckBoxSelected && details.deliveryQuantity == 0 && !details.isDeliveryQuantityError && <FormHelperText style={{ color: "red" }}>Insert at least 1 Quantity</FormHelperText>}
-                                    </div>
+                                    {value + 1 === 1 &&
+                                        <div className="col-2">
+                                            <FormControl fullWidth size="small" variant="outlined">
+                                                <OutlinedInput
+                                                    id={"outlined-adornment-Quantity-" + subindex}
+                                                    label=""
+                                                    value={details.deliveryQuantity}
+                                                    type="number"
+                                                    onChange={(e) => {
+                                                        let newArr = OrderListing
+                                                        let max = details.PendingDeliveryQty !== undefined ? details.PendingDeliveryQty : details.ProductQuantity
+                                                        if (e.target.value <= max && e.target.value >= 0) {
+                                                            newArr[index].orderDetails[subindex].deliveryQuantity = e.target.value
+                                                            newArr[index].orderDetails[subindex].isDeliveryQuantityError = false
+                                                        } else {
+                                                            newArr[index].orderDetails[subindex].isDeliveryQuantityError = true
+                                                        }
+                                                        setOrderListing([...newArr]);
+                                                    }}
+                                                    inputProps={{ 'aria-label': 'UserContactNo', inputProps: { min: 1, max: details.PendingDeliveryQty != undefined ? details.PendingDeliveryQty : details.ProductQuantity } }}
+                                                    required
+                                                />
+                                            </FormControl>
+                                            {details.isDeliveryQuantityError && <FormHelperText style={{ color: "red" }}>Insert valid Delivery Quantity</FormHelperText>}
+                                            {details.isCheckBoxSelected && details.deliveryQuantity == 0 && !details.isDeliveryQuantityError && <FormHelperText style={{ color: "red" }}>Insert at least 1 Quantity</FormHelperText>}
+                                        </div>
+                                    }
                                     <hr />
                                 </div>
                             )
@@ -493,261 +515,123 @@ export const OrderManagement = (props) => {
         )
     }
 
-    const OrderLayout = () => {
-        return (
-            <TableContainer component={Paper} style={{ overflow: "hidden" }}>
-                {isOrderSelected && orderDeliveryDetail()}
-                <Table aria-label="collapsible table">
-                    {headerLayout()}
-                    {
-                        isOrderSet ?
-                            <TableBody>
-                                {OrderListing.length > 0 && OrderListing.map((data, index) => {
-                                    return (
-                                        <>
-                                            {CollapseLayout(data, index)}
-                                            <TableRow style={{ backgroundColor: "#f8f9fa" }}>
-                                                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
-                                                    <Collapse in={checkCollapseOpen(index)} timeout="auto" unmountOnExit>
-                                                        <Box sx={{ margin: 1 }}>
-                                                            {console.log("ddadsadsa", data)}
-                                                            {OrderDetailLayout(data, index)}
-                                                            <Card style={{ marginTop: "10px" }}>
-                                                                <CardContent>
-                                                                    <div className="row">
-                                                                        <div className="col">
-                                                                            <Typography style={TitleStyle} > Delivery Details </Typography>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="row" style={{ paddingTop: "10px" }}>
-                                                                        <div className="row">
+    const checkIndex = (index) => {
+        let returnIndex = index
+        if (page !== 0) {
+            returnIndex = rowsPerPage * page + index
+        }
+        return returnIndex
+    }
 
-                                                                            <div className="col-xl-3 col-lg-3 col-md-3 col-s-3 col-xs-3">
-                                                                                <div className="row">
-                                                                                    <InputLabel shrink htmlFor="bootstrap-input" style={{ paddingLeft: "15px", fontSize: "12pt" }}>Receiver Details</InputLabel>
-                                                                                    <Typography style={DetailStyle}> Name: {data.UserFullName}</Typography>
-                                                                                    <Typography style={DetailStyle}> Contact: {data.UserContactNo}</Typography>
+    const OrderLayout = (Listing) => {
+        return (
+            <>
+                <TableContainer component={Paper} style={{ overflow: "hidden" }}>
+                    {isOrderSelected && orderDeliveryDetail()}
+                    <Table aria-label="collapsible table" size="small">
+                        {headerLayout()}
+                        {
+                            isOrderSet ?
+                                <TableBody >
+                                    {isArrayNotEmpty(Listing) && Listing.slice((page) * rowsPerPage, (page) * rowsPerPage + rowsPerPage)
+                                        .map((data, index) => {
+                                            return (
+                                                <>
+                                                    {CollapseLayout(data, checkIndex(index))}
+                                                    <TableRow style={{ backgroundColor: "#f8f9fa" }} >
+                                                        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
+                                                            <Collapse in={checkCollapseOpen(checkIndex(index))} timeout="auto" unmountOnExit>
+                                                                <Box sx={{ margin: 1 }}>
+                                                                    {OrderDetailLayout(data, checkIndex(index))}
+                                                                    <Card style={{ marginTop: "10px" }}>
+                                                                        <CardContent>
+                                                                            <div className="row">
+                                                                                <div className="col">
+                                                                                    <Typography style={TitleStyle} > Delivery Details </Typography>
                                                                                 </div>
                                                                             </div>
-                                                                            <div className="col-xl-4 col-lg-4 col-md-4 col-s-4 col-xs-4">
+                                                                            <div className="row" style={{ paddingTop: "10px" }}>
                                                                                 <div className="row">
-                                                                                    <InputLabel shrink htmlFor="bootstrap-input" style={{ paddingLeft: "15px", fontSize: "12pt" }}>Receiver Address</InputLabel>
-                                                                                    <Typography style={DetailStyle}> {data.UserAddressLine1 + " " + data.UserAddressLine2 + " " + data.UserCity + " " + data.UserPoscode + " , " + data.UserState}</Typography>
+
+                                                                                    <div className="col-xl-2 col-lg-2 col-md-2 col-s-6 col-xs-6">
+                                                                                        <div className="row">
+                                                                                            <InputLabel shrink htmlFor="bootstrap-input" style={{ paddingLeft: "15px", fontSize: "12pt" }}>Receiver Name</InputLabel>
+                                                                                            <Typography style={DetailStyle}> {data.UserFullName}</Typography>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div className="col-xl-2 col-lg-2 col-md-2  col-s-6 col-xs-6">
+                                                                                        <div className="row">
+                                                                                            <InputLabel shrink htmlFor="bootstrap-input" style={{ paddingLeft: "15px", fontSize: "12pt" }}>Receiver Contact</InputLabel>
+                                                                                            <Typography style={DetailStyle}>  {data.UserContactNo}</Typography>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div className="col-xl-5 col-lg-5 col-md-5  col-s-6 col-xs-6">
+                                                                                        <div className="row">
+                                                                                            <InputLabel shrink htmlFor="bootstrap-input" style={{ paddingLeft: "15px", fontSize: "12pt" }}>Receiver Address</InputLabel>
+                                                                                            <Typography style={DetailStyle}> {data.UserAddressLine1 + " " + data.UserAddressLine2 + " " + data.UserCity + " " + data.UserPoscode + " , " + data.UserState}</Typography>
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                    <div className="col-xl-3 col-lg-3 col-md-3 col-s-6 col-xs-6">
+                                                                                        <div className="row">
+                                                                                            <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt", paddingLeft: value + 1 === 1 ? "0px" : "15px" }}>Delivery Method</InputLabel>
+                                                                                            {
+                                                                                                value + 1 === 1 ?
+                                                                                                    <FormControl fullWidth size="small" variant="outlined">
+                                                                                                        <Select
+                                                                                                            id={"outlined-adornment-Method-" + index * page * rowsPerPage} label=""
+                                                                                                            value={data.PickUpInd}
+                                                                                                            onChange={(e) => {
+                                                                                                                let newArr = OrderListing
+                                                                                                                newArr[index * page * rowsPerPage].PickUpInd = e.target.value
+                                                                                                                setOrderListing([...newArr]);
+                                                                                                            }}
+                                                                                                            className="select"
+                                                                                                            required
+                                                                                                        >
+                                                                                                            <MenuItem value={1}> Self Pick Up </MenuItem>
+                                                                                                            <MenuItem value={0}> Delivery </MenuItem>
+                                                                                                        </Select>
+                                                                                                    </FormControl>
+                                                                                                    :
+                                                                                                    <Typography style={DetailStyle}>{data.PickUpInd === 1 ? "Self Pick Up" : "Delivery"}</Typography>
+                                                                                            }
+                                                                                        </div>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div className="col-xl-3 col-lg-3 col-md-3 col-s-3 col-xs-3">
-                                                                                <div className="row">
-                                                                                    <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt" }}>Delivery Method</InputLabel>
-                                                                                    <FormControl fullWidth size="small" variant="outlined">
-                                                                                        <Select
-                                                                                            id={"outlined-adornment-Method-" + index} label=""
-                                                                                            value={data.PickUpInd}
-                                                                                            onChange={(e) => {
-                                                                                                let newArr = OrderListing
-                                                                                                newArr[index].PickUpInd = e.target.value
-                                                                                                setOrderListing([...newArr]);
-                                                                                            }}
-                                                                                            className="select"
-                                                                                            required
-                                                                                        >
-                                                                                            <MenuItem value={1}> Self Pick Up </MenuItem>
-                                                                                            <MenuItem value={0}> Delivery </MenuItem>
-                                                                                        </Select>
-                                                                                    </FormControl>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </CardContent>
-                                                            </Card>
-                                                            {/* {
-                                                    data.PickUpInd === 0 &&
-                                                    <Card style={{ marginTop: "10px" }}>
-                                                        <CardContent>
-                                                            <div className="row" style={{ paddingBottom: "10px" }}>
-                                                                <div className="col">
-                                                                    <Typography style={TitleStyle} > Delivery Address Details </Typography>
-                                                                </div>
-                                                            </div>
-                                                            <div className="row">
-                                                                <div className="row">
-                                                                    <div className="col-xl-6 col-lg-6 col-md-6 col-s-12 col-xs-12">
-                                                                        <div className="row">
-                                                                            <div className="col-xl-2 col-lg-3 col-md-3 col-s-12 col-xs-12">
-                                                                                <Typography style={SubtitleStyle} > Address Line 1:</Typography>
-                                                                            </div>
-                                                                            <div className="col-xl-9 col-lg-8 col-md-8 col-s-12 col-xs-12">
-                                                                                <FormControl fullWidth size="small" variant="outlined">
-                                                                                    <OutlinedInput
-                                                                                        id={"outlined-adornment-UserFullName-" + index}
-                                                                                        label=""
-                                                                                        value={data.UserAddressLine1}
-                                                                                        onChange={(e) => {
-                                                                                            let newArr = OrderListing
-                                                                                            newArr[index].UserAddressLine1 = e.target.value
-                                                                                            setOrderListing([...newArr]);
-                                                                                        }}
-                                                                                        inputProps={{ 'aria-label': 'UserAddressLine1' }}
-                                                                                        required
-                                                                                    />
-                                                                                </FormControl>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-xl-6 col-lg-6 col-md-6 col-s-12 col-xs-12">
-                                                                        <div className="row">
-                                                                            <div className="col-xl-3 col-lg-3 col-md-3 col-s-12 col-xs-12">
-                                                                                <Typography style={SubtitleStyle} > Address Line 2:</Typography>
-                                                                            </div>
-                                                                            <div className="col-xl-9 col-lg-8 col-md-8 col-s-12 col-xs-12">
-                                                                                <FormControl fullWidth size="small" variant="outlined">
-                                                                                    <OutlinedInput
-                                                                                        id={"outlined-adornment-UserAddressLine2-" + index}
-                                                                                        label=""
-                                                                                        value={data.UserAddressLine2}
-                                                                                        onChange={(e) => {
-                                                                                            let newArr = OrderListing
-                                                                                            newArr[index].UserAddressLine2 = e.target.value
-                                                                                            setOrderListing([...newArr]);
-                                                                                        }}
-                                                                                        inputProps={{ 'aria-label': 'UserAddressLine2' }}
-                                                                                        required
-                                                                                    />
-                                                                                </FormControl>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div className="row" style={{ paddingTop: "10px" }}>
-                                                                <div className="row">
-                                                                    <div className="col-xl-6 col-lg-6 col-md-6 col-s-12 col-xs-12">
-                                                                        <div className="row">
-                                                                            <div className="col-xl-2 col-lg-3 col-md-3 col-s-12 col-xs-12">
-                                                                                <Typography style={SubtitleStyle} > City:</Typography>
-                                                                            </div>
-                                                                            <div className="col-xl-9 col-lg-8 col-md-8 col-s-12 col-xs-12">
-                                                                                <FormControl fullWidth size="small" variant="outlined">
-                                                                                    <OutlinedInput
-                                                                                        id={"outlined-adornment-UserCity-" + index}
-                                                                                        label=""
-                                                                                        value={data.UserCity}
-                                                                                        onChange={(e) => {
-                                                                                            let newArr = OrderListing
-                                                                                            newArr[index].UserCity = e.target.value
-                                                                                            setOrderListing([...newArr]);
-                                                                                        }}
-                                                                                        inputProps={{ 'aria-label': 'UserCity' }}
-                                                                                        required
-                                                                                    />
-                                                                                </FormControl>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-xl-6 col-lg-6 col-md-6 col-s-12 col-xs-12">
-                                                                        <div className="row">
-                                                                            <div className="col-xl-3 col-lg-3 col-md-3 col-s-12 col-xs-12">
-                                                                                <Typography style={SubtitleStyle} > State:</Typography>
-                                                                            </div>
-                                                                            <div className="col-xl-9 col-lg-8 col-md-8 col-s-12 col-xs-12">
-                                                                                <FormControl fullWidth size="small" variant="outlined">
-                                                                                    <OutlinedInput
-                                                                                        id={"outlined-adornment-UserState-" + index}
-                                                                                        label=""
-                                                                                        value={data.UserState}
-                                                                                        onChange={(e) => {
-                                                                                            let newArr = OrderListing
-                                                                                            newArr[index].UserState = e.target.value
-                                                                                            setOrderListing([...newArr]);
-                                                                                        }}
-                                                                                        inputProps={{ 'aria-label': 'UserState' }}
-                                                                                        required
-                                                                                    />
-                                                                                </FormControl>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div className="row" style={{ paddingTop: "10px" }}>
-                                                                <div className="row">
-                                                                    <div className="col-xl-6 col-lg-6 col-md-6 col-s-12 col-xs-12">
-                                                                        <div className="row">
-                                                                            <div className="col-xl-2 col-lg-3 col-md-3 col-s-12 col-xs-12">
-                                                                                <Typography style={SubtitleStyle} > Poscode:</Typography>
-                                                                            </div>
-                                                                            <div className="col-xl-9 col-lg-8 col-md-8 col-s-12 col-xs-12">
-                                                                                <FormControl fullWidth size="small" variant="outlined">
-                                                                                    <OutlinedInput
-                                                                                        id={"outlined-adornment-UserPoscode-" + index}
-                                                                                        label=""
-                                                                                        value={data.UserPoscode}
-                                                                                        onChange={(e) => {
-                                                                                            let newArr = OrderListing
-                                                                                            newArr[index].UserPoscode = e.target.value
-                                                                                            setOrderListing([...newArr]);
-                                                                                        }}
-                                                                                        inputProps={{ 'aria-label': 'UserPoscode' }}
-                                                                                        required
-                                                                                    />
-                                                                                </FormControl>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-xl-6 col-lg-6 col-md-6 col-s-12 col-xs-12">
-                                                                        <div className="row">
-                                                                            <div className="col-xl-3 col-lg-3 col-md-3 col-s-12 col-xs-12">
-                                                                                <Typography style={SubtitleStyle} > Country:</Typography>
-                                                                            </div>
-                                                                            <div className="col-xl-9 col-lg-8 col-md-8 col-s-12 col-xs-12">
-                                                                                <FormControl fullWidth size="small" variant="outlined">
-                                                                                    <Select
-                                                                                        id={"outlined-adornment-Country-" + index} label=""
-                                                                                        value={data.CountryID}
-                                                                                        onChange={(e) => {
-                                                                                            let newArr = OrderListing
-                                                                                            newArr[index].CountryID = e.target.value
-                                                                                            setOrderListing([...newArr]);
-                                                                                        }}
-                                                                                        className="select"
-                                                                                        required
-                                                                                    >
-                                                                                        {isArrayNotEmpty(countries) && countries.map((country) => (
-                                                                                            <MenuItem
-                                                                                                value={country.CountryId}
-                                                                                                key={country.CountryId}
-                                                                                            >
-                                                                                                {country.CountryName}
-                                                                                            </MenuItem>
-                                                                                        ))}
-                                                                                    </Select>
-                                                                                </FormControl>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </CardContent>
-                                                    </Card>
-                                                } */}
-                                                        </Box>
-                                                    </Collapse>
-                                                </TableCell>
-                                            </TableRow>
-                                        </>
-                                    )
-                                }
-                                )}
-                            </TableBody>
-                            :
-                            <LoadingPanel />
-                    }
-                </Table>
-            </TableContainer>
+                                                                        </CardContent>
+                                                                    </Card>
+                                                                </Box>
+                                                            </Collapse>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                </>
+                                            )
+                                        }
+                                        )}
+                                </TableBody>
+                                :
+                                <LoadingPanel />
+                        }
+                    </Table>
+                </TableContainer >
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={Listing.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={(e, page) => setPage(page)}
+                    onRowsPerPageChange={(e) => {
+                        setRowsPerPage(parseInt(e.target.value, 10));
+                        setPage(0);
+                    }}
+                />
+            </>
         )
     }
 
-    console.log("transactionStatus", transactionStatus)
     return (
         <div style={{ width: "100%" }}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -757,18 +641,13 @@ export const OrderManagement = (props) => {
                             return (<Tab label={x.TrackingStatus} {...a11yProps(index)} />)
                         })
                     }
-
-                    {/* <Tab label="Item Two" {...a11yProps(1)} />
-                    <Tab label="Item Three" {...a11yProps(2)} /> */}
                 </Tabs>
             </Box>
             {
                 isArrayNotEmpty(transactionStatus) && transactionStatus.map((x, statusIndex) => {
-                    return (<TabPanel value={value} index={statusIndex}> {OrderLayout(x.TrackingStatusID)} </TabPanel>)
+                    return (<TabPanel value={value} index={statusIndex}> {OrderLayout(isArrayNotEmpty(OrderListing) ? OrderListing.filter((y) => y.TrackingStatusID == x.TrackingStatusID) : [])} </TabPanel>)
                 })
             }
-
-
         </div>
     );
 }
