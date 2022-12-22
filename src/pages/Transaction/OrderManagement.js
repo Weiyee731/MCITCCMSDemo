@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GitAction } from "../../store/action/gitAction";
 import "../../app/App.scss";
-import DeleteIcon from '@mui/icons-material/Delete';
 import { toast } from "react-toastify";
 import { isArrayNotEmpty, isContactValid } from "../../tools/Helpers";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -13,10 +12,6 @@ import {
     TablePagination, Tabs, Tab,
 } from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel';
-import EditIcon from '@mui/icons-material/Edit';
-import DoneIcon from '@mui/icons-material/Done';
-import CloseIcon from '@mui/icons-material/Close';
-import AddIcon from '@mui/icons-material/Add';
 import LoadingPanel from "../../tools/LoadingPanel";
 import { Button } from "reactstrap";
 import moment from "moment/moment";
@@ -638,7 +633,16 @@ export const OrderManagement = (props) => {
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                     {
                         isArrayNotEmpty(transactionStatus) && transactionStatus.map((x, index) => {
-                            return (<Tab label={x.TrackingStatus} {...a11yProps(index)} />)
+
+                            const orderLength = () => {
+                                let listing = ""
+                                if (isArrayNotEmpty(OrderListing)) {
+                                    let listingLength = OrderListing.filter((y) => y.TrackingStatusID == x.TrackingStatusID).length
+                                    listing = " ( " + listingLength + " )"
+                                }
+                                return listing
+                            }
+                            return (<Tab label={x.TrackingStatus + orderLength()} {...a11yProps(index)} />)
                         })
                     }
                 </Tabs>
