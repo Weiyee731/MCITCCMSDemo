@@ -41,6 +41,7 @@ import ViewProductEndorsementComponent from "../../../pages/Product/ProductEndor
 import AddProductAllInOne from "../../../pages/Product/addProduct/addProductAllInOne.component";
 
 // Transaction
+import { OrderManagement } from "../../../pages/Transaction/OrderManagement";
 import ViewTransactionsComponent from "../../../pages/Transaction/viewTransaction.component";
 import TransactionDetailsComponent from "../../../pages/Transaction/transactionDetails.component";
 
@@ -60,7 +61,7 @@ import NewStock from "../../../pages/Stock/addStock";
 import StockDetail from "../../../pages/Stock/StockDetail";
 
 import ShoplotListing from "../../../pages/Setting/StoreListing";
-import {ProductCategory} from "../../../pages/ProductCategory/viewProductCategories.component";
+import { ProductCategory } from "../../../pages/ProductCategory/viewProductCategories.component";
 
 import ShoplotDetailListing from "../../../pages/Setting/StoreDetailListing";
 import ProductPurchaseOrder from "../../../pages/Report/ProductPurchaseOrder";
@@ -196,11 +197,15 @@ const routes = [
             </>
         ),
     },
-
     {
         path: "/viewTransactions",
         exact: true,
         element: <ViewTransactionsComponent />,
+    },
+    {
+        path: "/OrderManagement",
+        exact: true,
+        element: <OrderManagement />,
     },
     {
         path: "/viewMerchants",

@@ -21,6 +21,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import axios from "axios";
 import moment from 'moment';
+import LoadingPanel from "../../tools/LoadingPanel";
 
 export const PromotionDetails = (props) => {
     const { products, promotionByID, promoAction } = useSelector(state => ({
@@ -963,7 +964,7 @@ export const PromotionDetails = (props) => {
                                                                         disabled={!x.isEnable}
                                                                         type="number"
                                                                         style={{ opacity: x.isEnable ? "100%" : "50%" }}
-                                                                        disabled={isActive ? false : true}
+                                                                        // disabled={isActive ? false : true}
                                                                         onChange={(e) => {
                                                                             let newArr = confirmList
                                                                             newArr[index].detailListing[detailIndex].discountPrice = e.target.value
@@ -987,7 +988,7 @@ export const PromotionDetails = (props) => {
                                                                         disabled={!x.isEnable}
                                                                         type="number"
                                                                         style={{ opacity: x.isEnable ? "100%" : "50%" }}
-                                                                        disabled={isActive ? false : true}
+                                                                        // disabled={isActive ? false : true}
                                                                         onChange={(e) => {
                                                                             let newArr = confirmList
                                                                             newArr[index].detailListing[detailIndex].discountPercent = e.target.value
@@ -1016,7 +1017,7 @@ export const PromotionDetails = (props) => {
                                                                         value={x.stockLimitType}
                                                                         disabled={!x.isEnable}
                                                                         style={{ opacity: x.isEnable ? "100%" : "50%" }}
-                                                                        disabled={isActive ? false : true}
+                                                                        // disabled={isActive ? false : true}
                                                                         onChange={(e) => {
                                                                             let newArr = confirmList
                                                                             newArr[index].detailListing[detailIndex].stockLimitType = e.target.value
@@ -1077,8 +1078,8 @@ export const PromotionDetails = (props) => {
     }
 
     return (
+
         <div className="container-fluid my-2">
-            {/* <div style={{ display: "flex" }}> */}
             <div className="row">
                 <div className="col">
                     <Button onClick={() => window.location.href = "/PromotionListing"}>
@@ -1259,7 +1260,6 @@ export const PromotionDetails = (props) => {
                             </Dropzone>
                         </div>
                     </div>
-
                 </CardContent >
             </Card >
 
@@ -1280,19 +1280,37 @@ export const PromotionDetails = (props) => {
                             </div>
                         </div>
                         {
-                            isArrayNotEmpty(confirmList) &&
-                            <>
-                                {renderBatchSetting()}
-                                {renderConfirmListTable(confirmList)}
-                                <div style={{ textAlign: "right" }}>
-                                    <Button variant="contained"
-                                        style={{ margin: "5px", backgroundColor: "primary" }}
-                                        disabled={isActive ? false : true}
-                                        onClick={() => verifySubmitData()}
-                                    >Confirm</Button>
-                                </div>
-                            </>
+                            promotionID !== "" ?
+                                isPromotionEdit === true ?
+                                    isArrayNotEmpty(confirmList) &&
+                                    <>
+                                        {renderBatchSetting()}
+                                        {renderConfirmListTable(confirmList)}
+                                        <div style={{ textAlign: "right" }}>
+                                            <Button variant="contained"
+                                                style={{ margin: "5px", backgroundColor: "primary" }}
+                                                disabled={isActive ? false : true}
+                                                onClick={() => verifySubmitData()}
+                                            >Confirm</Button>
+                                        </div>
+                                    </>
+                                    :
+                                    <LoadingPanel />
+                                :
+                                isArrayNotEmpty(confirmList) &&
+                                <>
+                                    {renderBatchSetting()}
+                                    {renderConfirmListTable(confirmList)}
+                                    <div style={{ textAlign: "right" }}>
+                                        <Button variant="contained"
+                                            style={{ margin: "5px", backgroundColor: "primary" }}
+                                            disabled={isActive ? false : true}
+                                            onClick={() => verifySubmitData()}
+                                        >Confirm</Button>
+                                    </div>
+                                </>
                         }
+
                     </CardContent>
                 </Card>
             </div>

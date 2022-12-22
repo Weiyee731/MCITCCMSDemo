@@ -64,6 +64,11 @@ const sidebar_items = [
         title: "Transaction",
         icon: "money",
     },
+    {
+        to: "/OrderManagement",
+        title: "Order Management",
+        icon: "money",
+    },
     // {
     //     to: "",
     //     title: "User Management",
