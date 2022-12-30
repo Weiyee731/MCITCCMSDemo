@@ -56,7 +56,6 @@ export const OrderManagement = (props) => {
     const [value, setValue] = useState(0);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-
     const [isOrderSet, setOrder] = useState(false)
     const [isOrderSelected, setSelectedList] = useState(false)
     const [OrderListing, setOrderListing] = useState(false)
@@ -316,9 +315,11 @@ export const OrderManagement = (props) => {
                 <TableCell align="left">{data.UserContactNo}</TableCell>
                 <TableCell align="left">
                     {/* <Button disabled style={{ backgroundColor: checkStatus(data.TrackingStatusID) }}> */}
-                    {data.TrackingStatus}
+                    <Typography>{data.TrackingStatus}</Typography>
+                    <Typography style={DetailStyle}>{data.PaymentMethod}</Typography>
                     {/* </Button> */}
                 </TableCell>
+                {console.log("fsafsaff", data)}
                 <TableCell align="left">{isNaN(data.OrderTotalAmount) === false && parseFloat(data.OrderTotalAmount).toFixed(2)}</TableCell>
                 {
                     value + 1 === 1 &&

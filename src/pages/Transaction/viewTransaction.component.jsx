@@ -991,7 +991,7 @@ function Row(props) {
                         }
                     </>
                 </div>
-                {row.OrderProductDetail.length > 0 && row.OrderProductDetail !== null && getTrackingLength(JSON.parse(row.OrderProductDetail)).length > 0 && getTrackingLength(JSON.parse(row.OrderProductDetail))
+                {/* {row.OrderProductDetail.length > 0 && row.OrderProductDetail !== null && getTrackingLength(JSON.parse(row.OrderProductDetail)).length > 0 && getTrackingLength(JSON.parse(row.OrderProductDetail))
                     .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
                     .map((track, index) => {
                         return (
@@ -1011,7 +1011,7 @@ function Row(props) {
                                 {confirmListingTracking(track, index, JSON.parse(row.OrderProductDetail).filter((x) => x.LogisticID !== null && x.LogisticID !== 0))}
                             </div>
                         )
-                    })}
+                    })} */}
             </>
         )
     }
