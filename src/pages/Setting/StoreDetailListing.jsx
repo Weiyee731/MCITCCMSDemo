@@ -622,7 +622,7 @@ class StoreDetailListing extends Component {
                                                 </div>
                                                 <div className="row" style={{ paddingTop: "20px" }}>
                                                     <div className="col-12">
-                                                        <GoogleMaps
+                                                        {/* <GoogleMaps
                                                             zoom={16}
                                                             width="80%"
                                                             height="500"
@@ -631,7 +631,7 @@ class StoreDetailListing extends Component {
                                                             polypath={this.state.ShopModalData}
                                                             markerLabel={this.state.ShopModalData[0].ShoplotName}
                                                             toView={true}
-                                                        />
+                                                        /> */}
                                                     </div>
                                                 </div>
                                             </CardText>
@@ -751,7 +751,7 @@ class StoreDetailListing extends Component {
                                             </Tooltip>
                                         </div>
                                         <div className="col-12 col-md-12" style={{ paddingBottom: "10px", height: "350px" }}>
-                                            <GoogleMaps
+                                            {/* <GoogleMaps
                                                 zoom={15}
                                                 width="100%"
                                                 height="500"
@@ -761,7 +761,7 @@ class StoreDetailListing extends Component {
                                                 latitude={this.state.ShopModalData[0].latitude}
                                                 polypath={this.state.ShopModalData}
                                                 markerLabel={this.state.ShopModalData[0].ShoplotName}
-                                            />
+                                            /> */}
                                         </div>
                                     </div>
                                     {

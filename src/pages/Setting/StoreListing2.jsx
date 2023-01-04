@@ -876,13 +876,13 @@ class ShoplotListing extends Component {
                                         </Tooltip>
                                     </div>
                                     <div className="col-12 col-md-12" style={{ paddingBottom: "10px", height: "350px" }}>
-                                        <GoogleMaps
+                                        {/* <GoogleMaps
                                             width="100%"
                                             height="500"
                                             zoom={14}
                                             data={this.state}
                                             setValue={this.setTheState}
-                                        />
+                                        /> */}
                                     </div>
                                 </div>
                             </div>
