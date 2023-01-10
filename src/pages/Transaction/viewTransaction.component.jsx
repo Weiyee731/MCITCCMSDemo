@@ -25,6 +25,7 @@ import {
     TableHead,
     TableRow,
     TextField,
+    OutlinedInput
 } from "@mui/material";
 import Button from "@mui/material/Button";
 
@@ -40,7 +41,7 @@ import "./viewTransaction.component.css";
 import Logo from "../../assets/logos/logo.png";
 import SearchBar from "../../components/SearchBar/SearchBar"
 import { ArrowRoundedUp13x8Svg, ArrowRoundedDown12x7Svg } from '../../assets/svg';
-import { isContactValid, isEmailValid, isStringNullOrEmpty } from "../../tools/Helpers";
+import { isArrayNotEmpty, isContactValid, isEmailValid, isStringNullOrEmpty } from "../../tools/Helpers";
 
 function mapStateToProps(state) {
     return {
@@ -54,6 +55,8 @@ function mapStateToProps(state) {
         countries: state.counterReducer["countries"],
         order: state.counterReducer["order"],
         merchant: state.counterReducer["merchant"],
+        orderShipment: state.counterReducer["orderShipment"],
+        orderShipmentStatus: state.counterReducer["orderShipmentStatus"],
 
     };
 }
@@ -61,6 +64,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         CallGetTransaction: (transactionData) => dispatch(GitAction.CallGetTransaction(transactionData)),
+        CallAddOrderShipment: (propData) => dispatch(GitAction.CallAddOrderShipment(propData)),
+        CallOrderRequestShipmentStatus: (propData) => dispatch(GitAction.CallOrderRequestShipmentStatus(propData)),
         CallCourierService: () => dispatch(GitAction.CallCourierService()),
         CallGetTransactionStatus: () => dispatch(GitAction.CallGetTransactionStatus()),
         CallResetOrderTracking: () => dispatch(GitAction.CallResetOrderTracking()),
@@ -264,9 +269,10 @@ function Row(props) {
     const [existingTrackingData, setTrackingData] = React.useState([]);
     const [deliverQuantity, setDeliverQuantity] = React.useState([]);
     const [newUserDetails, setUserDetails] = React.useState([]);
+    const [parcelMeasurement, setParcelMeasurement] = React.useState([]);
+
     // Check Particular Product
     const handleSelectedProduct = (product, index) => {
-
         let tempArray = selectedProductDetailsID.filter((x) => parseInt(x) === parseInt(product.OrderProductDetailID))
         if (selectedProductDetailsID.length > 0) {
 
@@ -351,7 +357,6 @@ function Row(props) {
                     <TableCell style={{ width: "20%" }}>
                         <div style={{ fontWeight: "bold" }}>   Total : RM {(product.ProductQuantity * product.ProductVariationPrice).toFixed(2)}</div>
                     </TableCell>
-
                 </TableRow>
             </TableBody>
         )
@@ -424,7 +429,12 @@ function Row(props) {
                                 })
                                 :
                                 <>
-                                    <div style={{ fontWeight: "bold", fontSize: "14px", color: "red" }}> {product.TrackingNumber}</div>
+                                    <div style={{ fontWeight: "bold", fontSize: "14px", color: "red" }} onClick={() => product.LogisticID === 3 && prop.CallOrderRequestShipmentStatus({
+                                        TRACKINGNUMBER: product.TrackingNumber,
+                                        TYPE: "true",
+                                        PROJECTID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
+                                    })}>
+                                        {product.TrackingNumber}</div>
                                     {logistic.filter(x => x.LogisticID === product.LogisticID).map((courier) => {
                                         return (
                                             <div style={{ fontWeight: "bold", fontSize: "12px" }}> {courier.LogisticName}  </div>
@@ -577,23 +587,106 @@ function Row(props) {
 
     // Submit First Tracking Number
     const handleSubmitTracking = (tracking, LogisticID, ProductDetailsID) => {
-        prop.CallUpdateOrderTracking({
-            ORDERTRACKINGNUMBER: encodeURIComponent(tracking),
-            LOGISTICID: LogisticID,
-            ORDERPRODUCTDETAILSID: ProductDetailsID
-        })
-        setSelectedProductDetailsID([])
+
+        if (logisticID === 3) {
+
+            let senderInformation = {
+                sendername: "MYEMPORIA SDN BHD",
+                sendercompany: "MYEMPORIA SDN BHD",
+                sendercontact: "016-863 0091",
+                senderadd1: "Suite 3, 2nd Floor, Sublot 25",
+                senderadd2: "Tabuan Commercial Centre, Jalan Canna",
+                sendercity: "Kuching",
+                senderstate: "Sarawak",
+                senderposcode: "93350",
+            }
+            let error = false
+
+
+            console.log("trackingviewtrackingview", newUserDetails)
+            console.log("trackingviewtrackingview parcelMeasurement", parcelMeasurement)
+
+            console.log("trackingviewtrackingview1", row)
+            if (row.OrderProductDetail !== undefined) {
+                JSON.parse(row.OrderProductDetail).map((x) => {
+                    console.log("trackingviewtrackingview", x)
+                })
+            }
+
+            if (parcelMeasurement.length == 0 || parcelMeasurement[0].m_quantity == "" || parcelMeasurement[0].m_height == "" || parcelMeasurement[0].m_length == "" || parcelMeasurement[0].m_weight == "" || parcelMeasurement[0].m_width == "") {
+                error = true
+                toast.error("Please fill in all required parcel information")
+            }
+
+
+            if (row.PickUpInd == 1) {
+                error = true
+                toast.error("Please make sure is Set to Delivery mode")
+            }
+
+            if (row.UserFullName == "" || row.UserContactNo == "" || row.UserAddressLine1 == "" || row.UserAddressLine2 == "" || row.UserCity == "" || row.UserState == "" || row.UserPoscode == "" || row.CountryID == "") {
+                error = true
+                toast.error("Please make sure all receiver information is set correctly")
+            }
+
+            if (error === false) {
+                let object = {
+                    PACKAGETYPE: "SPX",
+                    WEIGHT: parcelMeasurement[0].m_weight,
+                    LENGTH: parcelMeasurement[0].m_length,
+                    WIDTH: parcelMeasurement[0].m_width,
+                    HEIGHT: parcelMeasurement[0].m_height,
+                    PARCELQUANTITY: parcelMeasurement[0].m_quantity,
+                    SENDER_CONTACTPERSON: senderInformation.sendername,
+                    SENDER_COMPANY: senderInformation.sendercompany,
+                    SENDER_CONTACTNO: senderInformation.sendercontact,
+                    SENDER_ADDLINE1: senderInformation.senderadd1,
+                    SENDER_ADDLINE2: senderInformation.senderadd2,
+                    SENDER_CITY: senderInformation.sendercity,
+                    SENDER_STATE: senderInformation.senderstate,
+                    SENDER_POSCODE: senderInformation.senderposcode,
+                    RECEIVER_FULLNAME: row.UserFullName,
+                    RECEIVER_CONTACTNO: row.UserContactNo,
+                    RECEIVER_ADDLINE1: row.UserAddressLine1,
+                    RECEIVER_ADDLINE2: row.UserAddressLine2,
+                    RECEIVER_CITY: row.UserCity,
+                    RECEIVER_STATE: row.UserState,
+                    RECEIVER_POSCODE: row.UserPoscode,
+                    RECEIVER_COUNTRYCODE: "MY",
+                    LOGISTICID: LogisticID,
+                    ORDERPRODUCTDETAILSID: ProductDetailsID,
+                    PROJECTID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
+                }
+                prop.CallAddOrderShipment(object)
+                console.log("trackingviewtrackingview objectobject", object)
+            }
+        }
+        { console.log("dsdaad", parcelMeasurement) }
+        // let props = {
+        //     ORDERTRACKINGNUMBER: encodeURIComponent(tracking),
+        //     LOGISTICID: LogisticID,
+        //     ORDERPRODUCTDETAILSID: ProductDetailsID
+        // }
+        toast.warning("IN PROGRESS WORKING ON IT")
+        console.log("trackingview testing", ProductDetailsID)
+        // prop.CallUpdateOrderTracking({
+        //     ORDERTRACKINGNUMBER: encodeURIComponent(tracking),
+        //     LOGISTICID: LogisticID,
+        //     ORDERPRODUCTDETAILSID: ProductDetailsID
+        // })
+        // setSelectedProductDetailsID([])
     }
 
     // Before having Tracking Number 
-    const trackingView = () => {
+    const trackingView = (data) => {
         return (
             <div style={{ textAlign: "left" }}>
+
+                <div className="row" style={{ paddingTop: "20px" }}>
+                    <label className="px-6">Logistic Tracking Number : </label>
+                </div>
                 <div className="row" >
-                    <div className="col-3" style={{ paddingTop: "20px" }}>
-                        <label className="px-6">Logistic Tracking Number : </label>
-                    </div>
-                    <div className="col-3" style={{ paddingTop: "10px" }}>
+                    <div className="col-xs-12 col-md-6 col-lg-3" style={{ paddingTop: "10px" }}>
                         <FormControl variant="outlined" size="small" style={{ width: "100%" }}>
                             <Select
                                 id="Logistic" label=""
@@ -613,25 +706,176 @@ function Row(props) {
                             </Select>
                         </FormControl>
                     </div>
-                    <div className="col-3" style={{ paddingTop: "10px" }}>
-                        <TextField
-                            id="outlined-size-small" size="small" label=""
-                            width="100%"
-                            className="font"
-                            variant="outlined"
-                            value={trackingNumber}
-                            onChange={(x) => setTrackingNumber(x.target.value)}
-                        />
+                    <div className="col-xs-12 col-md-6 col-lg-3" style={{ paddingTop: "10px" }}>
+                        {
+                            logisticID === 3 ?
+                                ""
+                                :
+                                <TextField
+                                    id="outlined-size-small" size="small" label=""
+                                    width="100%"
+                                    className="font"
+                                    variant="outlined"
+                                    value={trackingNumber}
+                                    onChange={(x) => setTrackingNumber(x.target.value)}
+                                />
+                        }
                     </div>
-                    <div className="col-2" style={{ paddingTop: "10px" }}>
-                        <Button style={{ backgroundColor: trackingNumber === "" ? "#808080" : "#28a745", color: "white" }}
-                            onClick={() => handleSubmitTracking(trackingNumber, logisticID, selectedProductDetailsID)}
-                            disabled={trackingNumber === "" ? true : false}
-                        >SUBMIT</Button>
+                    <div className="col-xs-12 col-md-6 col-lg-6" style={{ paddingTop: "10px", textAlign: "left" }}>
+                        {
+                            logisticID === 3 ?
+                                <div style={{ textAlign: "left" }}>
+                                    <Button
+                                        style={{ backgroundColor: trackingNumber === "" ? "#808080" : "#28a745", color: "white" }}
+                                        onClick={() => handleSubmitTracking(row, logisticID, selectedProductDetailsID)}
+                                    // disabled={trackingNumber === "" ? true : false}
+                                    >CREATE SHIPMENT</Button>
+                                </div>
+                                :
+                                <Button style={{ backgroundColor: trackingNumber === "" ? "#808080" : "#28a745", color: "white" }}
+                                    onClick={() => handleSubmitTracking(trackingNumber, logisticID, selectedProductDetailsID)}
+                                    disabled={trackingNumber === "" ? true : false}
+                                >SUBMIT</Button>
+                        }
                     </div>
                 </div>
             </div >
 
+        )
+    }
+
+
+
+    const parcelMeasurementView = (orderID) => {
+        return (
+            <div style={{ textAlign: "left" }}>
+                <div className="row" style={{ paddingTop: "20px" }}>
+                    <div className="col-xs-12 col-md-6 col-lg-6" >  <label className="px-6">Parcel Measurement : </label></div>
+                    <div className="col-xs-12 col-md-6 col-lg-6" >
+                        <TextField
+                            id="outlined-size-small" size="small" label="Parcel Quantity"
+                            width="100%"
+                            className="font"
+                            variant="outlined"
+                            type="number"
+                            onChange={(e) => {
+                                let newArr = parcelMeasurement
+                                let found = false
+                                parcelMeasurement.map((x, index) => {
+                                    if (x.id == orderID) {
+                                        newArr[index].m_quantity = e.target.value
+                                        found = true
+                                    }
+                                })
+                                if (found == false) {
+                                    let newData = { id: orderID, m_quantity: e.target.value, m_weight: 0, m_width: 0, m_length: 0, m_height: 0, }
+                                    setParcelMeasurement(listing => [...listing, newData]);
+                                } else
+                                    setParcelMeasurement(newArr)
+                            }}
+                        />
+                    </div>
+
+                </div>
+                <div className="row" >
+                    <div className="col-xs-12 col-md-6 col-lg-3" style={{ paddingTop: "10px" }}>
+                        <TextField
+                            id="outlined-size-small" size="small" label="Weight"
+                            width="100%"
+                            className="font"
+                            variant="outlined"
+                            type="number"
+                            onChange={(e) => {
+                                let newArr = parcelMeasurement
+                                let found = false
+                                parcelMeasurement.map((x, index) => {
+                                    if (x.id == orderID) {
+                                        newArr[index].m_weight = e.target.value
+                                        found = true
+                                    }
+                                })
+                                if (found == false) {
+                                    let newData = { id: orderID, m_weight: e.target.value, m_width: 0, m_length: 0, m_height: 0, m_quantity: 1 }
+                                    setParcelMeasurement(listing => [...listing, newData]);
+                                } else
+                                    setParcelMeasurement(newArr)
+                            }}
+                        />
+                    </div>
+                    <div className="col-xs-12 col-md-6 col-lg-3" style={{ paddingTop: "10px" }}>
+                        <TextField
+                            id="outlined-size-small" size="small" label="Width"
+                            width="100%"
+                            className="font"
+                            variant="outlined"
+                            type="number"
+                            onChange={(e) => {
+                                let newArr = parcelMeasurement
+                                let found = false
+                                parcelMeasurement.map((x, index) => {
+                                    if (x.id == orderID) {
+                                        newArr[index].m_width = e.target.value
+                                        found = true
+                                    }
+                                })
+                                if (found == false) {
+                                    let newData = { id: orderID, m_weight: 0, m_width: e.target.value, m_length: 0, m_height: 0, m_quantity: 1 }
+                                    setParcelMeasurement(listing => [...listing, newData]);
+                                } else
+                                    setParcelMeasurement(newArr)
+                            }}
+                        />
+                    </div>
+                    <div className="col-xs-12 col-md-6 col-lg-3" style={{ paddingTop: "10px" }}>
+                        <TextField
+                            id="outlined-size-small" size="small" label="Length"
+                            width="100%"
+                            className="font"
+                            variant="outlined"
+                            type="number"
+                            onChange={(e) => {
+                                let newArr = parcelMeasurement
+                                let found = false
+                                parcelMeasurement.map((x, index) => {
+                                    if (x.id == orderID) {
+                                        newArr[index].m_length = e.target.value
+                                        found = true
+                                    }
+                                })
+                                if (found == false) {
+                                    let newData = { id: orderID, m_weight: 0, m_width: 0, m_length: e.target.value, m_height: 0, m_quantity: 1 }
+                                    setParcelMeasurement(listing => [...listing, newData]);
+                                } else
+                                    setParcelMeasurement(newArr)
+                            }}
+                        />
+                    </div>
+                    <div className="col-xs-12 col-md-6 col-lg-3" style={{ paddingTop: "10px" }}>
+                        <TextField
+                            id="outlined-size-small" size="small" label="height"
+                            width="100%"
+                            className="font"
+                            variant="outlined"
+                            type="number"
+                            onChange={(e) => {
+                                let newArr = parcelMeasurement
+                                let found = false
+                                parcelMeasurement.map((x, index) => {
+                                    if (x.id == orderID) {
+                                        newArr[index].m_height = e.target.value
+                                        found = true
+                                    }
+                                })
+                                if (found == false) {
+                                    let newData = { id: orderID, m_weight: 0, m_width: 0, m_length: 0, m_height: e.target.value, }
+                                    setParcelMeasurement(listing => [...listing, newData]);
+                                } else
+                                    setParcelMeasurement(newArr)
+                            }}
+                        />
+                    </div>
+                </div>
+            </div >
         )
     }
 
@@ -956,11 +1200,8 @@ function Row(props) {
                                     {JSON.parse(row.OrderProductDetail)
                                         .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
                                         .map((product, i) => (
-
                                             <>
-
                                                 {
-
                                                     product.LogisticID === null ?
                                                         selectedProductDetailsID.length > 0 && selectedProductDetailsID.filter(x => x === product.OrderProductDetailID).length > 0 &&
                                                         orderListing(product, i)
@@ -972,8 +1213,9 @@ function Row(props) {
                                             </>
                                         ))
                                     }
-                                    {selectedProductDetailsID.length > 0 && trackingView()}
-                                    {console.log("JSON.parse(row.OrderProductDetail)", JSON.parse(row.OrderProductDetail))}
+                                    {selectedProductDetailsID.length > 0 && logisticID === 3 && parcelMeasurementView(row.OrderID)}
+                                    {selectedProductDetailsID.length > 0 && trackingView(row)}
+                                    {/* For listing not selected and no tracking number */}
                                     {row.OrderProductDetail.length > 0 && row.OrderProductDetail !== null && JSON.parse(row.OrderProductDetail)
                                         .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
                                         .map((product, i) => (
@@ -991,7 +1233,7 @@ function Row(props) {
                         }
                     </>
                 </div>
-                {/* {row.OrderProductDetail.length > 0 && row.OrderProductDetail !== null && getTrackingLength(JSON.parse(row.OrderProductDetail)).length > 0 && getTrackingLength(JSON.parse(row.OrderProductDetail))
+                {row.OrderProductDetail.length > 0 && row.OrderProductDetail !== null && getTrackingLength(JSON.parse(row.OrderProductDetail)).length > 0 && getTrackingLength(JSON.parse(row.OrderProductDetail))
                     .filter((x) => JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 ? parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) : [])
                     .map((track, index) => {
                         return (
@@ -1011,7 +1253,7 @@ function Row(props) {
                                 {confirmListingTracking(track, index, JSON.parse(row.OrderProductDetail).filter((x) => x.LogisticID !== null && x.LogisticID !== 0))}
                             </div>
                         )
-                    })} */}
+                    })}
             </>
         )
     }
@@ -1184,7 +1426,7 @@ function Row(props) {
                                 <p className="subHeading">Products Ordered</p>
                                 {console.log("OrderProductDetail", row.OrderProductDetail)}
 
-                                {row.OrderProductDetail ? ( eCommerceLayout()           ) : ( <p className="fadedText">No Products To Display</p>
+                                {row.OrderProductDetail ? (eCommerceLayout()) : (<p className="fadedText">No Products To Display</p>
                                 )}
                             </Box>
                         </Collapse>
@@ -1211,6 +1453,7 @@ class DisplayTable extends Component {
             isFiltered: false,
             filteredProduct: [],
             searchKeywords: "",
+
         };
 
         this.handleRequestSort = this.handleRequestSort.bind(this);
@@ -1346,6 +1589,7 @@ class DisplayTable extends Component {
         this.setState({ isFiltered: true, filteredProduct: removeDeplicate })
     }
 
+
     render() {
         const { classes } = this.props;
         const emptyRows =
@@ -1379,6 +1623,7 @@ class DisplayTable extends Component {
             width: 1,
         };
 
+
         if (Math.floor(this.props.Data.length / this.state.rowsPerPage) <= this.state.page && this.props.searchInd === true) {
             this.setState({ page: 0 });
             this.props.setSearchInd()
@@ -1398,6 +1643,7 @@ class DisplayTable extends Component {
                 ) : (
                     <div>
                         <div>
+
                             <Paper style={divStyle}>
                                 <h3 style={{ fontWeight: 600 }}>Orders List</h3>
                                 <TableContainer>
@@ -1524,7 +1770,8 @@ class ViewTransactionsComponent extends Component {
             searchKeywords: "",
             isFiltered: false,
             filteredProduct: [],
-            isSearch: false
+            isSearch: false,
+
         };
     }
 
@@ -1650,6 +1897,33 @@ class ViewTransactionsComponent extends Component {
         const changeData = (value) => {
             this.props.CallGetTransaction(value);
         };
+
+
+        const senderAddressLayout = () => {
+            console.log("sdasdasdsa", this.state)
+            return (
+                <div className="row" style={{ padding: "10px" }}>
+                    <div className="col-xl-3 col-lg-3 col-md-3 col-s-3 col-xs-3">
+                        <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt" }}>Sender Contact</InputLabel>
+                        <FormControl fullWidth size="small" variant="outlined">
+                            <OutlinedInput
+                                id={"outlined-adornment-sendername"}
+                                label=""
+                                value={this.state.senderInformation.sendername}
+                                type="sendername-local"
+                                onChange={(e) => {
+                                    let senderInfo = this.state.senderInformation
+                                    senderInfo.sendername = e.taregt.value
+                                    this.setState({ senderInformation: senderInfo })
+                                }}
+                                required
+                            />
+                        </FormControl>
+                    </div>
+
+                </div>
+            )
+        }
 
         let allTransactionStatusData = this.props.alltransactionstatus
             ? Object.keys(this.props.alltransactionstatus).map((key) => {

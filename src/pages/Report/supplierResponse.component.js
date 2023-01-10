@@ -118,7 +118,7 @@ class SupplierResponseComponent extends Component {
         if (this.props.salesOrders !== undefined && this.props.salesOrders.length > 0 && this.state.isSubmit === true) {
             if (this.props.salesOrders[0].PRODUCTPURCHASEORDERID !== undefined) {
                 this.props.CallResetSalesOrder()
-                // browserHistory.push("/viewPurchaseOrderList")
+                // browserHistory.push("/ecommerceCMSDev/viewPurchaseOrderList")
                 // window.location.reload(false);
             }
         }

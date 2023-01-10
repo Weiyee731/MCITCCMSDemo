@@ -337,6 +337,84 @@ export class GitEpic {
       }
     }));
 
+  Order_CreateOrderShipment = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.OrderCreateShipment), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Order_CreateOrderShipment?PACKAGETYPE=" + action.payload.PACKAGETYPE +
+            "&WEIGHT=" + action.payload.WEIGHT +
+            "&LENGTH=" + action.payload.LENGTH +
+            "&WIDTH=" + action.payload.WIDTH +
+            "&HEIGHT=" + action.payload.HEIGHT +
+            "&SENDER_CONTACTPERSON=" + action.payload.SENDER_CONTACTPERSON +
+            "&SENDER_COMPANY=" + action.payload.SENDER_COMPANY +
+            "&SENDER_CONTACTNO=" + action.payload.SENDER_CONTACTNO +
+            "&SENDER_ADDLINE1=" + action.payload.SENDER_ADDLINE1 +
+            "&SENDER_ADDLINE2=" + action.payload.SENDER_ADDLINE2 +
+            "&SENDER_CITY=" + action.payload.SENDER_CITY +
+            "&SENDER_STATE=" + action.payload.SENDER_STATE +
+            "&SENDER_POSCODE=" + action.payload.SENDER_POSCODE +
+            "&RECEIVER_FULLNAME=" + action.payload.RECEIVER_FULLNAME +
+            "&RECEIVER_CONTACTNO=" + action.payload.RECEIVER_CONTACTNO +
+            "&RECEIVER_ADDLINE1=" + action.payload.RECEIVER_ADDLINE1 +
+            "&RECEIVER_ADDLINE2=" + action.payload.RECEIVER_ADDLINE2 +
+            "&RECEIVER_CITY=" + action.payload.RECEIVER_CITY +
+            "&RECEIVER_STATE=" + action.payload.RECEIVER_STATE +
+            "&RECEIVER_POSCODE=" + action.payload.RECEIVER_POSCODE +
+            "&RECEIVER_COUNTRYCODE=" + action.payload.RECEIVER_COUNTRYCODE +
+            "&PARCELQUANTITY=" + action.payload.PARCELQUANTITY +
+            "&LOGISTICID=" + action.payload.LOGISTICID +
+            "&ORDERPRODUCTDETAILSID=" + action.payload.ORDERPRODUCTDETAILSID +
+            "&PROJECTID=" + action.payload.PROJECTID)
+            .then(response => response.json())
+            .then(json => {
+
+              console.log("return ddsdsadsada", json)
+              json = JSON.parse(json)
+              console.log("return1 ddsdsadsada", json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.OrderedCreateShipment, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.OrderedCreateShipment, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: OrderedCreateShipment. Please check on URL")
+          return dispatch({ type: GitAction.OrderedCreateShipment, payload: [] });
+        }
+      }
+    }));
+
+    Order_RequestOrderShipmentStatus = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.OrderRequestShipmentStatus), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Order_RequestOrderStatus?TRACKINGNUMBER=" + action.payload.TRACKINGNUMBER +
+            "&TYPE=" + action.payload.TYPE +
+            "&PROJECTID=" + action.payload.PROJECTID)
+            .then(response => response.json())
+            .then(json => {
+
+              console.log("return ddsdsadsada", json)
+              json = JSON.parse(json)
+              console.log("return1 ddsdsadsada", json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.OrderRequestedShipmentStatus, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.OrderRequestedShipmentStatus, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: OrderRequestedShipmentStatus. Please check on URL")
+          return dispatch({ type: GitAction.OrderRequestedShipmentStatus, payload: [] });
+        }
+      }
+    }));
+
   Order_UpdateUserDetails = action$ =>
     action$.pipe(filter(action => action.type === GitAction.OrderUserDetailsUpdate), map(action => {
       return dispatch => {

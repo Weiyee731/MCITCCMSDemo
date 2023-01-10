@@ -796,7 +796,7 @@ class MerchantDetailsComponent extends Component {
     if (this.props.currentUser.length > 0) {
       this.props.CallClearCurrentUser()
       setTimeout(() => {
-        // browserHistory.push("/viewMerchants");
+        // browserHistory.push("/ecommerceCMSDev/viewMerchants");
         window.location.reload(false);
       }, 3000);
     }

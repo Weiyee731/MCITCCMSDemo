@@ -3666,7 +3666,7 @@ class ProductDetailsComponent extends Component {
 
                 setTimeout(() => {
                     // toast.success("Product details successfully updated")
-                    // history.push("/viewProduct");
+                    // history.push("/ecommerceCMSDev/viewProduct");
                     // window.location.href = "/viewProduct"
                     // window.location.reload(false);
                 }, 1000);
@@ -3795,8 +3795,8 @@ class ProductDetailsComponent extends Component {
     handleBack() {
         // this.props.CallResetProductDetails()
         this.props.backToList()
-        // browserHistory.push("/")
-        window.location.href = "/"
+        // browserHistory.push("/ecommerceCMSDev/")
+        window.location.href = "/ecommerceCMSDev/"
     }
 
     handleChangeEditor = (content, editor) => {
