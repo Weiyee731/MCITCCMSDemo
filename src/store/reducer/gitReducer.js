@@ -38,6 +38,8 @@ const INITIAL_STATE = {
 
   // Order
   order: [],
+  orderShipment: [],
+  orderShipmentStatus: [],
   transactions: [],
   transactionStatus: [],
   tracking: [],
@@ -195,6 +197,26 @@ export function counterReducer(state = INITIAL_STATE, action) {
         loading: false,
         order: action.payload,
       });
+
+
+    case GitAction.OrderCreateShipment:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.OrderedCreateShipment:
+      return Object.assign({}, state, {
+        loading: false,
+        orderShipment: action.payload,
+      });
+
+    case GitAction.OrderRequestShipmentStatus:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.OrderRequestedShipmentStatus:
+      return Object.assign({}, state, {
+        loading: false,
+        orderShipmentStatus: action.payload,
+      });
+
+    case GitAction.ResetOrderShipment:
+      return Object.assign({}, state, { orderShipment: [], });
 
     case GitAction.ClearOrder:
       return Object.assign({}, state, { order: [], });

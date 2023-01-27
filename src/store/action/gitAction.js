@@ -138,6 +138,26 @@ export class GitAction {
       payload: prodData,
     };
   }
+
+  static OrderCreateShipment = "ORDER-CREATE-SHIPMENT";
+  static OrderedCreateShipment = "ORDER-CREATED-SHIPMENT";
+  static CallAddOrderShipment(prodData) {
+    return {
+      type: GitAction.OrderCreateShipment,
+      payload: prodData,
+    };
+  }
+
+  static OrderRequestShipmentStatus = "ORDER-REQUEST-SHIPMENT-STATUS";
+  static OrderRequestedShipmentStatus = "ORDER-REQUESTED-SHIPMENT-STATUS";
+  static CallOrderRequestShipmentStatus(prodData) {
+    return {
+      type: GitAction.OrderRequestShipmentStatus,
+      payload: prodData,
+    };
+  }
+
+
   static ClearOrder = "CLEAR-ORDER";
   static CallClearOrder() {
     return {
@@ -184,6 +204,13 @@ export class GitAction {
     return {
       type: GitAction.resetTracking,
       payload: prodData,
+    };
+  }
+
+  static ResetOrderShipment = "RESET-ORDER-SHIPMENT";
+  static CallResetOrderShipment() {
+    return {
+      type: GitAction.ResetOrderShipment,
     };
   }
 

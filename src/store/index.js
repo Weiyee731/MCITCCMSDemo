@@ -25,6 +25,8 @@ const rootEpic = combineEpics(
   // // Order
   // gitEpic.Order_Add,
   gitEpic.Order_ViewAll,
+  gitEpic.Order_CreateOrderShipment,  
+  gitEpic.Order_RequestOrderShipmentStatus,
   gitEpic.Order_UpdateUserDetails,
   gitEpic.Transaction_ViewStatus,
   gitEpic.Order_UpdateTrackingNumber,

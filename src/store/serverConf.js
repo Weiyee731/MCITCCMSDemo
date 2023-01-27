@@ -9,7 +9,7 @@ export const ServerConfiguration = {
 
     ServerUrl: "https://" + projectURL + "/eCommerceCMS_DEV/api/",
     LoginUrl: "https://" + loginProjectURL + "/eCommerceCMS_DEV/api/",
-    DevServerUrl: "https://" + projectURL + "/eCommerceCMS_DEV/api/",
+    DevServerUrl: "http://localhost/EmporiaTest/eCommerceCMSApi/api/",
     LiveServerUrl: "http://localhost/TourismManagementAPI/TourismApi/api/TourismApi/",
     mediaUrl: "http://localhost/TourismManagementAPI/TourismApi/api/TourismApi/",
     filesUrl: "http://localhost/TourismManagementAPI/TourismApi/api/TourismApi/",

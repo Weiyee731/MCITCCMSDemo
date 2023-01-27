@@ -42,6 +42,7 @@ import AddProductAllInOne from "../../../pages/Product/addProduct/addProductAllI
 
 // Transaction
 import { OrderManagement } from "../../../pages/Transaction/OrderManagement";
+import { TransactionManagement } from "../../../pages/Transaction/TransactionManagement";
 import ViewTransactionsComponent from "../../../pages/Transaction/viewTransaction.component";
 import TransactionDetailsComponent from "../../../pages/Transaction/transactionDetails.component";
 
@@ -206,6 +207,11 @@ const routes = [
         path: "/OrderManagement",
         exact: true,
         element: <OrderManagement />,
+    },
+    {
+        path: "/TransactionManagement",
+        exact: true,
+        element: <TransactionManagement />,
     },
     {
         path: "/viewMerchants",
