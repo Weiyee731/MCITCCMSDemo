@@ -311,28 +311,28 @@ export const splitArray = (arr, len) => {
     return chunks;
 }
 
-
+const URL = "/ecommerceCMSDev"
 export const url = {
     home: () => "/",
 
     catalog: () => "/shop/catalog",
 
-    category: (category) => category.ProductName !== null ? `/shop/catalog/${category.ProductName}` : `/shop/catalog`,
+    category: (category) => category.ProductName !== null ? URL + `/shop/catalog/${category.ProductName}` : URL + `/shop/catalog`,
 
-    // product: (product) => product.ProductName !== null ? `/shop/products/${product.ProductName.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_')}` :  `/shop/products/`,
+    // product: (product) => product.ProductName !== null ? URL + `/shop/products/${product.ProductName.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'_')}` :  URL + `/shop/products/`,
 
-    merchant: (merchant) => merchant.UserID !== null ? `/merchant/${merchant.UserID}` : `/merchant`,
+    merchant: (merchant) => merchant.UserID !== null ? URL + `/merchant/${merchant.UserID}` : URL + `/merchant`,
 
-    cartMerchant: (merchantID) => merchantID !== null ? `/merchant/${merchantID}` : `/merchant`,
+    cartMerchant: (merchantID) => merchantID !== null ? URL + `/merchant/${merchantID}` : URL + `/merchant`,
 
-    inventoryProduct: (ProductID) => ProductID !== null ? `/viewProductDetail/${ProductID}` : `/viewProductDetail/`,
+    inventoryProduct: (ProductID) => ProductID !== null ? URL + `/viewProductDetail/${ProductID}` : URL + `/viewProductDetail/`,
 
     inventoryProductDetails: (ProductID) => ProductID !== null ? `/viewProductDetailList/${ProductID}` : `/viewProductDetailList/`,
 
-    product: (product) => product.ProductID !== null ? `/shop/products/${product.ProductID}` : `/shop/products/`,
-    // product: (product) => `/shop/products/${product.slug}`,
+    product: (product) => product.ProductID !== null ? URL + `/shop/products/${product.ProductID}` : URL + `/shop/products/`,
+    // product: (product) => URL + `/shop/products/${product.slug}`,
 
-    productcateogory: (category) => category.ProductName !== null ? `/shop/ProductCategory/${category.ProductName}` : `/shop/ProductCategory/`,
+    productcateogory: (category) => category.ProductName !== null ? URL + `/shop/ProductCategory/${category.ProductName}` : URL + `/shop/ProductCategory/`,
 
     stockDetails: (variationDetailsID) => variationDetailsID !== null ? `/viewStockDetailList/${variationDetailsID}` : `/viewStockDetailList/`,
 

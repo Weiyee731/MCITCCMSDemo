@@ -71,6 +71,8 @@ function mapDispatchToProps(dispatch) {
         CallAddOrderShipment: (propData) => dispatch(GitAction.CallAddOrderShipment(propData)),
         CallOrderRequestShipmentStatus: (propData) => dispatch(GitAction.CallOrderRequestShipmentStatus(propData)),
         CallGetTransaction: (transactionData) => dispatch(GitAction.CallGetTransaction(transactionData)),
+        CallAddOrderShipment: (propData) => dispatch(GitAction.CallAddOrderShipment(propData)),
+        CallOrderRequestShipmentStatus: (propData) => dispatch(GitAction.CallOrderRequestShipmentStatus(propData)),
         CallCourierService: () => dispatch(GitAction.CallCourierService()),
         CallGetTransactionStatus: () => dispatch(GitAction.CallGetTransactionStatus()),
         CallResetOrderTracking: () => dispatch(GitAction.CallResetOrderTracking()),
@@ -1547,7 +1549,6 @@ class DisplayTable extends Component {
             isFiltered: false,
             filteredProduct: [],
             searchKeywords: "",
-
 
         };
 

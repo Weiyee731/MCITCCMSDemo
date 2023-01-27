@@ -37,6 +37,7 @@ import StepLabel from "@mui/material/StepLabel";
 import StepContent from "@mui/material/StepContent";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 // import { Fade } from "shards-react";
+import Fade from '@mui/material/Fade';
 import { styled } from '@mui/material/styles';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
@@ -674,7 +675,7 @@ class ProductDetailsComponent extends Component {
             });
         }
     };
-
+    FocusOn
     checkProgress = () => {
 
         if (this.state.variation1On) {
@@ -3666,7 +3667,7 @@ class ProductDetailsComponent extends Component {
 
                 setTimeout(() => {
                     // toast.success("Product details successfully updated")
-                    // history.push("/viewProduct");
+                    // history.push("/ecommerceCMSDev/viewProduct");
                     // window.location.href = "/viewProduct"
                     // window.location.reload(false);
                 }, 1000);
@@ -3795,8 +3796,8 @@ class ProductDetailsComponent extends Component {
     handleBack() {
         // this.props.CallResetProductDetails()
         this.props.backToList()
-        // browserHistory.push("/")
-        window.location.href = "/"
+        // browserHistory.push("/ecommerceCMSDev/")
+        window.location.href = "/ecommerceCMSDev/"
     }
 
     handleChangeEditor = (content, editor) => {
@@ -5243,6 +5244,15 @@ class ProductDetailsComponent extends Component {
                                                                     })
                                                                 }
                                                             /> */}
+                                                            <TextField id="outlined-basic" variant="outlined" disabled={true} fullWidth size="small"
+                                                                value={
+                                                                    this.props.variations.length > 0 && typeof this.props.variations[0].ReturnVal === "undefined" ?
+                                                                        this.props.variations.filter(data => data.ProductVariationID === this.state.variation1.options[i].variationID).map((x) => {
+                                                                            return (x.ProductVariation)
+                                                                        })
+                                                                        : "None"
+                                                                }
+                                                            />
                                                         </div>
                                                         <div className="col-9" style={{ paddingLeft: "10px" }}>
                                                             {/* <FormInput
@@ -5251,6 +5261,8 @@ class ProductDetailsComponent extends Component {
                                                                 size="small"
                                                                 value={this.state.variation1.options[i].optionName}
                                                             /> */}
+                                                            <TextField id="outlined-basic" variant="outlined" disabled={true} fullWidth size="small"
+                                                                value={this.state.variation1.options[i].optionName} />
                                                         </div>
                                                     </div>
                                                     {this.state.variation1.options[i].errorOption && this.state.toBeEdited && (
@@ -5428,6 +5440,8 @@ class ProductDetailsComponent extends Component {
                                                                                         InputProps={{
                                                                                             startAdornment: <InputAdornment position="start">RM</InputAdornment>,
                                                                                         }} required />
+
+
                                                                                     {/* <InputGroup className="TextFieldsTables">
                                                                                         <InputGroupAddon type="prepend">
                                                                                             <InputGroupText className="groupText">
@@ -6122,32 +6136,34 @@ class ProductDetailsComponent extends Component {
                                     </div>
                                 </CardContent>
                             </Card>
-                            {/* <Fade in={this.state.FocusOn}>
-                                <br />
 
-                                {this.state.toBeEdited ? <Card className="HintsCard">
-                                    <CardContent>
-                                        <div className="HintsContainer">
-                                            <div className="HintsTitleContainer">
-                                                <InfoOutlinedIcon
-                                                    color="disabled"
-                                                    className="HintsIcon"
-                                                />
-                                                <p className="HintsTitleText">Hints</p>
+                            {this.state.toBeEdited ?
+
+                                <Fade in={this.state.FocusOn} className="mt-2">
+                                    <Card className="HintsCard">
+                                        <CardContent>
+                                            <div className="HintsContainer">
+                                                <div className="HintsTitleContainer">
+                                                    <InfoOutlinedIcon
+                                                        color="disabled"
+                                                        className="HintsIcon"
+                                                    />
+                                                    <p className="HintsTitleText">Hints</p>
+                                                </div>
+                                                <div className="HintsBodyContainer">
+                                                    <ul>
+                                                        {this.state.helpText.map((text) => (
+                                                            <li>
+                                                                <p className="HintBodyText">{text}</p>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
                                             </div>
-                                            <div className="HintsBodyContainer">
-                                                <ul>
-                                                    {this.state.helpText.map((text) => (
-                                                        <li>
-                                                            <p className="HintBodyText">{text}</p>
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </CardContent>
-                                </Card> : null}
-                            </Fade> */}
+                                        </CardContent>
+                                    </Card>
+                                </Fade>
+                                : null}
                         </div>
                     </div>
 

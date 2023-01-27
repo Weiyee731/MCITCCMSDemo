@@ -198,7 +198,6 @@ export function counterReducer(state = INITIAL_STATE, action) {
         order: action.payload,
       });
 
-
     case GitAction.OrderCreateShipment:
       return Object.assign({}, state, { loading: true });
     case GitAction.OrderedCreateShipment:

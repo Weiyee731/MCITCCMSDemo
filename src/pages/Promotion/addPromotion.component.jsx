@@ -636,7 +636,7 @@ class AddPromotionBannerComponent extends Component {
             else {
                 toast.success("Promotion Banner Added Successfully.")
                 // window.location.href = '/viewProductPromotion';
-                // history.push("/promotionList");
+                // history.push("/ecommerceCMSDev/promotionList");
                 // window.location.reload(false);
             }
         }
@@ -831,7 +831,7 @@ class AddPromotionBannerComponent extends Component {
         };
 
         const back = () => {
-            history.push("/promotionList");
+            history.push("/ecommerceCMSDev/promotionList");
             window.location.reload(false);
         };
 

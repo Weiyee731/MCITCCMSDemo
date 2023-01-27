@@ -685,7 +685,7 @@ class AddStock extends Component {
             if (this.DataState.length > 0)
                 this.setState({ isBackClick: true })
             else {
-                history.push("/stockList")
+                history.push("/ecommerceCMSDev/stockList")
                 window.location.reload(false)
             }
         }
@@ -820,7 +820,7 @@ class AddStock extends Component {
                             <div style={{ textAlign: "right" }}>
                                 <Button variant="contained" color="primary" style={{ margin: "10px" }} onClick={() => {
                                     <>
-                                        {history.push("/stockList")}
+                                        {history.push("/ecommerceCMSDev/stockList")}
                                         {window.location.reload(false)}
                                     </>
                                 }}>

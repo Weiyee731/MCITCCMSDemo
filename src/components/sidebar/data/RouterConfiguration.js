@@ -208,6 +208,12 @@ const routes = [
         exact: true,
         element: <OrderManagement />,
     },
+    
+    {
+        path: "/TransactionManagement",
+        exact: true,
+        element: <TransactionManagement />,
+    },
     {
         path: "/TransactionManagement",
         exact: true,

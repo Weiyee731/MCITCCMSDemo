@@ -30,6 +30,7 @@ const rootEpic = combineEpics(
   gitEpic.Order_UpdateUserDetails,
   gitEpic.Transaction_ViewStatus,
   gitEpic.Order_UpdateTrackingNumber,
+  gitEpic.Order_CreateOrderShipment,
 
   // Merchant
   gitEpic.Merchants_ViewProfile,

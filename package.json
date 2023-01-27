@@ -1,7 +1,7 @@
 {
   "name": "eCommerceCMS",
   "version": "0.1.0",
-  "homepage": "/",
+  "homepage": "/ecommerceCMSDev",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.7.1",
@@ -36,6 +36,7 @@
     "react-map-gl": "^7.0.6",
     "react-native": "^0.66.4",
     "react-pdf": "^6.2.1",
+    "react-pdf-viewer": "^0.1.0",
     "react-pro-sidebar": "^0.7.1",
     "react-redux": "^8.0.5",
     "react-router": "^6.2.1",

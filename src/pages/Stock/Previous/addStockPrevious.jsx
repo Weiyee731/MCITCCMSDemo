@@ -594,7 +594,7 @@ class AddStock extends Component {
             if (this.DataState.length > 0)
                 this.setState({ isBackClick: true })
             else {
-                history.push("/stockList")
+                history.push("/ecommerceCMSDev/stockList")
                 window.location.reload(false)
             }
         }

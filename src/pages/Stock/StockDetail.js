@@ -448,7 +448,7 @@ class StockDetail extends Component {
         }
 
         const goBack = () => {
-            history.push("/stockList")
+            history.push("/ecommerceCMSDev/stockList")
             window.location.reload(false)
         }
 
@@ -471,7 +471,7 @@ class StockDetail extends Component {
                                         <div className="row" style={{ display: "flex" }}>
                                             <Tooltip title="Add Stock">
                                                 <IconButton size="small" sx={{ color: "#0074ea", marginRight: 4 }} onClick={() => <>
-                                                    {history.push("/addStock")}
+                                                    {history.push("/ecommerceCMSDev/addStock")}
                                                     {window.location.reload(false)}
                                                 </>}>
                                                     <GroupAddIcon />

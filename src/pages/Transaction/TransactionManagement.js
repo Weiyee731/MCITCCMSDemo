@@ -76,7 +76,6 @@ export const TransactionManagement = (props) => {
         deliveryDateTime: "",
         isDeliveryDateTimeError: false,
     })
-
     const TitleStyle = { fontWeight: "bold", fontSize: "15pt" }
     const HeaderStyle = { fontWeight: "bold", fontSize: "12pt" }
     const DetailStyle = { fontSize: "10pt", color: "gray" }
