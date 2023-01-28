@@ -17,6 +17,9 @@ import { Button } from "reactstrap";
 import moment from "moment/moment";
 import Logo from "../../assets/logos/logo.png";
 import { useReactToPrint } from 'react-to-print';
+import { Document, Page, pdfjs } from "react-pdf";
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -961,18 +964,17 @@ export const TransactionManagement = (props) => {
     const OrderLayout = (Listing) => {
         return (
             <>
-                <TableContainer component={Paper} style={{ overflow: "hidden" }}>
-                    <div style={{ display: "none" }} >
-                        <div ref={componentRef}>
-                            <div>
-                                {
-                                    PDFLabel !== "" && <iframe src={'data:application/pdf;base64,' + PDFLabel} />
-                                }
-                            </div>
-                        </div>
+                <div style={{ display: "none" }} >
+                    <div ref={componentRef}>
+                        {
+                            PDFLabel !== "" &&
+                            <Document file={`data:application/pdf;base64,${PDFLabel}`}>
+                                <Page pageNumber={1} wrap={false} />
+                            </Document>
+                        }
                     </div>
-                    {/* } */}
-
+                </div>
+                <TableContainer component={Paper} style={{ overflow: "hidden" }}>
                     <Table aria-label="collapsible table" size="small">
                         {headerLayout()}
                         {
