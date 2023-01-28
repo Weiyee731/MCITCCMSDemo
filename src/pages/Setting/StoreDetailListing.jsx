@@ -153,7 +153,7 @@ class StoreDetailListing extends Component {
             else {
                 if (this.state.isDeleteShop === true)
                     setTimeout(() => {
-                        history.push("/ecommerceCMSDev/shoplotList");
+                        history.push("/shoplotList");
                         window.location.reload(false);
                     }, 1000)
                 else

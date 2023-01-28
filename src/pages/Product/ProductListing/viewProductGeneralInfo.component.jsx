@@ -188,7 +188,7 @@ class ViewProductGeneralInfo extends Component {
       this.getCategoryListing(this.props.productInfo[0], this.props.productCategories)
       this.getVariationList(this.props.productInfo[0])
     }
-    if (this.props.productInfo !== undefined && this.props.productInfo.length > 0 && this.props.productInfo[0].ProductVariation !== null && this.state.newArray.length === 0) {
+    if (this.props.productInfo !== undefined && this.props.productInfo.length > 0 && this.props.productInfo[0].ProductVariation !== null && this.props.productInfo[0].ProductVariation !== "[]" && this.state.newArray.length === 0) {
       this.setState({
         newArray: this.props.productInfo[0].ProductVariation !== null ? JSON.parse(this.props.productInfo[0].ProductVariation) : []
       })

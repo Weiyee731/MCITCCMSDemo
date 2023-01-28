@@ -59,21 +59,25 @@ const sidebar_items = [
             // },
         ]
     },
-    {
-        to: "/viewTransactions",
-        title: "Transaction",
-        icon: "money",
-    },
-    {
-        to: "/OrderManagement",
-        title: "Order Management",
-        icon: "money",
-    },
-    {
-        to: "/TransactionManagement",
-        title: "Transaction Management",
-        icon: "money",
-    },
+
+    //Close for Live Purpose
+    // {
+    //     to: "/viewTransactions",
+    //     title: "Transaction",
+    //     icon: "money",
+    // },
+    // {
+    //     to: "/OrderManagement",
+    //     title: "Order Management",
+    //     icon: "money",
+    // },
+    // {
+    //     to: "/TransactionManagement",
+    //     title: "Transaction Management",
+    //     icon: "money",
+    // },
+
+
     // {
     //     to: "",
     //     title: "User Management",
@@ -96,33 +100,42 @@ const sidebar_items = [
         title: "Shop Profile",
         icon: "shop",
     },
+
+    
     {
-        to: "/stockList",
-        title: "Stock Management",
-        icon: "inventory",
+        to: "/category",
+        title: "Product Category",
+        icon: <Shop2Rounded />,
     },
-    {
-        to: "/PromotionListing",
-        title: "Promotion",
-        icon: "inventory",
-    },
-    {
-        to: "",
-        title: "Setting",
-        icon: <Settings />,
-        submenus: [
-            {
-                to: "/shoplotList",
-                title: "Shoplot",
-                icon: <Shop2Rounded />,
-            },
-            {
-                to: "/category",
-                title: "Product Category",
-                icon: <Shop2Rounded />,
-            },
-        ]
-    },
+
+    //Close for Live Purpose
+    // {
+    //     to: "/stockList",
+    //     title: "Stock Management",
+    //     icon: "inventory",
+    // },
+    // {
+    //     to: "/PromotionListing",
+    //     title: "Promotion",
+    //     icon: "inventory",
+    // },
+    // {
+    //     to: "",
+    //     title: "Setting",
+    //     icon: <Settings />,
+    //     submenus: [
+    //         {
+    //             to: "/shoplotList",
+    //             title: "Shoplot",
+    //             icon: <Shop2Rounded />,
+    //         },
+    //         {
+    //             to: "/category",
+    //             title: "Product Category",
+    //             icon: <Shop2Rounded />,
+    //         },
+    //     ]
+    // },
     // {
     //     to: "",
     //     title: "Report",

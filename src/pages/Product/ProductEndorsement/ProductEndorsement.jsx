@@ -132,7 +132,7 @@ class ViewProductEndorsementComponent extends Component {
     this.state.filteredProduct.splice(0, this.state.filteredProduct.length)
 
     let DataSet = JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? this.props.allstocks :
-      JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 && this.props.allstocks !== undefined ? this.props.allstocks.filter((x) => parseInt(x.MerchantID) === parseInt(localStorage.getItem("loginUser")[0].UserID)) : []
+      JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 && this.props.allstocks !== undefined ? this.props.allstocks.filter((x) => parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID)) : []
 
     DataSet.filter((searchedItem) =>
       searchedItem.ProductName !== null && searchedItem.ProductName.toLowerCase().includes(
@@ -148,7 +148,7 @@ class ViewProductEndorsementComponent extends Component {
   render() {
 
     const DataList = JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? this.props.allstocks :
-      JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 && this.props.allstocks !== undefined ? this.props.allstocks.filter((x) => parseInt(x.MerchantID) === parseInt(localStorage.getItem("loginUser")[0].UserID)) : []
+      JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 && this.props.allstocks !== undefined ? this.props.allstocks.filter((x) => parseInt(x.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID)) : []
 
 
     const tableHeadCells = [
@@ -190,7 +190,6 @@ class ViewProductEndorsementComponent extends Component {
                     value={this.state.searchKeywords}
                   />
                 </div>
-                {console.log("DataList", DataList)}
                 <br />
                 <TableComponents
                   tableTopLeft={<h3 style={{ fontWeight: 600 }}>Product Endorsement List</h3>}

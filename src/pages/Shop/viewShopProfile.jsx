@@ -153,14 +153,14 @@ class EditShopProfile extends Component {
             this.setState({ shopRating: parseFloat(ratingCount.reduce((subtotal, item) => subtotal + item, 0) / ratingCount.length).toFixed(2) })
 
         } else {
-            // browserHistory.push("/ecommerceCMSDev/login");
+            // browserHistory.push("/login");
             // window.location.reload(false);
         }
     }
     componentDidUpdate(prevProps) {
 
         if (prevProps.shopUpdated !== this.props.shopUpdated) {
-            // browserHistory.push("/ecommerceCMSDev/");
+            // browserHistory.push("/");
             // delete this.state;
 
             // this.setState(group);

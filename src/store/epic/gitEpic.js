@@ -593,7 +593,8 @@ export class GitEpic {
             })
             .then(response => response.json())
             .then(json => {
-              json = JSON.parse(json)
+              // json = JSON.parse(json)
+              console.log("dsadasda2", json)
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.AddedProduct, payload: JSON.parse(json[0].ReturnData) });
               } else {
@@ -609,7 +610,7 @@ export class GitEpic {
     }));
 
   Product_Update = action$ =>
-    action$.pipe(filter(action => action.type === GitAction.AddProduct), map(action => {
+    action$.pipe(filter(action => action.type === GitAction.UpdateProduct), map(action => {
       return dispatch => {
         try {
           return fetch(url + project + "/Product_UpdateProductByPost"
@@ -639,7 +640,8 @@ export class GitEpic {
             })
             .then(response => response.json())
             .then(json => {
-              json = JSON.parse(json)
+              console.log("dsadasda1", json)
+              // json = JSON.parse(json)
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.UpdatedProduct, payload: JSON.parse(json[0].ReturnData) });
               } else {

@@ -151,7 +151,7 @@ class ViewProductComponent extends Component {
     let filteredListing = []
 
     let DataSet = JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? this.props.allstocks :
-      JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 && this.props.allstocks !== undefined ? this.props.allstocks.filter((x) => parseInt(x.MerchantID) === parseInt(localStorage.getItem("loginUser")[0].UserID)) : []
+      JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 && this.props.allstocks !== undefined ? this.props.allstocks.filter((x) => parseInt(x.MerchantID) == parseInt(localStorage.getItem("loginUser")[0].UserID)) : []
 
     DataSet.length > 0 && DataSet.filter((searchedItem) =>
       searchedItem.ProductName !== null && searchedItem.ProductName.toLowerCase().includes(
@@ -197,7 +197,9 @@ class ViewProductComponent extends Component {
 
   render() {
     const DataList = JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? this.props.allstocks :
-      JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 && this.props.allstocks !== undefined ? this.props.allstocks.filter((x) => parseInt(x.MerchantID) === parseInt(localStorage.getItem("loginUser")[0].UserID)) : []
+      JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 && this.props.allstocks !== undefined ?
+        this.props.allstocks.filter((x) => parseInt(x.MerchantID) == parseInt( JSON.parse(localStorage.getItem("loginUser"))[0].UserID))
+        : []
 
     if (DataList.length > 0) {
       var generateOptions = []

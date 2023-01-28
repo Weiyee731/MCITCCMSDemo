@@ -2077,9 +2077,10 @@ class AddProductComponent extends Component {
       //     imageHeight += ","
       //   }
       // }
-
+      console.log("RETURN RESULT UPLOADIMGAE")
 
       for (let i = 0; i < uploadingMedia.length; i++) {
+        console.log("RETURN RESULT UPLOADIMGAE2")
         let fileExt = getFileExtension(uploadingMedia[i])
         let filename = productID + "_" + i + "_" + convertDateTimeToString(new Date())
         let image = uploadingMedia[i]
@@ -2115,6 +2116,8 @@ class AddProductComponent extends Component {
         UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
       }
       let imageURL = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/uploadImages.php"
+
+      console.log("")
       // let imageURL = "https://" + localStorage.getItem("projectDomain") + "/images/uploadproductImages.php"
       // let imageURL = "https://" + localStorage.getItem("projectDomain") + "/images/uploadproductImages.php"
       // axios.post("https://tourism.denoo.my/MCITCApi/php/uploadproductImages.php", formData, config).then((res) => {
@@ -3398,8 +3401,9 @@ class AddProductComponent extends Component {
     }
 
     //call the variations for product specifications and product category
+    console.log("RETURN RESULT", this.props)
     if (this.props.result) {
-      if (typeof this.props.result !== "undefined" && this.props.result.length > 0 && this.props.result[0].ReturnVal == 1) {
+      if (typeof this.props.result !== "undefined" && this.props.result.length > 0 && this.props.result[0].ProductID !== undefined) {
         const { variation1, productSpecificationOptions } = this.state
         let ProductID = this.props.result[0].ProductID
 
@@ -3447,10 +3451,10 @@ class AddProductComponent extends Component {
         if (this.state.isSubmit === true) {
           toast.success("Product is successfully submitted to Admin for endorsement. Estimated 3 - 5 days for admin to revise your added product.")
           this.setState({ isSubmit: false })
-          setTimeout(() => {
-            window.location.href = "/ecommerceCMSDev/viewProduct"
-            window.location.reload(false);
-          }, 3000);
+          // setTimeout(() => {
+          //   window.location.href = "/viewProduct"
+          //   window.location.reload(false);
+          // }, 3000);
         }
       }
     }

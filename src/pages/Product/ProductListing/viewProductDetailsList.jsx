@@ -3569,11 +3569,11 @@ class ProductDetailsComponent extends Component {
             ProductID: this.props.productInfo.length > 0 ? this.props.productInfo[0].ProductID : "",
             productCategory: this.props.productInfo.length > 0 ? this.props.productInfo[0].ProductCategoryID : "",
             stock: this.props.productInfo.length > 0 ? this.props.productInfo[0].ProductStockAmount : "",
-            selectedVariationID: this.props.productInfo.length > 0 && this.props.productInfo[0].ProductVariation !== null ? JSON.parse(this.props.productInfo[0].ProductVariation)[0].ProductVariationID : "",
-            selectedVariationName: this.props.productInfo.length > 0 && this.props.productInfo[0].ProductVariation !== null ? JSON.parse(this.props.productInfo[0].ProductVariation)[0].ProductVariation : "",
+            selectedVariationID: this.props.productInfo.length > 0 && this.props.productInfo[0].ProductVariation !== null && this.props.productInfo[0].ProductVariation !== "[]" ? JSON.parse(this.props.productInfo[0].ProductVariation)[0].ProductVariationID : "",
+            selectedVariationName: this.props.productInfo.length > 0 && this.props.productInfo[0].ProductVariation !== null && this.props.productInfo[0].ProductVariation !== "[]" ? JSON.parse(this.props.productInfo[0].ProductVariation)[0].ProductVariation : "",
             variation1On: variationIsOn,
             variation1: variationObject,
-            variation1Options: this.props.productInfo.length > 0 && this.props.productInfo[0].ProductVariation !== null ? JSON.parse(this.props.productInfo[0].ProductVariation).length : 0,
+            variation1Options: this.props.productInfo.length > 0 && this.props.productInfo[0].ProductVariation !== null && this.props.productInfo[0].ProductVariation !== "[]" ? JSON.parse(this.props.productInfo[0].ProductVariation).length : 0,
             productSpecification: this.props.productInfo.length > 0 ? this.props.productInfo[0].ProductSpecification : "",
             productSpecificationOptions: specificationArray,
             file: this.props.productInfo.length > 0 ? this.props.productInfo[0].ProductImages !== null ? productImages : [] : [],
@@ -3667,7 +3667,7 @@ class ProductDetailsComponent extends Component {
 
                 setTimeout(() => {
                     // toast.success("Product details successfully updated")
-                    // history.push("/ecommerceCMSDev/viewProduct");
+                    // history.push("/viewProduct");
                     // window.location.href = "/viewProduct"
                     // window.location.reload(false);
                 }, 1000);
@@ -3796,8 +3796,8 @@ class ProductDetailsComponent extends Component {
     handleBack() {
         // this.props.CallResetProductDetails()
         this.props.backToList()
-        // browserHistory.push("/ecommerceCMSDev/")
-        window.location.href = "/ecommerceCMSDev/"
+        // browserHistory.push("/")
+        window.location.href = "/"
     }
 
     handleChangeEditor = (content, editor) => {
