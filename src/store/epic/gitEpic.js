@@ -365,6 +365,7 @@ export class GitEpic {
             "&RECEIVER_COUNTRYCODE=" + action.payload.RECEIVER_COUNTRYCODE +
             "&PARCELQUANTITY=" + action.payload.PARCELQUANTITY +
             "&LOGISTICID=" + action.payload.LOGISTICID +
+            "&ORDERNAME=" + action.payload.ORDERNAME +
             "&ORDERPRODUCTDETAILSID=" + action.payload.ORDERPRODUCTDETAILSID +
             "&PROJECTID=" + action.payload.PROJECTID)
             .then(response => response.json())
@@ -411,6 +412,33 @@ export class GitEpic {
         } catch (error) {
           toast.error("Error Code: OrderRequestedShipmentStatus. Please check on URL")
           return dispatch({ type: GitAction.OrderRequestedShipmentStatus, payload: [] });
+        }
+      }
+    }));
+
+        Order_UpdateTrackingStatus = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.OrderTrackingStatusUpdate), map(action => {
+      return dispatch => {
+        console.log(url + project + "/" +
+        "Order_UpdateTrackingStatus?OrderID=" + action.payload.OrderID +
+        "&TrackingStatusID=" + action.payload.TrackingStatusID)
+        try {
+          return fetch(url + project + "/" +
+            "Order_UpdateTrackingStatus?OrderID=" + action.payload.OrderID +
+            "&TrackingStatusID=" + action.payload.TrackingStatusID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.OrderTrackingStatusUpdated, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.OrderTrackingStatusUpdated, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: OrderTrackingStatusUpdated. ")
+          return dispatch({ type: GitAction.OrderTrackingStatusUpdated, payload: [] });
         }
       }
     }));

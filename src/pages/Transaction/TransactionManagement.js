@@ -16,10 +16,7 @@ import LoadingPanel from "../../tools/LoadingPanel";
 import { Button } from "reactstrap";
 import moment from "moment/moment";
 import Logo from "../../assets/logos/logo.png";
-import { useReactToPrint } from 'react-to-print';
-import { Document, Page, pdfjs } from "react-pdf";
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
-
+import AlertDialog from "../../components/ModalComponent/ModalComponent";
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -49,11 +46,12 @@ function a11yProps(index) {
 }
 
 export const TransactionManagement = (props) => {
-    const { transactions, countries, transactionStatus, logistic, orderShipment, orderShipmentStatus } = useSelector(state => ({
+    const { transactions, countries, transactionStatus, logistic, orderShipment, orderShipmentStatus, trackingStatusAction } = useSelector(state => ({
         transactions: state.counterReducer.transactions,
         transactionStatus: state.counterReducer.transactionStatus,
         countries: state.counterReducer.countries,
         logistic: state.counterReducer.logistic,
+        trackingStatusAction: state.counterReducer.trackingStatusAction,
         orderShipment: state.counterReducer["orderShipment"],
         orderShipmentStatus: state.counterReducer["orderShipmentStatus"],
     }));
@@ -65,8 +63,10 @@ export const TransactionManagement = (props) => {
     const [isOrderSet, setOrder] = useState(false)
     const [isOrderSelected, setSelectedList] = useState(false)
     const [OrderListing, setOrderListing] = useState(false)
-    const [PDFLabel, setOrderPDFLabel] = useState("")
     const [isShipmentSubmit, setShipmentSubmit] = useState(false)
+    const [isViewTracking, setViewTracking] = useState(false)
+    const [isStatusViewClick, setViewClick] = useState(false)
+
 
     // const [logisticID, setLogisticID] = React.useState(3);
     // const [trackingNumber, setTrackingNumber] = React.useState("");
@@ -98,13 +98,6 @@ export const TransactionManagement = (props) => {
     const HeaderStyle = { fontWeight: "bold", fontSize: "12pt" }
     const DetailStyle = { fontSize: "10pt", color: "gray" }
 
-    const componentRef = useRef();
-    const handlePrint = useReactToPrint({
-        content: () => componentRef.current,
-    });
-
-
-
     useEffect(() => {
         dispatch(GitAction.CallGetTransaction({
             TrackingStatus: "Payment Confirm",
@@ -115,13 +108,18 @@ export const TransactionManagement = (props) => {
         dispatch(GitAction.CallCourierService())
     }, [])
 
+
+    useEffect(() => {
+        if (isStatusViewClick === true)
+            setViewTracking(true)
+    }, [orderShipmentStatus])
+
     useEffect(() => {
         if (isOrderSet === false && isArrayNotEmpty(transactions)) {
             let listing = []
             transactions.map((order) => {
                 let detailListing = []
                 order.OrderProductDetail !== undefined && JSON.parse(order.OrderProductDetail).map((detail) => {
-                    console.log("SADASDASDA", detail)
                     detailListing = [...detailListing, {
                         ...detail,
                         pendingDeliveryQty: detail.ProductQuantity,
@@ -134,7 +132,6 @@ export const TransactionManagement = (props) => {
                         isCheckBoxSelected: false
                     }]
                 })
-                console.log("dsadasdasddsa", detailListing)
                 listing = [...listing, {
                     ...order,
                     orderDetails: detailListing,
@@ -156,12 +153,42 @@ export const TransactionManagement = (props) => {
     useEffect(() => {
         if (isArrayNotEmpty(orderShipment) && orderShipment[0].PDFLabel !== undefined && isShipmentSubmit === true) {
             setShipmentSubmit(false)
-            setOrderPDFLabel(orderShipment[0].PDFLabel)
-            handlePrint()
+            previewCosignment(orderShipment[0].PDFLabel)
+            setTimeout(
+                () => window.location.reload(false),
+                1000
+            );
         }
     }, [orderShipment])
 
+    useEffect(() => {
+        if (isArrayNotEmpty(trackingStatusAction)) {
+            dispatch(GitAction.CallResetUpdateTrackingStatus())
+            if (trackingStatusAction[0].OrderID !== undefined) {
+                toast.success("Successfully Update Tracking Status")
+                setTimeout(
+                    () => window.location.reload(false),
+                    2000
+                );
+            } else {
+                toast.error("Fail to Update Tracking Status")
+            }
+        }
+    }, [trackingStatusAction])
 
+
+
+    const previewCosignment = (Base64Label) => {
+        let byteCharacters = atob(Base64Label);
+        let byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        let byteArray = new Uint8Array(byteNumbers);
+        let file = new Blob([byteArray], { type: 'application/pdf;base64' });
+        let fileURL = URL.createObjectURL(file);
+        window.open(fileURL);
+    }
     const headerLayout = () => {
         return (
             <TableHead style={{ backgroundColor: "#f8f9fa" }}>
@@ -182,7 +209,6 @@ export const TransactionManagement = (props) => {
     }
 
     const handleChange = (event, newValue) => {
-        console.log("handleChange", newValue)
         setValue(newValue);
     };
 
@@ -215,14 +241,13 @@ export const TransactionManagement = (props) => {
     }
 
     const setCheckBoxListing = (maindata, index, subdata, subindex, layer) => {
+        let listingData = [...OrderListing]
+        let selectedIndex = getIndex(OrderListing, maindata)
 
-        console.log("setCheckBoxListing")
-        let listingData = [...OrderListing.filter((y) => y.TrackingStatusID == value + 1)]
         let isToSet = false
         if (layer === 1) {
             if (isArrayNotEmpty(listingData)) {
-                console.log("setCheckBoxListing1")
-                let data = listingData[index]
+                let data = listingData[selectedIndex]
                 let checkBoxStatus = false
                 if (data.isCheckBoxSelected === false)
                     checkBoxStatus = true
@@ -245,31 +270,24 @@ export const TransactionManagement = (props) => {
             }
         } else {
             if (isArrayNotEmpty(listingData)) {
-                let mainData = listingData[index]
-                let data = listingData[index].orderDetails[subindex]
-                let orderDetailsLength = listingData[index].orderDetails.length
+                let mainData = listingData[selectedIndex]
+                let data = listingData[selectedIndex].orderDetails[subindex]
+                let orderDetailsLength = listingData[selectedIndex].orderDetails.length
                 let selectedData = []
                 if (data.isCheckBoxSelected === false) {
                     data.isCheckBoxSelected = true
-                    // data.deliveryQuantity = data.pendingDeliveryQty
-                    // data.isDeliveryQuantityError = false
                 }
                 else {
                     data.isCheckBoxSelected = false
-                    // data.deliveryQuantity = 0
-                    // data.isDeliveryQuantityError = false
                 }
 
-                console.log("setCheckBoxListing2", data)
 
                 selectedData = mainData.orderDetails !== undefined && isArrayNotEmpty(mainData.orderDetails) && mainData.orderDetails.filter((x) => x.isCheckBoxSelected == true)
 
                 if (selectedData.length === orderDetailsLength)
-                    listingData[index].isCheckBoxSelected = true
+                    listingData[selectedIndex].isCheckBoxSelected = true
                 else
-                    listingData[index].isCheckBoxSelected = false
-
-                console.log("setCheckBoxListing22", listingData)
+                    listingData[selectedIndex].isCheckBoxSelected = false
                 setOrderListing(listingData)
             }
         }
@@ -302,6 +320,15 @@ export const TransactionManagement = (props) => {
             })
         }
         return data
+    }
+
+    const getIndex = (newArr, data) => {
+        let selectedIndex = ""
+        newArr.map((x, i) => {
+            if (x.OrderID === data.OrderID)
+                selectedIndex = i
+        })
+        return selectedIndex
     }
 
     // const submitDelivery = () => {
@@ -384,8 +411,14 @@ export const TransactionManagement = (props) => {
                     value + 1 === 1 &&
                     <TableCell align="left">
                         <IconButton>
-                            <Button disabled style={{ backgroundColor: "RED" }}>
-                                <CancelIcon /> Cancel
+                            <Button style={{ backgroundColor: "#e74c3c" }} onClick={() => {
+                                dispatch(GitAction.CallUpdateOrderTrackingStatus({
+                                    OrderID: data.OrderID,
+                                    TrackingStatusID: 6
+                                }))
+                            }}>
+                                {/* <CancelIcon />  */}
+                                Cancel
                             </Button>
                         </IconButton>
                     </TableCell>
@@ -599,8 +632,6 @@ export const TransactionManagement = (props) => {
     }
 
     const handleSubmitTracking = (selectedIndex, data) => {
-        console.log("handleSubmitTracking selectedIndex", selectedIndex)
-        console.log("handleSubmitTracking data", data)
 
         if (data.logisticID === 3) {
             let error = false
@@ -661,11 +692,31 @@ export const TransactionManagement = (props) => {
                     RECEIVER_COUNTRYCODE: "MY",
                     LOGISTICID: data.logisticID,
                     ORDERPRODUCTDETAILSID: selectedData,
+                    ORDERNAME: data.OrderName,
                     PROJECTID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
                 }
                 dispatch(GitAction.CallAddOrderShipment(object))
+
+
+                let userObject = {
+                    OrderID: data.OrderID,
+                    FirstName: data.UserFullName !== "" ? data.UserFullName : "-",
+                    LastName: "-",
+                    PickUpInd: data.Method === "Delivery" ? 0 : 1,
+                    UserContactNo: data.UserContactNo !== "" ? data.UserContactNo : "-",
+                    UserEmailAddress: data.UserEmailAddress !== "" ? data.UserEmailAddress : "-",
+                    UserAddressLine1: data.UserAddressLine1 !== "" ? data.UserAddressLine1 : "-",
+                    UserAddressLine2: data.UserAddressLine2 !== "" ? data.UserAddressLine2 : "-",
+
+                    UserPoscode: data.UserPoscode !== "" ? data.UserPoscode : "-",
+                    UserState: data.UserState !== "" ? data.UserState : "-",
+
+                    UserCity: data.UserCity !== "" ? data.UserCity : "-",
+                    CountryID: data.CountryID,
+                }
+                dispatch(GitAction.CallUpdateOrderUserDetails(userObject))
                 setShipmentSubmit(true)
-                console.log("trackingviewtrackingview objectobject", object)
+                toast.success("Creating shipment, Waiting for shipment processing...")
             }
         }
     }
@@ -681,9 +732,9 @@ export const TransactionManagement = (props) => {
                     <div className="row">
                         <div className={value + 1 === 1 ? "col-3" : "col-2"}></div>
                         <div className="col-3">  <Typography style={TitleStyle} > Product Variation</Typography></div>
-                        <div className="col-3">  <Typography style={TitleStyle} > Order Details</Typography></div>
+                        <div className="col-2">  <Typography style={TitleStyle} > Order Details</Typography></div>
                         {
-                            value + 1 > 2 && <div className="col-3">  <Typography style={TitleStyle} > Shipping Details</Typography></div>
+                            value + 1 > 2 && <div className="col-4">  <Typography style={TitleStyle} > Shipping Details</Typography></div>
                         }
                     </div>
                     <hr />
@@ -694,10 +745,11 @@ export const TransactionManagement = (props) => {
                                     {value + 1 === 1 &&
                                         <div className="col-1">
                                             {
-                                                data.TrackingNumber == "-" || data.TrackingNumber == undefined &&
-                                                <Checkbox color="primary"
-                                                    checked={details.isCheckBoxSelected}
-                                                    onClick={() => setCheckBoxListing(data, index, details, subindex, 2)} />
+                                                details.TrackingNumber === null || details.TrackingNumber === undefined || details.TrackingNumber === "-" ?
+                                                    <Checkbox color="primary"
+                                                        checked={details.isCheckBoxSelected}
+                                                        onClick={() => setCheckBoxListing(data, index, details, subindex, 2)} />
+                                                    : ""
                                             }
                                         </div>
                                     }
@@ -714,63 +766,97 @@ export const TransactionManagement = (props) => {
                                         <div style={{ fontSize: "11px" }}>  SKU : {details.SKU} </div>
                                         <div style={{ fontSize: "11px" }}>  Variation : {details.ProductVariationValue} </div>
                                     </div>
-                                    <div className="col-3" >
+                                    <div className="col-2" >
                                         <div >  </div>
                                         <div style={{ fontSize: "11px", fontWeight: "bold" }}>  Total Order Quantity : {details.ProductQuantity} </div>
                                         <div style={{ fontSize: "11px" }}>  Total Price : RM {(details.ProductQuantity * details.ProductVariationPrice).toFixed(2)}  </div>
                                     </div>
-                                    <div className="col-3">
-                                        {console.log("dsadasdada", details)}
+                                    <div className="col-4">
                                         {
                                             details.TrackingNumber !== "-" && details.TrackingNumber !== undefined &&
-                                            <div className="col-5">
-                                                <div >  </div>
-                                                <div style={{ fontSize: "11px", fontWeight: "bold" }}>  {checkLogistic(details.LogisticID)} </div>
-                                                <div style={{ fontSize: "11px", fontWeight: "bold" }}>  {details.TrackingNumber}  </div>
+                                            <div className="row">
+                                                <div className="col-5">
+                                                    <div >  </div>
+                                                    <div style={{ fontSize: "11px", fontWeight: "bold" }}>  {checkLogistic(details.LogisticID)} </div>
+                                                    <div style={{ fontSize: "11px", fontWeight: "bold" }}>  {details.TrackingNumber}  </div>
+                                                </div>
+                                                {
+                                                    details.PDFLabel !== "" && details.PDFLabel !== undefined && details.TrackingNumber !== null && details.TrackingNumber !== undefined && details.TrackingNumber !== "-" &&
+                                                    <div className="col-7">
+                                                        <div className="row" >
+                                                            <div className="col">
+                                                                <Button style={{ fontSize: "11px" }} color="primary" onClick={() =>
+                                                                    previewCosignment(details.PDFLabel)
+                                                                }>Reprint</Button>
+                                                            </div>
+                                                            <div className="col">
+                                                                <Button style={{ fontSize: "11px" }} color="primary" onClick={() =>
+                                                                    <>
+                                                                        {
+                                                                            dispatch(GitAction.CallOrderRequestShipmentStatus({
+                                                                                TRACKINGNUMBER: details.TrackingNumber,
+                                                                                TYPE: "true",
+                                                                                PROJECTID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
+                                                                            }))
+                                                                        }
+                                                                        {setViewClick(true)}
+                                                                    </>
+                                                                }>Tracking</Button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
                                             </div>
                                         }
                                     </div>
-                                    {
-                                        details.PDFLabel !== "" && details.PDFLabel !== undefined &&
-                                        <div className="col-3">
-                                            <Button onClick={() =>
-                                                <>
-                                                    {setOrderPDFLabel(details.PDFLabel)}
-                                                    {handlePrint()}
-                                                </>
-                                            }>Reprint Cosignment</Button>
-                                        </div>
-                                    }
                                     <hr />
-
-                                    {/* {value + 1 === 1 &&
-                                        <div className="col-2">
-                                            <FormControl fullWidth size="small" variant="outlined">
-                                                <OutlinedInput
-                                                    id={"outlined-adornment-Quantity-" + subindex}
-                                                    label=""
-                                                    value={details.deliveryQuantity}
-                                                    type="number"
-                                                    onChange={(e) => {
-                                                       let newArr = OrderListing.filter((y) => y.TrackingStatusID == value + 1)
-                                                        let max = details.PendingDeliveryQty !== undefined ? details.PendingDeliveryQty : details.ProductQuantity
-                                                        if (e.target.value <= max && e.target.value >= 0) {
-                                                            newArr[index * page * rowsPerPage].orderDetails[subindex].deliveryQuantity = e.target.value
-                                                            newArr[index * page * rowsPerPage].orderDetails[subindex].isDeliveryQuantityError = false
-                                                        } else {
-                                                            newArr[index * page * rowsPerPage].orderDetails[subindex].isDeliveryQuantityError = true
+                                    <AlertDialog
+                                        open={isViewTracking}
+                                        fullWidth
+                                        maxWidth="md"
+                                        handleToggleDialog={() => {
+                                            setViewTracking(false)
+                                            setViewClick(false)
+                                        }}
+                                        title="Tracking Status"
+                                        showAction={false}
+                                    >
+                                        <div className="container-fluid">
+                                            <div className="container">
+                                                {isArrayNotEmpty(orderShipmentStatus) ?
+                                                    <>
+                                                        {isArrayNotEmpty(orderShipmentStatus.trackHeader) &&
+                                                            <Typography style={{ fontSize: "11px", fontWeight: "bold" }}>Tracking Number :{orderShipmentStatus.trackHeader[0].hawb}</Typography>
                                                         }
-                                                        setOrderListing([...newArr]);
-                                                    }}
-                                                    inputProps={{ 'aria-label': 'UserContactNo', inputProps: { min: 1, max: details.PendingDeliveryQty != undefined ? details.PendingDeliveryQty : details.ProductQuantity } }}
-                                                    required
-                                                />
-                                            </FormControl>
-                                            {details.isDeliveryQuantityError && <FormHelperText style={{ color: "red" }}>Insert valid Delivery Quantity</FormHelperText>}
-                                            {details.isCheckBoxSelected && details.deliveryQuantity == 0 && !details.isDeliveryQuantityError && <FormHelperText style={{ color: "red" }}>Insert at least 1 Quantity</FormHelperText>}
+                                                        <hr />
+                                                        {
+                                                            isArrayNotEmpty(orderShipmentStatus.trackDetails) &&
+                                                            <div className="row">
+                                                                <Typography style={{ fontSize: "11px", fontWeight: "bold" }}>Parcel Status</Typography>
+                                                                <Typography>Shiping Status : {orderShipmentStatus.trackDetails[0].status}</Typography>
+                                                                <Typography>Latest Location : {orderShipmentStatus.trackDetails[0].location}</Typography>
+                                                                <Typography>Latest Update Time : {orderShipmentStatus.trackDetails[0].detTime}</Typography>
+                                                                <Typography>Latest Update Date : {orderShipmentStatus.trackDetails[0].detDate}</Typography>
+                                                            </div>
+                                                        }
+                                                        <hr />
+                                                        {
+                                                            isArrayNotEmpty(orderShipmentStatus.trackHeader) &&
+                                                            <div className="row">
+                                                                <Typography style={{ fontSize: "11px", fontWeight: "bold" }}>Parcel Details</Typography>
+                                                                <Typography>Parcel Origin : {orderShipmentStatus.trackHeader[0].status}</Typography>
+                                                                <Typography>Parcel Destination : {orderShipmentStatus.trackHeader[0].location}</Typography>
+                                                                <Typography>Parcel Weight : {orderShipmentStatus.trackHeader[0].t_weight} kg</Typography>
+                                                                <Typography>Parcel Dimension : {orderShipmentStatus.trackHeader[0].vw_height + "cm(H) * " + orderShipmentStatus.trackHeader[0].vw_length + "cm(L) * " + orderShipmentStatus.trackHeader[0].vw_width + "cm(W)"}</Typography>
+                                                            </div>
+                                                        }
+                                                    </>
+                                                    :
+                                                    <Typography>There is an error while retrieving Order Tracking Status</Typography>
+                                                }
+                                            </div>
                                         </div>
-                                    } */}
-
+                                    </AlertDialog >
                                 </div>
                             )
                         })
@@ -786,10 +872,11 @@ export const TransactionManagement = (props) => {
                                             id={"outlined-adornment-logistic-" + index} label=""
                                             value={data.logisticID}
                                             onChange={(e) => {
-                                                let newArr = OrderListing.filter((y) => y.TrackingStatusID == value + 1)
-                                                newArr[index * page * rowsPerPage].logisticID = e.target.value
-                                                newArr[index * page * rowsPerPage].parcelQuantity = newArr[index * page * rowsPerPage].parcelQuantity !== undefined ? newArr[index * page * rowsPerPage].parcelQuantity : 1
-                                                newArr[index * page * rowsPerPage].isParcelQuantityError = false
+                                                let newArr = OrderListing
+                                                let selectedIndex = getIndex(newArr, data)
+                                                newArr[selectedIndex].logisticID = e.target.value
+                                                newArr[selectedIndex].parcelQuantity = newArr[selectedIndex].parcelQuantity !== undefined ? newArr[selectedIndex].parcelQuantity : 1
+                                                newArr[selectedIndex].isParcelQuantityError = false
                                                 setOrderListing([...newArr]);
                                             }}
                                             className="select"
@@ -817,9 +904,10 @@ export const TransactionManagement = (props) => {
                                                             value={data.parcelQuantity}
                                                             type="number"
                                                             onChange={(e) => {
-                                                                let newArr = OrderListing.filter((y) => y.TrackingStatusID == value + 1)
-                                                                newArr[index * page * rowsPerPage].parcelQuantity = e.target.value
-                                                                newArr[index * page * rowsPerPage].isParcelQuantityError = e.target.value <= 0 || e.target.value == "" ? true : false
+                                                                let newArr = OrderListing
+                                                                let selectedIndex = getIndex(newArr, data)
+                                                                newArr[selectedIndex].parcelQuantity = e.target.value
+                                                                newArr[selectedIndex].isParcelQuantityError = e.target.value <= 0 || e.target.value == "" ? true : false
                                                                 setOrderListing([...newArr]);
                                                             }}
                                                             required
@@ -844,9 +932,10 @@ export const TransactionManagement = (props) => {
                                                             value={data.trackingNumber}
                                                             type="number"
                                                             onChange={(e) => {
-                                                                let newArr = OrderListing.filter((y) => y.TrackingStatusID == value + 1)
-                                                                newArr[index * page * rowsPerPage].trackingNumber = e.target.value
-                                                                newArr[index * page * rowsPerPage].isTrackingNumberError = e.target.value === "" ? true : false
+                                                                let newArr = OrderListing
+                                                                let selectedIndex = getIndex(newArr, data)
+                                                                newArr[selectedIndex].trackingNumber = e.target.value
+                                                                newArr[selectedIndex].isTrackingNumberError = e.target.value === "" ? true : false
                                                                 setOrderListing([...newArr]);
                                                             }}
                                                             required
@@ -875,9 +964,10 @@ export const TransactionManagement = (props) => {
                                                     value={data.parcelWeight}
                                                     type="number"
                                                     onChange={(e) => {
-                                                        let newArr = OrderListing.filter((y) => y.TrackingStatusID == value + 1)
-                                                        newArr[index * page * rowsPerPage].parcelWeight = e.target.value
-                                                        newArr[index * page * rowsPerPage].isParcelWeightError = e.target.value <= 0 || e.target.value == "" ? true : false
+                                                        let newArr = OrderListing
+                                                        let selectedIndex = getIndex(newArr, data)
+                                                        newArr[selectedIndex].parcelWeight = e.target.value
+                                                        newArr[selectedIndex].isParcelWeightError = e.target.value <= 0 || e.target.value == "" ? true : false
                                                         setOrderListing([...newArr]);
                                                     }}
                                                     required
@@ -894,9 +984,10 @@ export const TransactionManagement = (props) => {
                                                     value={data.parcelWidth}
                                                     type="number"
                                                     onChange={(e) => {
-                                                        let newArr = OrderListing.filter((y) => y.TrackingStatusID == value + 1)
-                                                        newArr[index * page * rowsPerPage].parcelWidth = e.target.value
-                                                        newArr[index * page * rowsPerPage].isParcelWidthError = e.target.value <= 0 || e.target.value == "" ? true : false
+                                                        let newArr = OrderListing
+                                                        let selectedIndex = getIndex(newArr, data)
+                                                        newArr[selectedIndex].parcelWidth = e.target.value
+                                                        newArr[selectedIndex].isParcelWidthError = e.target.value <= 0 || e.target.value == "" ? true : false
                                                         setOrderListing([...newArr]);
                                                     }}
                                                     required
@@ -913,9 +1004,10 @@ export const TransactionManagement = (props) => {
                                                     value={data.parcelHeight}
                                                     type="number"
                                                     onChange={(e) => {
-                                                        let newArr = OrderListing.filter((y) => y.TrackingStatusID == value + 1)
-                                                        newArr[index * page * rowsPerPage].parcelHeight = e.target.value
-                                                        newArr[index * page * rowsPerPage].isParcelHeightError = e.target.value <= 0 || e.target.value == "" ? true : false
+                                                        let newArr = OrderListing
+                                                        let selectedIndex = getIndex(newArr, data)
+                                                        newArr[selectedIndex].parcelHeight = e.target.value
+                                                        newArr[selectedIndex].isParcelHeightError = e.target.value <= 0 || e.target.value == "" ? true : false
                                                         setOrderListing([...newArr]);
                                                     }}
                                                     required
@@ -932,9 +1024,10 @@ export const TransactionManagement = (props) => {
                                                     value={data.parcelLength}
                                                     type="number"
                                                     onChange={(e) => {
-                                                        let newArr = OrderListing.filter((y) => y.TrackingStatusID == value + 1)
-                                                        newArr[index * page * rowsPerPage].parcelLength = e.target.value
-                                                        newArr[index * page * rowsPerPage].isParcelLengthError = e.target.value <= 0 || e.target.value == "" ? true : false
+                                                        let newArr = OrderListing
+                                                        let selectedIndex = getIndex(newArr, data)
+                                                        newArr[selectedIndex].parcelLength = e.target.value
+                                                        newArr[selectedIndex].isParcelLengthError = e.target.value <= 0 || e.target.value == "" ? true : false
                                                         setOrderListing([...newArr]);
                                                     }}
                                                     required
@@ -946,7 +1039,6 @@ export const TransactionManagement = (props) => {
                                 }
                             </div>
                         }
-                        {console.log("data", data.orderDetails)}
                     </div>
                 </CardContent>
             </Card >
@@ -964,18 +1056,9 @@ export const TransactionManagement = (props) => {
     const OrderLayout = (Listing) => {
         return (
             <>
-                <div style={{ display: "none" }} >
-                    <div ref={componentRef}>
-                        {
-                            PDFLabel !== "" &&
-                            <Document file={`data:application/pdf;base64,${PDFLabel}`}>
-                                <Page pageNumber={1} wrap={false} />
-                            </Document>
-                        }
-                    </div>
-                </div>
                 <TableContainer component={Paper} style={{ overflow: "hidden" }}>
                     <Table aria-label="collapsible table" size="small">
+                        {isShipmentSubmit === true && <LoadingPanel />}
                         {headerLayout()}
                         {
                             isOrderSet ?
@@ -1000,15 +1083,16 @@ export const TransactionManagement = (props) => {
                                                                                     value + 1 === 1 &&
                                                                                     <div className="col" style={{ textAlign: "right" }}>
                                                                                         <Button color="primary" onClick={() => {
-                                                                                            let newArr = OrderListing.filter((y) => y.TrackingStatusID == value + 1)
-                                                                                            newArr[index * page * rowsPerPage].isEdit = newArr[index * page * rowsPerPage].isEdit === undefined ? true : !newArr[index * page * rowsPerPage].isEdit
+                                                                                            let newArr = OrderListing
+                                                                                            let selectedIndex = getIndex(newArr, data)
+                                                                                            newArr[selectedIndex].isEdit = newArr[selectedIndex].isEdit === undefined ? true : !newArr[selectedIndex].isEdit
                                                                                             setOrderListing([...newArr])
-                                                                                        }}>{OrderListing[index].isEdit === false ? "EDIT" : "CANCEL"}</Button>
+                                                                                        }}>{OrderListing[getIndex(OrderListing, data)].isEdit === false ? "EDIT" : "CANCEL"}</Button>
                                                                                     </div>
                                                                                 }
                                                                             </div>
                                                                             {
-                                                                                OrderListing[index].isEdit === true ?
+                                                                                OrderListing[getIndex(OrderListing, data)].isEdit === true ?
                                                                                     <div className="row">
                                                                                         <div className="row" style={{ paddingTop: "10px" }}>
                                                                                             <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
@@ -1019,9 +1103,10 @@ export const TransactionManagement = (props) => {
                                                                                                         label=""
                                                                                                         value={data.UserFullName}
                                                                                                         onChange={(e) => {
-                                                                                                            let newArr = OrderListing.filter((y) => y.TrackingStatusID == value + 1)
-                                                                                                            newArr[index * page * rowsPerPage].UserFullName = e.target.value
-                                                                                                            newArr[index * page * rowsPerPage].isUserFullNameError = e.target.value === "" ? true : false
+                                                                                                            let newArr = OrderListing
+                                                                                                            let selectedIndex = getIndex(newArr, data)
+                                                                                                            newArr[selectedIndex].UserFullName = e.target.value
+                                                                                                            newArr[selectedIndex].isUserFullNameError = e.target.value === "" ? true : false
                                                                                                             setOrderListing([...newArr]);
                                                                                                         }}
                                                                                                         required
@@ -1037,9 +1122,10 @@ export const TransactionManagement = (props) => {
                                                                                                         label=""
                                                                                                         value={data.UserContactNo}
                                                                                                         onChange={(e) => {
-                                                                                                            let newArr = OrderListing.filter((y) => y.TrackingStatusID == value + 1)
-                                                                                                            newArr[index * page * rowsPerPage].UserContactNo = e.target.value
-                                                                                                            newArr[index * page * rowsPerPage].isUserContactNoError = e.target.value === "" ? true : false
+                                                                                                            let newArr = OrderListing
+                                                                                                            let selectedIndex = getIndex(newArr, data)
+                                                                                                            newArr[selectedIndex].UserContactNo = e.target.value
+                                                                                                            newArr[selectedIndex].isUserContactNoError = e.target.value === "" ? true : false
                                                                                                             setOrderListing([...newArr]);
                                                                                                         }}
                                                                                                         required
@@ -1049,12 +1135,14 @@ export const TransactionManagement = (props) => {
                                                                                             <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
                                                                                                 <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt", paddingLeft: value + 1 === 1 ? "0px" : "15px" }}>Delivery Method</InputLabel>
                                                                                                 <FormControl fullWidth size="small" variant="outlined">
+
                                                                                                     <Select
-                                                                                                        id={"outlined-adornment-Method-" + index * page * rowsPerPage} label=""
+                                                                                                        id={"outlined-adornment-Method-" + index} label=""
                                                                                                         value={data.PickUpInd}
                                                                                                         onChange={(e) => {
-                                                                                                            let newArr = OrderListing.filter((y) => y.TrackingStatusID == value + 1)
-                                                                                                            newArr[index * page * rowsPerPage].PickUpInd = e.target.value
+                                                                                                            let newArr = OrderListing
+                                                                                                            let selectedIndex = getIndex(newArr, data)
+                                                                                                            newArr[selectedIndex].PickUpInd = e.target.value
                                                                                                             setOrderListing([...newArr]);
                                                                                                         }}
                                                                                                         className="select"
@@ -1075,9 +1163,10 @@ export const TransactionManagement = (props) => {
                                                                                                         label=""
                                                                                                         value={data.UserAddressLine1}
                                                                                                         onChange={(e) => {
-                                                                                                            let newArr = OrderListing.filter((y) => y.TrackingStatusID == value + 1)
-                                                                                                            newArr[index * page * rowsPerPage].UserAddressLine1 = e.target.value
-                                                                                                            newArr[index * page * rowsPerPage].isUserAddressLine1Error = e.target.value === "" ? true : false
+                                                                                                            let newArr = OrderListing
+                                                                                                            let selectedIndex = getIndex(newArr, data)
+                                                                                                            newArr[selectedIndex].UserAddressLine1 = e.target.value
+                                                                                                            newArr[selectedIndex].isUserAddressLine1Error = e.target.value === "" ? true : false
                                                                                                             setOrderListing([...newArr]);
                                                                                                         }}
                                                                                                         required
@@ -1092,9 +1181,10 @@ export const TransactionManagement = (props) => {
                                                                                                         label=""
                                                                                                         value={data.UserAddressLine2}
                                                                                                         onChange={(e) => {
-                                                                                                            let newArr = OrderListing.filter((y) => y.TrackingStatusID == value + 1)
-                                                                                                            newArr[index * page * rowsPerPage].UserAddressLine2 = e.target.value
-                                                                                                            newArr[index * page * rowsPerPage].isUserAddressLine2Error = e.target.value === "" ? true : false
+                                                                                                            let newArr = OrderListing
+                                                                                                            let selectedIndex = getIndex(newArr, data)
+                                                                                                            newArr[selectedIndex].UserAddressLine2 = e.target.value
+                                                                                                            newArr[selectedIndex].isUserAddressLine2Error = e.target.value === "" ? true : false
                                                                                                             setOrderListing([...newArr]);
                                                                                                         }}
                                                                                                         required
@@ -1109,9 +1199,10 @@ export const TransactionManagement = (props) => {
                                                                                                         label=""
                                                                                                         value={data.UserCity}
                                                                                                         onChange={(e) => {
-                                                                                                            let newArr = OrderListing.filter((y) => y.TrackingStatusID == value + 1)
-                                                                                                            newArr[index * page * rowsPerPage].UserCity = e.target.value
-                                                                                                            newArr[index * page * rowsPerPage].isUserCityError = e.target.value === "" ? true : false
+                                                                                                            let newArr = OrderListing
+                                                                                                            let selectedIndex = getIndex(newArr, data)
+                                                                                                            newArr[selectedIndex].UserCity = e.target.value
+                                                                                                            newArr[selectedIndex].isUserCityError = e.target.value === "" ? true : false
                                                                                                             setOrderListing([...newArr]);
                                                                                                         }}
                                                                                                         required
@@ -1129,9 +1220,10 @@ export const TransactionManagement = (props) => {
                                                                                                         label=""
                                                                                                         value={data.UserPoscode}
                                                                                                         onChange={(e) => {
-                                                                                                            let newArr = OrderListing.filter((y) => y.TrackingStatusID == value + 1)
-                                                                                                            newArr[index * page * rowsPerPage].UserPoscode = e.target.value
-                                                                                                            newArr[index * page * rowsPerPage].isUserPoscodeError = e.target.value === "" ? true : false
+                                                                                                            let newArr = OrderListing
+                                                                                                            let selectedIndex = getIndex(newArr, data)
+                                                                                                            newArr[selectedIndex].UserPoscode = e.target.value
+                                                                                                            newArr[selectedIndex].isUserPoscodeError = e.target.value === "" ? true : false
                                                                                                             setOrderListing([...newArr]);
                                                                                                         }}
                                                                                                         required
@@ -1146,9 +1238,10 @@ export const TransactionManagement = (props) => {
                                                                                                         label=""
                                                                                                         value={data.UserState}
                                                                                                         onChange={(e) => {
-                                                                                                            let newArr = OrderListing.filter((y) => y.TrackingStatusID == value + 1)
-                                                                                                            newArr[index * page * rowsPerPage].UserState = e.target.value
-                                                                                                            newArr[index * page * rowsPerPage].isUserStateError = e.target.value === "" ? true : false
+                                                                                                            let newArr = OrderListing
+                                                                                                            let selectedIndex = getIndex(newArr, data)
+                                                                                                            newArr[selectedIndex].UserState = e.target.value
+                                                                                                            newArr[selectedIndex].isUserStateError = e.target.value === "" ? true : false
                                                                                                             setOrderListing([...newArr]);
                                                                                                         }}
                                                                                                         required
@@ -1163,8 +1256,9 @@ export const TransactionManagement = (props) => {
                                                                                                         label=""
                                                                                                         value={data.CountryID}
                                                                                                         onChange={(e) => {
-                                                                                                            let newArr = OrderListing.filter((y) => y.TrackingStatusID == value + 1)
-                                                                                                            newArr[index * page * rowsPerPage].CountryID = e.target.value
+                                                                                                            let newArr = OrderListing
+                                                                                                            let selectedIndex = getIndex(newArr, data)
+                                                                                                            newArr[selectedIndex].CountryID = e.target.value
                                                                                                             setOrderListing([...newArr]);
                                                                                                         }}
                                                                                                         className="select"

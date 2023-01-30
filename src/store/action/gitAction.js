@@ -209,6 +209,22 @@ export class GitAction {
     };
   }
 
+  static OrderTrackingStatusUpdate = "UPDATE-TRACKING-STATUS";
+  static OrderTrackingStatusUpdated = "UPDATED-TRACKING-STATUS";
+  static CallUpdateOrderTrackingStatus(prodData) {
+    return {
+      type: GitAction.OrderTrackingStatusUpdate,
+      payload: prodData,
+    };
+  }
+
+  static resetTrackingStatus = "RESET-TRACKING-STATUS";
+  static CallResetUpdateTrackingStatus() {
+    return {
+      type: GitAction.resetTrackingStatus,
+    };
+  }
+
   static updateTrackingNumber = "UPDATE-TRACKING-NUMBER";
   static updatedTrackingNumber = "UPDATED-TRACKING-NUMBER";
   static CallUpdateOrderTracking(prodData) {

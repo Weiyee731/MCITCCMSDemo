@@ -662,7 +662,7 @@ class ViewProductGeneralInfo extends Component {
                         <img
                           width="200"
                           height="150"
-                          src={this.props.productInfo[0].ProductImages !== null ? JSON.parse(this.props.productInfo[0].ProductImages)[0].ProductMediaUrl : Logo}
+                          src={this.props.productInfo[0].ProductImages !== null && this.props.productInfo[0].ProductImages !== "[]" ? JSON.parse(this.props.productInfo[0].ProductImages)[0].ProductMediaUrl : Logo}
                           onError={(e) => { e.target.onerror = null; e.target.src = Logo }}
                           alt=""
                         />

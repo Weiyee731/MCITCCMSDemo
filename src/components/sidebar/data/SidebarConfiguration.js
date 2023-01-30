@@ -61,21 +61,21 @@ const sidebar_items = [
     },
 
     //Close for Live Purpose
-    // {
-    //     to: "/viewTransactions",
-    //     title: "Transaction",
-    //     icon: "money",
-    // },
-    // {
-    //     to: "/OrderManagement",
-    //     title: "Order Management",
-    //     icon: "money",
-    // },
-    // {
-    //     to: "/TransactionManagement",
-    //     title: "Transaction Management",
-    //     icon: "money",
-    // },
+    {
+        to: "/viewTransactions",
+        title: "Transaction",
+        icon: "money",
+    },
+    {
+        to: "/OrderManagement",
+        title: "Order Management",
+        icon: "money",
+    },
+    {
+        to: "/TransactionManagement",
+        title: "Transaction Management",
+        icon: "money",
+    },
 
 
     // {
@@ -109,33 +109,33 @@ const sidebar_items = [
     },
 
     //Close for Live Purpose
-    // {
-    //     to: "/stockList",
-    //     title: "Stock Management",
-    //     icon: "inventory",
-    // },
-    // {
-    //     to: "/PromotionListing",
-    //     title: "Promotion",
-    //     icon: "inventory",
-    // },
-    // {
-    //     to: "",
-    //     title: "Setting",
-    //     icon: <Settings />,
-    //     submenus: [
-    //         {
-    //             to: "/shoplotList",
-    //             title: "Shoplot",
-    //             icon: <Shop2Rounded />,
-    //         },
-    //         {
-    //             to: "/category",
-    //             title: "Product Category",
-    //             icon: <Shop2Rounded />,
-    //         },
-    //     ]
-    // },
+    {
+        to: "/stockList",
+        title: "Stock Management",
+        icon: "inventory",
+    },
+    {
+        to: "/PromotionListing",
+        title: "Promotion",
+        icon: "inventory",
+    },
+    {
+        to: "",
+        title: "Setting",
+        icon: <Settings />,
+        submenus: [
+            {
+                to: "/shoplotList",
+                title: "Shoplot",
+                icon: <Shop2Rounded />,
+            },
+            {
+                to: "/category",
+                title: "Product Category",
+                icon: <Shop2Rounded />,
+            },
+        ]
+    },
     // {
     //     to: "",
     //     title: "Report",
@@ -153,11 +153,11 @@ const sidebar_items = [
     //         },
     //     ]
     // },
-    {
-        to: "https://myemporia.my",
-        title: "Back to Market Place",
-        icon: <StorefrontIcon />,
-    },
+    // {
+    //     to: "https://myemporia.my",
+    //     title: "Back to Market Place",
+    //     icon: <StorefrontIcon />,
+    // },
     // console.log("row", row)
 
     // {
