@@ -324,6 +324,7 @@ class EditShopProfile extends Component {
             SHOPSTATE: this.state.SHOPSTATE === "" || this.state.SHOPSTATE === undefined ? data[0].ShopState : this.state.SHOPSTATE,
             SHOPCOUNTRYID: this.state.SHOPCOUNTRYID === "" || this.state.SHOPCOUNTRYID === undefined ? data[0].ShopCountryID : this.state.SHOPCOUNTRYID
         });
+        toast.success("Shop profile is updated");
     }
 
     uploadHandler(e) {
@@ -398,7 +399,7 @@ class EditShopProfile extends Component {
                                     onClick={() => this.updateShop()}
                                 >
                                     <DoneIcon className="saveicon" />
-                                    Save
+                                    Submit Edit
                                 </button>
                             </div>
                         </div>
