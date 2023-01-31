@@ -17,6 +17,7 @@ import { Button } from "reactstrap";
 import moment from "moment/moment";
 import Logo from "../../assets/logos/logo.png";
 import AlertDialog from "../../components/ModalComponent/ModalComponent";
+import SearchBar from "../../components/SearchBar/SearchBar"
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -67,21 +68,8 @@ export const TransactionManagement = (props) => {
     const [isViewTracking, setViewTracking] = useState(false)
     const [isStatusViewClick, setViewClick] = useState(false)
 
-
-    // const [logisticID, setLogisticID] = React.useState(3);
-    // const [trackingNumber, setTrackingNumber] = React.useState("");
-    // const [deliveryMan, setDeliveryMan] = useState([
-    //     { id: 1, driverName: "Ali" },
-    //     { id: 2, driverName: "Vincent" },
-    //     { id: 3, driverName: "Peter" },
-    //     { id: 4, driverName: "Aladin" }
-    // ])
-    const [OrderDeliverySetting, setOrderDeliverySetting] = useState({
-        deliveryMan: "",
-        isDeliverymanError: false,
-        deliveryDateTime: "",
-        isDeliveryDateTimeError: false,
-    })
+    const [searchkeyword, setSearchKeyword] = useState("")
+    const [filteredListing, setFilteredListing] = useState([])
     const [senderInformation, setSenderInformation] = React.useState({
         sendername: "MYEMPORIA SDN BHD",
         sendercompany: "MYEMPORIA SDN BHD",
@@ -1087,7 +1075,7 @@ export const TransactionManagement = (props) => {
                                                                                             let selectedIndex = getIndex(newArr, data)
                                                                                             newArr[selectedIndex].isEdit = newArr[selectedIndex].isEdit === undefined ? true : !newArr[selectedIndex].isEdit
                                                                                             setOrderListing([...newArr])
-                                                                                        }}>{OrderListing[getIndex(OrderListing, data)].isEdit === false ? "EDIT" : "CANCEL"}</Button>
+                                                                                        }}>{OrderListing[getIndex(OrderListing, data)].isEdit === true ? "CANCEL" : "EDIT"}</Button>
                                                                                     </div>
                                                                                 }
                                                                             </div>
@@ -1341,8 +1329,52 @@ export const TransactionManagement = (props) => {
         )
     }
 
+    const searchSpace = (value) => {
+
+        // const [filteredListing, setFilteredListing] = useState([])
+        setFilteredListing([])
+
+        let DataSet = OrderListing
+        let filterListing = []
+
+        isArrayNotEmpty(DataSet) && DataSet.filter((searchedItem) =>
+            searchedItem.OrderName !== null && searchedItem.OrderName.toLowerCase().includes(
+                value.toLowerCase()
+            )
+        ).map((filteredItem) => {
+            filterListing.push(filteredItem)
+        })
+
+        isArrayNotEmpty(DataSet) && DataSet.map((x) => {
+            isArrayNotEmpty(x.orderDetails) && x.orderDetails.filter((y) => y.TrackingNumber !== null && y.TrackingNumber.toLowerCase().includes(value.toLowerCase())).map((z) => {
+                filterListing.push(x)
+            })
+        })
+        let removeDuplicate = filterListing.length > 0 ? filterListing.filter((ele, ind) => ind === filterListing.findIndex(elem => elem.OrderID === ele.OrderID)) : []
+        setFilteredListing(removeDuplicate)
+    }
+
     return (
         <div style={{ width: "100%" }}>
+            <div className="col-md-12 col-12 mb-3 d-flex" >
+                <SearchBar
+                    id=""
+                    placeholder="Enter Order ID or parcel tracking number to search"
+                    buttonOnClick={() => searchSpace(searchkeyword)}
+                    onChange={(e) => {
+                        if (e.target.value === "") {
+                            setSearchKeyword(e.target.value)
+                            setFilteredListing([])
+                        }
+                        else
+                            setSearchKeyword(e.target.value)
+                    }}
+                    className="searchbar-input mb-auto"
+                    // disableButton={this.state.isDataFetching}
+                    tooltipText="Search with current data"
+                    value={searchkeyword}
+                />
+            </div>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                     {
@@ -1350,8 +1382,9 @@ export const TransactionManagement = (props) => {
 
                             const orderLength = () => {
                                 let listing = ""
-                                if (isArrayNotEmpty(OrderListing)) {
-                                    let listingLength = OrderListing.filter((y) => y.TrackingStatusID == x.TrackingStatusID).length
+                                let DataSet = isArrayNotEmpty(filteredListing) ? filteredListing : OrderListing
+                                if (isArrayNotEmpty(DataSet)) {
+                                    let listingLength = DataSet.filter((y) => y.TrackingStatusID == x.TrackingStatusID).length
                                     listing = " ( " + listingLength + " )"
                                 }
                                 return listing
@@ -1363,7 +1396,13 @@ export const TransactionManagement = (props) => {
             </Box>
             {
                 isArrayNotEmpty(transactionStatus) && transactionStatus.map((x, statusIndex) => {
-                    return (<TabPanel value={value} index={statusIndex}> {OrderLayout(isArrayNotEmpty(OrderListing) ? OrderListing.filter((y) => y.TrackingStatusID === x.TrackingStatusID) : [])} </TabPanel>)
+                    return (<TabPanel value={value} index={statusIndex}> {
+                        OrderLayout(
+                            isArrayNotEmpty(filteredListing) ?
+                                filteredListing.filter((y) => y.TrackingStatusID === x.TrackingStatusID)
+                                :
+                                isArrayNotEmpty(OrderListing) ? OrderListing.filter((y) => y.TrackingStatusID === x.TrackingStatusID) : [])
+                    } </TabPanel>)
                 })
             }
         </div>

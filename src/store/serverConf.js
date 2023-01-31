@@ -12,11 +12,11 @@ export const ServerConfiguration = {
 
     ServerUrl: "https://" + projectURL + "/eCommerceCMS_DEV/api/",
     LoginUrl: "https://" + loginProjectURL + "/eCommerceCMS_DEV/api/",
-    // DevServerUrl: "http://localhost/EmporiaTest/eCommerceCMSApi/api/",
+    DevServerUrl: "http://localhost/EmporiaTest/eCommerceCMSApi/api/",
     // ServerUrl: "https://" + projectURL + URLtype + "api/",
     // LoginUrl: "https://" + loginProjectURL + URLtype + "api/",
     // DevServerUrl: "https://" + projectURL + URLtype + "api/",
-    DevServerUrl: "https://" + projectURL + URLtype + "api/",
+    // DevServerUrl: "https://" + projectURL + URLtype + "api/",
     LiveServerLoginUrl: "https://cms.myemporia.my" + URLtype + "api/",
     LiveServerUrl: "http://localhost/TourismManagementAPI/TourismApi/api/TourismApi/",
     mediaUrl: "http://localhost/TourismManagementAPI/TourismApi/api/TourismApi/",
