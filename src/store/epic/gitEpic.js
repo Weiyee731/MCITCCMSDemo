@@ -416,12 +416,12 @@ export class GitEpic {
       }
     }));
 
-        Order_UpdateTrackingStatus = action$ =>
+  Order_UpdateTrackingStatus = action$ =>
     action$.pipe(filter(action => action.type === GitAction.OrderTrackingStatusUpdate), map(action => {
       return dispatch => {
         console.log(url + project + "/" +
-        "Order_UpdateTrackingStatus?OrderID=" + action.payload.OrderID +
-        "&TrackingStatusID=" + action.payload.TrackingStatusID)
+          "Order_UpdateTrackingStatus?OrderID=" + action.payload.OrderID +
+          "&TrackingStatusID=" + action.payload.TrackingStatusID)
         try {
           return fetch(url + project + "/" +
             "Order_UpdateTrackingStatus?OrderID=" + action.payload.OrderID +
@@ -502,11 +502,6 @@ export class GitEpic {
 
   Order_UpdateTrackingNumber = action$ =>
     action$.pipe(filter(action => action.type === GitAction.updateTrackingNumber), map(action => {
-      console.log(url + project + "/" +
-        "Order_UpdateTrackingNumber?ORDERTRACKINGNUMBER=" + action.payload.ORDERTRACKINGNUMBER +
-        "&LOGISTICID=" + action.payload.LOGISTICID +
-        "&PDFLABEL=" + action.payload.PDFLABEL +
-        "&ORDERPRODUCTDETAILSID=" + action.payload.ORDERPRODUCTDETAILSID)
       return dispatch => {
         try {
           return fetch(url + project + "/" +

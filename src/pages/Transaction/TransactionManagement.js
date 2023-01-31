@@ -11,7 +11,6 @@ import {
     InputLabel, Checkbox, TableContainer, OutlinedInput, FormControl, TableCell, TableBody, Table, IconButton, Collapse,
     TablePagination, Tabs, Tab,
 } from '@mui/material';
-import CancelIcon from '@mui/icons-material/Cancel';
 import LoadingPanel from "../../tools/LoadingPanel";
 import { Button } from "reactstrap";
 import moment from "moment/moment";
@@ -159,9 +158,8 @@ export const TransactionManagement = (props) => {
                     () => window.location.reload(false),
                     2000
                 );
-            } else {
+            } else
                 toast.error("Fail to Update Tracking Status")
-            }
         }
     }, [trackingStatusAction])
 
@@ -181,8 +179,7 @@ export const TransactionManagement = (props) => {
         }
     }, [tracking])
 
-
-
+    // set base64 to PDF file 
     const previewCosignment = (Base64Label) => {
         let byteCharacters = atob(Base64Label);
         let byteNumbers = new Array(byteCharacters.length);
@@ -194,6 +191,7 @@ export const TransactionManagement = (props) => {
         let fileURL = URL.createObjectURL(file);
         window.open(fileURL);
     }
+
     const headerLayout = () => {
         return (
             <TableHead style={{ backgroundColor: "#f8f9fa" }}>
@@ -220,7 +218,6 @@ export const TransactionManagement = (props) => {
     const clickCollapseOpen = (mainIndex) => {
         let listingData = [...OrderListing]
         listingData[mainIndex].isOpen = !listingData[mainIndex].isOpen
-
         setOrderListing(listingData)
     }
 
@@ -256,20 +253,6 @@ export const TransactionManagement = (props) => {
                 let checkBoxStatus = false
                 if (data.isCheckBoxSelected === false)
                     checkBoxStatus = true
-
-                // data.orderDetails !== undefined && isArrayNotEmpty(data.orderDetails) && data.orderDetails.map((x, detailIndex) => {
-                //     data.orderDetails[detailIndex].isCheckBoxSelected = checkBoxStatus
-                //     if (checkBoxStatus === true) {
-                //         data.orderDetails[detailIndex].deliveryQuantity = x.pendingDeliveryQty
-                //         data.orderDetails[detailIndex].isDeliveryQuantityError = false
-                //     }
-                //     else {
-                //         data.orderDetails[detailIndex].deliveryQuantity = 0
-                //         data.orderDetails[detailIndex].isDeliveryQuantityError = false
-                //     }
-
-                // })
-
                 data.isCheckBoxSelected = checkBoxStatus
                 setOrderListing(listingData)
             }
@@ -279,13 +262,11 @@ export const TransactionManagement = (props) => {
                 let data = listingData[selectedIndex].orderDetails[subindex]
                 let orderDetailsLength = listingData[selectedIndex].orderDetails.length
                 let selectedData = []
-                if (data.isCheckBoxSelected === false) {
+                if (data.isCheckBoxSelected === false)
                     data.isCheckBoxSelected = true
-                }
-                else {
-                    data.isCheckBoxSelected = false
-                }
 
+                else
+                    data.isCheckBoxSelected = false
 
                 selectedData = mainData.orderDetails !== undefined && isArrayNotEmpty(mainData.orderDetails) && mainData.orderDetails.filter((x) => x.isCheckBoxSelected == true)
 
@@ -301,21 +282,6 @@ export const TransactionManagement = (props) => {
 
         setSelectedList(isToSet)
     }
-
-    // const checkStatus = (status) => {
-    //     let background = "#7393B3"  //Payment Confirm
-
-    //     switch (status) {
-    //         case 2: background = "#F28C28"; break;  //In Purchasing"
-    //         case 3: background = "#F88379"; break; //In Shipping
-    //         case 4: background = "#CCCCFF"; break; //To Receive
-    //         case 5: background = "green"; break; //Completed
-    //         case 6: background = "grey"; break; //Cancelled
-    //         case 7: background = "#b3531a"; break; //Return Refund
-    //         case 8: background = "#880808"; break; //Delivered But Incomplete Payment
-    //     }
-    //     return background
-    // }
 
     const checkLogistic = (ID) => {
         let data = ""
@@ -335,53 +301,6 @@ export const TransactionManagement = (props) => {
         })
         return selectedIndex
     }
-
-    // const submitDelivery = () => {
-    //     let listing = checkSelectedListing(OrderListing)
-    //     let error = false
-    //     if (OrderDeliverySetting.deliveryMan == "" || OrderDeliverySetting.isDeliverymanError == true) {
-    //         error = true
-    //         setOrderDeliverySetting({
-    //             ...OrderDeliverySetting,
-    //             isDeliverymanError: true,
-    //         })
-    //     }
-
-    //     if (OrderDeliverySetting.deliveryDateTime == "" || OrderDeliverySetting.isDeliveryDateTimeError == true) {
-    //         error = true
-    //         setOrderDeliverySetting({
-    //             ...OrderDeliverySetting,
-    //             isDeliveryDateTimeError: true,
-    //         })
-    //     } else { }
-
-    //     if (isArrayNotEmpty(listing) && listing.filter((x) => x.deliveryQuantity == 0).length > 0) {
-    //         error = true
-    //     }
-
-    //     if (error === false) {
-    //         let deliveryQuantity = []
-    //         let OrderProductDetailID = []
-    //         let OrderID = []
-
-    //         listing.map((x) => {
-    //             deliveryQuantity.push(x.deliveryQuantity)
-    //             OrderProductDetailID.push(x.OrderProductDetailID)
-    //             OrderID.push(x.OrderID)
-    //         })
-    //         let propData = {
-    //             deliveryMan: OrderDeliverySetting.deliveryMan,
-    //             deliveryDateTime: moment(OrderDeliverySetting.deliveryDateTime).format("YYYY-MM-DD HH:mm:ss"),
-    //             deliveryQuantity: deliveryQuantity,
-    //             OrderProductDetailID: OrderProductDetailID,
-    //             OrderID: OrderID,
-    //             ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
-    //             UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
-    //         }
-    //     } else {
-    //         toast.warning("Please fill in all required data")
-    //     }
-    // }
 
     const CollapseLayout = (data, index) => {
         return (
@@ -422,7 +341,6 @@ export const TransactionManagement = (props) => {
                                     TrackingStatusID: 6
                                 }))
                             }}>
-                                {/* <CancelIcon />  */}
                                 Cancel
                             </Button>
                         </IconButton>
@@ -432,29 +350,7 @@ export const TransactionManagement = (props) => {
         )
     }
 
-    const orderDeliveryDetail = () => {
-        // const orderDelivery = (type) => {
-        //     let data = ""
-        //     let listing = checkSelectedListing(OrderListing)
-        //     switch (type) {
-        //         case "order":
-        //             let removeDuplicate = isArrayNotEmpty(listing) ? listing.filter((ele, ind) => ind === listing.findIndex(elem => parseInt(elem.OrderID) === parseInt(ele.OrderID))) : []
-        //             data = removeDuplicate.length
-        //             break;
-
-        //         case "quantity":
-        //             data = listing.reduce((subtotal, item) => subtotal + parseInt(item.deliveryQuantity), 0)
-        //             break;
-
-        //         case "price":
-        //             data = listing.reduce((subtotal, item) => subtotal + (parseInt(item.deliveryQuantity) * item.ProductVariationPrice), 0)
-        //             break;
-
-        //         default:
-        //             break;
-        //     }
-        //     return data
-        // }
+    const senderInformationLayout = () => {
         return (
             <div className="row" style={{ padding: "10px" }}>
                 <div className="col">
@@ -1074,6 +970,7 @@ export const TransactionManagement = (props) => {
         return (
             <>
                 <TableContainer component={Paper} style={{ overflow: "hidden" }}>
+                    {isOrderSelected && senderInformationLayout()}
                     <Table aria-label="collapsible table" size="small">
                         {isShipmentSubmit === true && <LoadingPanel />}
                         {headerLayout()}
@@ -1399,7 +1296,6 @@ export const TransactionManagement = (props) => {
                             setSearchKeyword(e.target.value)
                     }}
                     className="searchbar-input mb-auto"
-                    // disableButton={this.state.isDataFetching}
                     tooltipText="Search with current data"
                     value={searchkeyword}
                 />
