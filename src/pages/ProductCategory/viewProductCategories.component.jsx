@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GitAction } from "../../store/action/gitAction";
 import "../../app/App.scss";
@@ -13,6 +13,9 @@ import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import LoadingPanel from "../../tools/LoadingPanel";
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
+import SearchBar from "../../components/SearchBar/SearchBar"
 
 export const ProductCategory = (props) => {
   const { categories, productCategories } = useSelector(state => ({
@@ -23,6 +26,7 @@ export const ProductCategory = (props) => {
   const dispatch = useDispatch()
   const [isHierachySet, setHierachy] = useState(false)
   const [categoryListingDetails, setListingDetails] = useState([])
+  const [searchKeywords, setsearchKeywords] = useState("")
 
   useEffect(() => {
     dispatch(GitAction.CallAllProductCategoryListing())
@@ -129,7 +133,6 @@ export const ProductCategory = (props) => {
   }
 
   const submitData = (type, HierarchyID, parentCategoryID, categoryID, Category) => {
-
     if (categoryID === "") {
       let propsData = {
         ProductCategoryImage: "NULL",
@@ -140,6 +143,7 @@ export const ProductCategory = (props) => {
         UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
       }
       dispatch(GitAction.CallAddProductCategory(propsData))
+      toast.success("Successfully added product category")
     } else {
 
       if (type === "delete") {
@@ -148,6 +152,7 @@ export const ProductCategory = (props) => {
           UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
         }
         dispatch(GitAction.CallDeleteProductCategory(propsData))
+        toast.success("Successfully deleted product category")
       }
       else {
         let propsData = {
@@ -156,6 +161,7 @@ export const ProductCategory = (props) => {
           UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
         }
         dispatch(GitAction.CallUpdateProductCategory(propsData))
+        toast.success("Successfully updated product category")
       }
     }
   }
@@ -167,7 +173,12 @@ export const ProductCategory = (props) => {
       let listing = listingData[mainIndex]
 
       if (type === "cancel") {
-        listingData = listingData.filter((x) => x.ProductCategoryID !== "")
+        if (listingData[mainIndex].ProductCategoryID === "") {
+          listingData.splice(mainIndex, 1)
+        } else {
+          listingData[mainIndex] = productCategories[mainIndex]
+        }
+        // listingData = listingData.filter((x) => x.ProductCategoryID !== "")
         listing.isEdit = !listing.isEdit
       }
 
@@ -193,6 +204,11 @@ export const ProductCategory = (props) => {
       let listing = listingData[mainIndex].SubDetails[subindex]
 
       if (type === "cancel") {
+        // if(listingData[mainIndex].SubDetails[subindex].ProductCategoryID === "") {
+        //   listingData[mainIndex].SubDetails.splice(subindex, 1)
+        // } else {
+        //   listingData[mainIndex].SubDetails = productCategories[mainIndex].SubDetails
+        // }
         let filterHierachy = listingData[mainIndex].SubDetails.filter((x) => x.ProductCategoryID !== "")
         listingData[mainIndex].SubDetails = filterHierachy
         listing.isEdit = !listing.isEdit
@@ -303,8 +319,7 @@ export const ProductCategory = (props) => {
     setListingDetails(listingData)
   }
 
-
-  const handleNewCategory = (hierachy, index, subIndex) => {
+  const handleNewCategory = (hierachy, index, subIndex,) => {
     let listingData = [...categoryListingDetails]
 
     let mainListing = {
@@ -336,6 +351,7 @@ export const ProductCategory = (props) => {
       default:
         break;
     }
+    console.log(listingData)
     setListingDetails(listingData)
   }
 
@@ -378,12 +394,12 @@ export const ProductCategory = (props) => {
                   fullWidth
                   hiddenLabel
                   id="filled-hidden-label-small"
-                  defaultValue={data.ProductCategory}
                   variant="filled"
                   placeholder="Product Category"
                   onChange={(e) => {
                     handleChanges("Category", e.target.value, data, index, subindex, subdetailIndex)
                   }}
+                  value={data.ProductCategory}
                   size="small"
                 />
                 {data.ProductCategory === "" && <Typography style={{ color: "red" }}>Product Category is required</Typography>}
@@ -391,24 +407,25 @@ export const ProductCategory = (props) => {
               :
               <Typography>{data.ProductCategory}</Typography>
           }
-
-
         </TableCell>
         <TableCell align="left">
           {
             checkEdit(data, index, subindex, subdetailIndex) ?
-              <TextField
-                fullWidth
-                hiddenLabel
-                id="filled-hidden-label-small"
-                defaultValue={data.Tag}
-                variant="filled"
-                placeholder="Tag"
-                onChange={(e) => {
-                  handleChanges("Tag", e.target.value, data, index, subindex, subdetailIndex)
-                }}
-                size="small"
-              />
+              <>
+                <TextField
+                  fullWidth
+                  hiddenLabel
+                  id="filled-hidden-label-small"
+                  value={data.Tag}
+                  variant="filled"
+                  placeholder="Tag"
+                  onChange={(e) => {
+                    handleChanges("Tag", e.target.value, data, index, subindex, subdetailIndex)
+                  }}
+                  size="small"
+                />
+                {data.Tag === "" && <Typography style={{ color: "grey", opacity: 0.6 }}>Optional</Typography>}
+              </>
               :
               <Typography>{data.Tag}</Typography>
           }
@@ -417,26 +434,79 @@ export const ProductCategory = (props) => {
     )
   }
 
+  const baseColor = "#c4c4c4"
+  const highlightColor = "#ffffff"
+
+  // const searchSpace = (value) => {
+  //   let transactionList = []
+  //   if (JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1)
+  //     this.props.alltransactions.filter((x) => x.TrackingStatus === this.state.currentlyChosen).map((y) => {
+  //       transactionList.push(y)
+  //     })
+
+  //   if (JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16) {
+  //     this.props.alltransactions !== null && this.props.alltransactions.map((list) => {
+  //       list.OrderProductDetail !== null && JSON.parse(list.OrderProductDetail).filter((y) => parseInt(y.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) && list.TrackingStatus === this.state.currentlyChosen).map((data) => {
+  //         transactionList.push(list)
+  //       })
+  //     })
+  //   }
+
+  //   // var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+
+  //   this.setState({ searchKeywords: value })
+  //   this.state.filteredProduct.splice(0, this.state.filteredProduct.length)
+
+  //   transactionList.length > 0 && transactionList.filter((searchedItem) =>
+  //     searchedItem.OrderName !== null && searchedItem.OrderName.toLowerCase().includes(
+  //       value.toLowerCase()
+  //     )
+  //   ).map((filteredItem) => {
+  //     this.state.filteredProduct.push(filteredItem);
+  //   })
+
+  //   transactionList.length > 0 && transactionList.map((list) => {
+  //     list.OrderProductDetail !== null && JSON.parse(list.OrderProductDetail).filter(x => x.TrackingNumber !== null
+  //       && x.TrackingNumber.toLowerCase().includes(value.toLowerCase())).map(filteredItem => {
+  //         this.state.filteredProduct.push(list);
+  //       });
+  //   })
+
+  //   let removeDeplicate = this.state.filteredProduct.filter((ele, ind) => ind === this.state.filteredProduct.findIndex(elem => elem.OrderID === ele.OrderID))
+  //   this.setState({ isFiltered: true, filteredProduct: removeDeplicate, isSearch: true })
+  // }
+
   return (
     <div style={{ width: "100%" }}>
       <h3>Product Category List</h3>
       <TableContainer component={Paper} style={{ overflow: "hidden" }}>
         <div className="row" style={{ padding: "10px" }}>
-          <div className="col">
+          <div className="col-4">
             <Typography variant="h6" gutterBottom component="div">
               Product Category
             </Typography>
           </div>
-          <div className="col" style={{ textAlign: "right" }}>
+          <div className="col-7" style={{ textAlign: "right" }}>
+            {/* <SearchBar
+              id=""
+              placeholder="Search By Category Name"
+              onChange={(e) => this.searchSpace(e.target.value)}
+              className="searchbar-input mb-auto"
+              tooltipText="Search with current data"
+              value={setsearchKeywords()}
+            /> */}
+          </div>
+          <div className="col-1" style={{ textAlign: "center" }}>
             <IconButton>
-              <AddIcon onClick={() => handleNewCategory(1, 0, 0)} />
+              <AddIcon onClick={() => handleNewCategory(1, 0, 0,)} />
             </IconButton>
           </div>
         </div>
-        <Table aria-label="collapsible table">
-          {headerLayout()}
-          {
-            isHierachySet === true ?
+        {
+          isHierachySet === true ?
+            <Table aria-label="collapsible table">
+              {headerLayout()}
+
               <TableBody>
                 {categoryListingDetails.length > 0 && categoryListingDetails.map((data, index) => {
                   return (
@@ -459,7 +529,7 @@ export const ProductCategory = (props) => {
                                 </div>
                               </div>
                               {
-                                data.SubDetails.length > 0 ?
+                                typeof data.SubDetails !== 'undefined' && data.SubDetails.length > 0 ?
                                   <Table size="small" aria-label="purchases">
                                     {headerLayout()}
                                     <TableBody>
@@ -546,10 +616,13 @@ export const ProductCategory = (props) => {
                 }
                 )}
               </TableBody>
-              :
-              <LoadingPanel />
-          }
-        </Table>
+            </Table>
+            :
+            // <LoadingPanel />
+            <div>
+              <Skeleton height={40} baseColor={baseColor} highlightColor={highlightColor} count={categoryListingDetails.length} style={{ width: '100%' }} />
+            </div>
+        }
       </TableContainer>
     </div>
   );
