@@ -47,11 +47,12 @@ function a11yProps(index) {
 }
 
 export const TransactionManagement = (props) => {
-    const { transactions, countries, transactionStatus, logistic, orderShipment, orderShipmentStatus, trackingStatusAction } = useSelector(state => ({
+    const { transactions, countries, transactionStatus, logistic, tracking, orderShipment, orderShipmentStatus, trackingStatusAction } = useSelector(state => ({
         transactions: state.counterReducer.transactions,
         transactionStatus: state.counterReducer.transactionStatus,
         countries: state.counterReducer.countries,
         logistic: state.counterReducer.logistic,
+        tracking: state.counterReducer.tracking,
         trackingStatusAction: state.counterReducer.trackingStatusAction,
         orderShipment: state.counterReducer["orderShipment"],
         orderShipmentStatus: state.counterReducer["orderShipmentStatus"],
@@ -163,6 +164,22 @@ export const TransactionManagement = (props) => {
             }
         }
     }, [trackingStatusAction])
+
+    useEffect(() => {
+        if (isArrayNotEmpty(tracking)) {
+            dispatch(GitAction.CallResetOrderTracking())
+            if (tracking[0].PDFLabel !== undefined) {
+                dispatch(GitAction.CallGetTransaction({
+                    TrackingStatus: "Payment Confirm",
+                    ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
+                }))
+                toast.success("Successfully Update Tracking Number")
+                setOrder(false)
+            } else {
+                toast.error("Fail to Update Tracking Status")
+            }
+        }
+    }, [tracking])
 
 
 
@@ -620,38 +637,54 @@ export const TransactionManagement = (props) => {
     }
 
     const handleSubmitTracking = (selectedIndex, data) => {
+        let error = false
+        let selectedData = []
+
+        if (isArrayNotEmpty(data.orderDetails)) {
+            data.orderDetails.filter((x) => x.isCheckBoxSelected === true).map((y) => {
+                selectedData.push(y.OrderProductDetailID)
+            })
+        }
+
+        if (data.PickUpInd === 1) {
+            error = true
+            toast.error("Please make sure is Set to Delivery mode")
+        }
+
+        if (data.UserFullName === "" || data.UserContactNo === "" || data.UserAddressLine1 === "" || data.UserAddressLine2 === "" || data.UserCity === "" || data.UserState === "" || data.UserPoscode === "" || data.CountryID === "" ||
+            data.UserFullName === undefined || data.UserContactNo === undefined || data.UserAddressLine1 === undefined || data.UserAddressLine2 === undefined || data.UserCity === undefined || data.UserState === undefined || data.UserPoscode === undefined || data.CountryID === undefined) {
+            error = true
+            toast.error("Please make sure all receiver information is set correctly")
+        }
+
+        if (senderInformation.sendername === "" || senderInformation.sendercompany === "" || senderInformation.sendercontact === "" || senderInformation.senderadd1 === "" ||
+            senderInformation.senderadd2 === "" || senderInformation.sendercity === "" || senderInformation.senderstate === "" || senderInformation.senderposcode === "") {
+            error = true
+            toast.error("Please make sure all sender information is set correctly")
+        }
+
+        let userObject = {
+            OrderID: data.OrderID,
+            FirstName: data.UserFullName !== "" ? data.UserFullName : "-",
+            LastName: "-",
+            PickUpInd: data.Method === "Delivery" ? 0 : 1,
+            UserContactNo: data.UserContactNo !== "" ? data.UserContactNo : "-",
+            UserEmailAddress: data.UserEmailAddress !== "" ? data.UserEmailAddress : "-",
+            UserAddressLine1: data.UserAddressLine1 !== "" ? data.UserAddressLine1 : "-",
+            UserAddressLine2: data.UserAddressLine2 !== "" ? data.UserAddressLine2 : "-",
+
+            UserPoscode: data.UserPoscode !== "" ? data.UserPoscode : "-",
+            UserState: data.UserState !== "" ? data.UserState : "-",
+
+            UserCity: data.UserCity !== "" ? data.UserCity : "-",
+            CountryID: data.CountryID,
+        }
 
         if (data.logisticID === 3) {
-            let error = false
-            let selectedData = []
-
-            if (isArrayNotEmpty(data.orderDetails)) {
-                data.orderDetails.filter((x) => x.isCheckBoxSelected === true).map((y) => {
-                    selectedData.push(y.OrderProductDetailID)
-                })
-            }
-
             if (data.parcelLength === "" || data.parcelHeight === "" || data.parcelQuantity === "" || data.parcelWeight === "" || data.parcelWidth === "" ||
                 data.parcelLength <= 0 || data.parcelHeight <= 0 || data.parcelQuantity <= 0 || data.parcelWeight <= 0 || data.parcelWidth <= 0) {
                 error = true
                 toast.error("Please fill in all required parcel information")
-            }
-
-            if (data.PickUpInd === 1) {
-                error = true
-                toast.error("Please make sure is Set to Delivery mode")
-            }
-
-            if (data.UserFullName === "" || data.UserContactNo === "" || data.UserAddressLine1 === "" || data.UserAddressLine2 === "" || data.UserCity === "" || data.UserState === "" || data.UserPoscode === "" || data.CountryID === "" ||
-                data.UserFullName === undefined || data.UserContactNo === undefined || data.UserAddressLine1 === undefined || data.UserAddressLine2 === undefined || data.UserCity === undefined || data.UserState === undefined || data.UserPoscode === undefined || data.CountryID === undefined) {
-                error = true
-                toast.error("Please make sure all receiver information is set correctly")
-            }
-
-            if (senderInformation.sendername === "" || senderInformation.sendercompany === "" || senderInformation.sendercontact === "" || senderInformation.senderadd1 === "" ||
-                senderInformation.senderadd2 === "" || senderInformation.sendercity === "" || senderInformation.senderstate === "" || senderInformation.senderposcode === "") {
-                error = true
-                toast.error("Please make sure all sender information is set correctly")
             }
 
             if (error === false) {
@@ -684,28 +717,25 @@ export const TransactionManagement = (props) => {
                     PROJECTID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
                 }
                 dispatch(GitAction.CallAddOrderShipment(object))
-
-
-                let userObject = {
-                    OrderID: data.OrderID,
-                    FirstName: data.UserFullName !== "" ? data.UserFullName : "-",
-                    LastName: "-",
-                    PickUpInd: data.Method === "Delivery" ? 0 : 1,
-                    UserContactNo: data.UserContactNo !== "" ? data.UserContactNo : "-",
-                    UserEmailAddress: data.UserEmailAddress !== "" ? data.UserEmailAddress : "-",
-                    UserAddressLine1: data.UserAddressLine1 !== "" ? data.UserAddressLine1 : "-",
-                    UserAddressLine2: data.UserAddressLine2 !== "" ? data.UserAddressLine2 : "-",
-
-                    UserPoscode: data.UserPoscode !== "" ? data.UserPoscode : "-",
-                    UserState: data.UserState !== "" ? data.UserState : "-",
-
-                    UserCity: data.UserCity !== "" ? data.UserCity : "-",
-                    CountryID: data.CountryID,
-                }
                 dispatch(GitAction.CallUpdateOrderUserDetails(userObject))
                 setShipmentSubmit(true)
                 toast.success("Creating shipment, Waiting for shipment processing...")
             }
+        } else {
+            if (data.trackingNumber !== null && data.trackingNumber !== undefined && data.trackingNumber !== "") {
+                if (error === false) {
+                    let object = {
+                        ORDERTRACKINGNUMBER: data.trackingNumber,
+                        LOGISTICID: data.logisticID,
+                        PDFLABEL: "-",
+                        ORDERPRODUCTDETAILSID: selectedData
+                    }
+                    dispatch(GitAction.CallUpdateOrderTracking(object))
+                    dispatch(GitAction.CallUpdateOrderUserDetails(userObject))
+                }
+            }
+            else
+                toast.error("Tracking Number is required for this logistic service")
         }
     }
     const OrderDetailLayout = (data, index) => {
@@ -918,7 +948,6 @@ export const TransactionManagement = (props) => {
                                                             id={"outlined-adornment-tracking-" + index}
                                                             label=""
                                                             value={data.trackingNumber}
-                                                            type="number"
                                                             onChange={(e) => {
                                                                 let newArr = OrderListing
                                                                 let selectedIndex = getIndex(newArr, data)
@@ -931,7 +960,7 @@ export const TransactionManagement = (props) => {
                                                     </FormControl>
                                                     {data.isTrackingNumberError && <FormHelperText style={{ color: "red" }}>Insert Tracking Number</FormHelperText>}
                                                 </div>
-                                                <div className="col" style={{ paddingTop: "20px" }}>
+                                                <div className="col" style={{ paddingTop: "20px", textAlign: "right" }} onClick={() => handleSubmitTracking(index, data)}>
                                                     <Button color="primary">Create Shipment</Button>
                                                 </div>
                                             </div>
