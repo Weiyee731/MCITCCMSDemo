@@ -27,6 +27,8 @@ export const ProductCategory = (props) => {
   const [isHierachySet, setHierachy] = useState(false)
   const [categoryListingDetails, setListingDetails] = useState([])
   const [searchKeywords, setsearchKeywords] = useState("")
+  const [filteredList, setfilteredList] = useState([])
+  const [isFiltered, setisFiltered] = useState(false)
 
   useEffect(() => {
     dispatch(GitAction.CallAllProductCategoryListing())
@@ -132,36 +134,61 @@ export const ProductCategory = (props) => {
     return isOpen
   }
 
-  const submitData = (type, HierarchyID, parentCategoryID, categoryID, Category) => {
-    if (categoryID === "") {
-      let propsData = {
-        ProductCategoryImage: "NULL",
-        ProductCategory: Category,
-        HierarchyID: HierarchyID,
-        ParentProductCategoryID: parentCategoryID,
-        ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
-        UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
-      }
-      dispatch(GitAction.CallAddProductCategory(propsData))
-      toast.success("Successfully added product category")
-    } else {
+  const submitData = (type, HierarchyID, parentCategoryID, categoryID, Category, mainIndex, subIndex, subdetailIndex) => {
+    if (productCategories.filter((x) => x.ProductCategory === Category)) {
+      switch (HierarchyID) {
+        case 1:
+          toast.error("The category is existed, please double check before submitting.")
+          categoryListingDetails.splice(mainIndex, 1)
+          setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
+          break;
 
-      if (type === "delete") {
-        let propsData = {
-          ProductCategoryID: categoryID,
-          UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
-        }
-        dispatch(GitAction.CallDeleteProductCategory(propsData))
-        toast.success("Successfully deleted product category")
+        case 2:
+          toast.error("The category is existed, please double check before submitting.")
+          categoryListingDetails[mainIndex].SubDetails.splice(subIndex, 1)
+          setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
+          break;
+
+        case 3:
+          toast.error("The category is existed, please double check before submitting.")
+          categoryListingDetails[mainIndex].SubDetails[subIndex].SubDetails.splice(subdetailIndex, 1)
+          setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
+          break;
+
+        default:
+          break;
       }
-      else {
+    }
+    else {
+      if (categoryID === "" && productCategories.filter((x) => x.ProductCategory !== Category)) {
         let propsData = {
-          ProductCategoryID: categoryID,
+          ProductCategoryImage: "NULL",
           ProductCategory: Category,
+          HierarchyID: HierarchyID,
+          ParentProductCategoryID: parentCategoryID,
+          ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
           UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
         }
-        dispatch(GitAction.CallUpdateProductCategory(propsData))
-        toast.success("Successfully updated product category")
+        dispatch(GitAction.CallAddProductCategory(propsData))
+        toast.success("Successfully added product category")
+      } else {
+        if (type === "delete") {
+          let propsData = {
+            ProductCategoryID: categoryID,
+            UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+          }
+          dispatch(GitAction.CallDeleteProductCategory(propsData))
+          toast.success("Successfully deleted product category")
+        }
+        else {
+          let propsData = {
+            ProductCategoryID: categoryID,
+            ProductCategory: Category,
+            UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+          }
+          dispatch(GitAction.CallUpdateProductCategory(propsData))
+          toast.success("Successfully updated product category")
+        }
       }
     }
   }
@@ -184,7 +211,7 @@ export const ProductCategory = (props) => {
 
       if (type === "done") {
         if (listing.ProductCategory !== "") {
-          submitData(type, listing.HierarchyID, 0, listing.ProductCategoryID, listing.ProductCategory)
+          submitData(type, listing.HierarchyID, 0, listing.ProductCategoryID, listing.ProductCategory, mainIndex, subindex, subdetailIndex)
           listing.isEdit = !listing.isEdit
         } else {
           toast.warning("Product Category is required")
@@ -192,7 +219,7 @@ export const ProductCategory = (props) => {
       }
 
       if (type === "delete") {
-        submitData(type, listing.HierarchyID, 0, listing.ProductCategoryID, listing.ProductCategory)
+        submitData(type, listing.HierarchyID, 0, listing.ProductCategoryID, listing.ProductCategory, mainIndex, subindex, subdetailIndex)
         listing.isEdit = !listing.isEdit
       }
 
@@ -204,19 +231,19 @@ export const ProductCategory = (props) => {
       let listing = listingData[mainIndex].SubDetails[subindex]
 
       if (type === "cancel") {
-        // if(listingData[mainIndex].SubDetails[subindex].ProductCategoryID === "") {
-        //   listingData[mainIndex].SubDetails.splice(subindex, 1)
-        // } else {
-        //   listingData[mainIndex].SubDetails = productCategories[mainIndex].SubDetails
-        // }
-        let filterHierachy = listingData[mainIndex].SubDetails.filter((x) => x.ProductCategoryID !== "")
-        listingData[mainIndex].SubDetails = filterHierachy
+        if (listingData[mainIndex].SubDetails[subindex].ProductCategoryID === "") {
+          listingData[mainIndex].SubDetails.splice(subindex, 1)
+        } else {
+          listingData[mainIndex].SubDetails[subindex] = JSON.parse(productCategories[mainIndex].HierarchyItem)[0]
+        }
+        // let filterHierachy = listingData[mainIndex].SubDetails.filter((x) => x.ProductCategoryID !== "")
+        // listingData[mainIndex].SubDetails = filterHierachy
         listing.isEdit = !listing.isEdit
       }
 
       if (type === "done") {
         if (listing.ProductCategory !== "") {
-          submitData(type, listing.HierarchyID, listingData[mainIndex].ProductCategoryID, listing.ProductCategoryID, listing.ProductCategory)
+          submitData(type, listing.HierarchyID, listingData[mainIndex].ProductCategoryID, listing.ProductCategoryID, listing.ProductCategory, mainIndex, subindex, subdetailIndex)
           listing.isEdit = !listing.isEdit
         } else {
           toast.warning("Product Category is required")
@@ -224,7 +251,7 @@ export const ProductCategory = (props) => {
       }
 
       if (type === "delete") {
-        submitData(type, listing.HierarchyID, listingData[mainIndex].ProductCategoryID, listing.ProductCategoryID, listing.ProductCategory)
+        submitData(type, listing.HierarchyID, listingData[mainIndex].ProductCategoryID, listing.ProductCategoryID, listing.ProductCategory, mainIndex, subindex, subdetailIndex)
         listing.isEdit = !listing.isEdit
       }
 
@@ -236,14 +263,22 @@ export const ProductCategory = (props) => {
       let listing = listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex]
 
       if (type === "cancel") {
-        let filterHierachy = listingData[mainIndex].SubDetails[subindex].SubDetails.filter((x) => x.ProductCategoryID !== "")
-        listingData[mainIndex].SubDetails[subindex].SubDetails = filterHierachy
+        if (listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex].ProductCategoryID === "") {
+          listingData[mainIndex].SubDetails[subindex].SubDetails.splice(subdetailIndex, 1)
+        } else {
+          const SubDetailsHierarchyItem = JSON.parse(productCategories[mainIndex].HierarchyItem)[0]
+          const subdetailshierarchyitem = JSON.parse(SubDetailsHierarchyItem.HierarchyItem)[0]
+
+          listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex] = subdetailshierarchyitem
+        }
+        // let filterHierachy = listingData[mainIndex].SubDetails[subindex].SubDetails.filter((x) => x.ProductCategoryID !== "")
+        // listingData[mainIndex].SubDetails[subindex].SubDetails = filterHierachy
         listing.isEdit = !listing.isEdit
       }
 
       if (type === "done") {
         if (listing.ProductCategory !== "") {
-          submitData(type, listing.HierarchyID, listingData[mainIndex].SubDetails[subindex].ProductCategoryID, listing.ProductCategoryID, listing.ProductCategory)
+          submitData(type, listing.HierarchyID, listingData[mainIndex].SubDetails[subindex].ProductCategoryID, listing.ProductCategoryID, listing.ProductCategory, mainIndex, subindex, subdetailIndex)
           listing.isEdit = !listing.isEdit
         } else {
           toast.warning("Product Category is required")
@@ -251,7 +286,7 @@ export const ProductCategory = (props) => {
       }
 
       if (type === "delete") {
-        submitData(type, listing.HierarchyID, listingData[mainIndex].SubDetails[subindex].ProductCategoryID, listing.ProductCategoryID, listing.ProductCategory)
+        submitData(type, listing.HierarchyID, listingData[mainIndex].SubDetails[subindex].ProductCategoryID, listing.ProductCategoryID, listing.ProductCategory, mainIndex, subindex, subdetailIndex)
         listing.isEdit = !listing.isEdit
       }
 
@@ -272,13 +307,14 @@ export const ProductCategory = (props) => {
       }
 
       if (data.HierarchyID === 2) {
-        if (listingData[mainIndex].SubDetails[subindex] !== undefined)
+        if (listingData[mainIndex].SubDetails[subindex] !== undefined && listingData[mainIndex].SubDetails[subindex].length !== 0)
           isEdit = listingData[mainIndex].SubDetails[subindex].isEdit
       }
 
       if (data.HierarchyID === 3) {
-
-        if (listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex] !== undefined)
+        if (listingData[mainIndex].SubDetails !== undefined && listingData[mainIndex].SubDetails.length !== 0 &&
+          listingData[mainIndex].SubDetails[subindex].SubDetails !== undefined && listingData[mainIndex].SubDetails[subindex].SubDetails.length !== 0 &&
+          listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex] !== undefined && listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex].length !== 0)
           isEdit = listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex].isEdit
       }
     }
@@ -351,7 +387,6 @@ export const ProductCategory = (props) => {
       default:
         break;
     }
-    console.log(listingData)
     setListingDetails(listingData)
   }
 
@@ -437,44 +472,19 @@ export const ProductCategory = (props) => {
   const baseColor = "#c4c4c4"
   const highlightColor = "#ffffff"
 
-  // const searchSpace = (value) => {
-  //   let transactionList = []
-  //   if (JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1)
-  //     this.props.alltransactions.filter((x) => x.TrackingStatus === this.state.currentlyChosen).map((y) => {
-  //       transactionList.push(y)
-  //     })
+  const searchSpace = (event) => {
+    setsearchKeywords(event.target.value)
 
-  //   if (JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16) {
-  //     this.props.alltransactions !== null && this.props.alltransactions.map((list) => {
-  //       list.OrderProductDetail !== null && JSON.parse(list.OrderProductDetail).filter((y) => parseInt(y.MerchantID) === parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID) && list.TrackingStatus === this.state.currentlyChosen).map((data) => {
-  //         transactionList.push(list)
-  //       })
-  //     })
-  //   }
-
-  //   // var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
-
-  //   this.setState({ searchKeywords: value })
-  //   this.state.filteredProduct.splice(0, this.state.filteredProduct.length)
-
-  //   transactionList.length > 0 && transactionList.filter((searchedItem) =>
-  //     searchedItem.OrderName !== null && searchedItem.OrderName.toLowerCase().includes(
-  //       value.toLowerCase()
-  //     )
-  //   ).map((filteredItem) => {
-  //     this.state.filteredProduct.push(filteredItem);
-  //   })
-
-  //   transactionList.length > 0 && transactionList.map((list) => {
-  //     list.OrderProductDetail !== null && JSON.parse(list.OrderProductDetail).filter(x => x.TrackingNumber !== null
-  //       && x.TrackingNumber.toLowerCase().includes(value.toLowerCase())).map(filteredItem => {
-  //         this.state.filteredProduct.push(list);
-  //       });
-  //   })
-
-  //   let removeDeplicate = this.state.filteredProduct.filter((ele, ind) => ind === this.state.filteredProduct.findIndex(elem => elem.OrderID === ele.OrderID))
-  //   this.setState({ isFiltered: true, filteredProduct: removeDeplicate, isSearch: true })
-  // }
+    if (event.target.value === "") {
+      setfilteredList(categoryListingDetails)
+    }
+    else {
+      let filteredList = []
+      filteredList = categoryListingDetails.filter((item) => item.ProductCategory.toLowerCase().includes(event.target.value.toLowerCase()))
+      setfilteredList(filteredList)
+      setisFiltered(true)
+    }
+  }
 
   return (
     <div style={{ width: "100%" }}>
@@ -486,18 +496,18 @@ export const ProductCategory = (props) => {
               Product Category
             </Typography>
           </div>
-          <div className="col-7" style={{ textAlign: "right" }}>
-            {/* <SearchBar
+          <div className="col-7" style={{ display: "flex", alignItems: "center" }}>
+            <SearchBar
               id=""
               placeholder="Search By Category Name"
-              onChange={(e) => this.searchSpace(e.target.value)}
+              onChange={(e) => searchSpace(e)}
               className="searchbar-input mb-auto"
               tooltipText="Search with current data"
-              value={setsearchKeywords()}
-            /> */}
+              value={searchKeywords}
+            />
           </div>
-          <div className="col-1" style={{ textAlign: "center" }}>
-            <IconButton>
+          <div className="col-1" style={{ display: "flex", justifyContent: "center" }}>
+            <IconButton >
               <AddIcon onClick={() => handleNewCategory(1, 0, 0,)} />
             </IconButton>
           </div>
@@ -508,7 +518,7 @@ export const ProductCategory = (props) => {
               {headerLayout()}
 
               <TableBody>
-                {categoryListingDetails.length > 0 && categoryListingDetails.map((data, index) => {
+                {!isFiltered ? categoryListingDetails.length > 0 && categoryListingDetails.map((data, index) => {
                   return (
                     <>
                       {CollapseLayout(data, index, 0, 0)}
@@ -534,7 +544,7 @@ export const ProductCategory = (props) => {
                                     {headerLayout()}
                                     <TableBody>
                                       {
-                                        data.SubDetails.length > 0 && data.SubDetails.map((details, detailIndex) => {
+                                        typeof data.SubDetails !== 'undefined' && data.SubDetails.length > 0 && data.SubDetails.map((details, detailIndex) => {
                                           return (
                                             <>
                                               {CollapseLayout(details, index, detailIndex, 0)}
@@ -557,7 +567,7 @@ export const ProductCategory = (props) => {
                                                           </div>
                                                         </div>
                                                         {
-                                                          details.SubDetails.length > 0 ?
+                                                          typeof details.SubDetails !== 'undefined' && details.SubDetails.length > 0 ?
                                                             <Table size="small" aria-label="purchases">
                                                               {headerLayout()}
 
@@ -614,7 +624,114 @@ export const ProductCategory = (props) => {
                     </>
                   )
                 }
-                )}
+                ) :
+                  filteredList.map((item, index) => {
+                    return (
+                      <>
+                        {CollapseLayout(item, index, 0, 0)}
+                        <TableRow>
+                          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                            <Collapse in={checkCollapseOpen(item, index, 0, 0)} timeout="auto" unmountOnExit>
+                              <Box sx={{ margin: 1 }}>
+                                <div className="row">
+                                  <div className="col">
+                                    <Typography variant="h6" gutterBottom component="div">
+                                      Sub Category
+                                    </Typography>
+                                  </div>
+                                  <div className="col" style={{ textAlign: "right" }}>
+                                    <IconButton>
+                                      <AddIcon onClick={() => handleNewCategory(2, index, 0)} />
+                                    </IconButton>
+                                  </div>
+                                </div>
+                                {
+                                  typeof item.SubDetails !== 'undefined' && item.SubDetails.length > 0 ?
+                                    <Table size="small" aria-label="purchases">
+                                      {headerLayout()}
+                                      <TableBody>
+                                        {
+                                          typeof item.SubDetails !== 'undefined' && item.SubDetails.length > 0 && item.SubDetails.map((details, detailIndex) => {
+                                            return (
+                                              <>
+                                                {CollapseLayout(details, index, detailIndex, 0)}
+                                                <TableRow>
+                                                  <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                                                    <Collapse in={checkCollapseOpen(details, index, detailIndex, 0)} timeout="auto" unmountOnExit>
+                                                      {
+
+                                                        <Box sx={{ margin: 1 }}>
+                                                          <div className="row" >
+                                                            <div className="col">
+                                                              <Typography variant="h6" gutterBottom component="div">
+                                                                Sub Category
+                                                              </Typography>
+                                                            </div>
+                                                            <div className="col" style={{ textAlign: "right" }}>
+                                                              <IconButton>
+                                                                <AddIcon onClick={() => handleNewCategory(3, index, detailIndex)} />
+                                                              </IconButton>
+                                                            </div>
+                                                          </div>
+                                                          {
+                                                            typeof details.SubDetails !== 'undefined' && details.SubDetails.length > 0 ?
+                                                              <Table size="small" aria-label="purchases">
+                                                                {headerLayout()}
+
+                                                                <TableBody>
+                                                                  {
+                                                                    details.SubDetails.length > 0 && details.SubDetails.map((subdetails, subdetailIndex) => {
+                                                                      return (
+                                                                        <>
+                                                                          {CollapseLayout(subdetails, index, detailIndex, subdetailIndex)}
+                                                                          <TableRow>
+                                                                            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                                                                              <Collapse in={checkCollapseOpen(subdetails, index, detailIndex, 0)} timeout="auto" unmountOnExit>
+                                                                                <Box sx={{ margin: 1 }}>
+                                                                                  <Typography variant="h6" gutterBottom component="div">
+                                                                                    Sub Category3
+                                                                                  </Typography>
+                                                                                  <Table size="small" aria-label="purchases">
+                                                                                    {headerLayout()}
+                                                                                    <TableBody>
+                                                                                      {CollapseLayout(subdetails, index, detailIndex, subdetailIndex)}
+                                                                                    </TableBody>
+                                                                                  </Table>
+                                                                                </Box>
+                                                                              </Collapse>
+                                                                            </TableCell>
+                                                                          </TableRow>
+                                                                        </>
+                                                                      )
+                                                                    })
+                                                                  }
+                                                                </TableBody>
+                                                              </Table>
+                                                              :
+                                                              <Typography>There is no subcategory in this hierachy</Typography>
+                                                          }
+                                                        </Box>
+                                                      }
+                                                    </Collapse>
+                                                  </TableCell>
+                                                </TableRow>
+                                              </>
+                                            )
+                                          })
+                                        }
+                                      </TableBody>
+                                    </Table>
+                                    :
+                                    <Typography>There is no subcategory in this hierachy</Typography>
+                                }
+                              </Box>
+                            </Collapse>
+                          </TableCell>
+                        </TableRow>
+                      </>
+                    )
+                  })
+                }
               </TableBody>
             </Table>
             :
