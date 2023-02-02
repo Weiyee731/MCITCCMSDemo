@@ -84,7 +84,7 @@ export const PromotionDetails = (props) => {
 
         dispatch(GitAction.CallAllProducts({
             type: "Merchant",
-            typeValue: '0',
+            typeValue: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
             userId: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
             productPage: '999',
             page: '1',
@@ -159,6 +159,39 @@ export const PromotionDetails = (props) => {
     }, [promotionByID])
 
     const tableHeadCells = [
+        {
+            id: "ProductName",
+            align: 'left',
+            disablePadding: false,
+            label: "Product Name",
+        },
+        {
+            id: "ProductSold",
+            align: 'left',
+            disablePadding: false,
+            label: "Product Sold ",
+        },
+        {
+            id: "ProductPrice",
+            align: 'left',
+            disablePadding: false,
+            label: "Price Sold (RM)",
+        },
+        {
+            id: "ProductStockAmount",
+            align: 'left',
+            disablePadding: false,
+            label: "Product Stock",
+        },
+        {
+            id: "MerchantShopName",
+            align: 'left',
+            disablePadding: false,
+            label: "Shop Name",
+        },
+    ];
+
+    const merchantTableHeadCells = [
         {
             id: "ProductName",
             align: 'left',
@@ -447,7 +480,6 @@ export const PromotionDetails = (props) => {
 
         let deletedProductID = []
 
-
         const getBannerImage = () => {
             var today = new Date();
             var date = today.getFullYear() + '' + (today.getMonth() + 1) + '' + today.getDate();
@@ -583,18 +615,19 @@ export const PromotionDetails = (props) => {
                             ActiveInd: activeIndList
                         }
                         const formData = new FormData();
-                        formData.append("imageFile", promotionBanner[0]);
-                        formData.append("imageName", getBannerImage());
-                        let url = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/uploadpromotion.php"
-                        axios.post(url, formData, {}).then(res => {
-                            if (res.status === 200) {
-                                dispatch(GitAction.CallUpdatePromotion(propsData))
-                                setSubmitPromotion(true)
-                            }
-                            else {
-                                toast.error("Res Status error.");
-                            }
-                        });
+                        console.log("HERE")
+                        // formData.append("imageFile", promotionBanner[0]);
+                        // formData.append("imageName", getBannerImage());
+                        // let url = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/uploadpromotion.php"
+                        // axios.post(url, formData, {}).then(res => {
+                        //     if (res.status === 200) {
+                        //         dispatch(GitAction.CallUpdatePromotion(propsData))
+                        //         setSubmitPromotion(true)
+                        //     }
+                        //     else {
+                        //         toast.error("Res Status error.");
+                        //     }
+                        // });
                     } else {
                         let bannerlength = promotionBanner.split("/").length
                         let propsData = {
@@ -614,8 +647,9 @@ export const PromotionDetails = (props) => {
                             ProductPurchaseLimit: productPurchaseLimitList,
                             ActiveInd: activeIndList
                         }
-                        dispatch(GitAction.CallUpdatePromotion(propsData))
-                        setSubmitPromotion(true)
+                        console.log("HERE1", propsData)
+                        // dispatch(GitAction.CallUpdatePromotion(propsData))
+                        // setSubmitPromotion(true)
                     }
                 } else {
                     toast.warning("Valid Promotion Data is required")
@@ -670,6 +704,10 @@ export const PromotionDetails = (props) => {
                     <TableCell align="left" style={{ opacity: checkExisting(confirmList, data) ? "0.5" : "1.0" }}>{data.ProductSold}</TableCell>
                     <TableCell align="left" style={{ opacity: checkExisting(confirmList, data) ? "0.5" : "1.0" }}>{data.ProductStockAmount}</TableCell>
                     <TableCell align="left" style={{ opacity: checkExisting(confirmList, data) ? "0.5" : "1.0" }}> {data.ProductPrice} </TableCell>
+                    {JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 &&
+                        <TableCell align="left" style={{ opacity: checkExisting(confirmList, data) ? "0.5" : "1.0" }}> {data.MerchantShopName} </TableCell>
+                    }
+
                 </>
             )
         }
@@ -1318,7 +1356,7 @@ export const PromotionDetails = (props) => {
             <AlertDialog
                 open={isModalOpen}
                 fullWidth
-                maxWidth="md"
+                maxWidth="lg"
                 handleToggleDialog={() => setModalOpen(false)}
                 title="Select Promotion Product"
                 style={TitleStyle}
@@ -1348,6 +1386,7 @@ export const PromotionDetails = (props) => {
                         </div>
                     </div>
 
+
                     <TableComponents
                         tableTopLeft={"empty"}
                         tableOptions={{
@@ -1357,7 +1396,7 @@ export const PromotionDetails = (props) => {
                             stickyTableHeader: false,
                         }}
                         paginationOptions={[8, 15, 20, { label: 'All', value: -1 }]}
-                        tableHeaders={tableHeadCells}
+                        tableHeaders={JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? tableHeadCells : merchantTableHeadCells}
                         tableRows={{
                             renderTableRows: renderTableRows,
                             checkbox: false,
@@ -1368,8 +1407,11 @@ export const PromotionDetails = (props) => {
 
                         Data={filteredListing.length > 0 ? filteredListing : products.length > 0 && products[0].ProductName !== undefined ? products : []}
                     />
+                    {console.log("checking", products)}
+                    {console.log("checking1", selectedList)}
+                    {console.log("checking2", confirmList)}
                     <div style={{ textAlign: "right" }}>
-                        <Button variant="outlined" color="primary" style={{ margin: "5px" }} >Cancel</Button>
+                        <Button variant="outlined" color="primary" style={{ margin: "5px" }} onClick={() => setModalOpen(false)} >Cancel</Button>
                         <Button variant="contained"
                             style={{ margin: "5px", backgroundColor: "primary" }}
                             disabled={selectedList.length > 0 ? false : true}

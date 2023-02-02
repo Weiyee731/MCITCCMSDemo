@@ -37,10 +37,8 @@ function mapDispatchToProps(dispatch) {
   return {
     CallAllProducts: (prodData) => dispatch(GitAction.CallAllProducts(prodData)),
     CallResetProductMgmtReturnVal: () => dispatch(GitAction.CallResetProductMgmtReturnVal()),
-    CallDeleteProduct: (prodData) =>
-      dispatch(GitAction.CallDeleteProduct(prodData)),
-    CallResetProductDetails: () =>
-      dispatch(GitAction.CallResetProductDetails()),
+    CallDeleteProduct: (prodData) => dispatch(GitAction.CallDeleteProduct(prodData)),
+    CallResetProductDetails: () => dispatch(GitAction.CallResetProductDetails()),
   };
 }
 
@@ -151,7 +149,7 @@ class ViewProductComponent extends Component {
     let filteredListing = []
 
     let DataSet = JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? this.props.allstocks :
-      JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 && this.props.allstocks !== undefined ? this.props.allstocks.filter((x) => parseInt(x.MerchantID) == parseInt( JSON.parse(localStorage.getItem("loginUser"))[0].UserID)) : []
+      JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 && this.props.allstocks !== undefined ? this.props.allstocks.filter((x) => parseInt(x.MerchantID) == parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID)) : []
 
     DataSet.length > 0 && DataSet.filter((searchedItem) =>
       searchedItem.ProductName !== null && searchedItem.ProductName.toLowerCase().includes(
@@ -199,15 +197,17 @@ class ViewProductComponent extends Component {
   render() {
     const DataList = JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? this.props.allstocks :
       JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 16 && this.props.allstocks !== undefined ?
-        this.props.allstocks.filter((x) => parseInt(x.MerchantID) == parseInt( JSON.parse(localStorage.getItem("loginUser"))[0].UserID))
+        this.props.allstocks.filter((x) => parseInt(x.MerchantID) == parseInt(JSON.parse(localStorage.getItem("loginUser"))[0].UserID))
         : []
 
     if (DataList.length > 0) {
       var generateOptions = []
+      console.log("DataList", DataList)
       generateOptions = DataList.length > 0 &&
         DataList
           .filter((ele, ind) => ind === DataList.findIndex(elem => elem.MerchantID === ele.MerchantID))
           .map((data, i) => {
+            console.log("dasdsadsa", data)
             return (
               <MenuItem value={data.MerchantID}>{data.MerchantShopName}</MenuItem>
             );
@@ -241,7 +241,7 @@ class ViewProductComponent extends Component {
     return (
       <div className="container-fluid my-2">
         <div className="row mb-3">
-          <div className="col-10">
+          <div className={JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? "col-10" : "col-12"}>
             <SearchBar
               id=""
               placeholder="Search By Product SKU, Product Name to search"
@@ -253,23 +253,27 @@ class ViewProductComponent extends Component {
               value={this.state.searchKeywords}
             />
           </div>
-          <div className="col-2">
-            <Box sx={{ minWidth: 120 }}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Shop</InputLabel>
-                <Select
-                  value={this.state.selectedMerchant}
-                  onChange={this.filterMerchantListing.bind(this)}
-                  className="select"
-                  size="small"
-                  label="Shop"
-                >
-                  <MenuItem value={0}>All Merchant Shop</MenuItem>
-                  {generateOptions}
-                </Select>
-              </FormControl>
-            </Box>
-          </div>
+          {
+            JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 &&
+            <div className="col-2">
+              <Box sx={{ minWidth: 120 }}>
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Shop</InputLabel>
+                  <Select
+                    value={this.state.selectedMerchant}
+                    onChange={this.filterMerchantListing.bind(this)}
+                    className="select"
+                    size="small"
+                    label="Shop"
+                  >
+                    <MenuItem value={0}>All Merchant Shop</MenuItem>
+                    {generateOptions}
+                  </Select>
+                </FormControl>
+              </Box>
+            </div>
+          }
+
         </div>
 
         <TableComponents
