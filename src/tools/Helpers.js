@@ -311,7 +311,7 @@ export const splitArray = (arr, len) => {
     return chunks;
 }
 
-const URL = ""
+const URL = "/ecommerceCMSDev"
 export const url = {
     home: () => "/",
 

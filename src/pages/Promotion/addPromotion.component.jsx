@@ -831,7 +831,7 @@ class AddPromotionBannerComponent extends Component {
         };
 
         const back = () => {
-            history.push("/promotionList");
+            history.push("/ecommerceCMSDev/promotionList");
             window.location.reload(false);
         };
 

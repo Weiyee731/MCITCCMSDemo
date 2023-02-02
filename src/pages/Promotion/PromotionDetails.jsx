@@ -97,7 +97,7 @@ export const PromotionDetails = (props) => {
             dispatch(GitAction.CallClearPromotion())
             toast.success("Successfully Update")
             setTimeout(
-                window.location.href = "/PromotionListing"
+                window.location.href = "/ecommerceCMSDev/PromotionListing"
                 , 3000
             );
         }
@@ -1082,7 +1082,7 @@ export const PromotionDetails = (props) => {
         <div className="container-fluid my-2">
             <div className="row">
                 <div className="col">
-                    <Button onClick={() => window.location.href = "/PromotionListing"}>
+                    <Button onClick={() => window.location.href = "/ecommerceCMSDev/PromotionListing"}>
                         <ArrowRoundedLeft8x13Svg fontSize="inherit" />
                         <Link style={{ paddingLeft: "10px", paddingRight: "10px", textDecoration: "none", color: "black" }}>
                             Back

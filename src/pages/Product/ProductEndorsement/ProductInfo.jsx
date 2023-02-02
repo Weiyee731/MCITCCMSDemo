@@ -112,7 +112,7 @@ class ProductEndorsementInfo extends Component {
                 toast.success("This product endorsed successfully.", {
                     autoClose: 3000,
                     onClose: () => {
-                        history.push("/viewProductEndorsement");
+                        history.push("/ecommerceCMSDev/viewProductEndorsement");
                         window.location.reload(false);
                         // this.props.backToList(false)
                     }
@@ -307,7 +307,7 @@ class ProductEndorsementInfo extends Component {
                         <div className="row" style={{ display: "flex" }}>
                             <div className="col-6">
                                 <Button onClick={() => <>
-                                    {history.push("/viewProductEndorsement")}
+                                    {history.push("/ecommerceCMSDev/viewProductEndorsement")}
                                     {window.location.reload(false)}
                                 </>}>
                                     <ArrowRoundedLeft8x13Svg fontSize="inherit" />

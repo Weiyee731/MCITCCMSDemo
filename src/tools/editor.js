@@ -13,7 +13,7 @@ import axios from "axios";
 
 
 const DescriptionFunction = (props) => {
-    const { post_content, content, handleChange, imageFileUrl, editorState, projectID } = props
+    const { post_content, content, handleChange, imageFileUrl, editorState, projectID , error} = props
 
     let uploadURL = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/uploadImages.php"
     let imageURL = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/"
@@ -29,7 +29,7 @@ const DescriptionFunction = (props) => {
                 value={content}
                 onEditorChange={(e) => handleChange(e)}
                 disabled={editorState === true ? false : true}
-
+                error={error}
                 init={{
                     height: 600,
                     menubar: false,

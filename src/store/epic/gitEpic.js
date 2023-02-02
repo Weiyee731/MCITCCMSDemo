@@ -600,7 +600,7 @@ export class GitEpic {
               body: JSON.stringify({
                 PRODUCTNAME: action.payload.name,
                 PROJECTID: action.payload.ProjectID,
-                MERCHANTID: action.payload.productSupplier,
+                MERCHANT: action.payload.productSupplier,
                 PRODUCTDESC: action.payload.description,
                 PRODUCTCATEGORYID: action.payload.productCategory,
                 PRODUCTHEIGHT: action.payload.height,
@@ -647,7 +647,7 @@ export class GitEpic {
                 PRODUCTID: action.payload.ProductID,
                 PRODUCTNAME: action.payload.name,
                 PROJECTID: action.payload.ProjectID,
-                MERCHANTID: action.payload.productSupplier,
+                MERCHANT: action.payload.productSupplier,
                 PRODUCTDESC: action.payload.description,
                 PRODUCTCATEGORYID: action.payload.productCategory,
                 PRODUCTHEIGHT: action.payload.height,

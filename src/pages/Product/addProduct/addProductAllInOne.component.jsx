@@ -315,7 +315,7 @@ const INITIAL_STATE = {
   name: "",
   description: "",
   productCategory: "",
-  productSupplier: localStorage.getItem("loginUser") !== null && JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+  productSupplier: "",
   height: "",
   width: "",
   depth: "",
@@ -3260,25 +3260,65 @@ class AddProductComponent extends Component {
   }
 
   checkGeneral = () => {
+    let error = false
+    if (this.state.name === "" || this.state.productNameDublicated === true) {
+      this.setState({ productNameEmpty: true })
+      error = true
+    }
 
-    let error = this.state.brandEmpty &&
-      this.state.depthNotDecimal &&
-      this.state.depthEmpty &&
-      this.state.productDesciptionEmpty &&
-      this.state.productNameEmpty &&
-      this.state.productNameDublicated &&
-      this.state.productCategoryEmpty &&
-      this.state.heightEmpty &&
-      this.state.heightNotDecimal &&
-      this.state.widthNotDecimal &&
-      this.state.widthEmpty &&
-      this.state.weightNotDecimal &&
-      this.state.weightEmpty &&
-      this.state.modelEmpty &&
-      this.state.productTagsEmpty
+    if (this.state.brand === "") {
+      this.setState({ brandEmpty: true })
+      error = true
+    }
 
-    if (error === true)
+    if (this.state.depth === "") {
+      this.setState({ depthEmpty: true })
+      error = true
+    }
+
+    if (this.state.height === "") {
+      this.setState({ heightEmpty: true })
+      error = true
+    }
+
+    if (this.state.width === "") {
+      this.setState({ widthEmpty: true })
+      error = true
+    }
+
+    if (this.state.weight === "") {
+      this.setState({ weightEmpty: true })
+      error = true
+    }
+
+    if (this.state.model === "") {
+      this.setState({ modelEmpty: true })
+      error = true
+    }
+
+    if (this.state.tags === "") {
+      this.setState({ productTagsEmpty: true })
+      error = true
+    }
+
+    if (this.state.productCategory === "") {
+      this.setState({ productCategoryEmpty: true })
+      error = true
+    }
+
+    if (this.state.description === "") {
+      this.setState({ productDesciptionEmpty: true })
+      error = true
+    }
+
+    if (this.state.productSupplier === "") {
+      this.setState({ productSupplierEmpty: true })
+      error = true
+    }
+    if (error === true) {
       return 1
+    }
+
     else return 0
   }
 
@@ -3397,6 +3437,10 @@ class AddProductComponent extends Component {
       }
     }
 
+
+    console.log("sdadsdsadad", this.props)
+    console.log("sdadsdsadad123", this.state)
+
     //call the variations for product specifications and product category
     if (this.props.result) {
       if (typeof this.props.result !== "undefined" && this.props.result.length > 0 && this.props.result[0].ProductID !== undefined) {
@@ -3426,31 +3470,33 @@ class AddProductComponent extends Component {
     let isProductVariantReset = false
 
     //reset product specs return value if there is
-    if (typeof this.props.productSpecsDetail !== "undefined" && this.props.productSpecsDetail.length > 0 && this.props.productSpecsDetail[0].ReturnVal == 1)
+    if (typeof this.props.productSpecsDetail !== "undefined" && this.props.productSpecsDetail.length > 0 && this.props.productSpecsDetail[0].ProductSpecificationDetailID !== undefined)
       this.props.CallResetProductSpecsDetailResults()
     else
       isProductSpecReset = true
 
     //reset product variation return value if there is
-    if (typeof this.props.addProductVariationResult !== "undefined" && this.props.addProductVariationResult.length > 0 && this.props.addProductVariationResult[0].ReturnVal == 1)
+    if (typeof this.props.addProductVariationResult !== "undefined" && this.props.addProductVariationResult.length > 0 && this.props.addProductVariationResult[0].ProductVariationDetailID !== undefined)
       this.props.CallResetProductVariationDetailResult()
     else
       isProductVariantReset = true
 
     if (isProductSpecReset && isProductVariantReset && this.state.isSubmit === true) {
-      if (typeof this.props.productMediaResult !== "undefined" && this.props.productMediaResult.length > 0 && this.props.productMediaResult[0].ReturnVal == 1) {
+      if (typeof this.props.productMediaResult !== "undefined" && this.props.productMediaResult.length > 0 && this.props.productMediaResult[0].ProductMediaID !== undefined) {
         toast.success("Product is successfully submitted to Admin for endorsement. Estimated 3 - 5 days for admin to revise your added product.")
         this.props.CallResetProductMediaResult()
+        console.log("12345")
         // this.setState({ isSubmit: false })
       }
       else {
         if (this.state.isSubmit === true) {
           toast.success("Product is successfully submitted to Admin for endorsement. Estimated 3 - 5 days for admin to revise your added product.")
           this.setState({ isSubmit: false })
-          setTimeout(() => {
-            window.location.href = "/viewProduct"
-            window.location.reload(false);
-          }, 3000);
+          console.log("678910")
+          // setTimeout(() => {
+          //   window.location.href = "/ecommerceCMSDev/viewProduct"
+          //   window.location.reload(false);
+          // }, 3000);
         }
       }
     }
@@ -3544,7 +3590,9 @@ class AddProductComponent extends Component {
   }
 
   handleChangeEditor = (content, editor) => {
-    this.setState({ description: content });
+    this.setState({ description: content, productDesciptionEmpty: false });
+    if (content === "")
+      this.setState({ productDesciptionEmpty: true })
   }
 
 
@@ -3882,6 +3930,7 @@ class AddProductComponent extends Component {
               categoryH4ID: null,
               categoryH4Name: null,
               productCategory: e.currentTarget.id,
+              productCategoryEmpty: false
             });
           }
         });
@@ -3898,6 +3947,7 @@ class AddProductComponent extends Component {
               categoryH4ID: null,
               categoryH4Name: null,
               productCategory: e.currentTarget.id,
+              productCategoryEmpty: false
             });
           }
         });
@@ -3911,6 +3961,7 @@ class AddProductComponent extends Component {
               categoryH4ID: null,
               categoryH4Name: null,
               productCategory: e.currentTarget.id,
+              productCategoryEmpty: false
             });
           }
         });
@@ -3921,6 +3972,7 @@ class AddProductComponent extends Component {
               categoryH4ID: e.currentTarget.id,
               categoryH4Name: categoryItem.ProductCategory,
               productCategory: e.currentTarget.id,
+              productCategoryEmpty: false
             });
           }
         });
@@ -4001,9 +4053,7 @@ class AddProductComponent extends Component {
 
                 {this.state.name && checkDuplicate}
 
-                {this.state.productCategoryEmpty && (
-                  <p className="error">Product category cannot be empty.</p>
-                )}
+
                 <p className="Label">Product Category</p>
                 <div className="CategorySelector">
                   <Autocomplete
@@ -4033,6 +4083,9 @@ class AddProductComponent extends Component {
                     onChange={(event, value) => searchCategory(value)}
                     className="InputField"
                   />
+                  {this.state.productCategoryEmpty && (
+                    <p className="error">Product category cannot be empty.</p>
+                  )}
                   <div className="CategorySelectorBody">
                     <div className="CategorySelectorSection">
                       {productCategoriesList !== undefined && productCategoriesList.length > 0 && productCategoriesList.map((category) => (
@@ -4173,13 +4226,14 @@ class AddProductComponent extends Component {
                   <TextField
                     id="productSupplier"
                     label="Product Supplier"
-                    defaultValue={JSON.parse(localStorage.getItem("loginUser"))[0].UserFullName}
-                    InputProps={{
-                      readOnly: true,
-                    }}
+                    onChange={this.handleChange.bind(this, "Product Supplier")}
+                    value={this.state.productSupplier}
+                    error={this.state.productSupplierEmpty}
                     InputLabelProps={{
                       shrink: true,
                     }}
+                    onFocus={this.setHint.bind(this, "ProductSupplier")}
+                    onBlur={() => this.setState({ FocusOn: false, })}
                     size="small"
                     variant="outlined"
                     className="InputField"
@@ -4332,7 +4386,7 @@ class AddProductComponent extends Component {
                       <Dropzone
                         onDrop={this.handleDrop.bind(this, "512x512")}
                         accept="image/*"
-                        maxSize="30000"
+                        maxSize="1000000"
                         onFocus={this.setHint.bind(this, "ProductImages")}
                         onBlur={() =>
                           this.setState({
@@ -4400,7 +4454,7 @@ class AddProductComponent extends Component {
                     {!this.state.file2Added && (
                       <Dropzone
                         onDrop={this.handleDrop.bind(this, "512x512")}
-                        maxSize="30000"
+                        maxSize="1000000"
                         accept="image/*"
                         onFocus={this.setHint.bind(this, "ProductImages")}
                         onBlur={() =>
@@ -4470,7 +4524,7 @@ class AddProductComponent extends Component {
                     {!this.state.file3Added && (
                       <Dropzone
                         onDrop={this.handleDrop.bind(this, "512x512")}
-                        maxSize="30000"
+                        maxSize="1000000"
                         accept="image/*"
                         onFocus={this.setHint.bind(this, "ProductImages")}
                         onBlur={() =>
@@ -4567,6 +4621,7 @@ class AddProductComponent extends Component {
                   content={this.state.description}
                   imageFileUrl="productDescription"
                   editorState={true}
+                  error={this.state.productDesciptionEmpty}
                   projectID={JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID}
                 />
                 {this.state.productDesciptionEmpty && (
@@ -5272,9 +5327,11 @@ class AddProductComponent extends Component {
                         size="small"
                         // fullWidth="true"
                         value={this.state.height}
+                        type="number"
                         invalid={
                           this.state.heightEmpty || this.state.heightNotDecimal
                         }
+                        error={this.state.heightEmpty || this.state.heightNotDecimal}
                         onChange={this.handleChange.bind(this, "height")}
                         onFocus={this.setHint.bind(this, "ProductHeight")}
                         onBlur={() =>
@@ -5285,6 +5342,14 @@ class AddProductComponent extends Component {
                         label="" required
                       />
                     </FormControl>
+                    {this.state.heightEmpty && (
+                      <p className="error">Product height cannot be empty.</p>
+                    )}
+                    {this.state.heightNotDecimal && this.state.height && (
+                      <p className="error">
+                        Product height has to be positive and in two decimal places.
+                      </p>
+                    )}
                   </div>
                   <div className="InputFieldMiddleElementNested">
                     <p className="FontTypeInputLabel">Width</p>
@@ -5296,6 +5361,8 @@ class AddProductComponent extends Component {
                         invalid={
                           this.state.widthEmpty || this.state.widthNotDecimal
                         }
+                        type="number"
+                        error={this.state.widthEmpty || this.state.widthNotDecimal}
                         onChange={this.handleChange.bind(this, "width")}
                         onFocus={this.setHint.bind(this, "ProductWidth")}
                         onBlur={() =>
@@ -5306,6 +5373,14 @@ class AddProductComponent extends Component {
                         label="" required
                       />
                     </FormControl>
+                    {this.state.widthEmpty && (
+                      <p className="error">Product width cannot be empty.</p>
+                    )}
+                    {this.state.widthNotDecimal && this.state.width && (
+                      <p className="error">
+                        Product width has to be positive and in two decimal places.
+                      </p>
+                    )}
                   </div>
                   <div className="InputFieldMiddleElementNested">
                     <p className="FontTypeInputLabel">Depth</p>
@@ -5317,6 +5392,8 @@ class AddProductComponent extends Component {
                         invalid={
                           this.state.depthEmpty || this.state.depthNotDecimal
                         }
+                        type="number"
+                        error={this.state.depthEmpty || this.state.depthNotDecimal}
                         onChange={this.handleChange.bind(this, "depth")}
                         onFocus={this.setHint.bind(this, "ProductDepth")}
                         onBlur={() =>
@@ -5327,33 +5404,17 @@ class AddProductComponent extends Component {
                         label="" required
                       />
                     </FormControl>
+                    {this.state.depthEmpty && (
+                      <p className="error">Product depth cannot be empty.</p>
+                    )}
+                    {this.state.depthNotDecimal && this.state.depth && (
+                      <p className="error">
+                        Product depth has to be positive and in two decimal places.
+                      </p>
+                    )}
                   </div>
                 </div>
-
-                {this.state.heightEmpty && (
-                  <p className="error">Product height cannot be empty.</p>
-                )}
-                {this.state.heightNotDecimal && this.state.height && (
-                  <p className="error">
-                    Product height has to be positive and in two decimal places.
-                  </p>
-                )}
-                {this.state.widthEmpty && (
-                  <p className="error">Product width cannot be empty.</p>
-                )}
-                {this.state.widthNotDecimal && this.state.width && (
-                  <p className="error">
-                    Product width has to be positive and in two decimal places.
-                  </p>
-                )}
-                {this.state.depthEmpty && (
-                  <p className="error">Product depth cannot be empty.</p>
-                )}
-                {this.state.depthNotDecimal && this.state.depth && (
-                  <p className="error">
-                    Product depth has to be positive and in two decimal places.
-                  </p>
-                )}
+                
                 <div className="HorizontalContainer">
                   <div className="InputFieldMiddleElement">
                     <p className="FontTypeInputLabel">Weight</p>
@@ -5384,6 +5445,7 @@ class AddProductComponent extends Component {
                       <OutlinedInput
                         endAdornment={<InputAdornment position="end">kg</InputAdornment>}
                         size="small"
+                        type="number"
                         value={this.state.weight}
                         onChange={this.handleChange.bind(this, "weight")}
                         onFocus={this.setHint.bind(this, "ProductWeight")}
@@ -5395,6 +5457,7 @@ class AddProductComponent extends Component {
                         invalid={
                           this.state.weightEmpty || this.state.weightNotDecimal
                         }
+                        error={this.state.weightEmpty || this.state.weightNotDecimal}
                         label="" required
                       />
                     </FormControl>
@@ -5572,7 +5635,7 @@ class AddProductComponent extends Component {
                 <div className="container">
                   <h3>Media Error</h3>
                   <label>Image choose has over the size permitted. Please try a smaller size image</label>
-                  <p className="text-danger"><i>*** Only image with 30KB is allow</i></p>
+                  <p className="text-danger"><i>*** Only image with 1000KB is allow</i></p>
                   <div style={{ textAlign: "right" }}>
                     <Button variant="contained" color="primary" onClick={() => this.setState({ isOverFileSize: false })
                     }>

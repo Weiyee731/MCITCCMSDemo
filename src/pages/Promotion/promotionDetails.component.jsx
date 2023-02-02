@@ -454,7 +454,7 @@ class PromotionDetailsComponent extends Component {
                 function () {
                     // this.props.history.push("/viewProductPromotion");
                     //   browserHistory.push("/viewProductPromotion");
-                    history.push("/viewProductPromotion")
+                    history.push("/ecommerceCMSDev/viewProductPromotion")
                     window.location.reload(false);
                 }.bind(this),
                 500

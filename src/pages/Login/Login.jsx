@@ -178,8 +178,9 @@ class Dashboard extends Component {
         console.log("path", path)
         console.log("asdsdasdas", window.location)
 
-
-        if (path !== undefined && path.length > 0 && path[1] !== "" && path[1] !== undefined && path[1].toUpperCase() === "CMS.MYEMPORIA.MY" && path[2] !== undefined && path[2] !== "" && path[2].toUpperCase() !== "") {
+        if (path !== undefined && path.length > 0 && path[1] !== "" && path[1] !== undefined && path[1].toUpperCase() === "CMS.MYEMPORIA.MY" && path[2] !== undefined && path[2] !== "" && path[2].toUpperCase() !== "ECOMMERCECMSDEV") {
+           
+        // if (path !== undefined && path.length > 0 && path[1] !== "" && path[1] !== undefined && path[1].toUpperCase() === "CMS.MYEMPORIA.MY" && path[2] !== undefined && path[2] !== "" && path[2].toUpperCase() !== "") {
             credential = path[path.length - 1];
 
             console.log("credential", credential.split("_"))

@@ -335,7 +335,7 @@ const INITIAL_STATE = {
     name: "",
     description: "",
     productCategory: "",
-    productSupplier: localStorage.getItem("loginUser") !== null && JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+    productSupplier: "",
     height: "",
     width: "",
     depth: "",
@@ -2195,32 +2195,32 @@ class ProductDetailsComponent extends Component {
         })
 
 
-        // if (ValueWithID.length > 0) {
-        //     this.props.CallUpdateProductVariationDetail({
-        //         ProductVariationDetailID: optionID,
-        //         Customizable: CustomizableWithID,
-        //         Value: ValueWithID,
-        //         stock: stockWithID,
-        //         sku: skuWithID,
-        //         price: priceWithID,
-        //         UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID
-        //     })
-        // }
+        if (ValueWithID.length > 0) {
+            this.props.CallUpdateProductVariationDetail({
+                ProductVariationDetailID: optionID,
+                Customizable: CustomizableWithID,
+                Value: ValueWithID,
+                stock: stockWithID,
+                sku: skuWithID,
+                price: priceWithID,
+                UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+            })
+        }
 
-        // if (ValueWithoutID.length > 0) {
-        //     this.props.CallAddProductVariationDetail({
-        //         ProductVariation: selectedVariationID,
-        //         ProductID: ProductID,
-        //         Customizable: CustomizableWithoutID,
-        //         Value: ValueWithoutID,
-        //         stock: stockWithoutID,
-        //         sku: skuWithoutID,
-        //         price: priceWithoutID,
-        //         UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID
-        //     })
-        // }
+        if (ValueWithoutID.length > 0) {
+            this.props.CallAddProductVariationDetail({
+                ProductVariation: selectedVariationID,
+                ProductID: ProductID,
+                Customizable: CustomizableWithoutID,
+                Value: ValueWithoutID,
+                stock: stockWithoutID,
+                sku: skuWithoutID,
+                price: priceWithoutID,
+                UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+            })
+        }
 
-        // this.setState({ isSubmissionVariationChecking: true })
+        this.setState({ isSubmissionVariationChecking: true })
     }
 
     onSubmitProductSpecification = (ProductID) => {
@@ -3367,7 +3367,7 @@ class ProductDetailsComponent extends Component {
             this.state.productNameEmpty ||
             this.state.productNameDublicated ||
             this.state.productCategoryEmpty ||
-            // this.state.productSupplierEmpty ||
+            this.state.productSupplierEmpty ||
             this.state.heightEmpty ||
             this.state.heightNotDecimal ||
             this.state.widthNotDecimal ||
@@ -3423,7 +3423,7 @@ class ProductDetailsComponent extends Component {
                     ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
                 }
                 this.props.CallUpdateProduct(object)
-                // this.onSubmitProductVariation(this.state.ProductID)
+                this.onSubmitProductVariation(this.state.ProductID)
                 this.onSubmitProductSpecification(this.state.ProductID)
                 this.uploadFile(this.state.ProductID)
                 this.setState({ isSubmit: true })
@@ -3554,6 +3554,7 @@ class ProductDetailsComponent extends Component {
             }
         }
 
+        console.log("dasddasdsa", this.props.productInfo)
         this.setState({
             isProductIntoBind: true, // to stop the looping of calling this function from componentdidupdate
             name: this.props.productInfo.length > 0 ? this.props.productInfo[0].ProductName : "",
@@ -3564,6 +3565,7 @@ class ProductDetailsComponent extends Component {
             weight: this.props.productInfo.length > 0 ? this.props.productInfo[0].ProductWeight : "",
             brand: this.props.productInfo.length > 0 ? this.props.productInfo[0].Brand : "",
             tags: tagList,
+            productSupplier: this.props.productInfo.length > 0 ?this.props.productInfo[0].SupplierName : "",
             model: this.props.productInfo.length > 0 ? this.props.productInfo[0].Model : "",
             sku: this.props.productInfo.length > 0 ? this.props.productInfo[0].SKU : "",
             ProductID: this.props.productInfo.length > 0 ? this.props.productInfo[0].ProductID : "",
@@ -3634,27 +3636,27 @@ class ProductDetailsComponent extends Component {
             this.bindProductInfoToState()
 
         if (this.state.isSubmit === true && this.state.isSubmissionSpecChecking === true && this.state.isSubmissionVariationChecking === true) {
-            if (typeof this.props.returnUpdateProduct !== "undefined" && this.props.returnUpdateProduct.length > 0 && this.props.returnUpdateProduct[0].ReturnVal === 1) {
+            if (typeof this.props.returnUpdateProduct !== "undefined" && this.props.returnUpdateProduct.length > 0 && this.props.returnUpdateProduct[0].ProductID !== undefined) {
                 this.props.CallResetUpdateProduct()
             }
 
-            if (typeof this.props.productSpecsDetail !== "undefined" && this.props.productSpecsDetail.length > 0 && this.props.productSpecsDetail[0].ReturnVal === "1") {
+            if (typeof this.props.productSpecsDetail !== "undefined" && this.props.productSpecsDetail.length > 0 && this.props.productSpecsDetail[0].ProductSpecificationDetailID !== undefined) {
                 this.props.CallResetProductSpecsDetailResults()
             }
 
-            if (typeof this.props.SpecsDetail !== "undefined" && this.props.SpecsDetail.length > 0 && this.props.SpecsDetail[0].ReturnVal === "1") {
+            if (typeof this.props.SpecsDetail !== "undefined" && this.props.SpecsDetail.length > 0 && this.props.SpecsDetail[0].ProductSpecificationDetailID !== undefined) {
                 this.props.CallResetUpdateProductSpecsDetail()
             }
 
-            if (typeof this.props.addProductVariationResult !== "undefined" && this.props.addProductVariationResult.length > 0 && this.props.addProductVariationResult[0].ReturnVal === "1") {
+            if (typeof this.props.addProductVariationResult !== "undefined" && this.props.addProductVariationResult.length > 0 && this.props.addProductVariationResult[0].ProductVariationDetailID !== undefined) {
                 this.props.CallResetProductVariationDetailResult()
             }
 
-            if (typeof this.props.variationResult !== "undefined" && this.props.variationResult.length > 0 && this.props.variationResult[0].ReturnVal === "1") {
+            if (typeof this.props.variationResult !== "undefined" && this.props.variationResult.length > 0 && this.props.variationResult[0].ProductVariationDetailID !== undefined) {
                 this.props.CallResetUpdateProductVariationDetail()
             }
 
-            if (typeof this.props.productMediaResult !== "undefined" && this.props.productMediaResult.length > 0 && this.props.productMediaResult[0].ReturnVal === "1") {
+            if (typeof this.props.productMediaResult !== "undefined" && this.props.productMediaResult.length > 0 && this.props.productMediaResult[0].ProductMediaID !== undefined) {
                 this.props.CallResetProductMediaResult()
             }
 
@@ -3666,11 +3668,11 @@ class ProductDetailsComponent extends Component {
                 typeof this.props.productMediaResult !== "undefined" && this.props.productMediaResult.length === 0) {
 
                 setTimeout(() => {
-                    // toast.success("Product details successfully updated")
+                    toast.success("Product details successfully updated")
                     // history.push("/viewProduct");
-                    // window.location.href = "/viewProduct"
-                    // window.location.reload(false);
-                }, 1000);
+                    window.location.href = "/ecommerceCMSDev/viewProduct"
+                    window.location.reload(false);
+                }, 3000);
             }
         }
 
@@ -3797,7 +3799,7 @@ class ProductDetailsComponent extends Component {
         // this.props.CallResetProductDetails()
         this.props.backToList()
         // browserHistory.push("/")
-        window.location.href = "/"
+        window.location.href = "/ecommerceCMSDev/"
     }
 
     handleChangeEditor = (content, editor) => {
@@ -4516,55 +4518,85 @@ class ProductDetailsComponent extends Component {
                                 <CardContent>
                                     <p className="Heading">Product Details</p>
                                     {this.state.toBeEdited ?
-                                        <FormControl
-                                            variant="outlined"
-                                            className="InputField"
-                                            size="small"
-                                        >
-                                            <InputLabel shrink htmlFor="productSupplier">
-                                                Supplier
-                                            </InputLabel>
-                                            {/* <Select
-                                                native
-                                                label="Supplier"
-                                                value={this.state.productSupplier}
-                                                onChange={this.handleChange.bind(this, "Product Supplier")}
-                                                inputProps={{
-                                                    name: "Product Supplier",
-                                                    id: "productSupplier",
-                                                }}
-                                                error={this.state.productSupplierEmpty && this.state.toBeEdited}
-                                                onFocus={this.setHint.bind(this, "ProductSupplier")}
-                                                onBlur={() =>
-                                                    this.setState({
-                                                        FocusOn: false,
-                                                    })
-                                                }
-                                            >
-                                                <option aria-label="None" value="">None Selected</option>
-                                                <option value={JSON.parse(localStorage.getItem("loginUser"))[0].UserID}>
-                                                    {JSON.parse(localStorage.getItem("loginUser"))[0].UserFullName}
-                                                </option>
-                                            </Select> */}
-                                            <TextField
-                                                id="productSupplier"
-                                                label="Product Supplier"
-                                                defaultValue={JSON.parse(localStorage.getItem("loginUser"))[0].UserFullName}
-                                                InputProps={{
-                                                    readOnly: true,
-                                                }}
-                                                InputLabelProps={{
-                                                    shrink: true,
-                                                }}
-                                                size="small"
+                                        // <FormControl
+                                        //     variant="outlined"
+                                        //     className="InputField"
+                                        //     size="small"
+                                        // >
+                                        //     <InputLabel shrink htmlFor="productSupplier">
+                                        //         Supplier
+                                        //     </InputLabel>
+                                        //     {/* <Select
+                                        //         native
+                                        //         label="Supplier"
+                                        //         value={this.state.productSupplier}
+                                        //         onChange={this.handleChange.bind(this, "Product Supplier")}
+                                        //         inputProps={{
+                                        //             name: "Product Supplier",
+                                        //             id: "productSupplier",
+                                        //         }}
+                                        //         error={this.state.productSupplierEmpty && this.state.toBeEdited}
+                                        //         onFocus={this.setHint.bind(this, "ProductSupplier")}
+                                        //         onBlur={() =>
+                                        //             this.setState({
+                                        //                 FocusOn: false,
+                                        //             })
+                                        //         }
+                                        //     >
+                                        //         <option aria-label="None" value="">None Selected</option>
+                                        //         <option value={JSON.parse(localStorage.getItem("loginUser"))[0].UserID}>
+                                        //             {JSON.parse(localStorage.getItem("loginUser"))[0].UserFullName}
+                                        //         </option>
+                                        //     </Select> */}
+
+
+                                        //     <TextField
+                                        //         id="productSupplier"
+                                        //         label="Product Supplier"
+                                        //         defaultValue={JSON.parse(localStorage.getItem("loginUser"))[0].UserFullName}
+                                        //         InputProps={{
+                                        //             readOnly: true,
+                                        //         }}
+                                        //         InputLabelProps={{
+                                        //             shrink: true,
+                                        //         }}
+                                        //         size="small"
+                                        //         variant="outlined"
+                                        //         className="InputField"
+                                        //     />
+                                        // </FormControl>
+                                        <>
+                                            <FormControl
                                                 variant="outlined"
                                                 className="InputField"
-                                            />
-                                        </FormControl> :
+                                                size="small"
+                                            >
+                                                <TextField
+                                                    id="productSupplier"
+                                                    label="Product Supplier"
+                                                    onChange={this.handleChange.bind(this, "Product Supplier")}
+                                                    value={this.state.productSupplier}
+                                                    error={this.state.productSupplierEmpty}
+                                                    InputLabelProps={{
+                                                        shrink: true,
+                                                    }}
+                                                    onFocus={this.setHint.bind(this, "ProductSupplier")}
+                                                    onBlur={() => this.setState({ FocusOn: false, })}
+                                                    size="small"
+                                                    variant="outlined"
+                                                    className="InputField"
+                                                />
+                                            </FormControl>
+                                            {this.state.productSupplierEmpty && (
+                                                <p className="error">Product supplier cannot be empty.</p>
+                                            )}
+                                        </>
+                                        :
                                         <TextField
                                             id="productSupplier"
                                             label="Product Supplier"
-                                            defaultValue={JSON.parse(localStorage.getItem("loginUser"))[0].UserFullName}
+                                            // defaultValue={JSON.parse(localStorage.getItem("loginUser"))[0].UserFullName}
+                                            defaultValue={this.state.productSupplier}
                                             InputProps={{
                                                 readOnly: true,
                                             }}
@@ -4734,7 +4766,7 @@ class ProductDetailsComponent extends Component {
                                                 <Dropzone
                                                     onDrop={this.handleDrop.bind(this, "512x512")}
                                                     accept="image/*"
-                                                    maxSize="30000"
+                                                    maxSize="1000000"
                                                     onFocus={this.setHint.bind(this, "ProductImages")}
                                                     onBlur={() =>
                                                         this.setState({
@@ -4807,7 +4839,7 @@ class ProductDetailsComponent extends Component {
                                                 <Dropzone
                                                     onDrop={this.handleDrop.bind(this, "512x512")}
                                                     accept="image/*"
-                                                    maxSize="30000"
+                                                    maxSize="1000000"
                                                     onFocus={this.setHint.bind(this, "ProductImages")}
                                                     onBlur={() =>
                                                         this.setState({
@@ -4881,7 +4913,7 @@ class ProductDetailsComponent extends Component {
                                                 <Dropzone
                                                     onDrop={this.handleDrop.bind(this, "512x512")}
                                                     accept="image/*"
-                                                    maxSize="30000"
+                                                    maxSize="1000000"
                                                     onFocus={this.setHint.bind(this, "ProductImages")}
                                                     onBlur={() =>
                                                         this.setState({
@@ -6172,7 +6204,7 @@ class ProductDetailsComponent extends Component {
                             <div className="container">
                                 <h3>Media Error</h3>
                                 <label>Image choose has over the size permitted. Please try a smaller size image</label>
-                                <p className="text-danger"><i>*** Only image with 30KB is allow</i></p>
+                                <p className="text-danger"><i>*** Only image with 1000KB is allow</i></p>
                                 <div style={{ textAlign: "right" }}>
                                     <Button variant="contained" color="primary" onClick={() => this.setState({ isOverFileSize: false })
                                     }>
