@@ -610,14 +610,14 @@ class StoreDetailListing extends Component {
                                                                 <label>{this.ShoplotListing[0].ContactNumber !== "" ? this.ShoplotListing[0].ContactNumber : "-"}</label>
                                                             </div>
                                                         </div>
-                                                        <div className="row">
+                                                        {/* <div className="row">
                                                             <div className="col-lg-3">
                                                                 <label style={productInfoLabelStyle}>Coordinate :</label>
                                                             </div>
                                                             <div className="col-lg-8">
                                                                 <label>{this.ShoplotListing[0].ShoplotPolygonString !== "" ? this.ShoplotListing[0].ShoplotPolygonString : "-"}</label>
                                                             </div>
-                                                        </div>
+                                                        </div> */}
                                                     </div>
                                                 </div>
                                                 <div className="row" style={{ paddingTop: "20px" }}>

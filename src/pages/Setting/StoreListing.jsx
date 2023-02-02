@@ -156,7 +156,7 @@ class ShoplotListing extends Component {
     }
 
     ///////////////////////////////////////////////////  Share Function ///////////////////////////////////////////////////
-   
+
     renderTableRows = (data, index) => {
         return (
             <>
@@ -441,14 +441,14 @@ class ShoplotListing extends Component {
         if (shopListing.length > 0 && data === "shop") {
             if (shopListing.filter((data) => data.isContactNoError === true || data.isShoplotNameError === true).length > 0)
                 error = true
-            if (this.state.Location === "")
-                error = true
+            // if (this.state.Location === "")
+            //     error = true
             if (shopListing[0].ShoplotBlock[0].id === "")
                 error = true
         }
         return error
     }
-    
+
     clearState = () => {
         this.PagingListing = [{
             isOpenOverallDetails: [],
@@ -522,23 +522,23 @@ class ShoplotListing extends Component {
 
     OnSubmitShoplotDatabase = () => {
         if (!this.errorChecking("shop")) {
-            let replacePolygon = this.state.Location.replace("POLYGON((", '')
-            let replacePolygon2 = replacePolygon.replace("POLYGON ((", '')
-            let replacePolygon3 = replacePolygon2.replace("))", '')
+            // let replacePolygon = this.state.Location.replace("POLYGON((", '')
+            // let replacePolygon2 = replacePolygon.replace("POLYGON ((", '')
+            // let replacePolygon3 = replacePolygon2.replace("))", '')
 
-            let coordinate = replacePolygon3.split(",")
-            let latitude = []
-            let longitude = []
-            coordinate.length > 0 && coordinate.map((data) => {
-                if (data.split(" ")[0] === "") {
-                    latitude.push(parseFloat(data.split(" ")[2]))
-                    longitude.push(parseFloat(data.split(" ")[1]))
-                }
-                else {
-                    latitude.push(parseFloat(data.split(" ")[1]))
-                    longitude.push(parseFloat(data.split(" ")[0]))
-                }
-            })
+            // let coordinate = replacePolygon3.split(",")
+            // let latitude = []
+            // let longitude = []
+            // coordinate.length > 0 && coordinate.map((data) => {
+            //     if (data.split(" ")[0] === "") {
+            //         latitude.push(parseFloat(data.split(" ")[2]))
+            //         longitude.push(parseFloat(data.split(" ")[1]))
+            //     }
+            //     else {
+            //         latitude.push(parseFloat(data.split(" ")[1]))
+            //         longitude.push(parseFloat(data.split(" ")[0]))
+            //     }
+            // })
 
             this.props.CallAddShopList({
                 ShoplotName: this.state.ShopModalData[0].ShoplotName,
@@ -546,9 +546,9 @@ class ShoplotListing extends Component {
                 ShoplotBlock: this.state.ShopModalData[0].ShoplotBlock[0].value,
                 StorageBlockID: this.state.ShopModalData[0].ShoplotBlock[0].id,
                 ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
-                ShoplotPolygon: this.state.Location,
-                Longitude: longitude,
-                Latitude: latitude
+                ShoplotPolygon: '-',
+                Longitude: '-',
+                Latitude: '-',
             })
             this.setState(INITIAL_STATE)
         }
@@ -602,9 +602,8 @@ class ShoplotListing extends Component {
                 { id: "3", value: "Grid" }
             ]
 
-
         return (
-            <div className="container-fluid my-2">
+            <div className="container-fluid my-2" >
                 <div className="row">
                     <div className="col-md-12 col-12 mb-2 d-flex">
                         <div className="col-2 d-inline-flex">
@@ -724,23 +723,28 @@ class ShoplotListing extends Component {
                         handleToggleDialog={() => this.clearState()}
                         title={"New Shoplot"}
                         showAction={false}
+                        height='auto'
                     >
                         <div className="container-fluid" >
                             <div className="container" style={{ padding: "10px" }}>
                                 <div className="row" >
-                                    <div className="col-4 col-md-4" style={{ paddingBottom: "10px" }}>
-                                        {TextFieldData("text", "outlined", "Shoplot Name", "ShoplotName", this.state.ShopModalData[0].ShoplotName, this.state.ShopModalData[0].isShoplotNameError, 0)}
-                                    </div>
-                                    <div className="col-4 col-md-4" style={{ paddingBottom: "10px" }}>
-                                        <FormControl variant="standard" size="small" fullWidth>
+                                    <div className="col-4 col-md-4" style={{ paddingBottom: "10px", height:"90px"}}>
+                                        <FormControl variant="standard" size="small" fullWidth >
                                             <InputLabel id="Store-label">Block</InputLabel>
                                             <Select
                                                 labelId="Block"
                                                 id="Block"
                                                 name="Block"
+                                                placeholder="Block"
                                                 value={this.state.ShopModalData[0].ShoplotBlock}
                                                 onChange={(e) => this.handleFormInput(e, "Block", 0)}
-                                                label="Store"
+                                                label="Block"
+                                                styles={{
+                                                    menuList: () => ({
+                                                        overflowY: "scroll",
+                                                        height:"80px"
+                                                    }),
+                                                }}
                                                 options={
                                                     isArrayNotEmpty(this.props.block) && this.props.block.map((el, idx) => {
                                                         return { id: el.StorageBlockID, value: el.StorageBlock, label: el.StorageBlock }
@@ -750,10 +754,13 @@ class ShoplotListing extends Component {
                                             </Select>
                                         </FormControl>
                                     </div>
+                                    <div className="col-4 col-md-4" style={{ paddingBottom: "10px" }}>
+                                        {TextFieldData("text", "outlined", "Shoplot Name", "ShoplotName", this.state.ShopModalData[0].ShoplotName, this.state.ShopModalData[0].isShoplotNameError, 0)}
+                                    </div>
                                     <div className="col-4 col-md-4" >
                                         {TextFieldData("text", "outlined", "Contact Number", "ContactNo", this.state.ShopModalData[0].ContactNo, this.state.ShopModalData[0].isContactNoError, 0)}
                                     </div>
-                                    <hr />
+                                    {/* <hr />
                                     <div className="col-12" style={{ textAlign: "right" }}>
                                         <Tooltip title="Map Guide">
                                             <IconButton size="medium" sx={{ color: "#0074ea", marginRight: 1 }} onClick={() => this.setState({ isMapAlert: true })}>
@@ -762,14 +769,14 @@ class ShoplotListing extends Component {
                                         </Tooltip>
                                     </div>
                                     <div className="col-12 col-md-12" style={{ paddingBottom: "10px", height: "350px" }}>
-                                        {/* <GoogleMaps
+                                        <GoogleMaps
                                             width="100%"
                                             height="500"
                                             zoom={14}
                                             data={this.state}
                                             setValue={this.setTheState}
-                                        /> */}
-                                    </div>
+                                        />
+                                    </div> */}
                                 </div>
                             </div>
                             <div className="row">
