@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 
 import { Link } from "react-router-dom";
 import "./ProductInfo.css";
-import { isStringNullOrEmpty } from "../../../tools/Helpers";
+import { isStringNullOrEmpty, isArrayNotEmpty } from "../../../tools/Helpers";
 import Logo from "../../../assets/logos/logo.png";
 import CategoryHierachy from "../../../components/share/categoryHierachy";
 import IconButton from '@mui/material/IconButton';
@@ -15,6 +15,8 @@ import { ArrowRoundedLeft8x13Svg, ArrowRoundedRight8x13Svg } from '../../../asse
 
 import TableCell from '@mui/material/TableCell';
 import TableComponents from "../../../components/TableComponents/TableComponents";
+import { Card, CardContent } from "@mui/material";
+import { flexbox } from '@mui/system';
 
 
 
@@ -24,6 +26,7 @@ function mapStateToProps(state) {
     return {
         productInfo: state.counterReducer["productsByID"],
         productMgmtResult: state.counterReducer["productMgmtResult"],
+        endorsedProduct: state.counterReducer["endorsedProduct"],
     };
 }
 
@@ -49,7 +52,7 @@ const INITIAL_STATE = {
     // merchant info
     MerchantDetail: [],
 
-
+    showproductInfo: false,
     categoryListing: [],
 
     // form inputs
@@ -89,6 +92,13 @@ class ProductEndorsementInfo extends Component {
     }
 
     componentDidUpdate(prevProps) {
+
+        if(prevProps.productInfo !== this.props.productInfo && this.props.productInfo.length > 0){
+            setTimeout(() => {
+                this.setState({showproductInfo: true})
+                }, 5);
+        }
+
         if (typeof this.props.productInfo !== "undefined" && this.props.productInfo.length > 0 && typeof this.props.productInfo.ReturnVal === "undefined" && !this.state.isProductIntoBind)
             this.bindProductInfoToState()
         else if (!this.state.isProductIntoBind && typeof this.props.productInfo.ReturnVal !== "undefined")
@@ -160,6 +170,14 @@ class ProductEndorsementInfo extends Component {
                 ProductID: this.props.ProductID,
                 UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
             })
+        if(typeof this.props.ProductID !== "undefined" && this.props.ProductID != null && this.props.endorsedProduct.ProductID=== this.props.productId){
+            toast.success("Product has successfully endorsed");
+            setTimeout(() => {window.location.reload(true);
+                
+            }, 1000);
+            
+        }
+        
     }
 
     handleImageCarousel = (index) => {
@@ -225,20 +243,30 @@ class ProductEndorsementInfo extends Component {
 
     renderTableRows = (data, index) => {
         return (
-            <>
-                <TableCell align="left"> {data.ProductSpecification} </TableCell>
-                <TableCell align="left">{data.ProductSpecificationValue}</TableCell>
-            </>
+                <>
+                {
+                    <>
+                        <TableCell align="left"> {data.ProductSpecification} </TableCell>
+                        <TableCell align="left">{data.ProductSpecificationValue}</TableCell>
+                    </>
+                }
+                
+                </>
         )
     }
 
     renderTableVariationRows = (data, index) => {
         return (
             <>
-                <TableCell align="left"> {data.ProductVariation} </TableCell>
-                <TableCell align="left">{data.ProductVariationValue}</TableCell>
-                <TableCell align="left"> {data.ProductVariationSKU} </TableCell>
-                <TableCell align="left">{data.ProductVariationPrice}</TableCell>
+                {
+                    <>
+                        <TableCell align="left"> {data.ProductVariation} </TableCell>
+                        <TableCell align="left">{data.ProductVariationValue}</TableCell>
+                        <TableCell align="left"> {data.ProductVariationSKU} </TableCell>
+                        <TableCell align="left">{data.ProductVariationPrice}</TableCell>
+                    </>
+                    
+                }
             </>
         )
     }
@@ -246,12 +274,10 @@ class ProductEndorsementInfo extends Component {
     render() {
         const { productInfo } = this.props
         const { ProductMedias, currentImage } = this.state
-
         const getCategoryHierachyListing = (listing, id) => {
             // category = listing
             this.setState({ categoryListing: listing })
         }
-
         const tableSpecHeadCells = [
             {
                 id: "ProductSpecification",
@@ -330,7 +356,10 @@ class ProductEndorsementInfo extends Component {
                             </div>
                         </div>
                         {
-                            typeof this.props.productInfo !== "undefined" && productInfo.length > 0 ?
+                            this.state.showproductInfo &&
+                            <div>
+                                {
+                                    typeof this.props.productInfo !== "undefined" && productInfo.length > 0 ?
                                 <div>
                                     <div className="row" style={{ backgroundColor: "white", padding: "10px" }}>
                                         <div className="col-4 m-0">
@@ -376,7 +405,9 @@ class ProductEndorsementInfo extends Component {
                                                     })}</label>
                                                 </div>
                                                 <br />
-                                                <div><label><b> Brand :</b> {productInfo[0].Brand === null ? '-' : productInfo[0].Brand}</label></div>
+                                                {productInfo[0].Brand !== null && productInfo[0].Brand !== "-" ?
+                                                    <div>
+                                                        <div><label><b> Brand :</b> {productInfo[0].Brand === null ? '-' : productInfo[0].Brand}</label></div>
                                                 <div><label><b> Model :</b> {productInfo[0].Model === null ? '-' : productInfo[0].Model}</label></div>
                                                 <div><label><b> Product Tags :</b> {this.getTagList()}</label></div>
                                                 <div><label><b> Dimension :</b>
@@ -401,6 +432,13 @@ class ProductEndorsementInfo extends Component {
                                                 <div>
 
                                                 </div>
+                                                    </div>
+                                                    :
+                                                    <div>
+                                                        <i>No Data Available for Display Yet</i>
+                                                    </div>
+                                                }
+                                                
                                             </div>
                                         </div>
                                     </div>
@@ -440,6 +478,9 @@ class ProductEndorsementInfo extends Component {
                                     <div className='row' >
                                         <div className='col-6' style={{ backgroundColor: "white", padding: "20px" }}>
                                             {/* <h6>Product Specification</h6> */}
+                                        {
+                                            // this.state.ProductSpecifications !== undefined && this.state.ProductSpecification.length > 0 ?
+                                            isArrayNotEmpty(this.state.ProductSpecification) ?
                                             <TableComponents
                                                 // table settings 
                                                 tableTopLeft={<h6 style={{ fontWeight: "bold" }}>Product Specification</h6>}
@@ -455,12 +496,22 @@ class ProductEndorsementInfo extends Component {
                                                     renderTableRows: this.renderTableRows,   // required, it is a function, please refer to the example I have done in Table Components
                                                     checkbox: false,                          // optional, by default is true
                                                 }}
+                                                // Data={isArrayNotEmpty(this.state.ProductSpecifications) ? this.state.ProductSpecifications : this.state.EmptyMsg}
                                                 Data={this.state.ProductSpecifications}
                                             />
+                                            :
+                                            <Card>
+                                                <CardContent><h6>Product Specification</h6>
+                                                <i className='d-flex justify-content-center'>No Data Available for Display Yet</i></CardContent>
+                                            </Card>
+                                        }
+                                            
                                         </div>
 
                                         <div className='col-6' style={{ backgroundColor: "white", padding: "20px" }}>
-                                            <TableComponents
+                                            {
+                                            isArrayNotEmpty(this.state.ProductVariation) ?
+                                                <TableComponents
                                                 // table settings 
                                                 tableTopLeft={<h6 style={{ fontWeight: "bold" }}>Product Variation</h6>}
                                                 tableOptions={{
@@ -475,9 +526,16 @@ class ProductEndorsementInfo extends Component {
                                                     renderTableRows: this.renderTableVariationRows,   // required, it is a function, please refer to the example I have done in Table Components
                                                     checkbox: false,                          // optional, by default is true
                                                 }}
-                                                Data={this.state.ProductVariation}
+                                                Data={isArrayNotEmpty(this.state.ProductVariation) ? this.state.ProductVariation : this.state.EmptyMsg}
                                             />
+                                            :
+                                            <Card>
+                                                <CardContent><h6>Product Variation</h6>
+                                                <i className='d-flex justify-content-center'>No Data Available for Display Yet</i></CardContent>
+                                            </Card>
+                                            }
                                         </div>
+                                        
                                     </div>
                                     <br />
                                     <div className='row' >
@@ -491,6 +549,9 @@ class ProductEndorsementInfo extends Component {
                                 <div>
                                     <i>Something went wrong, please try again later</i>
                                 </div>
+                                }
+                            </div>
+                            
                         }
                     </div>
                 </div>
