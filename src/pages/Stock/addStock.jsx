@@ -29,6 +29,7 @@ import { toast } from "react-toastify";
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
+import HelpIcon from '@mui/icons-material/Help';
 
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 
@@ -509,14 +510,27 @@ class AddStock extends Component {
                 })
             })
 
-            this.props.CallAddProductVariationStock({
-                ContainerID: this.state.ContainerID,
-                UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
-                ProductVariationDetailsID: ProductVariationDetailID,
-                ProductStock: ProductStock,
-                ProductVariationCost: ProductVariationCost,
-                GridStorageID: GridStorageID
-            })
+            if (ProductVariationDetailID !== null && ProductStock !== null && ProductVariationCost !== NaN) {
+                this.props.CallAddProductVariationStock({
+                    ContainerID: this.state.ContainerID,
+                    UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+                    ProductVariationDetailsID: ProductVariationDetailID,
+                    ProductStock: ProductStock,
+                    ProductVariationCost: ProductVariationCost,
+                    GridStorageID: GridStorageID
+                })
+                toast.success("The product stock is updated successfully", {
+                    autoClose: 3000,
+                    onClose: () => {
+                        history.push("/stockList");
+                        window.location.reload(false);
+                    }
+                })
+            }
+            else {
+                toast.error("Product Stock, Product Variation Cost cannnot be null")
+            }
+
 
         } else {
             toast.warning("Input Error: Please cross check on All Stock Details Input")
@@ -548,11 +562,11 @@ class AddStock extends Component {
         const TextFieldData = (type, variant, title, name, stateValue, error, index) => {
             return (
                 <div className="col-12 col-md-12" style={{ paddingBottom: "10px" }}>
-                    <TextField variant={variant} type={type} size="small" inputProps={{ min: "0", step: name === "StockInAmount" ? "1.00" : "0.10" }} fullWidth label={title} value={name === "StockInAmount" ? parseFloat(stateValue).toFixed(0) : stateValue} name={name} onChange={(e) => this.handleFormInput(e, name, index)}
+                    <TextField required variant={variant} type={type} size="small" inputProps={{ min: "0", step: name === "StockInAmount" ? "1.00" : "0.10" }} fullWidth label={title} value={name === "StockInAmount" ? parseFloat(stateValue).toFixed(0) : stateValue} name={name} onChange={(e) => this.handleFormInput(e, name, index)}
                         InputProps={{
                             startAdornment: <InputAdornment position="start">{name === "StockInAmount" ? "  " : "RM"}</InputAdornment>,
                         }}
-                        required />
+                    />
                     {error && <FormHelperText sx={{ color: 'red' }} id={error}>Invalid {title} </FormHelperText>}
                 </div>
             )
@@ -698,13 +712,20 @@ class AddStock extends Component {
                             <ArrowRoundedLeft8x13Svg fontSize="inherit" style={{ margin: "10px" }} />
                             Stock List
                         </Button>
-                        <div className="d-md-flex my-2" style={{ marginLeft: 'auto' }}>
-                            <div style={{ width: '200px', marginRight: "15px", marginTop: "5px" }}>
-                                <TextField variant="standard" size="small" fullWidth label="Container" value={this.state.ContainerID} onChange={(e) => this.handleFormInput(e, "Container", 0)} required />
+                        <div className="d-md-flex my-2" style={{ marginLeft: 'auto', }}>
+                            <div style={{ width: '200px', }}>
+                                <TextField variant="standard" size="small" fullWidth label="Remark" value={this.state.ContainerID} onChange={(e) => this.handleFormInput(e, "Container", 0)} required />
                             </div>
-                            <div style={{ width: '200px', marginLeft: 5 }}>
+                            <div style={{ width: '100px', }}>
+                                <Tooltip title="Can be either as item's invoice number or remark indicate which batch of the stock is">
+                                    <IconButton>
+                                        <HelpIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            </div>
+                            {/* <div style={{ width: '200px', marginLeft: 5 }}>
                                 <ResponsiveDatePickers variant="standard" title="Stock In Date" value={this.state.StockInDate} onChange={(e) => this.onDateChange(e, "StockInDate")} />
-                            </div>
+                            </div> */}
                         </div>
                     </div>
 
