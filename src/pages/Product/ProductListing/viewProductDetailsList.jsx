@@ -44,7 +44,7 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
 // Share Compoonents
 import DescriptionFunction from "../../../tools/editor";
-import { convertDateTimeToString, getFileExtension, getFileTypeByExtension, isStringNullOrEmpty } from "../../../tools/Helpers"
+import { convertDateTimeToString, getFileExtension, getFileTypeByExtension, isArrayNotEmpty, isStringNullOrEmpty } from "../../../tools/Helpers"
 import LoadingPanel from "../../../tools/LoadingPanel";
 import { url } from "../../../tools/Helpers"
 import "./viewProductDetailsList.css";
@@ -332,6 +332,12 @@ function getStepContent(step) {
 }
 
 const INITIAL_STATE = {
+    CategoryHierachyListing: [],
+    CategoryHierachyID: [],
+    categoryHierachy: 0,
+    breadcrumb: [],
+    isCategorySet: false,
+
     name: "",
     description: "",
     productCategory: "",
@@ -499,6 +505,7 @@ class ProductDetailsComponent extends Component {
         this.onSubmitProductSpecification = this.onSubmitProductSpecification.bind(this);
         this.applyToAllVariant = this.applyToAllVariant.bind(this);
         this.bindProductInfoToState = this.bindProductInfoToState.bind(this);
+        this.getCategoryListing = this.getCategoryListing.bind(this)
 
         this.basicInfo = React.createRef();
         this.productDetails = React.createRef();
@@ -511,6 +518,125 @@ class ProductDetailsComponent extends Component {
         this.handleBack = this.handleBack.bind(this)
         this.state = INITIAL_STATE
         this.ExistanceSKU = []
+    }
+
+
+    getCategoryListing(productInfo, categoryInfo) {
+        let tempCategoryHierachy = 0
+        this.state.CategoryHierachyListing.splice(0, this.state.CategoryHierachyListing.length)
+
+        // Check if category in Heirachy 1
+        if (categoryInfo !== null && productInfo.ProductCategoryID !== null && this.state.categoryHierachy === 0) {
+            categoryInfo.map((category) => {
+                if (category.ProductCategoryID == productInfo.ProductCategoryID) {
+                    this.setState({ categoryHierachy: 1, categoryH1ID: category.ProductCategoryID, categoryH1Name: category.ProductCategory, categoryH2: category.HierarchyItem !== undefined ? JSON.parse(category.HierarchyItem) : [] })
+                    this.state.CategoryHierachyListing.push(category.ProductCategory)
+                    this.state.CategoryHierachyID.push(category.ProductCategoryID)
+                    tempCategoryHierachy = 1
+                }
+            })
+
+            // Check if category in Heirachy 2
+            if (tempCategoryHierachy === 0 && tempCategoryHierachy !== 1) {
+                categoryInfo.map((categoryList) => {
+                    categoryList.HierarchyItem !== null && categoryList.HierarchyItem !== undefined &&
+                        JSON.parse(categoryList.HierarchyItem).map((category) => {
+                            if (category.ProductCategoryID == productInfo.ProductCategoryID) {
+                                this.setState({
+                                    categoryHierachy: 2,
+                                    categoryH1ID: categoryList.ProductCategoryID,
+                                    categoryH1Name: categoryList.ProductCategory,
+                                    categoryH2: JSON.parse(categoryList.HierarchyItem),
+                                    categoryH2ID: category.ProductCategoryID,
+                                    categoryH2Name: category.ProductCategory,
+                                    categoryH3: category.HierarchyItem !== undefined ? JSON.parse(category.HierarchyItem) : []
+                                })
+                                this.state.CategoryHierachyListing.push(categoryList.ProductCategory, category.ProductCategory)
+                                this.state.CategoryHierachyID.push(categoryList.ProductCategoryID, category.ProductCategoryID)
+                                tempCategoryHierachy = 2
+                            }
+                        })
+                })
+            }
+
+            // Check if category in Heirachy 3
+            if (tempCategoryHierachy === 0 && tempCategoryHierachy !== 1 && tempCategoryHierachy !== 2) {
+                categoryInfo.map((categoryListing) => {
+                    categoryListing.HierarchyItem !== null && categoryListing.HierarchyItem !== undefined &&
+                        JSON.parse(categoryListing.HierarchyItem).map((categoryList) => {
+                            categoryList.HierarchyItem !== null && categoryList.HierarchyItem !== undefined &&
+                                JSON.parse(categoryList.HierarchyItem).map((category) => {
+                                    if (category.ProductCategoryID == productInfo.ProductCategoryID) {
+                                        this.setState({
+                                            categoryHierachy: 3,
+                                            categoryH1ID: categoryListing.ProductCategoryID,
+                                            categoryH1Name: categoryListing.ProductCategory,
+                                            categoryH2: JSON.parse(categoryList.HierarchyItem),
+                                            categoryH2ID: categoryList.ProductCategoryID,
+                                            categoryH2Name: categoryList.ProductCategory,
+                                            categoryH3: JSON.parse(category.HierarchyItem),
+                                            categoryH3ID: category.ProductCategoryID,
+                                            categoryH3Name: category.ProductCategory,
+                                            categoryH4: category.HierarchyItem !== undefined ? JSON.parse(category.HierarchyItem) : []
+                                        })
+                                        this.state.CategoryHierachyListing.push(categoryListing.ProductCategory, categoryList.ProductCategory, category.ProductCategory)
+                                        this.state.CategoryHierachyID.push(categoryListing.ProductCategoryID, categoryList.ProductCategoryID, category.ProductCategoryID)
+                                        tempCategoryHierachy = 3
+                                    }
+                                })
+                        })
+                })
+            }
+
+            // Check if category in Heirachy 4
+            if (tempCategoryHierachy === 0 && tempCategoryHierachy !== 1 && tempCategoryHierachy !== 2 && tempCategoryHierachy !== 4) {
+                categoryInfo.map((mainCategory) => {
+                    mainCategory.HierarchyItem !== null && mainCategory.HierarchyItem !== undefined &&
+                        JSON.parse(mainCategory.HierarchyItem).map((categoryListing) => {
+                            categoryListing.HierarchyItem !== null && categoryListing.HierarchyItem !== undefined &&
+                                JSON.parse(categoryListing.HierarchyItem).map((categoryList) => {
+                                    categoryList.HierarchyItem !== null && categoryList.HierarchyItem !== undefined &&
+                                        JSON.parse(categoryList.HierarchyItem).map((category) => {
+                                            if (category.ProductCategoryID == productInfo.ProductCategoryID) {
+                                                this.setState({
+                                                    categoryHierachy: 4,
+                                                    categoryH1ID: mainCategory.ProductCategoryID,
+                                                    categoryH1Name: mainCategory.ProductCategory,
+                                                    categoryH2: JSON.parse(categoryListing.HierarchyItem),
+                                                    categoryH2ID: categoryListing.ProductCategoryID,
+                                                    categoryH2Name: categoryListing.ProductCategory,
+                                                    categoryH3: JSON.parse(categoryListing.HierarchyItem),
+                                                    categoryH3ID: categoryList.ProductCategoryID,
+                                                    categoryH3Name: categoryList.ProductCategory,
+                                                    categoryH4: JSON.parse(categoryList.HierarchyItem),
+                                                    categoryH4ID: category.ProductCategoryID,
+                                                    categoryH4Name: category.ProductCategory,
+                                                    categoryH5: category.HierarchyItem !== undefined ? JSON.parse(category.HierarchyItem) : []
+                                                })
+                                                this.state.CategoryHierachyListing.push(mainCategory.ProductCategory, categoryListing.ProductCategory, categoryList.ProductCategory, category.ProductCategory)
+                                                this.state.CategoryHierachyID.push(mainCategory.ProductCategoryID, categoryListing.ProductCategoryID, categoryList.ProductCategoryID, category.ProductCategoryID)
+                                                tempCategoryHierachy = 4
+                                            }
+                                        })
+                                })
+                        })
+                })
+            }
+        }
+
+
+        if (this.state.isCategorySet === false) {
+            this.setState({ isCategorySet: true, })
+            let breadcrumb = this.state.breadcrumb
+
+            this.state.CategoryHierachyListing.length > 0 && this.state.CategoryHierachyListing.map((category, i) => {
+                breadcrumb = [...breadcrumb, ...[
+                    { title: category, url: "/viewProduct/" + category + "/" + this.state.CategoryHierachyID[i] },
+                ]]
+
+            })
+            this.setState({ breadcrumb: breadcrumb })
+        }
     }
 
     setHint = (data, e) => {
@@ -3276,7 +3402,11 @@ class ProductDetailsComponent extends Component {
             }
         }
         else {
-            this.bindProductInfoToState()
+            if (isArrayNotEmpty(this.props.productCategories)) {
+                this.bindProductInfoToState()
+                this.getCategoryListing(this.props.productInfo[0], this.props.productCategories)
+            }
+
         }
     }
 
@@ -3349,40 +3479,116 @@ class ProductDetailsComponent extends Component {
         let checkOption = variation1.length > 0 ? variation1.filter((x) => x.errorOption === true || x.optionName === "") : []
         let checkPrice = variation1.length > 0 ? variation1.filter((x) => x.errorPrice === true || x.price === "") : []
         let checkSKU = variation1.length > 0 ? variation1.filter((x) => x.errorSKU === true || x.sku === "") : []
-        // let checkStock = variation1.length > 0 ? variation1.filter((x) => x.errorStock === true || x.stock === "") : []
+        if (checkOption.length > 0 || checkPrice.length > 0 || checkSKU.length > 0) {
+            let variationData = variation1
+            variationData.options.map((x, index) => {
+                if (x.optionName === "")
+                    variationData.options[index].errorOption = true
 
-        // if (checkOption.length > 0 || checkPrice.length > 0 || checkSKU.length > 0 || checkStock.length > 0)
-        if (checkOption.length > 0 || checkPrice.length > 0 || checkSKU.length > 0)
+                if (x.price === "")
+                    variationData.options[index].errorPrice = true
+
+                if (x.sku === "")
+                    variationData.options[index].errorSKU = true
+
+                if (x.stock === "")
+                    variationData.options[index].errorStock = true
+            })
+            this.setState({ variation1: variationData })
+
             return 1
+        }
+
         else return 0
     }
 
 
     checkGeneral = () => {
 
-        if (this.state.brandEmpty ||
-            this.state.depthNotDecimal ||
-            this.state.depthEmpty ||
-            this.state.productDesciptionEmpty ||
-            this.state.productNameEmpty ||
-            this.state.productNameDublicated ||
-            this.state.productCategoryEmpty ||
-            this.state.productSupplierEmpty ||
-            this.state.heightEmpty ||
-            this.state.heightNotDecimal ||
-            this.state.widthNotDecimal ||
-            this.state.widthEmpty ||
-            this.state.weightNotDecimal ||
-            this.state.weightEmpty ||
-            this.state.modelEmpty ||
-            // this.state.skuEmpty ||
-            // this.state.skuNotLongEnough ||
-            this.state.productTagsEmpty
-            // ||
-            // this.state.notEnoughFiles1600x900 ||
-            // this.state.notEnoughFiles512x512
-        )
+        // if (this.state.brandEmpty ||
+        //     this.state.depthNotDecimal ||
+        //     this.state.depthEmpty ||
+        //     this.state.productDesciptionEmpty ||
+        //     this.state.productNameEmpty ||
+        //     this.state.productNameDublicated ||
+        //     this.state.productCategoryEmpty ||
+        //     this.state.productSupplierEmpty ||
+        //     this.state.heightEmpty ||
+        //     this.state.heightNotDecimal ||
+        //     this.state.widthNotDecimal ||
+        //     this.state.widthEmpty ||
+        //     this.state.weightNotDecimal ||
+        //     this.state.weightEmpty ||
+        //     this.state.modelEmpty ||
+        //     // this.state.skuEmpty ||
+        //     // this.state.skuNotLongEnough ||
+        //     this.state.productTagsEmpty
+        //     // ||
+        //     // this.state.notEnoughFiles1600x900 ||
+        //     // this.state.notEnoughFiles512x512
+        // )
+        //     return 1
+        // else return 0
+
+        let error = false
+        if (this.state.name === "" || this.state.productNameDublicated === true) {
+            this.setState({ productNameEmpty: true })
+            error = true
+        }
+
+        if (this.state.brand === "") {
+            this.setState({ brandEmpty: true })
+            error = true
+        }
+
+        if (this.state.depth === "") {
+            this.setState({ depthEmpty: true })
+            error = true
+        }
+
+        if (this.state.height === "") {
+            this.setState({ heightEmpty: true })
+            error = true
+        }
+
+        if (this.state.width === "") {
+            this.setState({ widthEmpty: true })
+            error = true
+        }
+
+        if (this.state.weight === "") {
+            this.setState({ weightEmpty: true })
+            error = true
+        }
+
+        if (this.state.model === "") {
+            this.setState({ modelEmpty: true })
+            error = true
+        }
+
+        if (this.state.tags === "") {
+            this.setState({ productTagsEmpty: true })
+            error = true
+        }
+
+        if (this.state.productCategory === "") {
+            this.setState({ productCategoryEmpty: true })
+            error = true
+        }
+
+        if (this.state.description === "") {
+            this.setState({ productDesciptionEmpty: true })
+            error = true
+        }
+
+        if (this.state.productSupplier === "") {
+            this.setState({ productSupplierEmpty: true })
+            error = true
+        }
+        if (error === true) {
             return 1
+        }
+
         else return 0
     }
 
@@ -3426,7 +3632,7 @@ class ProductDetailsComponent extends Component {
                 this.onSubmitProductVariation(this.state.ProductID)
                 this.onSubmitProductSpecification(this.state.ProductID)
                 this.uploadFile(this.state.ProductID)
-                this.setState({ isSubmit: true })
+                this.setState({ isSubmit: true, isCategorySet: false })
             }
         }
     }
@@ -3554,7 +3760,6 @@ class ProductDetailsComponent extends Component {
             }
         }
 
-        console.log("dasddasdsa", this.props.productInfo)
         this.setState({
             isProductIntoBind: true, // to stop the looping of calling this function from componentdidupdate
             name: this.props.productInfo.length > 0 ? this.props.productInfo[0].ProductName : "",
@@ -3565,7 +3770,7 @@ class ProductDetailsComponent extends Component {
             weight: this.props.productInfo.length > 0 ? this.props.productInfo[0].ProductWeight : "",
             brand: this.props.productInfo.length > 0 ? this.props.productInfo[0].Brand : "",
             tags: tagList,
-            productSupplier: this.props.productInfo.length > 0 ?this.props.productInfo[0].SupplierName : "",
+            productSupplier: this.props.productInfo.length > 0 ? this.props.productInfo[0].SupplierName : "",
             model: this.props.productInfo.length > 0 ? this.props.productInfo[0].Model : "",
             sku: this.props.productInfo.length > 0 ? this.props.productInfo[0].SKU : "",
             ProductID: this.props.productInfo.length > 0 ? this.props.productInfo[0].ProductID : "",
@@ -3627,13 +3832,22 @@ class ProductDetailsComponent extends Component {
         // then we need a state to check the allows to prevent the infinite looping of this function
 
         if (typeof this.props.productInfo !== "undefined" && this.props.productInfo) {
-            if (this.props.productInfo.length > 0 && typeof this.props.productInfo.ReturnVal === "undefined" && !this.state.isProductIntoBind) {
+            if (isArrayNotEmpty(this.props.productInfo) && !this.state.isProductIntoBind && isArrayNotEmpty(this.props.productCategories)) {
+                this.getCategoryListing(this.props.productInfo[0], this.props.productCategories)
                 this.bindProductInfoToState()
             }
         }
 
-        if (prevProps.productInfo !== this.props.productInfo)
+        if (prevProps.productInfo !== this.props.productInfo && isArrayNotEmpty(this.props.productCategories)) {
+            this.getCategoryListing(this.props.productInfo[0], this.props.productCategories)
             this.bindProductInfoToState()
+        }
+
+
+
+        // if (prevProps.productInfo !== this.props.productInfo) {
+        //     this.bindProductInfoToState()
+        // }
 
         if (this.state.isSubmit === true && this.state.isSubmissionSpecChecking === true && this.state.isSubmissionVariationChecking === true) {
             if (typeof this.props.returnUpdateProduct !== "undefined" && this.props.returnUpdateProduct.length > 0 && this.props.returnUpdateProduct[0].ProductID !== undefined) {
@@ -3676,9 +3890,7 @@ class ProductDetailsComponent extends Component {
             }
         }
 
-        if (prevProps.productInfo !== this.props.productInfo) {
-            this.bindProductInfoToState()
-        }
+
     }
 
     handleAddProductSpecification = (addOrRemove, index, specificationData) => {
@@ -3807,6 +4019,9 @@ class ProductDetailsComponent extends Component {
     }
 
     render() {
+
+        console.log("CHECKKK", this.props)
+        console.log("CHECKKK11", this.state)
 
         const { isOnViewState } = this.props  //this props used to indicate it is on the state of viewing product details or it is adding product
         const { description } = this.state
@@ -4255,8 +4470,7 @@ class ProductDetailsComponent extends Component {
 
         return (
 
-            this.props.productInfo.length !== 0 ?
-                // <div className="MainContainer" style={{ display: "flex" }}>
+            this.props.productInfo.length !== 0 && this.state.isProductIntoBind === true ?
                 <div style={{ display: "flex", width: "100%" }}>
                     <div className="MainTab">
                         <div>
@@ -4297,11 +4511,12 @@ class ProductDetailsComponent extends Component {
             } */}
                         </div>
                         {/* <Button onClick={() => this.setState({toBeEdited: !this.state.toBeEdited})}>{this.state.toBeEdited? "Cancel" : "Edit"}</Button> */}
-
+                        {console.log("dsadsadsad", this.props)}
+                        {console.log("dsadsadsad11", this.state)}
                         <div>
                             <Card id="basicInfo" className="SubContainer">
                                 <CardContent id="basicInfo">
-                                    <p className="Heading">Basic Information</p>
+                                    <p className="Heading">Basic Information12345</p>
 
                                     <TextField
                                         id="productName"
@@ -4328,16 +4543,6 @@ class ProductDetailsComponent extends Component {
                                         <p className="error">Product category cannot be empty.</p>
                                     )}
 
-
-                                    {this.state.toBeEdited ? <p className="Label">Product Category {
-                                        this.props.history.location.query === undefined ?
-                                            "" :
-                                            this.props.history.location.query.categoryDetails.map((category) => {
-                                                return (
-                                                    (<span>{"  >  " + category}</span>)
-                                                )
-                                            })
-                                    }</p> : null}
                                     {this.state.toBeEdited ? <div className="CategorySelector">
                                         <Autocomplete
                                             id="free-solo-demo"
@@ -4477,9 +4682,10 @@ class ProductDetailsComponent extends Component {
                                         label="Product Category"
                                         defaultValue={this.state.productCategory}
                                         value={
-                                            this.props.history.location.query === undefined ?
-                                                this.state.productCategory :
-                                                this.props.history.location.query.categoryDetails
+                                            isArrayNotEmpty(this.state.CategoryHierachyListing) ?
+                                                this.state.CategoryHierachyListing.map((x, i) => {
+                                                    return (x + " >")
+                                                }) : "-"
                                         }
                                         InputProps={{
                                             readOnly: true,
@@ -4491,26 +4697,30 @@ class ProductDetailsComponent extends Component {
                                         variant="outlined"
                                         className="InputField"
                                     />}
-                                    <div className="Label">
-                                        {this.state.categoryH1Name ? (
-                                            <span>
-                                                {this.state.categoryH1Name}
-                                                {this.state.categoryH2Name ? (
-                                                    <span>
-                                                        {" > " + this.state.categoryH2Name}
-                                                        {this.state.categoryH3Name ? (
-                                                            <span>
-                                                                {" > " + this.state.categoryH3Name}
-                                                                {this.state.categoryH4Name ? (
-                                                                    <span>{" > " + this.state.categoryH4Name}</span>
-                                                                ) : null}
-                                                            </span>
-                                                        ) : null}
-                                                    </span>
-                                                ) : null}
-                                            </span>
-                                        ) : null}
-                                    </div>
+                                    {
+                                        this.state.toBeEdited &&
+                                        <div className="Label">
+                                            {this.state.categoryH1Name ? (
+                                                <span>
+                                                    {this.state.categoryH1Name}
+                                                    {this.state.categoryH2Name ? (
+                                                        <span>
+                                                            {" > " + this.state.categoryH2Name}
+                                                            {this.state.categoryH3Name ? (
+                                                                <span>
+                                                                    {" > " + this.state.categoryH3Name}
+                                                                    {this.state.categoryH4Name ? (
+                                                                        <span>{" > " + this.state.categoryH4Name}</span>
+                                                                    ) : null}
+                                                                </span>
+                                                            ) : null}
+                                                        </span>
+                                                    ) : null}
+                                                </span>
+                                            ) : null}
+                                        </div>
+                                    }
+
                                 </CardContent>
                             </Card>
                             <br />
@@ -4596,7 +4806,7 @@ class ProductDetailsComponent extends Component {
                                             id="productSupplier"
                                             label="Product Supplier"
                                             // defaultValue={JSON.parse(localStorage.getItem("loginUser"))[0].UserFullName}
-                                            defaultValue={this.state.productSupplier}
+                                            defaultValue={isArrayNotEmpty(this.props.productInfo) ? this.props.productInfo[0].SupplierName : "-"}
                                             InputProps={{
                                                 readOnly: true,
                                             }}
@@ -4607,6 +4817,8 @@ class ProductDetailsComponent extends Component {
                                             variant="outlined"
                                             className="InputField"
                                         />}
+                                    {console.log("check", this.state)}
+                                    {console.log("check", this.props)}
                                     {this.state.productSupplierEmpty && this.state.toBeEdited && (
                                         <p className="error">Product supplier cannot be empty.</p>
                                     )}
@@ -5166,9 +5378,10 @@ class ProductDetailsComponent extends Component {
                                                 <p>Product Variation</p>
                                             </div>
                                             <div className="VariantOptionsSection">
-
+                                                {console.log("fasfafsafa", this.state)}
+                                                {console.log("fasfafsafa", this.props)}
                                                 <FormControl variant="outlined" className="w-100" size="small">
-                                                    {/* <InputLabel id="demo-simple-select-outlined-label">Product Variation</InputLabel> */}
+                                                    <InputLabel id="demo-simple-select-outlined-label">Product Variation</InputLabel>
                                                     <Select
                                                         labelId="Product_Variation"
                                                         id="Product_Variation"
@@ -5176,8 +5389,9 @@ class ProductDetailsComponent extends Component {
                                                         defaultValue={this.state.selectedVariationID}
                                                         onChange={(e) => { this.handleProductVariantInput("select", e) }}
                                                         label="Product Variation"
+                                                        place
                                                     >
-                                                        <MenuItem value=""><em>None</em></MenuItem>
+                                                        <MenuItem value={0}><em>None</em></MenuItem>
                                                         {this.props.variations ?
                                                             this.props.variations.length > 0 && typeof this.props.variations[0].ReturnVal === "undefined" &&
                                                             this.props.variations.map((el, idx) => {
@@ -6199,7 +6413,7 @@ class ProductDetailsComponent extends Component {
                         </div>
                     </div>
 
-                    <ModalPopOut open={this.state.isOverFileSize} title="File Size Error" showAction={false}>
+                    <ModalPopOut open={this.state.isOverFileSize} title="File Size Error" showAction={false} handleToggleDialog={() => this.setState({ isOverFileSize: false })}>
                         <div className="container-fluid">
                             <div className="container">
                                 <h3>Media Error</h3>

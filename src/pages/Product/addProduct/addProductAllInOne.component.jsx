@@ -3352,6 +3352,21 @@ class AddProductComponent extends Component {
 
           if (skuLength > 0 || priceEmpty > 0 || skuEmpty > 0 || this.state.selectedVariationID === 0) {
             toast.error("Input Error: Please fill in all variation with requirement")
+            let variationData = this.state.variation1
+            variationData.options.map((x, index) => {
+              if (x.optionName === "")
+                variationData.options[index].errorOption = true
+
+              if (x.price === "")
+                variationData.options[index].errorPrice = true
+
+              if (x.sku === "")
+                variationData.options[index].errorSKU = true
+
+              if (x.stock === "")
+                variationData.options[index].errorStock = true
+            })
+            this.setState({ variation1: variationData })
           }
           else {
             if (this.state.name === "" || this.state.description === "" || this.state.productCategory === "" || this.state.productSupplier === "" || this.state.height === ""
@@ -3437,10 +3452,6 @@ class AddProductComponent extends Component {
       }
     }
 
-
-    console.log("sdadsdsadad", this.props)
-    console.log("sdadsdsadad123", this.state)
-
     //call the variations for product specifications and product category
     if (this.props.result) {
       if (typeof this.props.result !== "undefined" && this.props.result.length > 0 && this.props.result[0].ProductID !== undefined) {
@@ -3485,18 +3496,16 @@ class AddProductComponent extends Component {
       if (typeof this.props.productMediaResult !== "undefined" && this.props.productMediaResult.length > 0 && this.props.productMediaResult[0].ProductMediaID !== undefined) {
         toast.success("Product is successfully submitted to Admin for endorsement. Estimated 3 - 5 days for admin to revise your added product.")
         this.props.CallResetProductMediaResult()
-        console.log("12345")
         // this.setState({ isSubmit: false })
       }
       else {
         if (this.state.isSubmit === true) {
           toast.success("Product is successfully submitted to Admin for endorsement. Estimated 3 - 5 days for admin to revise your added product.")
           this.setState({ isSubmit: false })
-          console.log("678910")
-          // setTimeout(() => {
-          //   window.location.href = "/ecommerceCMSDev/viewProduct"
-          //   window.location.reload(false);
-          // }, 3000);
+          setTimeout(() => {
+            window.location.href = "/ecommerceCMSDev/viewProduct"
+            window.location.reload(false);
+          }, 3000);
         }
       }
     }
@@ -4767,7 +4776,7 @@ class AddProductComponent extends Component {
                           onChange={(e) => { this.handleProductVariantInput("select", e) }}
                           label="Product Variation"
                         >
-                          <MenuItem value=""><em>None</em></MenuItem>
+                          <MenuItem value={0}><em>None</em></MenuItem>
                           {
                             this.props.variations.length > 0 && typeof this.props.variations[0].ReturnVal === "undefined" &&
                             this.props.variations.map((el, idx) => {
@@ -4776,7 +4785,7 @@ class AddProductComponent extends Component {
                           }
                         </Select>
                       </FormControl>
-                      {this.state.variation1NameEmpty ? (
+                      {this.state.selectedVariationID === "" ? (
                         <p className="error">
                           Variation name has to be filled.
                         </p>
@@ -5414,7 +5423,7 @@ class AddProductComponent extends Component {
                     )}
                   </div>
                 </div>
-                
+
                 <div className="HorizontalContainer">
                   <div className="InputFieldMiddleElement">
                     <p className="FontTypeInputLabel">Weight</p>
@@ -5605,32 +5614,7 @@ class AddProductComponent extends Component {
                 </div>
               </CardContent>
             </Card>
-            {/* <Fade in={this.state.FocusOn}>
-              <br />
-              <Card className="HintsCard">
-                <CardContent>
-                  <div className="HintsContainer">
-                    <div className="HintsTitleContainer">
-                      <InfoOutlinedIcon
-                        color="disabled"
-                        className="HintsIcon"
-                      />
-                      <p className="HintsTitleText">Hints</p>
-                    </div>
-                    <div className="HintsBodyContainer">
-                      <ul>
-                        {this.state.helpText.map((text) => (
-                          <li>
-                            <p className="HintBodyText">{text}</p>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </Fade> */}
-            <ModalPopOut open={this.state.isOverFileSize} title="File Size Error" showAction={false}>
+            <ModalPopOut open={this.state.isOverFileSize} title="File Size Error" showAction={false} handleToggleDialog={() => this.setState({ isOverFileSize: false })}>
               <div className="container-fluid">
                 <div className="container">
                   <h3>Media Error</h3>
