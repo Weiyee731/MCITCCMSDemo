@@ -124,6 +124,14 @@ export class GitEpic {
   User_ViewProfile = action$ =>
     action$.pipe(filter(action => action.type === GitAction.GetUserProfile), map(action => {
       return dispatch => {
+        console.log(url + project + "/" +
+            "User_ProfileListByType?TYPE=" + action.payload.TYPE +
+            "&TYPEVALUE=" + action.payload.TYPEVALUE +
+            "&USERID=" + action.payload.USERID +
+            "&UserRoleID=" + action.payload.USERROLEID +
+            "&LISTPERPAGE=" + action.payload.LISTPERPAGE +
+            "&PAGE=" + action.payload.PAGE +
+            "&ProjectID=" + action.payload.ProjectID)
         try {
           return fetch(url + project + "/" +
             "User_ProfileListByType?TYPE=" + action.payload.TYPE +
@@ -420,9 +428,6 @@ export class GitEpic {
   Order_UpdateTrackingStatus = action$ =>
     action$.pipe(filter(action => action.type === GitAction.OrderTrackingStatusUpdate), map(action => {
       return dispatch => {
-        console.log(url + project + "/" +
-          "Order_UpdateTrackingStatus?OrderID=" + action.payload.OrderID +
-          "&TrackingStatusID=" + action.payload.TrackingStatusID)
         try {
           return fetch(url + project + "/" +
             "Order_UpdateTrackingStatus?OrderID=" + action.payload.OrderID +
@@ -574,7 +579,8 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotMerchantOrders, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
+                toast("The current user has no purchase history at the moment")
                 return dispatch({ type: GitAction.GotMerchantOrders, payload: [] });
               }
             });

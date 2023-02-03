@@ -157,7 +157,6 @@ class ViewMerchantsComponent extends Component {
   }
 
   render() {
-
     const DataList = this.props.allmerchants.length > 0 ? this.props.allmerchants : []
 
     const tableHeadCells = [

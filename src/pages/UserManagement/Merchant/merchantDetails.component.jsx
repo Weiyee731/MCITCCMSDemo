@@ -232,7 +232,7 @@ const DeletableTableToolbar = (props) => {
     props.ProductProps.CallDeletePromoCode(props.selectedData);
     setTimeout(
       function () {
-        window.location.reload(false);
+        // window.location.reload(false);
       }.bind(this),
       500
     );
@@ -414,7 +414,6 @@ class DisplayTable extends Component {
         this.state.rowsPerPage,
         this.props.Data.length - this.state.page * this.state.rowsPerPage
       );
-
     const divStyle = {
       width: "100%",
       margin: "auto",
@@ -715,19 +714,19 @@ class MerchantDetailsComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      companyName: this.props.data.name,
-      companyContactNo: this.props.data.companyContactNo,
-      userID: this.props.data.userId,
-      firstName: this.props.data.firstName,
-      lastName: this.props.data.lastName,
-      companyDescription: this.props.data.companyDescription,
-      companyWebsite: this.props.data.companyWebsite,
-      companyAddressLine1: this.props.data.companyAddressLine1,
-      companyAddressLine2: this.props.data.companyAddressLine2,
-      companyPoscode: this.props.data.companyPoscode,
-      companyCity: this.props.data.companyCity,
-      companyState: this.props.data.companyState,
-      UserStatus: this.props.data.UserStatus,
+      companyName: this.props.data.companyName!== undefined && this.props.data.companyName !== "" ? this.props.data.companyName : "-",
+      companyContactNo: this.props.data.companyContactNo !== undefined && this.props.data.companyContactNo !== "" ? this.props.data.companyContactNo : "-",
+      userID: this.props.data.userId!== undefined && this.props.data.userId !== "" ? this.props.data.userId : "-",
+      firstName: this.props.data.firstName!== undefined && this.props.data.firstName !== "" ? this.props.data.firstName : "-",
+      lastName: this.props.data.lastName!== undefined && this.props.data.lastName !== "" ? this.props.data.lastName : "-",
+      companyDescription: this.props.data.companyDescription!== undefined && this.props.data.companyDescription !== "" ? this.props.data.companyDescription : "-",
+      companyWebsite: this.props.data.companyWebsite!== undefined && this.props.data.companyWebsite !== "" ? this.props.data.companyWebsite : "-",
+      companyAddressLine1: this.props.data.companyAddressLine1!== undefined && this.props.data.companyAddressLine1 !== "" ? this.props.data.companyAddressLine1 : "-",
+      companyAddressLine2: this.props.data.companyAddressLine2!== undefined && this.props.data.companyAddressLine2 !== "" ? this.props.data.companyAddressLine2 : "-",
+      companyPoscode: this.props.data.companyPoscode!== undefined && this.props.data.companyPoscode !== "" ? this.props.data.companyPoscode : "-",
+      companyCity: this.props.data.companyCity!== undefined && this.props.data.companyCity !== "" ? this.props.data.companyCity : "-",
+      companyState: this.props.data.companyState!== undefined && this.props.data.companyState !== "" ? this.props.data.companyState : "-",
+      UserStatus: this.props.data.UserStatus!== undefined && this.props.data.UserStatus !== "" ? this.props.data.UserStatus : "-",
       trackingStatus: "In Cart",
       showTerminatebutton: null,
       fixedHeader: true,
@@ -778,10 +777,10 @@ class MerchantDetailsComponent extends Component {
     
     });
 
-    this.props.CallGetMerchantsOrders({
-      trackingStatus: this.state.trackingStatus,
-      UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID
-    });
+    // this.props.CallGetMerchantsOrders({
+    //   trackingStatus: this.state.trackingStatus,
+    //   UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+    // });
   }
 
   componentDidMount() {
@@ -799,13 +798,11 @@ class MerchantDetailsComponent extends Component {
   }
 
   componentDidUpdate(prodData) {
-    if (this.props.currentUser.length > 0) {
-      this.props.CallClearCurrentUser()
-      setTimeout(() => {
-        // browserHistory.push("/viewMerchants");
-        window.location.reload(false);
-      }, 3000);
-    }
+    // if (this.props.currentUser.length > 0) {
+    //   this.props.CallClearCurrentUser()
+    //   setTimeout(() => {
+    //   }, 3000);
+    // }
   }
 
   handleChange = (data, e) => { };
@@ -833,7 +830,6 @@ class MerchantDetailsComponent extends Component {
     const handleChange = (event, newValue) => {
       this.setState({ value: newValue });
     };
-
     function a11yProps(index) {
       return {
         id: `scrollable-auto-tab-${index}`,
@@ -864,104 +860,70 @@ class MerchantDetailsComponent extends Component {
     const back = () => {
       //   window.location.reload(false);
       this.props.setDetailsShown(false);
+      this.props.setFilter(false);
     };
 
     const UserListing = () => {
       return (
         <>
           <h5>Representative Details</h5>
-          <div style={{ display: "flex", width: "100%" }}>
-            <FormControl style={{ width: "100%", marginRight: "5px" }}>
+          <div style={{ display: "flex", width: "100%", paddingTop:"0.5vw" }}>
+            <div style={{ width: "100%", marginRight: "5px" }}>
               <InputLabel htmlFor="component-simple">
                 Representative First Name
               </InputLabel>
-              <Input
-                id="component-simple"
-                value={this.state.firstName}
-                onChange={this.handleChange}
-                readOnly
-              />
-            </FormControl>
-            <FormControl style={{ width: "100%", marginLeft: "5px" }}>
+              {this.state.firstName}
+            </div>
+            <div style={{ width: "100%", marginLeft: "5px" }}>
               <InputLabel htmlFor="component-simple">
                 Representative Last Name
               </InputLabel>
-              <Input
-                id="component-simple"
-                value={this.state.lastName}
-                onChange={this.handleChange}
-                readOnly
-              />
-            </FormControl>
+              {this.state.lastName}
+            </div>
           </div>
           <h5 style={{ marginTop: "5px" }}>Company Details</h5>
-          <FormControl style={{ width: "100%", marginTop: "5px" }}>
+          <div style={{ width: "100%", marginTop: "15px" }}>
             <InputLabel htmlFor="component-simple">Company Name</InputLabel>
-            <Input
+            {/* <Input
               id="component-simple"
               value={this.state.companyName}
               onChange={this.handleChange}
               readOnly
-            />
-          </FormControl>
-          <FormControl style={{ width: "100%", marginTop: "5px" }}>
-            <InputLabel htmlFor="component-simple">Contact No.</InputLabel>
-            <Input
-              id="component-simple"
-              value={this.state.companyContactNo}
-              onChange={this.handleChange}
-              readOnly
-            />
-          </FormControl>
-          <FormControl style={{ width: "100%", marginTop: "5px" }}>
-            <InputLabel htmlFor="component-simple">Website</InputLabel>
-            <Input
-              id="component-simple"
-              value={this.state.companyWebsite}
-              onChange={this.handleChange}
-              readOnly
-            />
-          </FormControl>
-          <FormControl style={{ width: "100%", marginTop: "5px" }}>
-            <InputLabel htmlFor="component-simple">Address Line 1</InputLabel>
-            <Input
-              id="component-simple"
-              value={this.state.companyAddressLine1}
-              onChange={this.handleChange}
-              readOnly
-            />
-          </FormControl>
-          <FormControl style={{ width: "100%", marginTop: "5px" }}>
-            <InputLabel htmlFor="component-simple">Address Line 2</InputLabel>
-            <Input
-              id="component-simple"
-              value={this.state.companyAddressLine2}
-              onChange={this.handleChange}
-              readOnly
-            />
-          </FormControl>
-          <div style={{ display: "flex", width: "100%", marginTop: "5px" }}>
-            <FormControl style={{ width: "100%", marginRight: "5px" }}>
-              <InputLabel htmlFor="component-simple">City</InputLabel>
-              <Input
-                id="component-simple"
-                value={this.state.companyCity}
-                onChange={this.handleChange}
-                readOnly
-              />
-            </FormControl>
-            <FormControl style={{ width: "100%", marginLeft: "5px" }}>
-              <InputLabel htmlFor="component-simple">State</InputLabel>
-              <Input
-                id="component-simple"
-                value={this.state.companyState}
-                onChange={this.handleChange}
-                readOnly
-              />
-            </FormControl>
+            /> */}
+            {this.state.companyName}
           </div>
-          <TextField
-            style={{ width: "100%", marginTop: "5px" }}
+          <div style={{ width: "100%", marginTop: "15px" }}>
+            <InputLabel htmlFor="component-simple">Contact No.</InputLabel>
+            {this.state.companyContactNo}
+          </div>
+          <div style={{ width: "100%", marginTop: "15px" }}>
+            <InputLabel htmlFor="component-simple">Website</InputLabel>
+            {this.state.companyWebsite}
+          </div>
+          <div style={{ width: "100%", marginTop: "15px" }}>
+            <InputLabel htmlFor="component-simple">Address Line 1</InputLabel>
+            {this.state.companyAddressLine1}
+          </div>
+          <div style={{ width: "100%", marginTop: "15px" }}>
+            <InputLabel htmlFor="component-simple">Address Line 2</InputLabel>
+            {this.state.companyAddressLine2}
+          </div>
+          <div style={{ display: "flex", width: "100%", marginTop: "15px" }}>
+            <div style={{ width: "100%", marginRight: "5px" }}>
+              <InputLabel htmlFor="component-simple">City</InputLabel>
+              {this.state.companyCity}
+            </div>
+            <div style={{ width: "100%", marginLeft: "15px" }}>
+              <InputLabel htmlFor="component-simple">State</InputLabel>
+              {this.state.companyState}
+            </div>
+            <div style={{ width: "100%", marginLeft: "15px" }}>
+              <InputLabel htmlFor="component-simple">Postcode</InputLabel>
+              {this.state.companyPoscode}
+            </div>
+          </div>
+          {/* <TextField
+            style={{ width: "100%", marginTop: "15px" }}
             id="outlined-multiline-flexible"
             label="Company Description"
             multiline
@@ -969,7 +931,9 @@ class MerchantDetailsComponent extends Component {
             value={this.state.companyDescription}
             onChange={this.handleChange}
             inputProps={{ readOnly: true }}
-          />
+          /> */}
+          <InputLabel htmlFor="component-simple">Company Description</InputLabel>
+          {this.state.companyDescription}
         </>
       )
     }
@@ -1027,11 +991,13 @@ class MerchantDetailsComponent extends Component {
           this.state.showTerminatebutton ? (
             <div>
               <h2>Merchant Details</h2>
-              <Button onClick={back}>
-                <ArrowRoundedLeft8x13Svg fontSize="inherit" />
-                {" "}Back
-              </Button>
-              <Card style={{ width: "80%", margin: "0 auto" }}>
+              <div className="col-6">
+                <Button style={{color:"black"}} onClick={back}>
+                    <ArrowRoundedLeft8x13Svg style={{margin:"0.5vw"}} fontSize="inherit" />
+                        Back
+                </Button>
+              </div>
+              <Card style={{ width: "100%", margin: "0 auto" }}>
                 <CardContent>
                   {
                     this.state.UserStatus === "Endorsed" ?
@@ -1043,7 +1009,7 @@ class MerchantDetailsComponent extends Component {
                       }} onClick={() => this.handleClick("terminate")}>Terminate this merchant</Button>
                       :
                       <>
-                        <Button variant="outlined" size="medium" className="float-right-accept-button"
+                        {/* <Button variant="outlined" size="medium" className="float-right-accept-button"
                           style={{
                             float: "right",
                             marginBottom: "16px",
@@ -1058,7 +1024,7 @@ class MerchantDetailsComponent extends Component {
                             marginLeft: "16px",
                             color: "#3f51b5 "
                           }}
-                          onClick={() => this.handleClick("revise")}>Revise merchant</Button>
+                          onClick={() => this.handleClick("revise")}>Revise merchant</Button> */}
                       </>
                   }
                   {UserListing()}
@@ -1087,12 +1053,15 @@ class MerchantDetailsComponent extends Component {
             :
             (<div>
               <h2>Merchant Details</h2>
-              <Button onClick={back}>
-                <i className="fas fa-chevron-left"></i>Back
-              </Button>
-              <Card style={{ width: "80%", margin: "0 auto" }}>
+              <div className="col-6">
+                <Button style={{color:"black"}} onClick={back}>
+                    <ArrowRoundedLeft8x13Svg style={{margin:"0.5vw"}} fontSize="inherit" />
+                        Back
+                </Button>
+              </div>
+              <Card style={{ width: "100%", margin: "0 auto" }}>
                 <CardContent>
-                  {
+                  {/* {
                     this.state.UserStatus === "Pending" ?
                       <>
                         <Button variant="outlined" size="medium" className="float-right-accept-button"
@@ -1131,7 +1100,7 @@ class MerchantDetailsComponent extends Component {
                           }}
                           onClick={() => this.handleClick("revise")}>Revise Merchant</Button>
                       </>
-                  }
+                  } */}
                   {UserListing()}
                 </CardContent>
               </Card></div>)

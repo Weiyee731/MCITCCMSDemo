@@ -34,6 +34,8 @@ import AppBar from "@mui/material/AppBar";
 import Tabs from "@mui/material/Tabs";
 import TextField from "@mui/material/TextField";
 import Collapse from "@mui/material/Collapse";
+import { isArrayNotEmpty } from "../../../tools/Helpers";
+import { connectableObservableDescriptor } from "rxjs/observable/ConnectableObservable";
 
 
 function mapStateToProps(state) {
@@ -109,19 +111,19 @@ const useStyles = makeStyles((theme) => ({
         top: 20,
         width: 1,
     },
-    highlight:
-        theme.palette.type === "light"
-            ? {
-                color: theme.palette.secondary.main,
-                // backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-            }
-            : {
-                color: theme.palette.text.primary,
-                backgroundColor: theme.palette.secondary.dark,
-            },
-    title: {
-        flex: "1 1 100%",
-    },
+    // highlight:
+    //     theme.palette.type === "light"
+    //         ? {
+    //             color: theme.palette.secondary.main,
+    //             // backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+    //         }
+    //         : {
+    //             color: theme.palette.text.primary,
+    //             backgroundColor: theme.palette.secondary.dark,
+    //         },
+    // title: {
+    //     flex: "1 1 100%",
+    // },
 }));
 
 const headCells = [
@@ -283,7 +285,6 @@ class DisplayTable extends Component {
                 this.state.rowsPerPage,
                 this.props.Data.length - this.state.page * this.state.rowsPerPage
             );
-
         const divStyle = {
             width: "100%",
             margin: "auto",
@@ -318,7 +319,7 @@ class DisplayTable extends Component {
                                 <p className="subTextLeft">{leftTitle}</p>
                             </div>
                             <div className="col-9">
-                                <TextField
+                                {/* <TextField
                                     id="outlined-size-small" size="small"
                                     style={{
                                         width: '100%'
@@ -327,7 +328,8 @@ class DisplayTable extends Component {
                                     variant="outlined"
                                     value={leftValue}
                                     disabled={true}
-                                />
+                                /> */}
+                                <p>{leftValue}</p>
                             </div>
                         </div>
                     </div>
@@ -337,7 +339,7 @@ class DisplayTable extends Component {
                                 <p className="subTextLeft">{rightTitle}</p>
                             </div>
                             <div className="col-9">
-                                <TextField
+                                {/* <TextField
                                     id="outlined-size-small" size="small"
                                     style={{
                                         width: '100%'
@@ -346,7 +348,8 @@ class DisplayTable extends Component {
                                     variant="outlined"
                                     value={rightValue}
                                     disabled={true}
-                                />
+                                /> */}
+                                <p>{rightValue}</p>
                             </div>
                         </div>
                     </div>
@@ -356,20 +359,21 @@ class DisplayTable extends Component {
 
         const UserSmallColListing = (Title, Value) => {
             return (
-                <div className="col-3">
+                <div className="col-6">
                     <div className="row">
                         <div className="col-3">
                             <p className="subTextLeft">{Title}</p>
                         </div>
                         <div className="col-9">
-                            <TextField
+                            {/* <TextField
                                 id="outlined-size-small" size="small"
                                 width="100%"
                                 className="font"
                                 variant="outlined"
                                 value={Value}
                                 disabled={true}
-                            />
+                            /> */}
+                            <p>{Value}</p>
                         </div>
                     </div>
                 </div>
@@ -486,6 +490,7 @@ class DisplayTable extends Component {
                                                                         }
                                                                         <p className="subHeading">Products Ordered</p>
                                                                         {
+
                                                                             row.OrderProductDetail !== null ? (
                                                                                 <>
                                                                                     <div size="small" aria-label="products">
@@ -493,34 +498,54 @@ class DisplayTable extends Component {
                                                                                             merchantList.length > 0 && merchantList.map((listing) => {
                                                                                                 return (
                                                                                                     <>
-                                                                                                        <div>
+                                                                                                        {/* <div>
                                                                                                             {this.props.ProductProps.allmerchants.length > 0 && this.props.ProductProps.allmerchants.filter((X) => X.UserID === listing.MerchantID).map((merchant) => {
                                                                                                                 return (<span style={{ fontWeight: "bold", fontSize: "15px", color: "green" }}>  {merchant.ShopName}  </span>)
                                                                                                             })}
-                                                                                                        </div>
+                                                                                                        </div> */}
+                                                                                                        {this.props.ProductProps.allmerchants.length > 0 &&
+                                                                                                            this.props.ProductProps.allmerchants.filter((X) => X.UserID === listing.MerchantID).map((merchant) => {
+                                                                                                            })}
                                                                                                         <div className="row" style={{ borderTop: "4px solid #fff", paddingTop: "5px", paddingBottom: "5px" }}>
                                                                                                             {row.OrderProductDetail ? JSON.parse(row.OrderProductDetail)
                                                                                                                 .filter((x) => x.MerchantID === listing.MerchantID)
                                                                                                                 .map((product, i) => (
                                                                                                                     <>
-                                                                                                                        <div className="col-8" style={{ paddingTop: "10px" }}>
+                                                                                                                        <div className="col-12" style={{ paddingTop: "10px" }}>
+                                                                                                                            <div className="col-12" style={{ fontWeight: "bold", fontSize: "15px" }}>  {product.ProductName} </div>
                                                                                                                             <div className="row">
                                                                                                                                 <div className="col-3" style={{ width: "20%" }}>
                                                                                                                                     <img
                                                                                                                                         height={60}
-                                                                                                                                        src={product.ProductImage !== null ? JSON.parse(product.ProductImages)[0] : Logo}
+                                                                                                                                        src={product.ProductImage !== null && isArrayNotEmpty(product.ProductImage) ? JSON.parse(product.ProductImages)[0] : Logo}
+                                                                                                                                        // src={Logo}
                                                                                                                                         onError={(e) => { e.target.onerror = null; e.target.src = Logo }}
                                                                                                                                         alt={product.ProductName}
                                                                                                                                     />
                                                                                                                                 </div>
-                                                                                                                                <div className="col-9" style={{ width: "40%" }}>
-                                                                                                                                    <div style={{ fontWeight: "bold", fontSize: "13px" }}>  {product.ProductName} </div>
-                                                                                                                                    <div style={{ fontSize: "11px" }}>  Variation : {product.ProductVariationValue}  </div>
-                                                                                                                                    <div style={{ fontSize: "11px" }}>  SKU : {product.SKU}  </div>
-                                                                                                                                    <div style={{ fontSize: "11px" }}>  Dimension : {product.ProductDimensionWidth}m (W) X {product.ProductDimensionHeight}m (H) X {product.ProductDimensionDeep}m (L) </div>
-                                                                                                                                    <div style={{ fontSize: "11px" }}>  Weight : {product.ProductWeight} kg   </div>
-                                                                                                                                    <div style={{ fontSize: "13px", fontWeight: "bold" }}>  Total Paid : {(product.ProductQuantity * product.ProductVariationPrice).toFixed(2)}  / Qty ({product.ProductQuantity})</div>
+                                                                                                                                <div className="col-9">
+                                                                                                                                    <div className="row" style={{ width: "100%" }}>
+                                                                                                                                        {/* <div className="col-6" style={{ fontWeight: "bold", fontSize: "15px" }}>  {product.ProductName} </div> */}
+                                                                                                                                        <div className="col-6" style={{ fontSize: "13px" }}>  Variation : {product.ProductVariationValue}  </div>
+                                                                                                                                        <div className="col-6" style={{ fontSize: "13px" }}>  SKU : {product.SKU}  </div>
+                                                                                                                                        <div className="col-6" style={{ fontSize: "13px" }}>  Dimension : {product.ProductDimensionWidth}m (W) X {product.ProductDimensionHeight}m (H) X {product.ProductDimensionDeep}m (L) </div>
+                                                                                                                                        <div className="col-6" style={{ fontSize: "13px" }}>  Weight : {product.ProductWeight} kg   </div>
+                                                                                                                                        {/* <div className="col-6" style={{ fontSize: "13px" }}>  Shop Name : <span style={{ fontWeight: "bold", color: "green" }}>
+                                                                                                                                            {this.props.ProductProps.allmerchants.length > 0 &&
+                                                                                                                                                this.props.ProductProps.allmerchants.filter((X) => X.UserID === listing.MerchantID).map((merchant) => {
+                                                                                                                                                    return (
+                                                                                                                                                        <span style={{ fontWeight: "bold", fontSize: "15px", color: "green" }}>
+                                                                                                                                                            {merchant.ShopName !== undefined ? merchant.ShopName : "-"}
+                                                                                                                                                        </span>
+                                                                                                                                                    )
+                                                                                                                                                })}
+                                                                                                                                        </span>
+                                                                                                                                        </div> */}
+                                                                                                                                        <div className="col-6" style={{ fontSize: "15px", fontWeight: "bold" }}></div>
+                                                                                                                                        <div className="col-6" style={{ fontSize: "15px", fontWeight: "bold" }}>  Total Paid : {(product.ProductQuantity * product.ProductVariationPrice).toFixed(2)}  / Qty ({product.ProductQuantity})</div>
+                                                                                                                                    </div>
                                                                                                                                 </div>
+
                                                                                                                             </div>
                                                                                                                         </div>
                                                                                                                     </>
@@ -580,7 +605,7 @@ class UserDetailsComponent extends Component {
             firstName: this.props.data.name.FirstName,
             lastName: this.props.data.name.LastName,
             email: this.props.data.name.UserEmailAddress,
-            trackingStatus: "In Cart",
+            trackingStatus: "Payment Confirm",
             fixedHeader: true,
             fixedFooter: true,
             stripedRows: false,
@@ -645,9 +670,9 @@ class UserDetailsComponent extends Component {
         });
 
     }
+
     handleChange = (data, e) => { };
     render() {
-
         const handleChange = (event, newValue) => {
             this.setState({ value: newValue });
         };
@@ -724,47 +749,51 @@ class UserDetailsComponent extends Component {
         return (
             <div>
                 <h2>User Details</h2>
-                <Button onClick={back}>
-                    <ArrowRoundedLeft8x13Svg fontSize="inherit" />
-                    {"  "}Back
+                <Button style={{ color: "black" }} onClick={back}>
+                    <ArrowRoundedLeft8x13Svg style={{ margin: "0.5vw" }} fontSize="inherit" />
+                    Back
                 </Button>
-                <Card style={{ width: "80%", margin: "0 auto" }}>
+                <Card style={{ width: "100%", margin: "0 auto" }}>
                     <CardContent>
                         <div style={{ display: "flex", width: "100%" }}>
-                            <FormControl style={{ width: "100%", marginRight: "5px" }}>
+                            <div style={{ width: "100%" }}>
                                 <InputLabel htmlFor="component-simple">First Name</InputLabel>
-                                <Input
+                                {/* <Input
                                     id="component-simple"
-                                    value={this.state.firstName}
+                                    value={this.state.firstName !== undefined && this.state.firstname !== null && this.state.firstname !== "" ? this.state.firstName : "-"}
                                     readOnly
-                                />
-                            </FormControl>
-                            <FormControl style={{ width: "100%", marginLeft: "5px" }}>
+                                /> */}
+                                {this.state.firstName !== undefined && this.state.firstname !== null && this.state.firstname !== "" ? this.state.firstName : "-"}
+                            </div>
+                            <div style={{ width: "100%" }}>
                                 <InputLabel htmlFor="component-simple">Last Name</InputLabel>
-                                <Input
+                                {/* <Input
                                     id="component-simple"
-                                    value={this.state.lastName}
+                                    value={this.state.lastName !== undefined && this.state.lastName !== null && this.state.lastName !== "" ? this.state.lastName : "-"}
                                     readOnly
-                                />
-                            </FormControl>
+                                /> */}
+                                {this.state.lastName !== undefined && this.state.lastName !== null && this.state.lastName !== "" ? this.state.lastName : "-"}
+                            </div>
                         </div>
                         <div style={{ display: "flex", width: "100%" }}>
-                            <FormControl style={{ width: "100%", marginTop: "5px" }}>
+                            <div style={{ width: "100%", marginTop: "5px" }}>
                                 <InputLabel htmlFor="component-simple">Contact No.</InputLabel>
-                                <Input
+                                {/* <Input
                                     id="component-simple"
-                                    value={this.state.userContact}
+                                    value={this.state.userContact !== undefined && this.state.userContact !== null && this.state.userContact !== "" ? this.state.userContact : "-"}
                                     readOnly
-                                />
-                            </FormControl>
-                            <FormControl style={{ width: "100%", marginTop: "5px" }}>
+                                /> */}
+                                {this.state.userContact !== undefined && this.state.userContact !== null && this.state.userContact !== "" ? this.state.userContact : "-"}
+                            </div>
+                            <div style={{ width: "100%" }}>
                                 <InputLabel htmlFor="component-simple">Email</InputLabel>
-                                <Input
+                                {/* <Input
                                     id="component-simple"
-                                    value={this.state.email}
+                                    value={this.state.userContact !== undefined && this.state.userContact !== null && this.state.userContact !== "" ? this.state.userContact : "-"}
                                     readOnly
-                                />
-                            </FormControl>
+                                /> */}
+                                {this.state.email !== undefined && this.state.email !== null && this.state.email !== "" ? this.state.email : "-"}
+                            </div>
                         </div>
                         <h5 style={{ marginTop: "15px", marginBottom: "15px" }}>Purchase Order History</h5>
                         <div style={{ width: "100%" }}>
