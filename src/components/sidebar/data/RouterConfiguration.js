@@ -18,7 +18,7 @@
     },
 ]
  */
-// import Dashboard from "../../../pages/Dashboard/Dashboard";
+import Dashboard from "../../../pages/Dashboard/Dashboard";
 // import UserManagement from '../../../pages/UserManagement/UserManagement';
 // import OverallStock from "../../../pages/Stock/OverallStock/OverallStock";
 // import StockGoods from "../../../pages/Stock/StockGoods/StockGoods";
@@ -71,11 +71,11 @@ import { PromotionDetails } from "../../../pages/Promotion/PromotionDetails";
 import { PromotionListing } from "../../../pages/Promotion/PromotionListing";
 
 const routes = [
-    // {
-    //     path: "/",
-    //     exact: true,
-    //     element: <Dashboard />,
-    // },
+    {
+        path: "/",
+        exact: true,
+        element: <Dashboard />,
+    },
     // {
     //     path: "/UserManagement",
     //     exact: true,
@@ -208,7 +208,7 @@ const routes = [
         exact: true,
         element: <OrderManagement />,
     },
-    
+
     {
         path: "/TransactionManagement",
         exact: true,

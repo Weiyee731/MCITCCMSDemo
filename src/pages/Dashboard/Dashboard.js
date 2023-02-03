@@ -5,6 +5,8 @@ import { browserHistory } from "react-router";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import Button from "@mui/material/Button";
 import ModalComponent from "../../components/ModalComponent/ModalComponent";
+import { Card, CardContent, CardHeader, Grid, Typography, Avatar } from "@mui/material";
+import Logo from "../../assets/logos/logo.png";
 
 function mapStateToProps(state) {
     return {
@@ -19,6 +21,9 @@ function mapDispatchToProps(dispatch) {
 const INITIAL_STATE = {
     openModal: false,
     openFullScreenModal: false,
+    cardDetails: [
+        {}
+    ]
 }
 
 class Dashboard extends Component {
@@ -37,9 +42,65 @@ class Dashboard extends Component {
     }
 
     render() {
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const d = new Date();
+        let day = days[d.getDay()];
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        let month = months[d.getMonth()];
+        const get_Complete_Today = d.getDate() + " " + month + " " + d.getFullYear()
+
         return (
-            <div>
-                <SearchBar
+            <Grid container spacing={1} style={{ padding: '25pt' }}>
+                <Grid item xs={12} sm={12} style={{ display: 'flex', }} >
+                    <Grid item xs={6} style={{ display: "flex", }}>
+                        <Typography variant="h5" style={{ fontWeight: 700 }}>Welcome back, Admin!</Typography>
+                    </Grid>
+                    <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <Typography variant="h6" style={{ color: '#1f7429', }}>{day},&nbsp; {get_Complete_Today}</Typography>
+                    </Grid>
+                </Grid>
+                <hr width="100%" />
+                {/* <Grid container>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12} sm={2} md={2} style={{ display: "flex", justifyContent:"center"}}>
+                            <img src={Logo} width="100%" />
+                        </Grid>
+                        <Grid item xs={12} sm={5} md={5}>
+                            <Card elevation={3}>
+                                <CardHeader
+                                    title={<Typography variant="h6" style={{ fontWeight: 700 }}>Sales</Typography>}
+                                    avatar={
+                                        <Avatar sx={{ bgcolor: 'red' }} aria-label="recipe">
+                                            R
+                                        </Avatar>
+                                    }
+                                />
+                                <CardContent>
+                                    <Typography variant="h5" style={{ fontWeight: 700 }}>333</Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={12} sm={5} md={5}>
+                            <Card elevation={3}>
+                                <CardHeader
+                                    title={<Typography variant="h6" style={{ fontWeight: 700 }}>Sales</Typography>}
+                                    avatar={
+                                        <Avatar sx={{ bgcolor: 'red' }} aria-label="recipe">
+                                            R
+                                        </Avatar>
+                                    }
+                                />
+                                <CardContent>
+                                    <Typography variant="h5" style={{ fontWeight: 700 }}>333</Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    </Grid>
+                </Grid> */}
+
+
+
+                {/* <SearchBar
                     label="search"
                     placeholder="Enter Member No, Tracking No or Container No to search"
                     buttonOnClick={() => this.onSearch("", "")}
@@ -125,8 +186,8 @@ class Dashboard extends Component {
 
                         Consequat interdum varius sit amet. Turpis massa tincidunt dui ut ornare. Cras fermentum odio eu feugiat. Lacinia quis vel eros donec. Feugiat in ante metus dictum at tempor commodo ullamcorper a. Vel facilisis volutpat est velit egestas dui id ornare. Elementum nisi quis eleifend quam adipiscing vitae proin. Nisi porta lorem mollis aliquam ut. Sagittis vitae et leo duis ut diam quam. Laoreet suspendisse interdum consectetur libero id faucibus nisl. Fringilla est ullamcorper eget nulla. Volutpat diam ut venenatis tellus in metus vulputate. Consectetur a erat nam at lectus urna. Leo duis ut diam quam nulla porttitor massa id neque. Donec adipiscing tristique risus nec feugiat. Egestas maecenas pharetra convallis posuere morbi leo. Morbi tristique senectus et netus et malesuada. Dui faucibus in ornare quam viverra orci sagittis eu volutpat. Erat velit scelerisque in dictum non consectetur a.
                     </div>
-                </ModalComponent>
-            </div>
+                </ModalComponent> */}
+            </Grid>
         )
     }
 }
