@@ -58,6 +58,7 @@ export const PromotionListing = (props) => {
         dispatch(GitAction.CallViewPromotion({
             ActiveInd: -1,
             ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+            UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
         }))
     }, [])
 
@@ -67,6 +68,8 @@ export const PromotionListing = (props) => {
             dispatch(GitAction.CallViewPromotion({
                 ActiveInd: -1,
                 ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+                UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+
             }))
             if (isPromoSubmit)
                 toast.success("Successfully Delete")
@@ -76,6 +79,45 @@ export const PromotionListing = (props) => {
     }, [promoAction])
 
     const tableHeadCells = [
+        {
+            id: "PromotionTitle",
+            align: 'left',
+            disablePadding: false,
+            label: "Promotion Title",
+        },
+        {
+            id: "ProductName",
+            align: 'left',
+            disablePadding: false,
+            label: "Products ",
+        },
+        {
+            id: "ShopName",
+            align: 'left',
+            disablePadding: false,
+            label: "Merchant Shop",
+        },
+        {
+            id: "PromotionStatus",
+            align: 'left',
+            disablePadding: false,
+            label: "Status",
+        },
+        {
+            id: "PromotionPeriod",
+            align: 'left',
+            disablePadding: false,
+            label: "Product Period",
+        },
+        {
+            id: "PromotionStatusInd",
+            align: 'left',
+            disablePadding: false,
+            label: "Is Active",
+        },
+    ];
+
+    const merchantTableHeadCells = [
         {
             id: "PromotionTitle",
             align: 'left',
@@ -111,7 +153,8 @@ export const PromotionListing = (props) => {
     const updateStatus = (activeInd, promotionID) => {
         dispatch(GitAction.CallUpdatePromotionStatus({
             PromotionID: promotionID,
-            ActiveInd: activeInd === true ? 1 : 0
+            ActiveInd: activeInd === true ? 1 : 0,
+            UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
         }))
         setSubmitStatus(true)
     }
@@ -122,7 +165,7 @@ export const PromotionListing = (props) => {
             selectedList.map((x) => {
                 promotionID.push(x.PromotionID)
             })
-            dispatch(GitAction.CallDeletePromotion({ PromotionID: promotionID }))
+            dispatch(GitAction.CallDeletePromotion({ PromotionID: promotionID, UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID }))
             setSubmitPromo(true)
             setSelectedList([])
         } else {
@@ -169,6 +212,10 @@ export const PromotionListing = (props) => {
                             })
                         }
                     </TableCell>
+                    {
+                        JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 &&
+                        <TableCell align="left" style={{ fontWeight: "bold" }} onClick={() => propPage(data.PromotionID)}>{data.ShopName}</TableCell>
+                    }
                     <TableCell align="left" onClick={() => propPage(data.PromotionID)}>
                         <Button variant="contained" size="sm" style={{ backgroundColor: data.ActiveInd == 1 ? checkPromotionPeriod(data.BeginDate, data.EndDate, "color",) : "grey", fontWeight: "bold" }}>
                             {data.ActiveInd == 1 ? checkPromotionPeriod(data.BeginDate, data.EndDate, "period") : "Inactive"}
@@ -194,7 +241,7 @@ export const PromotionListing = (props) => {
             <div className="row">
                 <SearchBar
                     id=""
-                    placeholder="Search By Promotion Name"
+                    placeholder="Enter Promotion Name"
                     onChange={(e) => searchSpace(e.target.value)}
                     className="searchbar-input mb-auto"
                     tooltipText="Search with current data"
@@ -223,7 +270,7 @@ export const PromotionListing = (props) => {
                     stickyTableHeader: false,    // optional, default is true
                 }}
                 paginationOptions={[8, 15, 20, { label: 'All', value: -1 }]} // optional, by default it will hide the table pagination. You should set settings for pagination options as in array, eg.: [5, 100, 250, { label: 'All', value: -1 }]
-                tableHeaders={tableHeadCells}        //required
+                tableHeaders={JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? tableHeadCells : merchantTableHeadCells}        //required
                 tableRows={{
                     renderTableRows: renderTableRows,   // required, it is a function, please refer to the example I have done in Table Components
                     checkbox: true,                          // optional, by default is true

@@ -148,6 +148,7 @@ class ViewProductGeneralInfo extends Component {
 
     this.props.CallViewAllProductVariationStock({
       ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+      UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
       ProductID: this.props.match.params.productId,
       ProductPerPage: 999,
       Page: 1
@@ -707,6 +708,16 @@ class ViewProductGeneralInfo extends Component {
                               : "-"}</label>
                           </div>
                         </div>
+                        {console.log("dasdsadsad", this.props)}
+                        <div key="Merchant" className="row">
+                          <div className="col-lg-2">
+                            <label style={productInfoLabelStyle}>Merchant Shop :</label>
+                          </div>
+                          <div className="col-lg-10">
+                            <label>{this.props.productInfo[0].ShopName !== "" ? this.props.productInfo[0].ShopName : "-"}</label>
+                          </div>
+                        </div>
+
                       </div>
                     </div>
                   </CardText>

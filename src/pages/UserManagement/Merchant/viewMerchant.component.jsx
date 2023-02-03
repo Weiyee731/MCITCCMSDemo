@@ -252,7 +252,7 @@ class ViewMerchantsComponent extends Component {
                 <div className="col-md-12 col-12 mb-3 d-flex" >
                   <SearchBar
                     id=""
-                    placeholder="Search By Representive Name, Shop Name and Contact..."
+                    placeholder="Enter Representive Name, Shop Name and Contact..."
                     buttonOnClick={() => this.onSearch("", "")}
                     onChange={(e) => this.searchSpace(e.target.value)}
                     className="searchbar-input mb-auto"

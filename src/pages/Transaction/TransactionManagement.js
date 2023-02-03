@@ -46,13 +46,14 @@ function a11yProps(index) {
 }
 
 export const TransactionManagement = (props) => {
-    const { transactions, countries, transactionStatus, logistic, tracking, orderShipment, orderShipmentStatus, trackingStatusAction } = useSelector(state => ({
+    const { transactions, countries, transactionStatus, logistic, tracking, orderShipment, orderShipmentStatus, trackingStatusAction, currentUser } = useSelector(state => ({
         transactions: state.counterReducer.transactions,
         transactionStatus: state.counterReducer.transactionStatus,
         countries: state.counterReducer.countries,
         logistic: state.counterReducer.logistic,
         tracking: state.counterReducer.tracking,
         trackingStatusAction: state.counterReducer.trackingStatusAction,
+        currentUser: state.counterReducer.currentUser,
         orderShipment: state.counterReducer["orderShipment"],
         orderShipmentStatus: state.counterReducer["orderShipmentStatus"],
     }));
@@ -67,6 +68,7 @@ export const TransactionManagement = (props) => {
     const [isShipmentSubmit, setShipmentSubmit] = useState(false)
     const [isViewTracking, setViewTracking] = useState(false)
     const [isStatusViewClick, setViewClick] = useState(false)
+    const [selectedMerchant, setSelectedMerchant] = useState(0)
 
     const [searchkeyword, setSearchKeyword] = useState("")
     const [filteredListing, setFilteredListing] = useState([])
@@ -89,11 +91,22 @@ export const TransactionManagement = (props) => {
     useEffect(() => {
         dispatch(GitAction.CallGetTransaction({
             TrackingStatus: "Payment Confirm",
-            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
+            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+            UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+
         }))
         dispatch(GitAction.CallCountry())
         dispatch(GitAction.CallGetTransactionStatus())
         dispatch(GitAction.CallCourierService())
+        dispatch(GitAction.CallUserProfile({
+            TYPE: "Usertype",
+            TYPEVALUE: 0,
+            USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID ? JSON.parse(localStorage.getItem("loginUser"))[0].UserID : 0,
+            USERROLEID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID ? JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID : 0,
+            LISTPERPAGE: 999,
+            PAGE: 1,
+            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
+        }))
     }, [])
 
 
@@ -133,6 +146,7 @@ export const TransactionManagement = (props) => {
                     isCheckBoxSelected: false
                 }]
             })
+
             setOrderListing(listing)
             setOrder(true)
         }
@@ -169,7 +183,9 @@ export const TransactionManagement = (props) => {
             if (tracking[0].PDFLabel !== undefined) {
                 dispatch(GitAction.CallGetTransaction({
                     TrackingStatus: "Payment Confirm",
-                    ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
+                    ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+                    UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+
                 }))
                 toast.success("Successfully Update Tracking Number")
                 setOrder(false)
@@ -1282,23 +1298,52 @@ export const TransactionManagement = (props) => {
 
     return (
         <div style={{ width: "100%" }}>
-            <div className="col-md-12 col-12 mb-3 d-flex" >
-                <SearchBar
-                    id=""
-                    placeholder="Enter Order ID or parcel tracking number to search"
-                    buttonOnClick={() => searchSpace(searchkeyword)}
-                    onChange={(e) => {
-                        if (e.target.value === "") {
-                            setSearchKeyword(e.target.value)
-                            setFilteredListing([])
-                        }
-                        else
-                            setSearchKeyword(e.target.value)
-                    }}
-                    className="searchbar-input mb-auto"
-                    tooltipText="Search with current data"
-                    value={searchkeyword}
-                />
+            <div className="row" >
+                <div className={JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? "col-10" : "col-12"}>
+                    <SearchBar
+                        id=""
+                        placeholder="Enter Order ID or parcel tracking number to search"
+                        buttonOnClick={() => searchSpace(searchkeyword)}
+                        onChange={(e) => {
+                            if (e.target.value === "") {
+                                setSearchKeyword(e.target.value)
+                                setFilteredListing([])
+                            }
+                            else
+                                setSearchKeyword(e.target.value)
+                        }}
+                        className="searchbar-input mb-auto"
+                        tooltipText="Search with current data"
+                        value={searchkeyword}
+                    />
+                </div>
+                {
+                    JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 &&
+                    <div className="col-2">
+                        <FormControl fullWidth size="small" variant="outlined">
+                            <InputLabel id="demo-simple-select-label">Merchant Shop</InputLabel>
+                            <Select
+                                id={"outlined-adornment-merchant"}
+                                value={selectedMerchant}
+                                onChange={(e) => { setSelectedMerchant(e.target.value) }}
+                                size="small"
+                                label="Merchant Shop"
+                                placeholder="Merchant Shop"
+                                className="select"
+                            >
+                                <MenuItem value={0}>All Merchant Shop</MenuItem>
+                                {
+                                    currentUser.filter(x => x.UserTypeID < 17)
+                                        .map((data, i) => {
+                                            return (
+                                                <MenuItem value={data.UserID}>{data.ShopName}</MenuItem>
+                                            )
+                                        })
+                                }
+                            </Select>
+                        </FormControl>
+                    </div>
+                }
             </div>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
@@ -1324,9 +1369,17 @@ export const TransactionManagement = (props) => {
                     return (<TabPanel value={value} index={statusIndex}> {
                         OrderLayout(
                             isArrayNotEmpty(filteredListing) ?
-                                filteredListing.filter((y) => y.TrackingStatusID === x.TrackingStatusID)
+                                selectedMerchant === 0 ?
+                                    filteredListing.filter((y) => y.TrackingStatusID === x.TrackingStatusID)
+                                    :
+                                    filteredListing.filter((y) => y.TrackingStatusID === x.TrackingStatusID && y.MerchantID === selectedMerchant)
                                 :
-                                isArrayNotEmpty(OrderListing) ? OrderListing.filter((y) => y.TrackingStatusID === x.TrackingStatusID) : [])
+                                isArrayNotEmpty(OrderListing) ?
+                                    selectedMerchant === 0 ?
+                                        OrderListing.filter((y) => y.TrackingStatusID === x.TrackingStatusID)
+                                        :
+                                        OrderListing.filter((y) => y.TrackingStatusID === x.TrackingStatusID && y.MerchantID === selectedMerchant)
+                                    : [])
                     } </TabPanel>)
                 })
             }

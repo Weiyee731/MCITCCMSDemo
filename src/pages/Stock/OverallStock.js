@@ -73,6 +73,12 @@ const overallHeadCells = [
         label: 'Product Stock',
     },
     {
+        id: 'ShopName',
+        align: 'center',
+        disablePadding: false,
+        label: 'Merchant Shop',
+    },
+    {
         id: 'FirstDate',
         align: 'center',
         disablePadding: false,
@@ -85,6 +91,35 @@ const overallHeadCells = [
         label: 'Last Stock Date',
     },
 ]
+
+
+const merchantOverallHeadCells = [
+    {
+        id: 'ProductName',
+        align: 'left',
+        disablePadding: false,
+        label: 'Product Name',
+    },
+    {
+        id: 'ProductStockAmount',
+        align: 'center',
+        disablePadding: false,
+        label: 'Product Stock',
+    },
+    {
+        id: 'FirstDate',
+        align: 'center',
+        disablePadding: false,
+        label: 'First Stock Date',
+    },
+    {
+        id: 'LastDate',
+        align: 'center',
+        disablePadding: false,
+        label: 'Last Stock Date',
+    },
+]
+
 
 const headCells = [
     {
@@ -193,6 +228,7 @@ class Stock extends Component {
         this.props.CallGridList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
         this.props.CallViewAllProductVariationStock({
             ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+            UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
             ProductID: 0,
             ProductPerPage: 999,
             Page: 1
@@ -222,6 +258,7 @@ class Stock extends Component {
             else
                 this.props.CallViewAllProductVariationStock({
                     ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+                    UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
                     ProductID: 0,
                     ProductPerPage: 999,
                     Page: 1
@@ -239,7 +276,7 @@ class Stock extends Component {
                     id={`enhanced-table-checkbox-${index}`}
                     scope="row"
                     padding="normal"
-                    style={{ width: "55%" }}
+                    style={{ width: "45%" }}
                 >
                     {data.ProductName} - ({data.ProductVariation} : {data.ProductVariationValue})
                 </TableCell>
@@ -248,7 +285,9 @@ class Stock extends Component {
                         amountList.push(x)
                     })
                 }
+         
                 <TableCell align="center" style={{ width: "15%" }}>{amountList.length > 0 ? amountList.reduce((amount, item) => amount + item.ProductStockAmount, 0) : 0}</TableCell>
+                {JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 && <TableCell align="center" style={{ width: "15%" }}>{data.ShopName}</TableCell>}
                 <TableCell align="center" style={{ width: "15%" }}>{data.FirstDate}</TableCell>
                 <TableCell align="center" style={{ width: "15%" }}>{data.LastDate}</TableCell>
             </>
@@ -773,7 +812,7 @@ class Stock extends Component {
                             <Select
                                 labelId="search-filter-category"
                                 id="search-filter-category"
-                                label="Search By"
+                                label="Enter"
                                 onChange={(e) => this.handleFormInput(e, "Filter", 0)}
                                 size="small"
                                 value={this.state.selectedFilter}
@@ -845,7 +884,7 @@ class Stock extends Component {
                                 elevation: 1
                             }}
                             paginationOptions={[10, 30, 40, { label: 'All', value: -1 }]}
-                            tableHeaders={overallHeadCells}
+                            tableHeaders={JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? overallHeadCells : merchantOverallHeadCells}
                             tableRows={{
                                 renderTableRows: this.renderTableRows,
                                 checkbox: false,

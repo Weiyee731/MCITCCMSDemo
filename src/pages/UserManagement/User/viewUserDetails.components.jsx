@@ -623,7 +623,12 @@ class UserDetailsComponent extends Component {
     componentDidMount() {
         this.props.CallCountry();
         this.props.CallGetTransactionStatus();
-        this.props.CallGetTransaction({ TrackingStatus: "In Cart", ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID });
+        this.props.CallGetTransaction({
+            TrackingStatus: "In Cart",
+            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+            UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+
+        });
 
         this.props.CallGetMerchantsOrders({
             trackingStatus: this.state.trackingStatus,
@@ -721,7 +726,7 @@ class UserDetailsComponent extends Component {
                 <h2>User Details</h2>
                 <Button onClick={back}>
                     <ArrowRoundedLeft8x13Svg fontSize="inherit" />
-                     {"  "}Back
+                    {"  "}Back
                 </Button>
                 <Card style={{ width: "80%", margin: "0 auto" }}>
                     <CardContent>

@@ -319,6 +319,7 @@ export class GitEpic {
         try {
           return fetch(url + project + "/" +
             "Order_ViewOrder?TRACKINGSTATUS=" + action.payload.TrackingStatus +
+            "&UserID=" + action.payload.UserID +
             "&ProjectID=" + action.payload.ProjectID)
             .then(response => response.json())
             .then(json => {
@@ -1109,6 +1110,7 @@ export class GitEpic {
           return fetch(url + project + "/" +
             "Product_ItemListWithProductVariationStock?PROJECTID=" + action.payload.ProjectID +
             "&PRODUCTID=" + action.payload.ProductID +
+            "&USERID=" + action.payload.UserID +
             "&PRODUCTPERPAGE=" + action.payload.ProductPerPage +
             "&PAGE=" + action.payload.Page)
             .then(response => response.json())
@@ -1550,7 +1552,8 @@ export class GitEpic {
         try {
           return fetch(url + project + "/" +
             "Promo_ViewPromotion?ACTIVEIND=" + action.payload.ActiveInd +
-            "&PROJECTID=" + action.payload.ProjectID)
+            "&PROJECTID=" + action.payload.ProjectID +
+            "&USERID=" + action.payload.UserID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -1608,7 +1611,8 @@ export class GitEpic {
             "&PRODUCTSTOCKLIMIT=" + action.payload.ProductStockLimit +
             "&PRODUCTVARIATIONDETAILID=" + action.payload.ProductVariationDetailID +
             "&PRODUCTPURCHASELIMIT=" + action.payload.ProductPurchaseLimit +
-            "&ACTIVEIND=" + action.payload.ActiveInd)
+            "&ACTIVEIND=" + action.payload.ActiveInd +
+            "&USERID=" + action.payload.UserID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -1646,7 +1650,8 @@ export class GitEpic {
             "&PRODUCTSTOCKLIMIT=" + action.payload.ProductStockLimit +
             "&PRODUCTVARIATIONDETAILID=" + action.payload.ProductVariationDetailID +
             "&PRODUCTPURCHASELIMIT=" + action.payload.ProductPurchaseLimit +
-            "&ACTIVEIND=" + action.payload.ActiveInd)
+            "&ACTIVEIND=" + action.payload.ActiveInd +
+            "&USERID=" + action.payload.UserID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -1670,7 +1675,8 @@ export class GitEpic {
         try {
           return fetch(url + project + "/" +
             "Promo_UpdatePromotionActiveInd?PROMOTIONID=" + action.payload.PromotionID +
-            "&ACTIVEIND=" + action.payload.ActiveInd)
+            "&ACTIVEIND=" + action.payload.ActiveInd +
+            "&USERID=" + action.payload.UserID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -1694,7 +1700,8 @@ export class GitEpic {
       return dispatch => {
         try {
           return fetch(url + project + "/" +
-            "Promo_DeletePromotion?PROMOTIONID=" + action.payload.PromotionID)
+            "Promo_DeletePromotion?PROMOTIONID=" + action.payload.PromotionID +
+            "&USERID=" + action.payload.UserID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)

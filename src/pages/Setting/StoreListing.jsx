@@ -610,7 +610,7 @@ class ShoplotListing extends Component {
                             <Select
                                 labelId="search-filter-category"
                                 id="search-filter-category"
-                                label="Search By"
+                                label="Enter"
                                 onChange={(e) => this.handleFormInput(e, "Filter", 0)}
                                 size="small"
                                 value={this.state.selectedFilter}

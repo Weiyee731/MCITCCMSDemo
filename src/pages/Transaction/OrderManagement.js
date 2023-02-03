@@ -78,7 +78,8 @@ export const OrderManagement = (props) => {
     useEffect(() => {
         dispatch(GitAction.CallGetTransaction({
             TrackingStatus: "Payment Confirm",
-            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
+            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+            UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
         }))
         dispatch(GitAction.CallCountry())
         dispatch(GitAction.CallGetTransactionStatus())

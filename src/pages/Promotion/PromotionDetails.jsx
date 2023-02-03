@@ -95,10 +95,10 @@ export const PromotionDetails = (props) => {
     useEffect(() => {
         if (isPromotionSubmit === true) {
             dispatch(GitAction.CallClearPromotion())
-            toast.success("Successfully Update")
+            toast.success("Successfully Upload Promotion")
             setTimeout(
                 window.location.href = "/ecommerceCMSDev/PromotionListing"
-                , 3000
+                , 5000
             );
         }
     }, [promoAction])
@@ -437,6 +437,34 @@ export const PromotionDetails = (props) => {
         if (batchData.isDiscountError || batchData.isStockLimitQtyError || batchData.isPurchaseLimitError)
             toast.warning("Insert only positive value data")
         else {
+
+            let error = []
+
+            // newArr[index].purchaseLimitType = e.target.value
+            // if (e.target.value === "No Limit") {
+            //     newArr[index].isPurchaseLimitError = false
+            //     error = errorData.purchaseError.filter((x) => x != index)
+            //     setErrorData({
+            //         ...errorData,
+            //         purchaseError: error
+            //     })
+            // }
+            // setConfirmList([...newArr]);
+
+            // purchaseLimitType: "No Limit",
+            // purchaseLimit: "",
+            // isPurchaseLimitError: false,
+            // detailListing
+
+            // discountPercent: "",
+            // isDiscountError: false,
+            // discountPrice: "",
+            // stockLimitType: "No Limit",
+            // stockLimitQty: "",
+            // isStockLimitError: false,
+            // isEnable: true
+
+
             if (selectedConfirmList.length > 0) {
                 selectedConfirmList.map((y) => {
                     confirmList.map((data, index) => {
@@ -446,9 +474,32 @@ export const PromotionDetails = (props) => {
                                 newArr[index].detailListing[detailIndex].discountPrice = parseFloat(x.ProductVariationPrice * (batchData.discountPercent / 100)).toFixed(2)
                                 newArr[index].detailListing[detailIndex].stockLimitType = batchData.stockLimitType
                                 newArr[index].detailListing[detailIndex].stockLimitQty = batchData.stockLimitQty
+
+                                if (batchData.discountPercent === "")
+                                    newArr[index].detailListing[detailIndex].isDiscountError = true
+                                else
+                                    newArr[index].detailListing[detailIndex].isDiscountError = false
+
+                                if (batchData.stockLimitType === "No Limit")
+                                    newArr[index].detailListing[detailIndex].isStockLimitError = false
+                                else {
+                                    if (batchData.stockLimitQty > -1 && batchData.stockLimitQty !== "")
+                                        newArr[index].detailListing[detailIndex].isStockLimitError = false
+                                    else
+                                        newArr[index].detailListing[detailIndex].isStockLimitError = true
+                                }
                             })
                             newArr[index].purchaseLimitType = batchData.purchaseLimitType
                             newArr[index].purchaseLimit = batchData.purchaseLimit
+
+                            if (batchData.purchaseLimitType === "No Limit")
+                                newArr[index].isPurchaseLimitError = false
+                            else {
+                                if (batchData.purchaseLimit > -1 && batchData.purchaseLimit !== "")
+                                    newArr[index].isPurchaseLimitError = false
+                                else
+                                    newArr[index].isPurchaseLimitError = true
+                            }
                         }
                     })
                 })
@@ -460,9 +511,32 @@ export const PromotionDetails = (props) => {
                         newArr[index].detailListing[detailIndex].discountPrice = parseFloat(x.ProductVariationPrice * (batchData.discountPercent / 100)).toFixed(2)
                         newArr[index].detailListing[detailIndex].stockLimitType = batchData.stockLimitType
                         newArr[index].detailListing[detailIndex].stockLimitQty = batchData.stockLimitQty
+
+                        if (batchData.discountPercent === "")
+                            newArr[index].detailListing[detailIndex].isDiscountError = true
+                        else
+                            newArr[index].detailListing[detailIndex].isDiscountError = false
+
+                        if (batchData.stockLimitType === "No Limit")
+                            newArr[index].detailListing[detailIndex].isStockLimitError = false
+                        else {
+                            if (batchData.stockLimitQty > -1 && batchData.stockLimitQty !== "")
+                                newArr[index].detailListing[detailIndex].isStockLimitError = false
+                            else
+                                newArr[index].detailListing[detailIndex].isStockLimitError = true
+                        }
                     })
                     newArr[index].purchaseLimitType = batchData.purchaseLimitType
                     newArr[index].purchaseLimit = batchData.purchaseLimit
+
+                    if (batchData.purchaseLimitType === "No Limit")
+                        newArr[index].isPurchaseLimitError = false
+                    else {
+                        if (batchData.purchaseLimit > -1 && batchData.purchaseLimit !== "")
+                            newArr[index].isPurchaseLimitError = false
+                        else
+                            newArr[index].isPurchaseLimitError = true
+                    }
                 })
                 setConfirmList([...newArr]);
             }
@@ -572,7 +646,8 @@ export const PromotionDetails = (props) => {
                         ProductStockLimit: productStockLimitList,
                         ProductPurchaseLimit: productPurchaseLimitList,
                         ProductVariationDetailID: productVariationDetailIDList,
-                        ActiveInd: activeIndList
+                        ActiveInd: activeIndList,
+                        UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
                     }
                     const formData = new FormData();
                     formData.append("imageFile", promotionBanner[0]);
@@ -612,22 +687,22 @@ export const PromotionDetails = (props) => {
                             ProductStockLimit: productStockLimitList,
                             ProductVariationDetailID: productVariationDetailIDList,
                             ProductPurchaseLimit: productPurchaseLimitList,
-                            ActiveInd: activeIndList
+                            ActiveInd: activeIndList,
+                            UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
                         }
                         const formData = new FormData();
-                        console.log("HERE")
-                        // formData.append("imageFile", promotionBanner[0]);
-                        // formData.append("imageName", getBannerImage());
-                        // let url = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/uploadpromotion.php"
-                        // axios.post(url, formData, {}).then(res => {
-                        //     if (res.status === 200) {
-                        //         dispatch(GitAction.CallUpdatePromotion(propsData))
-                        //         setSubmitPromotion(true)
-                        //     }
-                        //     else {
-                        //         toast.error("Res Status error.");
-                        //     }
-                        // });
+                        formData.append("imageFile", promotionBanner[0]);
+                        formData.append("imageName", getBannerImage());
+                        let url = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/uploadpromotion.php"
+                        axios.post(url, formData, {}).then(res => {
+                            if (res.status === 200) {
+                                dispatch(GitAction.CallUpdatePromotion(propsData))
+                                setSubmitPromotion(true)
+                            }
+                            else {
+                                toast.error("Res Status error.");
+                            }
+                        });
                     } else {
                         let bannerlength = promotionBanner.split("/").length
                         let propsData = {
@@ -645,11 +720,11 @@ export const PromotionDetails = (props) => {
                             ProductStockLimit: productStockLimitList,
                             ProductVariationDetailID: productVariationDetailIDList,
                             ProductPurchaseLimit: productPurchaseLimitList,
-                            ActiveInd: activeIndList
+                            ActiveInd: activeIndList,
+                            UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
                         }
-                        console.log("HERE1", propsData)
-                        // dispatch(GitAction.CallUpdatePromotion(propsData))
-                        // setSubmitPromotion(true)
+                        dispatch(GitAction.CallUpdatePromotion(propsData))
+                        setSubmitPromotion(true)
                     }
                 } else {
                     toast.warning("Valid Promotion Data is required")
@@ -665,19 +740,28 @@ export const PromotionDetails = (props) => {
         setActive(activeInd)
         dispatch(GitAction.CallUpdatePromotionStatus({
             PromotionID: promotionID,
-            ActiveInd: activeInd === true ? 1 : 0
+            ActiveInd: activeInd === true ? 1 : 0,
+            UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
         }))
+    }
+
+    const checkProductVariation = (data) => {
+        let error = false
+        if (data === "[]" || data === null || data === undefined)
+            error = true
+
+        return error
     }
 
     const renderTableRows = (data, index) => {
         if (data !== undefined) {
             return (
                 <>
-                    <TableCell align="left" style={{ opacity: checkExisting(confirmList, data) ? "0.5" : "1.0" }}>
+                    <TableCell align="left" style={{ opacity: checkExisting(confirmList, data) || checkProductVariation(data.ProductVariation) ? "0.5" : "1.0" }}>
                         <div className="row">
                             <div className="col-1">
                                 <Checkbox
-                                    disabled={checkExisting(confirmList, data)}
+                                    disabled={checkExisting(confirmList, data) || checkProductVariation(data.ProductVariation)}
                                     checked={checkExisting(selectedList, data)}
                                     onClick={(event) => setCheckBoxListing(event, data, "SELECTLIST")}
                                 />
@@ -698,8 +782,12 @@ export const PromotionDetails = (props) => {
                             </div>
                             <div className="col-9">
                                 {data.ProductName}
+                                {checkProductVariation(data.ProductVariation) &&
+                                    <Typography style={{ color: "red" }}>Unable to add this product as <strong>No Variation</strong> for this product</Typography>
+                                }
                             </div>
                         </div>
+
                     </TableCell>
                     <TableCell align="left" style={{ opacity: checkExisting(confirmList, data) ? "0.5" : "1.0" }}>{data.ProductSold}</TableCell>
                     <TableCell align="left" style={{ opacity: checkExisting(confirmList, data) ? "0.5" : "1.0" }}>{data.ProductStockAmount}</TableCell>
@@ -707,7 +795,6 @@ export const PromotionDetails = (props) => {
                     {JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 &&
                         <TableCell align="left" style={{ opacity: checkExisting(confirmList, data) ? "0.5" : "1.0" }}> {data.MerchantShopName} </TableCell>
                     }
-
                 </>
             )
         }
@@ -755,7 +842,7 @@ export const PromotionDetails = (props) => {
                                             disabled={isActive ? false : true}
                                             onChange={(e) => setBatchData({
                                                 ...batchData,
-                                                stockLimitType: e.target.value
+                                                stockLimitType: e.target.value,
                                             })}
                                         >
                                             <MenuItem value={"No Limit"}>No Limit</MenuItem>
@@ -794,7 +881,7 @@ export const PromotionDetails = (props) => {
                                             disabled={isActive ? false : true}
                                             onChange={(e) => setBatchData({
                                                 ...batchData,
-                                                purchaseLimitType: e.target.value
+                                                purchaseLimitType: e.target.value,
                                             })}
                                         >
                                             <MenuItem value={"No Limit"}>No Limit</MenuItem>
@@ -945,7 +1032,17 @@ export const PromotionDetails = (props) => {
                                                                 disabled={isActive ? false : true}
                                                                 onChange={(e) => {
                                                                     let newArr = confirmList
+                                                                    let error = []
+
                                                                     newArr[index].purchaseLimitType = e.target.value
+                                                                    if (e.target.value === "No Limit") {
+                                                                        newArr[index].isPurchaseLimitError = false
+                                                                        error = errorData.purchaseError.filter((x) => x != index)
+                                                                        setErrorData({
+                                                                            ...errorData,
+                                                                            purchaseError: error
+                                                                        })
+                                                                    }
                                                                     setConfirmList([...newArr]);
                                                                 }}
                                                             >
@@ -1058,7 +1155,17 @@ export const PromotionDetails = (props) => {
                                                                         // disabled={isActive ? false : true}
                                                                         onChange={(e) => {
                                                                             let newArr = confirmList
+                                                                            let error = []
                                                                             newArr[index].detailListing[detailIndex].stockLimitType = e.target.value
+
+                                                                            if (e.target.value === "No Limit") {
+                                                                                newArr[index].detailListing[detailIndex].isStockLimitError = false
+                                                                                error = errorData.stockError.filter((x) => !(x.listingIndex == index && x.detailsIndex == detailIndex))
+                                                                                setErrorData({
+                                                                                    ...errorData,
+                                                                                    stockError: error
+                                                                                })
+                                                                            }
                                                                             setConfirmList([...newArr]);
                                                                         }}
                                                                     >
@@ -1365,7 +1472,7 @@ export const PromotionDetails = (props) => {
                 <div className="container-fluid">
                     <SearchBar
                         id=""
-                        placeholder="Search By Product Name"
+                        placeholder="Enter Product Name"
                         // buttonOnClick={() => this.onSearch("", "")}
                         onChange={(e) => searchSpace(e.target.value)}
                         className="searchbar-input mb-auto"
@@ -1407,9 +1514,6 @@ export const PromotionDetails = (props) => {
 
                         Data={filteredListing.length > 0 ? filteredListing : products.length > 0 && products[0].ProductName !== undefined ? products : []}
                     />
-                    {console.log("checking", products)}
-                    {console.log("checking1", selectedList)}
-                    {console.log("checking2", confirmList)}
                     <div style={{ textAlign: "right" }}>
                         <Button variant="outlined" color="primary" style={{ margin: "5px" }} onClick={() => setModalOpen(false)} >Cancel</Button>
                         <Button variant="contained"

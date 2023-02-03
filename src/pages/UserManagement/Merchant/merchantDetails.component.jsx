@@ -770,7 +770,13 @@ class MerchantDetailsComponent extends Component {
     };
     this.props.CallGetTransactionStatus();
     // this.props.CallGetTransaction("In Cart");
-    this.props.CallGetTransaction({ TrackingStatus: "In Cart", ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID });
+    this.props.CallGetTransaction({ 
+      TrackingStatus: "In Cart", 
+      ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID ,
+      UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+           
+    
+    });
 
     this.props.CallGetMerchantsOrders({
       trackingStatus: this.state.trackingStatus,

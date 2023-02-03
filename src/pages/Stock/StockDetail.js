@@ -137,6 +137,7 @@ class StockDetail extends Component {
         });
         this.props.CallViewAllProductVariationStock({
             ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+            UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
             ProductID: 0,
             ProductPerPage: 999,
             Page: 1

@@ -589,7 +589,7 @@ class Stock extends Component {
                             <Select
                                 labelId="search-filter-category"
                                 id="search-filter-category"
-                                label="Search By"
+                                label="Enter"
                                 onChange={this.handleSearchCategory}
                                 size="small"
                                 IconComponent={FilterListOutlinedIcon}
@@ -650,7 +650,7 @@ class Stock extends Component {
                                     <Select
                                         labelId="search-filter-category"
                                         id="search-filter-category"
-                                        label="Search By"
+                                        label="Enter"
                                         onChange={this.handleSearchCategory}
                                         size="small"
                                         IconComponent={FilterListOutlinedIcon}

@@ -182,7 +182,7 @@ class ViewProductPromotionComponent extends Component {
                                 <div className="col-md-12 col-12 mb-3 d-flex" >
                                     <SearchBar
                                         id=""
-                                        placeholder="Search by promotion title..."
+                                        placeholder="Enter promotion title..."
                                         buttonOnClick={() => this.onSearch("", "")}
                                         onChange={(e) => this.searchSpace(e.target.value)}
                                         className="searchbar-input mb-auto"

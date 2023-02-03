@@ -664,7 +664,7 @@ function Row(props) {
                 prop.CallUpdateOrderTracking({
                     ORDERTRACKINGNUMBER: encodeURIComponent(Listing[0].existingTrackingNumber),
                     LOGISTICID: Listing[0].existingLogisticID,
-                    PDFLABEL:"-",
+                    PDFLABEL: "-",
                     ORDERPRODUCTDETAILSID: Listing[0].existingProductDetailsID
                 })
                 break;
@@ -674,7 +674,7 @@ function Row(props) {
                 prop.CallUpdateOrderTracking({
                     ORDERTRACKINGNUMBER: "-",
                     LOGISTICID: 0,
-                    PDFLABEL:"-",
+                    PDFLABEL: "-",
                     ORDERPRODUCTDETAILSID: Listing[0].existingProductDetailsID
                 })
                 break;
@@ -1877,7 +1877,11 @@ class ViewTransactionsComponent extends Component {
 
     componentDidMount() {
         this.props.CallGetTransactionStatus();
-        this.props.CallGetTransaction({ TrackingStatus: "Payment Confirm", ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID });
+        this.props.CallGetTransaction({ 
+            TrackingStatus: "Payment Confirm", 
+            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID ,
+            UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+        });
         this.props.CallCourierService();
         // this.props.CallAllUserAddress({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID });
         this.props.CallCountry();
@@ -1905,13 +1909,22 @@ class ViewTransactionsComponent extends Component {
 
         if (this.props.tracking.length > 0 && this.props.tracking[0].ReturnVal !== undefined) {
             this.props.CallResetOrderTracking()
-            this.props.CallGetTransaction({ TrackingStatus: "Payment Confirm", ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID });
+            this.props.CallGetTransaction({
+                TrackingStatus: "Payment Confirm",
+                ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+                UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+
+            });
             this.setState({ setting: true })
         }
 
         if (this.props.order.length > 0 && this.props.order[0].ReturnVal !== undefined) {
             this.props.CallClearOrder()
-            this.props.CallGetTransaction({ TrackingStatus: "Payment Confirm", ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID });
+            this.props.CallGetTransaction({
+                TrackingStatus: "Payment Confirm",
+                ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+                UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+            });
             this.setState({ setting: true })
         }
 
@@ -2004,10 +2017,6 @@ class ViewTransactionsComponent extends Component {
             );
         }
 
-        const changeData = (value) => {
-            this.props.CallGetTransaction(value);
-        };
-
 
         const senderAddressLayout = () => {
             console.log("sdasdasdsa", this.state)
@@ -2091,7 +2100,7 @@ class ViewTransactionsComponent extends Component {
                             <div className="col-10">
                                 <SearchBar
                                     id=""
-                                    placeholder="Search By Tracking Number or Order Number..."
+                                    placeholder="Enter Tracking Number or Order Number..."
                                     buttonOnClick={() => this.onSearch("", "")}
                                     onChange={(e) => this.searchSpace(e.target.value)}
                                     className="searchbar-input mb-auto"

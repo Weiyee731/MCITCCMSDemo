@@ -499,7 +499,7 @@ export const ProductCategory = (props) => {
           <div className="col-7" style={{ display: "flex", alignItems: "center" }}>
             <SearchBar
               id=""
-              placeholder="Search By Category Name"
+              placeholder="Enter Category Name"
               onChange={(e) => searchSpace(e)}
               className="searchbar-input mb-auto"
               tooltipText="Search with current data"

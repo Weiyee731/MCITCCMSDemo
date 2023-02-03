@@ -58,6 +58,44 @@ const tableHeadCells = [
     label: "Product Name",
   },
   {
+    id: "MerchantShopName",
+    align: 'left',
+    numeric: false,
+    disablePadding: false,
+    label: "Merchant Shop",
+  },
+  {
+    id: "ProductVariationSKU",
+    align: 'left',
+    numeric: false,
+    disablePadding: false,
+    label: "Product Variation SKU",
+  },
+  {
+    id: "ProductPrice",
+    align: 'left',
+    numeric: false,
+    disablePadding: false,
+    label: "Price Sold (RM)",
+  },
+];
+
+const merchantTableHeadCells = [
+  {
+    id: "ProductImage",
+    align: 'center',
+    numeric: false,
+    disablePadding: true,
+    label: "Product Image",
+  },
+  {
+    id: "ProductName",
+    align: 'left',
+    numeric: false,
+    disablePadding: false,
+    label: "Product Name",
+  },
+  {
     id: "ProductVariationSKU",
     align: 'left',
     numeric: false,
@@ -115,6 +153,9 @@ class ViewProductComponent extends Component {
           />
         </TableCell>
         <TableCell align="left"> {data.ProductName} </TableCell>
+        {
+          JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 && <TableCell align="left">{data.MerchantShopName}</TableCell>
+        }
         <TableCell align="left"> {data.ProductVariation !== null && data.ProductVariation !== undefined && JSON.parse(data.ProductVariation).map((x) => {
           return (
             <><label>{x.ProductVariationSKU}</label><br /></>
@@ -293,7 +334,7 @@ class ViewProductComponent extends Component {
             stickyTableHeader: false,    // optional, default is true
           }}
           paginationOptions={[8, 15, 20, { label: 'All', value: -1 }]} // optional, by default it will hide the table pagination. You should set settings for pagination options as in array, eg.: [5, 100, 250, { label: 'All', value: -1 }]
-          tableHeaders={tableHeadCells}        //required
+          tableHeaders={JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? tableHeadCells : merchantTableHeadCells}
           tableRows={{
             renderTableRows: this.renderTableRows,   // required, it is a function, please refer to the example I have done in Table Components
             checkbox: true,                          // optional, by default is true
