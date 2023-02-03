@@ -285,7 +285,7 @@ class ViewProductComponent extends Component {
           <div className={JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? "col-10" : "col-12"}>
             <SearchBar
               id=""
-              placeholder="Search By Product SKU, Product Name to search"
+              placeholder="Enter Product SKU, Product Name to search"
               buttonOnClick={() => this.onSearch("", "")}
               onChange={(e) => this.searchSpace(e.target.value)}
               className="searchbar-input mb-auto"
