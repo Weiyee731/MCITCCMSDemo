@@ -186,7 +186,7 @@ export const PromotionListing = (props) => {
     const renderTableRows = (data, index) => {
 
         const propPage = (ID) => {
-            window.location.href = "/ecommerceCMSDev/PromotionDetails/" + ID
+            window.location.href = "./PromotionDetails/" + ID
         }
         if (data !== undefined) {
             return (
@@ -256,7 +256,7 @@ export const PromotionListing = (props) => {
                         <h3 style={{ fontWeight: 600 }}>Promotion Listing</h3>
                         <div className="col" style={{ textAlign: "right", padding: "10px" }}>
                             <Button variant="contained" size="sm"
-                                onClick={() => window.location.href = "/ecommerceCMSDev/PromotionDetails/0"}
+                                onClick={() => window.location.href = "./PromotionDetails/0"}
                             ><AddCircleIcon />  New Promotion
                             </Button>
                         </div>
