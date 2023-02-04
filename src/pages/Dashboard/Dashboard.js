@@ -5,8 +5,9 @@ import { browserHistory } from "react-router";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import Button from "@mui/material/Button";
 import ModalComponent from "../../components/ModalComponent/ModalComponent";
-import { Card, CardContent, CardHeader, Grid, Typography, Avatar } from "@mui/material";
+import { Card, CardContent, CardHeader, Grid, Typography, Avatar, Box } from "@mui/material";
 import Logo from "../../assets/logos/logo.png";
+// import ReactApexChart from "react-apexcharts";
 
 function mapStateToProps(state) {
     return {
@@ -21,9 +22,12 @@ function mapDispatchToProps(dispatch) {
 const INITIAL_STATE = {
     openModal: false,
     openFullScreenModal: false,
-    cardDetails: [
-        {}
-    ]
+    statisticData: [
+        { title: "Net Profit", amount: "RM 10,000", iconImg: 'https://img.icons8.com/ios/50/null/economic-improvement.png' },
+        { title: "Expenditure", amount: "RM 6,800", iconImg: 'https://img.icons8.com/external-ddara-lineal-ddara/64/null/external-Expenditure-investment-ddara-lineal-ddara.png' },
+        { title: "Operation Profit", amount: "RM 6,200", iconImg: "https://img.icons8.com/ios/50/null/total-sales-1.png" },
+        { title: "Revenue", amount: "RM 16,200", iconImg: 'https://img.icons8.com/external-kiranshastry-lineal-kiranshastry/64/null/external-revenue-investment-kiranshastry-lineal-kiranshastry.png' },
+    ],
 }
 
 class Dashboard extends Component {
@@ -49,6 +53,46 @@ class Dashboard extends Component {
         let month = months[d.getMonth()];
         const get_Complete_Today = d.getDate() + " " + month + " " + d.getFullYear()
 
+        // const Operationcostoptions = {
+        //     chart: {
+        //         width: 380,
+        //         type: 'donut',
+        //         foreColor: "white",
+        //     },
+        //     plotOptions: {
+        //         pie: {
+        //             // offsetY: 30,
+        //             startAngle: -90,
+        //             endAngle: 270
+        //         }
+        //     },
+        //     labels: ['Materials', 'Salary', 'Crops', 'Asset', 'Utilities'],
+        //     dataLabels: {
+        //         enabled: false,
+        //     },
+        //     fill: {
+        //         type: 'gradient',
+        //     },
+        //     legend: {
+        //         formatter: function (val, opts) {
+        //             return val + " - " + opts.w.globals.series[opts.seriesIndex] + "K"
+        //         }
+        //     },
+        //     responsive: [{
+        //         breakpoint: 480,
+        //         options: {
+        //             chart: {
+        //                 width: 300
+        //             },
+        //             legend: {
+        //                 position: 'bottom'
+        //             }
+        //         }
+        //     }]
+        // }
+
+        // const Operationcostseries = [20, 55, 41, 30, 15]
+
         return (
             <Grid container spacing={1} style={{ padding: '25pt' }}>
                 <Grid item xs={12} sm={12} style={{ display: 'flex', }} >
@@ -60,43 +104,58 @@ class Dashboard extends Component {
                     </Grid>
                 </Grid>
                 <hr width="100%" />
-                {/* <Grid container>
+                <Grid container>
                     <Grid container spacing={3}>
-                        <Grid item xs={12} sm={2} md={2} style={{ display: "flex", justifyContent:"center"}}>
+                        <Grid item xs={12} sm={2} md={2} style={{ display: "flex", justifyContent: "center" }}>
                             <img src={Logo} width="100%" />
                         </Grid>
                         <Grid item xs={12} sm={5} md={5}>
                             <Card elevation={3}>
                                 <CardHeader
-                                    title={<Typography variant="h6" style={{ fontWeight: 700 }}>Sales</Typography>}
-                                    avatar={
-                                        <Avatar sx={{ bgcolor: 'red' }} aria-label="recipe">
-                                            R
-                                        </Avatar>
-                                    }
+                                    title={<Typography variant="h6" style={{ fontWeight: 700 }}>Monthly Statistic Overview</Typography>}
+                                // avatar={
+                                //     <Avatar sx={{ bgcolor: 'red' }} aria-label="recipe">
+                                //         R
+                                //     </Avatar>
+                                // }
                                 />
                                 <CardContent>
-                                    <Typography variant="h5" style={{ fontWeight: 700 }}>333</Typography>
+                                    <Box sx={{ display: "flex", borderRadius: 3, margin: "0.5vw" }} >
+                                        <Grid container>
+                                            {
+                                                this.state.statisticData.filter((y) => y.key === this.state.key).map((x) => {
+                                                    return (
+                                                        <Grid item xs={6} sm={6} md={3} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                                            <Grid>
+                                                                <img src={x.iconImg} width="35vw" height="35vw" />
+                                                            </Grid>
+                                                            <Grid>
+                                                                <Typography style={{ fontSize: "0.82vw", fontWeight: "700" }}>{x.title}</Typography>
+                                                            </Grid>
+                                                            <Grid>
+                                                                <Typography style={{ fontSize: "0.82vw" }}>{x.amount}</Typography>
+                                                            </Grid>
+                                                        </Grid>
+                                                    )
+                                                })
+                                            }
+                                        </Grid>
+                                    </Box>
                                 </CardContent>
                             </Card>
                         </Grid>
                         <Grid item xs={12} sm={5} md={5}>
                             <Card elevation={3}>
                                 <CardHeader
-                                    title={<Typography variant="h6" style={{ fontWeight: 700 }}>Sales</Typography>}
-                                    avatar={
-                                        <Avatar sx={{ bgcolor: 'red' }} aria-label="recipe">
-                                            R
-                                        </Avatar>
-                                    }
+                                    title={<Typography variant="h6" style={{ fontWeight: 700 }}>Inventory Management</Typography>}
                                 />
                                 <CardContent>
-                                    <Typography variant="h5" style={{ fontWeight: 700 }}>333</Typography>
+                                    {/* <ReactApexChart options={Operationcostoptions} series={Operationcostseries} type="donut" height={245} /> */}
                                 </CardContent>
                             </Card>
                         </Grid>
                     </Grid>
-                </Grid> */}
+                </Grid>
 
 
 
