@@ -7,7 +7,46 @@ import Button from "@mui/material/Button";
 import ModalComponent from "../../components/ModalComponent/ModalComponent";
 import { Card, CardContent, CardHeader, Grid, Typography, Avatar, Box } from "@mui/material";
 import Logo from "../../assets/logos/logo.png";
-// import ReactApexChart from "react-apexcharts";
+import ReactApexChart from "react-apexcharts";
+import { styled } from '@mui/material/styles';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import NativeSelect from '@mui/material/NativeSelect';
+import InputBase from '@mui/material/InputBase';
+import MarketingCampaigns from "./MarketingCampaign";
+
+const BootstrapInput = styled(InputBase)(({ theme }) => ({
+    'label + &': {
+        marginTop: theme.spacing(3),
+    },
+    '& .MuiInputBase-input': {
+        borderRadius: 4,
+        position: 'relative',
+        backgroundColor: theme.palette.background.paper,
+        border: '1px solid #ced4da',
+        fontSize: 16,
+        padding: '4px 5px 4px 25px',
+        transition: theme.transitions.create(['border-color', 'box-shadow']),
+        // Use the system font instead of the default Roboto font.
+        fontFamily: [
+            '-apple-system',
+            'BlinkMacSystemFont',
+            '"Segoe UI"',
+            'Roboto',
+            '"Helvetica Neue"',
+            'Arial',
+            'sans-serif',
+            '"Apple Color Emoji"',
+            '"Segoe UI Emoji"',
+            '"Segoe UI Symbol"',
+        ].join(','),
+        '&:focus': {
+            borderRadius: 4,
+            borderColor: '#80bdff',
+            // boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+        },
+    },
+}));
 
 function mapStateToProps(state) {
     return {
@@ -23,10 +62,52 @@ const INITIAL_STATE = {
     openModal: false,
     openFullScreenModal: false,
     statisticData: [
-        { title: "Net Profit", amount: "RM 10,000", iconImg: 'https://img.icons8.com/ios/50/null/economic-improvement.png' },
-        { title: "Expenditure", amount: "RM 6,800", iconImg: 'https://img.icons8.com/external-ddara-lineal-ddara/64/null/external-Expenditure-investment-ddara-lineal-ddara.png' },
-        { title: "Operation Profit", amount: "RM 6,200", iconImg: "https://img.icons8.com/ios/50/null/total-sales-1.png" },
-        { title: "Revenue", amount: "RM 16,200", iconImg: 'https://img.icons8.com/external-kiranshastry-lineal-kiranshastry/64/null/external-revenue-investment-kiranshastry-lineal-kiranshastry.png' },
+        { title: "Nett Profit", amount: "RM 73,700", iconImg: 'https://img.icons8.com/ios/50/null/economic-improvement.png' },
+        { title: "Expenditure", amount: "RM 32,000", iconImg: 'https://img.icons8.com/external-ddara-lineal-ddara/64/null/external-Expenditure-investment-ddara-lineal-ddara.png' },
+        { title: "Operation Profit", amount: "RM 20,200", iconImg: "https://img.icons8.com/ios/50/null/total-sales-1.png" },
+        { title: "Revenue", amount: "RM 93,900", iconImg: 'https://img.icons8.com/external-kiranshastry-lineal-kiranshastry/64/null/external-revenue-investment-kiranshastry-lineal-kiranshastry.png' },
+    ],
+    saleBreakdownOverallly: [
+        { id: 1, title: "Nett Profit", amount: 36 },
+        { id: 2, title: "Shipping", amount: 6 },
+        { id: 3, title: "Tax", amount: 2 },
+        { id: 4, title: "Cost", amount: 3 },
+        { id: 5, title: "Others", amount: 2.6 },
+    ],
+    year: '2023',
+    yealySaleDummy: [
+        {
+            year: '2023',
+            items: [
+                { saleType: "Total Income", month: "Jan", amount: 28 },
+                { saleType: "Total Income", month: "Feb", amount: 29 },
+                { saleType: "Total Income", month: "Mar", amount: 33 },
+                { saleType: "Total Income", month: "Apr", amount: 36 },
+                { saleType: "Total Income", month: "May", amount: 32 },
+                { saleType: "Total Income", month: "Jun", amount: 32 },
+                { saleType: "Total Expenses", month: "Jan", amount: 12 },
+                { saleType: "Total Expenses", month: "Feb", amount: 11 },
+                { saleType: "Total Expenses", month: "Mar", amount: 14 },
+                { saleType: "Total Expenses", month: "Apr", amount: 18 },
+                { saleType: "Total Expenses", month: "May", amount: 17 },
+                { saleType: "Total Expenses", month: "Jun", amount: 13 },]
+        },
+        {
+            year: '2022',
+            items: [
+                { saleType: "Total Income", month: "Jan", amount: 30 },
+                { saleType: "Total Income", month: "Feb", amount: 40 },
+                { saleType: "Total Income", month: "Mar", amount: 33 },
+                { saleType: "Total Income", month: "Apr", amount: 36 },
+                { saleType: "Total Income", month: "May", amount: 29 },
+                { saleType: "Total Income", month: "Jun", amount: 28 },
+                { saleType: "Total Expenses", month: "Jan", amount: 25 },
+                { saleType: "Total Expenses", month: "Feb", amount: 35 },
+                { saleType: "Total Expenses", month: "Mar", amount: 30 },
+                { saleType: "Total Expenses", month: "Apr", amount: 25 },
+                { saleType: "Total Expenses", month: "May", amount: 28 },
+                { saleType: "Total Expenses", month: "Jun", amount: 26 },]
+        },
     ],
 }
 
@@ -45,6 +126,10 @@ class Dashboard extends Component {
 
     }
 
+    handleChange(event) {
+        this.setState({ year: event.target.value });
+    };
+
     render() {
         const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const d = new Date();
@@ -53,45 +138,197 @@ class Dashboard extends Component {
         let month = months[d.getMonth()];
         const get_Complete_Today = d.getDate() + " " + month + " " + d.getFullYear()
 
-        // const Operationcostoptions = {
-        //     chart: {
-        //         width: 380,
-        //         type: 'donut',
-        //         foreColor: "white",
-        //     },
-        //     plotOptions: {
-        //         pie: {
-        //             // offsetY: 30,
-        //             startAngle: -90,
-        //             endAngle: 270
-        //         }
-        //     },
-        //     labels: ['Materials', 'Salary', 'Crops', 'Asset', 'Utilities'],
-        //     dataLabels: {
-        //         enabled: false,
-        //     },
-        //     fill: {
-        //         type: 'gradient',
-        //     },
-        //     legend: {
-        //         formatter: function (val, opts) {
-        //             return val + " - " + opts.w.globals.series[opts.seriesIndex] + "K"
-        //         }
-        //     },
-        //     responsive: [{
-        //         breakpoint: 480,
-        //         options: {
-        //             chart: {
-        //                 width: 300
-        //             },
-        //             legend: {
-        //                 position: 'bottom'
-        //             }
-        //         }
-        //     }]
-        // }
+        const SalesBreakdownoptions = {
+            chart: {
+                width: 250,
+                type: 'donut',
+                // foreColor: "white",
+            },
+            plotOptions: {
+                pie: {
+                    // offsetY: 20,
+                    startAngle: -90,
+                    endAngle: 270,
+                },
+            },
+            labels: this.state.saleBreakdownOverallly.map((x) => x.title),
+            dataLabels: {
+                enabled: false,
+            },
+            fill: {
+                type: 'gradient',
+            },
+            legend: {
+                formatter: function (val, opts) {
+                    return val + " - " + opts.w.globals.series[opts.seriesIndex] + "K"
+                }
+            },
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: 250
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }]
+        }
 
-        // const Operationcostseries = [20, 55, 41, 30, 15]
+        const SalesBreakdownseries = this.state.saleBreakdownOverallly.map((x) => x.amount)
+
+        const saleBreakdownSeries = [{
+            name: "Nett Profit",
+            data: [2, 3, 3.5, 5, 6.07, 3.3, 9.73, 4, 6, 5, 4, 3.35, 8.75, 1, 9]
+        }, {
+            name: "Shipping",
+            data: [0.2, 0.8, 0.9, 1, 1.2, 0.6, 0.7, 0.4, 0.3, 2, 1.5, 1.3, 1, 2.4, 3]
+        }, {
+            name: "Tax",
+            data: [0.2, 0.8, 0.9, 1, 1.2, 0.6, 0.7, 0.4, 0.3, 2, 1.5, 1.3, 1, 2.4, 2]
+        }, {
+            name: "Cost",
+            data: [0.2, 0.8, 0.9, 1, 1.2, 0.6, 0.7, 0.4, 0.3, 2, 1.5, 1.3, 1, 2.4, 1]
+        }, {
+            name: "Others",
+            data: [0.2, 0.2, 0.2, 0.3, 0.1, 0.1, 0.2, 0.3, 0, 0.2, 0, 0.3, 0.4, 0, 0.1]
+        }]
+
+        const saleBreakdownOptions = {
+            chart: {
+                type: 'bar',
+                height: 300,
+                stacked: true,
+            },
+            plotOptions: {
+                bar: {
+                    dataLabels: {
+                        position: 'top', // top, center, bottom
+                    },
+                    toolbar: {
+                        show: false
+                    },
+                    // columnWidth: '40vw',
+                }
+            },
+            xaxis: {
+                categories: ['17 Jan 23', '18 Jan 23', '19 Jan 23', '20 Jan 23', '21 Jan 23', '22 Jan 23', '23 Jan 23', '24 Jan 23', '25 Jan 23', '26 Jan 23', '27 Jan 23', '28 Jan 23', '29 Jan 23', '30 Jan 23', '31 Jan 23',],
+                labels: {
+                    formatter: function (val) {
+                        return val
+                        // + "K"
+                    }
+                }
+            },
+            tooltip: {
+                enabled: true,
+                enabledOnSeries: undefined,
+                shared: true,
+                followCursor: false,
+                intersect: false,
+                inverseOrder: false,
+                custom: undefined,
+                fillSeriesColor: true,
+                theme: true,
+                style: { fontSize: '10px', },
+                onDatasetHover: { highlightDataSeries: false, },
+                y: { formatter: function (val) { return val + "K" } },
+                fixed: { enabled: false, position: 'topRight', offsetX: 0, offsetY: 0, },
+            },
+            fill: { opacity: 1 },
+            legend: {
+                show: false,
+                // position: 'bottom',
+                // horizontalAlign: 'left',
+                // offsetX: 40 
+            },
+        }
+
+        const selectedData = this.state.yealySaleDummy.filter((x) => x.year === this.state.year).map((y) => y)
+        const yearlySaleoptions = {
+            chart: {
+                height: 200,
+                type: 'line',
+                // foreColor: "white",
+                dropShadow: {
+                    enabled: true,
+                    color: '#000',
+                    top: 18,
+                    left: 7,
+                    blur: 10,
+                    opacity: 0.2
+                },
+                toolbar: { show: false },
+            },
+            colors: [
+                '#FFA701',
+                '#E3242B',
+                // '#77B6EA',
+                // '#545454'
+            ],
+            dataLabels: { enabled: false, },
+            stroke: { curve: 'smooth', width: 1.5 },
+            tooltip: {
+                enabled: true,
+                enabledOnSeries: undefined,
+                shared: true,
+                followCursor: false,
+                intersect: false,
+                inverseOrder: false,
+                custom: undefined,
+                fillSeriesColor: true,
+                theme: true,
+                style: { fontSize: '12px', },
+                onDatasetHover: { highlightDataSeries: true, },
+            },
+            grid: {
+                borderColor: '#e7e7e7',
+                row: {
+                    colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                    opacity: 0.5
+                },
+            },
+            xaxis: {
+                categories: selectedData[0].items.filter((z) => z.saleType === "Total Income").map((data) => data.month),
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'right',
+                floating: true,
+            }
+        }
+
+        const yearlySaleseries = [
+            {
+                name: "Total Income",
+                data: selectedData[0].items.filter((z) => z.saleType === "Total Income").map((data) => data.amount)
+            },
+            {
+                name: "Total Expenses",
+                data: selectedData[0].items.filter((z) => z.saleType === "Total Expenses").map((data) => data.amount)
+            }
+        ]
+
+        const productCategorySaleSeries = [44, 33, 54, 45]
+        const productCategorySaleOptions = {
+            chart: {
+                width: 380,
+                type: 'pie',
+            },
+            labels: ['Power Tools', 'Babies & Toys', 'Health & Beauty', 'Home & Lifestyle'],
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: 200
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }]
+        }
 
         return (
             <Grid container spacing={1} style={{ padding: '25pt' }}>
@@ -104,24 +341,17 @@ class Dashboard extends Component {
                     </Grid>
                 </Grid>
                 <hr width="100%" />
-                <Grid container>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} sm={2} md={2} style={{ display: "flex", justifyContent: "center" }}>
-                            <img src={Logo} width="100%" />
-                        </Grid>
-                        <Grid item xs={12} sm={5} md={5}>
-                            <Card elevation={3}>
-                                <CardHeader
-                                    title={<Typography variant="h6" style={{ fontWeight: 700 }}>Monthly Statistic Overview</Typography>}
-                                // avatar={
-                                //     <Avatar sx={{ bgcolor: 'red' }} aria-label="recipe">
-                                //         R
-                                //     </Avatar>
-                                // }
-                                />
-                                <CardContent>
-                                    <Box sx={{ display: "flex", borderRadius: 3, margin: "0.5vw" }} >
-                                        <Grid container>
+                <Grid container spacing={2}>
+                    <Grid item container xs={12} sm={12} md={7} rowSpacing={2} >
+                        <Grid item xs={12} style={{ display: "flex", alignItems: "center", flexDirection: "row" }}>
+                            <Grid item xs={12} sm={3} md={3}>
+                                <img src={Logo} width="100%" />
+                            </Grid>
+                            <Grid item xs={12} sm={9} md={9}>
+                                <Card elevation={3}>
+                                    <CardHeader title={<Typography variant="h6" style={{ fontWeight: 700 }}>Monthly Statistic Overview</Typography>} />
+                                    <CardContent>
+                                        <Grid container spacing={8}>
                                             {
                                                 this.state.statisticData.filter((y) => y.key === this.state.key).map((x) => {
                                                     return (
@@ -140,23 +370,112 @@ class Dashboard extends Component {
                                                 })
                                             }
                                         </Grid>
-                                    </Box>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        </Grid>
+                        <Grid item container xs={12} spacing={3} style={{ display: "flex", alignItems: "center" }}>
+                            <Grid item xs={12}>
+                                <Card elevation={3}>
+                                    <CardHeader
+                                        title={
+                                            <Grid item xs={12} style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                                                <Typography variant="h6" style={{ fontWeight: 700 }}>Yearly Sales</Typography>
+                                                <FormControl sx={{ m: 0.5 }} variant="outlined">
+                                                    {/* <InputLabel htmlFor="demo-customized-select-native">Year</InputLabel> */}
+                                                    <NativeSelect
+                                                        id="demo-customized-select-native"
+                                                        value={this.state.year}
+                                                        onChange={(e) => this.handleChange(e)}
+                                                        input={<BootstrapInput />}
+                                                    >
+                                                        <option aria-label="None" value="" />
+                                                        <option value={2022}>2022</option>
+                                                        <option value={2023}>2023</option>
+                                                    </NativeSelect>
+                                                </FormControl>
+                                            </Grid>
+                                        }
+                                    />
+                                    <CardContent>
+                                        <ReactApexChart options={yearlySaleoptions} series={yearlySaleseries} type="area" height={290} />
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        </Grid>
+                        <Grid item container xs={12} spacing={3} style={{ display: "flex", alignItems: "center" }}>
+                            <Grid item xs={12} sm={6} md={6}>
+                                <Card elevation={3}>
+                                    <CardHeader title={<Typography variant="h6" style={{ fontWeight: 700 }}>Product Category Sales</Typography>} />
+                                    <CardContent>
+                                        <ReactApexChart options={productCategorySaleOptions} series={productCategorySaleSeries} type="pie" height={300} />
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={6}>
+                                <Card elevation={3}>
+                                    <CardHeader title={<Typography variant="h6" style={{ fontWeight: 700 }}>Monthly Sales</Typography>} />
+                                    <CardContent>
+                                        <ReactApexChart options={SalesBreakdownoptions} series={SalesBreakdownseries} type="donut" height={300} />
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        </Grid>
+                        <Grid item container spacing={3} xs={12} >
+                            <Grid item xs={12} sm={6} md={6}>
+                                <Card elevation={3}>
+                                    <CardHeader title={<Typography variant="h6" style={{ fontWeight: 700 }}>Monthly Best Merchant</Typography>} />
+                                    <CardContent>
+                                        <ReactApexChart options={SalesBreakdownoptions} series={SalesBreakdownseries} type="donut" height={300} />
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={6}>
+                                <Card elevation={3}>
+                                    <CardHeader title={<Typography variant="h6" style={{ fontWeight: 700 }}>Latest Products</Typography>} />
+                                    <CardContent>
+                                        <ReactApexChart options={SalesBreakdownoptions} series={SalesBreakdownseries} type="donut" height={300} />
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid item container rowSpacing={3} xs={12} sm={12} md={5} >
+                        <Grid item xs={12} sm={12} md={12} >
+                            <Card elevation={3}>
+                                <CardHeader title={<Typography variant="h6" style={{ fontWeight: 700 }}>Sales Breakdown</Typography>} />
+                                <CardContent>
+                                    <Grid item xs={12} sm={12} md={12}>
+                                        <ReactApexChart options={SalesBreakdownoptions} series={SalesBreakdownseries} type="donut" height={200} />
+                                    </Grid>
+                                    <Grid item xs={12} sm={12} md={12}>
+                                        <ReactApexChart options={saleBreakdownOptions} series={saleBreakdownSeries} type="bar" height={280} />
+                                    </Grid>
                                 </CardContent>
                             </Card>
                         </Grid>
-                        <Grid item xs={12} sm={5} md={5}>
+                        <Grid item xs={12} sm={12} md={12} >
                             <Card elevation={3}>
-                                <CardHeader
-                                    title={<Typography variant="h6" style={{ fontWeight: 700 }}>Inventory Management</Typography>}
-                                />
+                                <CardHeader title={<Typography variant="h6" style={{ fontWeight: 700 }}>Inventory Management</Typography>} />
                                 <CardContent>
-                                    {/* <ReactApexChart options={Operationcostoptions} series={Operationcostseries} type="donut" height={245} /> */}
+                                    <Grid item xs={12} sm={12} md={12}>
+                                        <ReactApexChart options={SalesBreakdownoptions} series={SalesBreakdownseries} type="donut" height={210} />
+                                    </Grid>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={12} >
+                            <Card elevation={3}>
+                                <CardHeader title={<Typography variant="h6" style={{ fontWeight: 700 }}>Marketing Campaigns</Typography>} />
+                                <CardContent>
+                                    <Grid item xs={12} sm={12} md={12} style={{ height:'25vh', overflowX: 'hidden',}} >
+                                        <MarketingCampaigns />
+                                    </Grid>
                                 </CardContent>
                             </Card>
                         </Grid>
                     </Grid>
                 </Grid>
-
 
 
                 {/* <SearchBar
