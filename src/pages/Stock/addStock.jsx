@@ -841,7 +841,7 @@ class AddStock extends Component {
                             <div style={{ textAlign: "right" }}>
                                 <Button variant="contained" color="primary" style={{ margin: "10px" }} onClick={() => {
                                     <>
-                                        {history.push("/ecommerceCMSDev/stockList")}
+                                        {history.push("./stockList")}
                                         {window.location.reload(false)}
                                     </>
                                 }}>

@@ -3503,7 +3503,7 @@ class AddProductComponent extends Component {
           toast.success("Product is successfully submitted to Admin for endorsement. Estimated 3 - 5 days for admin to revise your added product.")
           this.setState({ isSubmit: false })
           setTimeout(() => {
-            window.location.href = "/ecommerceCMSDev/viewProduct"
+            window.location.href = "./viewProduct"
             window.location.reload(false);
           }, 3000);
         }
