@@ -6,7 +6,7 @@ import SearchBar from "../../components/SearchBar/SearchBar";
 import Button from "@mui/material/Button";
 import ModalComponent from "../../components/ModalComponent/ModalComponent";
 import { Card, CardContent, CardHeader, Grid, Typography, Avatar, Box } from "@mui/material";
-import Logo from "../../assets/logos/logo.png";
+import Logo from "../../assets/MyEmporia Logo.png";
 import ReactApexChart from "react-apexcharts";
 import { styled } from '@mui/material/styles';
 import InputLabel from '@mui/material/InputLabel';
@@ -345,7 +345,7 @@ class Dashboard extends Component {
                     <Grid item container xs={12} sm={12} md={7} rowSpacing={2} >
                         <Grid item xs={12} style={{ display: "flex", alignItems: "center", flexDirection: "row" }}>
                             <Grid item xs={12} sm={3} md={3}>
-                                <img src={Logo} width="100%" />
+                                <img src={Logo} width="90%" />
                             </Grid>
                             <Grid item xs={12} sm={9} md={9}>
                                 <Card elevation={3}>

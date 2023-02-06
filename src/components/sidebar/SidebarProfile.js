@@ -14,7 +14,7 @@ export default function Profile(props) {
                 whiteSpace: 'nowrap',
             }}
         >
-            Template
+            MyEmporia CMS
         </div>
     )
 }
