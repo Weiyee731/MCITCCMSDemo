@@ -30,159 +30,178 @@
  */
 
 
-import { Settings, Shop2Rounded, ShopOutlined } from '@mui/icons-material';
-import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
-import StorefrontIcon from '@mui/icons-material/Storefront';
+// import { Settings, Shop2Rounded, ShopOutlined } from '@mui/icons-material';
+// import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+// import StorefrontIcon from '@mui/icons-material/Storefront';
 
 
-const sidebar_items = [
+// const SidebarConfiguration = [
 
-    {
-        to: "",
-        title: "Product",
-        icon: "indeterminate_check_box",
-        submenus: [
-            {
-                to: "/viewProduct",
-                title: "Product Listing",
-                icon: "inventory",
-            },
-            {
-                to: "/viewProductEndorsement",
-                title: "Product Endorsement",
-                icon: "assignment_turned_in",
-            },
-            // {
-            //     to: "/promotionList",
-            //     title: "Product Promotion",
-            //     icon: "assignment_turned_in",
-            // },
-        ]
-    },
+//     {
+//         to: "",
+//         title: "Product",
+//         icon: "indeterminate_check_box",
+//         submenus: [
+//             {
+//                 to: "/viewProduct",
+//                 title: "Product Listing",
+//                 icon: "inventory",
+//             },
+//             {
+//                 to: "/viewProductEndorsement",
+//                 title: "Product Endorsement",
+//                 icon: "assignment_turned_in",
+//             },
+//         ]
+//     },
 
-    //Close for Live Purpose
-    // {
-    //     to: "/viewTransactions",
-    //     title: "Transaction",
-    //     icon: "money",
-    // },
-    // {
-    //     to: "/OrderManagement",
-    //     title: "Order Management",
-    //     icon: "money",
-    // },
-    {
-        to: "/TransactionManagement",
-        title: "Transaction Management",
-        icon: "money",
-    },
-
-
-    // {
-    //     to: "",
-    //     title: "User Management",
-    //     icon: <AssignmentIndIcon />,
-    //     submenus: [
-    //         {
-    //             to: "/viewMerchants",
-    //             title: "Merchant",
-    //             icon: <AssignmentIndIcon />,
-    //         },
-    //         {
-    //             to: "/viewUser",
-    //             title: "User",
-    //             icon: <AssignmentIndIcon />,
-    //         },
-    //     ]
-    // },
-    {
-        to: "/viewShopProfile",
-        title: "Shop Profile",
-        icon: "shop",
-    },
+//     //Close for Live Purpose
+//     {
+//         to: "/viewTransactions",
+//         title: "Transaction",
+//         icon: "money",
+//     },
+//     {
+//         to: "/OrderManagement",
+//         title: "Order Management",
+//         icon: "money",
+//     },
+//     {
+//         to: "/TransactionManagement",
+//         title: "Transaction Management",
+//         icon: "money",
+//     },
+//     {
+//         to: "/viewShopProfile",
+//         title: "Shop Profile",
+//         icon: "shop",
+//     },
 
     
-    {
-        to: "/category",
-        title: "Product Category",
-        icon: <Shop2Rounded />,
-    },
+//     {
+//         to: "/category",
+//         title: "Product Category",
+//         icon: <Shop2Rounded />,
+//     },
 
-    //Close for Live Purpose
-    {
-        to: "/stockList",
-        title: "Stock Management",
-        icon: "inventory",
-    },
-    {
-        to: "/PromotionListing",
-        title: "Promotion",
-        icon: "inventory",
-    },
-    {
-        to: "",
-        title: "Setting",
-        icon: <Settings />,
-        submenus: [
-            {
-                to: "/shoplotList",
-                title: "Shoplot",
-                icon: <Shop2Rounded />,
-            },
-            {
-                to: "/category",
-                title: "Product Category",
-                icon: <Shop2Rounded />,
-            },
-        ]
-    },
-    // {
-    //     to: "",
-    //     title: "Report",
-    //     icon: <AssignmentIndIcon />,
-    //     submenus: [
-    //         {
-    //             to: "/viewPurchaseOrderList",
-    //             title: "Purchase Order Listing",
-    //             icon: <AssignmentIndIcon />,
-    //         },
-    //         {
-    //             to: "/viewQuotationList",
-    //             title: "Quotation Listing",
-    //             icon: <AssignmentIndIcon />,
-    //         },
-    //     ]
-    // },
-    // {
-    //     to: "https://myemporia.my",
-    //     title: "Back to Market Place",
-    //     icon: <StorefrontIcon />,
-    // },
-    // console.log("row", row)
-
-    // {
-    //     to: "/quotationList",
-    //     title: "Quotation",
-    //     icon: "shop",
-    // },
-    // {
-    //     to: "",
-    //     title: "Stock Management",
-    //     icon: "indeterminate_check_box",
-    //     submenus: [
-    //         {
-    //             to: "/OverallStock",
-    //             title: "Overall",
-    //             icon: "all_inbox",
-    //         },
-    //         {
-    //             to: "/StockGoods",
-    //             title: "Stock Order Goods",
-    //             icon: "assignment_turned_in",
-    //         },
-    //     ]
-    // },
-]
+//     //Close for Live Purpose
+//     {
+//         to: "/stockList",
+//         title: "Stock Management",
+//         icon: "inventory",
+//     },
+//     {
+//         to: "/PromotionListing",
+//         title: "Promotion",
+//         icon: "inventory",
+//     },
+//     {
+//         to: "",
+//         title: "Setting",
+//         icon: <Settings />,
+//         submenus: [
+//             {
+//                 to: "/shoplotList",
+//                 title: "Shoplot",
+//                 icon: <Shop2Rounded />,
+//             },
+//             {
+//                 to: "/category",
+//                 title: "Product Category",
+//                 icon: <Shop2Rounded />,
+//             },
+//         ]
+//     },
+// ]
 
 
-export default sidebar_items
+// export default SidebarConfiguration
+
+import React, { Component, useEffect, useState } from "react";
+import { connect, useDispatch, useSelector } from "react-redux";
+import { GitAction } from "../../../store/action/gitAction";
+import { withRouter } from "react-router";
+
+const SidebarConfiguration = () => {
+    const { sidebars } = useSelector((state) => ({
+        sidebars: state.counterReducer.sidebars,
+    }));
+    const dispatch = useDispatch();
+    console.log("sidebars",sidebars)
+    useEffect(() => {
+        dispatch(
+            GitAction.CallFetchSidebar({
+                ROLEGROUPID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID,
+                PROJECTID: 2,
+            })
+        );
+    }, []);
+
+    let overallListing = [];
+
+    sidebars.length > 0 &&
+        JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID !== 1 ?
+            sidebars.filter((x)=> x.PageID !== 15).map((data) => {
+        if (data.submenus !== null && data.submenus !== "[]") {
+            let submenu = [];
+            JSON.parse(data.submenus).map((x) => {
+                let data = {
+                    to: x.page,
+                    title: x.title,
+                    // icon: x.icon.replace("fa fa-", ""),
+                    icon: x.icon,
+                };
+                submenu.push(data);
+            });
+            let listing = {
+                to: data.page,
+                title: data.title,
+                icon: data.icon,
+                submenus: submenu,
+            };
+            overallListing.push(listing);
+        } else {
+            let listing = {
+                to: data.page,
+                title: data.title,
+                icon: data.icon,
+            };
+            overallListing.push(listing);
+        }
+                })
+                :
+            sidebars.map((data) => {
+            if (data.submenus !== null && data.submenus !== "[]") {
+                let submenu = [];
+                console.log("menu",data.title)
+                JSON.parse(data.submenus).map((x) => {
+                    console.log("submenu",x)
+                    let data = {
+                        to: x.page,
+                        title: x.title,
+                        // icon: x.icon.replace("fa fa-", ""),
+                        icon: x.icon,
+                    };
+                    submenu.push(data);
+                });
+                let listing = {
+                    to: data.page,
+                    title: data.title,
+                    icon: data.icon,
+                    submenus: submenu,
+                };
+                overallListing.push(listing);
+            } else {
+                let listing = {
+                    to: data.page,
+                    title: data.title,
+                    icon: data.icon,
+                };
+                overallListing.push(listing);
+            }
+                });
+
+    return overallListing;
+};
+
+export default SidebarConfiguration;

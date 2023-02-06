@@ -97,6 +97,7 @@ const Aside = ({ rtl, toggled, handleToggleSidebar, sidebarItems }) => {
                 typeof item.submenus === "undefined" || item.submenus === null ?
 
                   checkHost() === true ?
+                  
                     <MenuItem
                       key={item.title}
                       prefix={typeof item.prefix !== "undefined" && item.prefix !== null ? item.prefix : null}

@@ -94,10 +94,10 @@ export class GitAction {
 
   static UpdateShopDetail = "UPDATE-SHOP-DETAIL";
   static UpdatedShopDetail = "UPDATED-SHOP-DETAIL";
-  static CallUpdateShopDetail(propsData) {
+  static CallUpdateShopDetail(prodData) {
     return {
       type: GitAction.UpdateShopDetail,
-      payload: propsData,
+      payload: prodData,
     };
   }
 

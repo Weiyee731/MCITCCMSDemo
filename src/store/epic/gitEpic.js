@@ -2157,10 +2157,14 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.FetchSidebar), map(action => {
       return dispatch => {
         try {
+          console.log(url + project + "/" +
+          "User_ViewPage?" +
+          "ROLEGROUPID=" + action.payload.ROLEGROUPID +
+          "&PROJECTID=" + action.payload.PROJECTID)
           return fetch(url + project + "/" +
             "User_ViewPage?" +
             "ROLEGROUPID=" + action.payload.ROLEGROUPID +
-            "&USERID=" + action.payload.USERID)
+            "&PROJECTID=" + action.payload.PROJECTID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)

@@ -3,7 +3,7 @@ import Aside from './Aside';
 import Main from './Main';
 import { isUserLogon, getSidebaritems } from "../auth/AuthManagement";
 import Login from "../../pages/Login/Login";
-import sidebar_items from './data/SidebarConfiguration';
+import SidebarConfiguration from './data/SidebarConfiguration';
 import "./styles/sidebar.css";
 import { isArrayNotEmpty } from '../../tools/Helpers';
 import { ToastContainer } from 'react-toastify';
@@ -65,7 +65,7 @@ function Layout() {
             <Aside
               image={false} // can set the background image for the sidebar here
               rtl={rtl}
-              sidebarItems={isArrayNotEmpty(renderSidebarItems()) ? renderSidebarItems() : sidebar_items}
+              sidebarItems={isArrayNotEmpty(renderSidebarItems()) ? renderSidebarItems() : SidebarConfiguration()}
               toggled={toggled}
               handleToggleSidebar={handleToggleSidebar}
             />
