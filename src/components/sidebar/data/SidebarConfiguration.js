@@ -71,11 +71,11 @@ const sidebar_items = [
     //     title: "Order Management",
     //     icon: "money",
     // },
-    // {
-    //     to: "/TransactionManagement",
-    //     title: "Transaction Management",
-    //     icon: "money",
-    // },
+    {
+        to: "/TransactionManagement",
+        title: "Transaction Management",
+        icon: "money",
+    },
 
 
     // {
@@ -114,28 +114,28 @@ const sidebar_items = [
         title: "Stock Management",
         icon: "inventory",
     },
-    // {
-    //     to: "/PromotionListing",
-    //     title: "Promotion",
-    //     icon: "inventory",
-    // },
-    // {
-    //     to: "",
-    //     title: "Setting",
-    //     icon: <Settings />,
-    //     submenus: [
-    //         {
-    //             to: "/shoplotList",
-    //             title: "Shoplot",
-    //             icon: <Shop2Rounded />,
-    //         },
-    //         {
-    //             to: "/category",
-    //             title: "Product Category",
-    //             icon: <Shop2Rounded />,
-    //         },
-    //     ]
-    // },
+    {
+        to: "/PromotionListing",
+        title: "Promotion",
+        icon: "inventory",
+    },
+    {
+        to: "",
+        title: "Setting",
+        icon: <Settings />,
+        submenus: [
+            {
+                to: "/shoplotList",
+                title: "Shoplot",
+                icon: <Shop2Rounded />,
+            },
+            {
+                to: "/category",
+                title: "Product Category",
+                icon: <Shop2Rounded />,
+            },
+        ]
+    },
     // {
     //     to: "",
     //     title: "Report",

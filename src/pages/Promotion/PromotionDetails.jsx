@@ -23,6 +23,10 @@ import axios from "axios";
 import moment from 'moment';
 import LoadingPanel from "../../tools/LoadingPanel";
 
+import InfoIcon from '@mui/icons-material/Info';
+import { styled } from '@mui/material/styles';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+
 export const PromotionDetails = (props) => {
     const { products, promotionByID, promoAction } = useSelector(state => ({
         products: state.counterReducer.products,
@@ -70,6 +74,17 @@ export const PromotionDetails = (props) => {
         stockError: [],
     })
 
+    const HtmlTooltip = styled(({ className, ...props }) => (
+        <Tooltip {...props} classes={{ popper: className }} />
+    ))(({ theme }) => ({
+        [`& .${tooltipClasses.tooltip}`]: {
+            backgroundColor: '#f5f5f9',
+            color: 'rgba(0, 0, 0, 0.87)',
+            width: "800px",
+            fontSize: theme.typography.pxToRem(12),
+            border: '1px solid #dadde9',
+        },
+    }));
 
     useEffect(() => {
         let pathname = window.location.pathname
@@ -390,8 +405,6 @@ export const PromotionDetails = (props) => {
             else
                 setSelectedList(listing => [...listing, data]);
         }
-
-
     }
 
     const filterConfirmList = () => {
@@ -439,31 +452,6 @@ export const PromotionDetails = (props) => {
         else {
 
             let error = []
-
-            // newArr[index].purchaseLimitType = e.target.value
-            // if (e.target.value === "No Limit") {
-            //     newArr[index].isPurchaseLimitError = false
-            //     error = errorData.purchaseError.filter((x) => x != index)
-            //     setErrorData({
-            //         ...errorData,
-            //         purchaseError: error
-            //     })
-            // }
-            // setConfirmList([...newArr]);
-
-            // purchaseLimitType: "No Limit",
-            // purchaseLimit: "",
-            // isPurchaseLimitError: false,
-            // detailListing
-
-            // discountPercent: "",
-            // isDiscountError: false,
-            // discountPrice: "",
-            // stockLimitType: "No Limit",
-            // stockLimitQty: "",
-            // isStockLimitError: false,
-            // isEnable: true
-
 
             if (selectedConfirmList.length > 0) {
                 selectedConfirmList.map((y) => {
@@ -550,6 +538,7 @@ export const PromotionDetails = (props) => {
             purchaseError: [],
             discountError: [],
             stockError: [],
+            duplicatePromoError: []
         }
 
         let deletedProductID = []
@@ -598,7 +587,11 @@ export const PromotionDetails = (props) => {
             })
         }
 
-        if (!isArrayNotEmpty(isError.nameError) && !isArrayNotEmpty(isError.dateError) && !isArrayNotEmpty(isError.purchaseError) && !isArrayNotEmpty(isError.discountError) && !isArrayNotEmpty(isError.stockError)) {
+        if (isArrayNotEmpty(confirmList) && confirmList.filter((x) => x.isDuplicatePromo === true).length > 0)
+            isError.duplicatePromoError.push(true)
+
+
+        if (!isArrayNotEmpty(isError.nameError) && !isArrayNotEmpty(isError.dateError) && !isArrayNotEmpty(isError.purchaseError) && !isArrayNotEmpty(isError.discountError) && !isArrayNotEmpty(isError.stockError) && !isArrayNotEmpty(isError.duplicatePromoError)) {
 
             // if (localStorage.getItem("promotionList") !== undefined && localStorage.getItem("promotionList") !== null) {
             //     if (isArrayNotEmpty(JSON.parse(localStorage.getItem("promotionList"))))
@@ -753,15 +746,63 @@ export const PromotionDetails = (props) => {
         return error
     }
 
+    const checkProductPromotionData = (BeginDate, EndDate, promoStartDate, promoEndDate) => {
+        let startDate = moment(BeginDate).format("YYYY-MM-DD HH:mm:ss")
+        let endDate = moment(EndDate).format("YYYY-MM-DD HH:mm:ss")
+
+        let promoendDate = moment(promoEndDate).format("YYYY-MM-DD HH:mm:ss")
+        let promostartDate = moment(promoStartDate).format("YYYY-MM-DD HH:mm:ss")
+
+        let isDateInvalid = false
+
+        if (startDate >= promostartDate) {
+            if (startDate <= promoendDate)
+                isDateInvalid = true
+        }
+
+        if (startDate < promostartDate) {
+            if (endDate >= promostartDate)
+                isDateInvalid = true
+        }
+
+        return isDateInvalid
+    }
+
+    const checkPromotionListing = (data, promoStartDate, promoEndDate) => {
+
+        let isDuplicatePromo = false
+        if (data.ProductPromotion !== "[]") {
+            let isDateInvalid = []
+            JSON.parse(data.ProductPromotion).map((x) => {
+                isDateInvalid.push(checkProductPromotionData(x.BeginDate, x.EndDate, promoStartDate, promoEndDate))
+            })
+            if (isArrayNotEmpty(isDateInvalid) && isDateInvalid.filter((x) => x === true).length > 0)
+                isDuplicatePromo = true
+        }
+        return isDuplicatePromo
+    }
+
+    const handlePromoCheckProductAvailability = (startDate, endDate) => {
+        let listing = confirmList
+
+        isArrayNotEmpty(listing) && listing.map((data, index) => {
+            if (checkPromotionListing(data, startDate, endDate) === true)
+                listing[index].isDuplicatePromo = true
+            else
+                listing[index].isDuplicatePromo = false
+        })
+        setConfirmList([...listing])
+    }
+
     const renderTableRows = (data, index) => {
         if (data !== undefined) {
             return (
                 <>
-                    <TableCell align="left" style={{ opacity: checkExisting(confirmList, data) || checkProductVariation(data.ProductVariation) ? "0.5" : "1.0" }}>
+                    <TableCell align="left" style={{ opacity: checkExisting(confirmList, data) || checkProductVariation(data.ProductVariation) || checkPromotionListing(data, selectionRange.startDate, selectionRange.endDate) ? "0.5" : "1.0" }}>
                         <div className="row">
                             <div className="col-1">
                                 <Checkbox
-                                    disabled={checkExisting(confirmList, data) || checkProductVariation(data.ProductVariation)}
+                                    disabled={checkExisting(confirmList, data) || checkProductVariation(data.ProductVariation) || checkPromotionListing(data, selectionRange.startDate, selectionRange.endDate)}
                                     checked={checkExisting(selectedList, data)}
                                     onClick={(event) => setCheckBoxListing(event, data, "SELECTLIST")}
                                 />
@@ -785,9 +826,12 @@ export const PromotionDetails = (props) => {
                                 {checkProductVariation(data.ProductVariation) &&
                                     <Typography style={{ color: "red" }}>Unable to add this product as <strong>No Variation</strong> for this product</Typography>
                                 }
+                                {
+                                    checkPromotionListing(data, selectionRange.startDate, selectionRange.endDate) === true &&
+                                    <Typography style={{ color: "red" }}>Unable to add this product as <strong>Existing in other promo</strong> in same duration</Typography>
+                                }
                             </div>
                         </div>
-
                     </TableCell>
                     <TableCell align="left" style={{ opacity: checkExisting(confirmList, data) ? "0.5" : "1.0" }}>{data.ProductSold}</TableCell>
                     <TableCell align="left" style={{ opacity: checkExisting(confirmList, data) ? "0.5" : "1.0" }}>{data.ProductStockAmount}</TableCell>
@@ -1020,6 +1064,13 @@ export const PromotionDetails = (props) => {
                                                         {data.ProductName}
                                                     </div>
                                                 </div>
+                                                {
+                                                    data.isDuplicatePromo === true &&
+                                                    <div className="row">
+                                                        <FormHelperText style={{ color: "red" }}>This product unable to add in this promo period. Product Exist in order promotion in similar period</FormHelperText>
+                                                    </div>
+                                                }
+
                                             </TableCell>
                                             <TableCell align="left" width="15%">
                                                 <div className="row">
@@ -1223,7 +1274,6 @@ export const PromotionDetails = (props) => {
     }
 
     return (
-
         <div className="container-fluid my-2">
             <div className="row">
                 <div className="col">
@@ -1313,11 +1363,14 @@ export const PromotionDetails = (props) => {
                                             label=""
                                             value={selectionRange.startDate}
                                             disabled={isActive ? false : true}
-                                            onChange={(e) => handleselectionRange({
-                                                ...selectionRange,
-                                                startDate: e.target.value,
-                                                isDateError: selectionRange.endDate < e.target.value ? true : false
-                                            })}
+                                            onChange={(e) => {
+                                                handleselectionRange({
+                                                    ...selectionRange,
+                                                    startDate: e.target.value,
+                                                    isDateError: selectionRange.endDate < e.target.value ? true : false
+                                                })
+                                                handlePromoCheckProductAvailability(e.target.value, selectionRange.endDate)
+                                            }}
                                         />
                                     </FormControl>
                                     {errorData.dateError[0] === true && <FormHelperText style={{ color: "red" }}>Valid Promotion Period is required</FormHelperText>}
@@ -1330,11 +1383,14 @@ export const PromotionDetails = (props) => {
                                             label=""
                                             value={selectionRange.endDate}
                                             disabled={isActive ? false : true}
-                                            onChange={(e) => handleselectionRange({
-                                                ...selectionRange,
-                                                endDate: e.target.value,
-                                                isDateError: selectionRange.startDate > e.target.value ? true : false
-                                            })}
+                                            onChange={(e) => {
+                                                handleselectionRange({
+                                                    ...selectionRange,
+                                                    endDate: e.target.value,
+                                                    isDateError: selectionRange.startDate > e.target.value ? true : false
+                                                })
+                                                handlePromoCheckProductAvailability(selectionRange.startDate, e.target.value)
+                                            }}
                                         />
                                     </FormControl>
                                     {selectionRange.isDateError === true &&
@@ -1407,7 +1463,6 @@ export const PromotionDetails = (props) => {
                     </div>
                 </CardContent >
             </Card >
-
             <div style={{ paddingTop: "20px", opacity: isActive ? "100%" : "60%" }}>
                 <Card>
                     <CardContent>
@@ -1418,9 +1473,21 @@ export const PromotionDetails = (props) => {
                             </div>
                             <div className="col">
                                 <div style={{ textAlign: "right", padding: "10px" }}>
-                                    <Button variant="outlined" color="primary" onClick={() => setModalOpen(true)} disabled={isActive ? false : true}>
+                                    <Button variant="outlined" color="primary" onClick={() => setModalOpen(true)} disabled={isActive && selectionRange.startDate !== "" && selectionRange.endDate !== "" && selectionRange.isDateError !== true ? false : true}>
                                         Add Product
                                     </Button>
+                                    <HtmlTooltip
+                                        title={
+                                            <React.Fragment>
+                                                <Typography style={TitleStyle}>Add Promotion Product</Typography>
+                                                <Typography style={SubtitleStyle}>Make sure all <strong>Basic Promotion Information </strong> is fill in correctly.</Typography>
+                                            </React.Fragment>
+                                        }
+                                    >
+                                        <IconButton size="medium">
+                                            <InfoIcon />
+                                        </IconButton>
+                                    </HtmlTooltip>
                                 </div>
                             </div>
                         </div>
