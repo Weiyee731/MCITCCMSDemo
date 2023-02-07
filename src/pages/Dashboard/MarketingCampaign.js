@@ -90,14 +90,14 @@ class MarketingCampaigns extends Component {
                     padding="normal"
                 >
                     <img src={data.campaignsImg} width={25} />
-                    <div><Typography variant="subtitle" style={{ color:"black" }}>{data.campaigns}</Typography></div>
+                    <div><Typography variant="subtitle" style={{ color: "black" }}>{data.campaigns}</Typography></div>
                 </TableCell>
                 <TableCell align="center" style={{ color: data.color }}>
-                    <img src={data.graph} width={20}/>
+                    <img src={data.graph} width={20} />
                     <Typography variant="subtitle" >{data.growth}</Typography>
                 </TableCell>
                 <TableCell align="center">
-                    <Typography variant="subtitle" style={{ color:"black" }}>{data.charges}</Typography>
+                    <Typography variant="subtitle" style={{ color: "black" }}>{data.charges}</Typography>
                 </TableCell>
                 <TableCell align="center">
                     <Typography variant="subtitle" style={{ color: data.color }}>{data.status}</Typography>
@@ -122,80 +122,80 @@ class MarketingCampaigns extends Component {
         return (
             <div >
                 {/* <Card sx={{ borderRadius: 4, height: "25vh", overflowY: "scroll", marginTop: "0.5vw" }}> */}
-                    <TableComponents
-                        tableTopLeft={
-                            <>
-                                {/* <h5 variant="title" style={{ marginTop: "1vw", fontSize: "0.92vw", fontWeight: "bold", }} >Marketing Campaigns</h5> */}
-                                <div className="row mt-2 mb-2" >
-                                    <div className="col-4 mt-1">
-                                        <div style={{ display: "flex", flexDirection: "row" }}>
-                                            <img src={Increase} width={30} />
-                                            <div style={{ display: "flex", flexDirection: "column" }}>
-                                                <div>
-                                                    <Typography variant="subtitle" >1,000</Typography>
-                                                    <span style={{ textAlign: "center", fontSize: "0.62vw", padding: "0.25vw", fontWeight: "bold", color: "green" }}>(+80.0%)</span>
-                                                </div>
-                                                <div>
-                                                    <Typography variant="subtitle2" >1 January 2021</Typography>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-4 mt-1">
-                                        <div style={{ display: "flex", flexDirection: "row" }}>
-                                            <img src={Decrease} width={30} />
-                                            <div style={{ display: "flex", flexDirection: "column" }}>
-                                                <div>
-                                                    <Typography variant="subtitle" >200</Typography>
-                                                    <span style={{ textAlign: "center", fontSize: "0.62vw", padding: "0.25vw", fontWeight: "bold", color: "red" }}>(-10.0%)</span>
-                                                </div>
-                                                <div>
-                                                    <Typography variant="subtitle2" >16 September 2021</Typography>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-4 mt-1" style={{ display: "flex", justifyContent: "flex-end" }}>
-                                        {/* <Button variant='contained' color="primary" onClick="#">
-                                            View Report
-                                        </Button> */}
-                                        {/* hide for demo purpose */}
-                                    </div>
-                                </div>
-                            </>
-                        }
-                        tableTopRight={
-                            <>
-                                {/* <NotificationsIcon
+                <TableComponents
+                    tableTopLeft= "empty"
+                    // {
+                    //     <>
+                    //         <h5 variant="title" style={{ marginTop: "1vw", fontSize: "0.92vw", fontWeight: "bold", }} >Marketing Campaigns</h5>
+                    //         <div className="row mt-2 mb-2" >
+                    //             <div className="col-4 mt-1">
+                    //                 <div style={{ display: "flex", flexDirection: "row" }}>
+                    //                     <img src={Increase} width={30} />
+                    //                     <div style={{ display: "flex", flexDirection: "column" }}>
+                    //                         <div>
+                    //                             <Typography variant="subtitle" >1,000</Typography>
+                    //                             <span style={{ textAlign: "center", fontSize: "0.62vw", padding: "0.25vw", fontWeight: "bold", color: "green" }}>(+80.0%)</span>
+                    //                         </div>
+                    //                         <div>
+                    //                             <Typography variant="subtitle2" >1 January 2023</Typography>
+                    //                         </div>
+                    //                     </div>
+                    //                 </div>
+                    //             </div>
+                    //             <div className="col-4 mt-1">
+                    //                 <div style={{ display: "flex", flexDirection: "row" }}>
+                    //                     <img src={Decrease} width={30} />
+                    //                     <div style={{ display: "flex", flexDirection: "column" }}>
+                    //                         <div>
+                    //                             <Typography variant="subtitle" >200</Typography>
+                    //                             <span style={{ textAlign: "center", fontSize: "0.62vw", padding: "0.25vw", fontWeight: "bold", color: "red" }}>(-10.0%)</span>
+                    //                         </div>
+                    //                         <div>
+                    //                             <Typography variant="subtitle2" >16 December 2022</Typography>
+                    //                         </div>
+                    //                     </div>
+                    //                 </div>
+                    //             </div>
+                    //             <div className="col-4 mt-1" style={{ display: "flex", justifyContent: "flex-end" }}>
+                    //                 <Button variant='contained' color="primary" onClick="#">
+                    //                     View Report
+                    //                 </Button>
+                    //             </div>
+                    //         </div>
+                    //     </>
+                    // }
+                    tableTopRight={
+                        <>
+                            {/* <NotificationsIcon
                                     onClick={(e) => this.handleNotification(e)}
                                     style={{ cursor: "pointer" }} /> */}
-                            </>
-                        }
-                        tableOptions={{
-                            dense: true,
-                            tableOrderBy: 'asc',
-                            sortingIndex: "",
-                            stickyTableHeader: false,
-                            stickyTableHeight: 300,
-                            elevation: 1,
-                        }}
-                        // paginationOptions={[5, 10, 20, { label: 'All', value: -1 }]}
-                        tableHeaders={headCells}
-                        tableRows={{
-                            renderTableRows: this.renderTableRows,
-                            checkbox: false,
-                            checkboxColor: "primary",
-                            onRowClickSelect: false,
-                        }}
-                        Data={
-                            this.state.dummyMarket
-                        }
-                        onSelectRow={(e) => console.log(e)}
-                        onSelectAllRows={(e) => console.log(e)}
-                        onTableRowClick={this.onTableRowClick}
-                        // SelectionActionButtons={<Button onClick={() => alert('hi')}>SelectionActionButtons</Button>}     // optional, onAddButtonClick = () => { }. The function should follow the one shown, as it will return the action that set in this page
-                        SelectionExtraInfo={<div>Hi</div>}
-                    />
+                        </>
+                    }
+                    tableOptions={{
+                        dense: true,
+                        tableOrderBy: 'asc',
+                        sortingIndex: "",
+                        stickyTableHeader: true,
+                        stickyTableHeight: 215,
+                        elevation: 0,
+                    }}
+                    // paginationOptions={[5, 10, 20, { label: 'All', value: -1 }]}
+                    tableHeaders={headCells}
+                    tableRows={{
+                        renderTableRows: this.renderTableRows,
+                        checkbox: false,
+                        checkboxColor: "primary",
+                        onRowClickSelect: false,
+                    }}
+                    Data={
+                        this.state.dummyMarket
+                    }
+                    onSelectRow={(e) => console.log(e)}
+                    onSelectAllRows={(e) => console.log(e)}
+                    onTableRowClick={this.onTableRowClick}
+                    // SelectionActionButtons={<Button onClick={() => alert('hi')}>SelectionActionButtons</Button>}     // optional, onAddButtonClick = () => { }. The function should follow the one shown, as it will return the action that set in this page
+                    SelectionExtraInfo={<div>Hi</div>}
+                />
                 {/* </Card> */}
             </div >
         );
