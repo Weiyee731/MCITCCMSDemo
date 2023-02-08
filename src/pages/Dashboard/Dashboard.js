@@ -150,11 +150,11 @@ class Dashboard extends Component {
         const SalesBreakdownoptions = {
             chart: {
                 width: 250,
-                type: 'donut',
+                type: 'donut', 
                 // foreColor: "white",
             },
             plotOptions: {
-                pie: {
+                pie: { 
                     // offsetY: 20,
                     startAngle: -90,
                     endAngle: 270,
@@ -231,9 +231,7 @@ class Dashboard extends Component {
                     dataLabels: {
                         position: 'top', // top, center, bottom
                     },
-                    toolbar: {
-                        show: false
-                    },
+                    toolbar: { show: false }, 
                     // columnWidth: '40vw',
                 }
             },
@@ -445,7 +443,7 @@ class Dashboard extends Component {
                 y: {
                     formatter: function (y) {
                         if (typeof y !== "undefined") {
-                            return y.toFixed(0) 
+                            return y.toFixed(0)
                             // + " points";
                         }
                         return y;
@@ -507,7 +505,6 @@ class Dashboard extends Component {
                                             <Grid item xs={12} style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
                                                 <Typography variant="h6" style={{ fontWeight: 700 }}>Yearly Sales</Typography>
                                                 <FormControl sx={{ m: 0.5 }} variant="outlined">
-                                                    {/* <InputLabel htmlFor="demo-customized-select-native">Year</InputLabel> */}
                                                     <NativeSelect
                                                         id="demo-customized-select-native"
                                                         value={this.state.year}
@@ -636,9 +633,7 @@ class Dashboard extends Component {
                             <Card elevation={3}>
                                 <CardHeader title={<Typography variant="h6" style={{ fontWeight: 700 }}>Marketing Campaigns</Typography>} />
                                 <CardContent>
-                                    {/* <Grid item xs={12} sm={12} md={12} style={{ height: '24vh', overflowX: 'hidden', }} > */}
                                     <MarketingCampaigns />
-                                    {/* </Grid> */}
                                 </CardContent>
                             </Card>
                         </Grid>

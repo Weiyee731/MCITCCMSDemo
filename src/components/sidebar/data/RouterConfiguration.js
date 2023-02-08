@@ -19,6 +19,7 @@
 ]
  */
 import Dashboard from "../../../pages/Dashboard/Dashboard";
+import MerchantDashboard from "../../../pages/Dashboard/MerchantDashboard";
 // import UserManagement from '../../../pages/UserManagement/UserManagement';
 // import OverallStock from "../../../pages/Stock/OverallStock/OverallStock";
 // import StockGoods from "../../../pages/Stock/StockGoods/StockGoods";
@@ -75,6 +76,11 @@ const routes = [
         path: "/",
         exact: true,
         element: <Dashboard />,
+    },
+    {
+        path: "/MerchantDashboard",
+        exact: true,
+        element: <MerchantDashboard />,
     },
     // {
     //     path: "/UserManagement",
