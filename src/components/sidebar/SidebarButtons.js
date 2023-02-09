@@ -10,7 +10,7 @@ export default function SidebarButtons(props) {
             <div className="p-2 w-100 clearfix">
                 <div className="float-start">
                     <IconButton aria-label="notification icon" size="medium" style={{ color: 'white' }}>
-                        <NotificationsActiveIcon />
+                        {/* <NotificationsActiveIcon /> */}
                     </IconButton>
                 </div>
                 <div className="float-end">
