@@ -1,6 +1,6 @@
 // "user manual": You can set your footer here
 import React from 'react'
-import reactLogo from '../../assets/logos/logo.svg';
+// import reactLogo from '../../assets/logos/logo.svg';
 export default function PanelHeader(props) {
     return (
         // <header>

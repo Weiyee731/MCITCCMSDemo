@@ -183,10 +183,10 @@ class Dashboard extends Component {
         // if (path !== undefined && path.length > 0 && path[1] !== "" && path[1] !== undefined && path[1].toUpperCase() === "CMS.MYEMPORIA.MY" && path[2] !== undefined && path[2] !== "" && path[2].toUpperCase() !== "") {
             credential = path[path.length - 1];
 
-            console.log("credential", credential.split("_"))
+            // console.log("credential", credential.split("_"))
 
-            console.log(credential.split("_")[0].replace(/p1L2u3S/g, '+').replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '='))
-            console.log(credential.split("_")[1].replace(/p1L2u3S/g, '+').replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '='))
+            // console.log(credential.split("_")[0].replace(/p1L2u3S/g, '+').replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '='))
+            // console.log(credential.split("_")[1].replace(/p1L2u3S/g, '+').replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '='))
             let username = decryptData(credential.split("_")[0].replace(/p1L2u3S/g, '+').replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '='))
             let password = decryptData(credential.split("_")[1].replace(/p1L2u3S/g, '+').replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '='))
 
@@ -206,8 +206,8 @@ class Dashboard extends Component {
             <div style={{ display: 'flex', width: '100%', height: '100vh', }}>
                 <div className="container login-container m-auto">
 
-                    <div className="logo-container w-100">
-                        <img src="" alt="System Logo" width='100%' height='100%' onError={event => { event.target.src = GetDefaultImage(); event.onerror = null }} />
+                    <div className="logo-container w-100" style={{textAlign:"center"}}>
+                        <img src="" alt="System Logo" width='250px' height='100%' onError={event => { event.target.src = GetDefaultImage(); event.onerror = null }} />
                     </div>
                     <div className="login-inputs-group">
                         <FormControl sx={{ m: 1, width: '100%' }} variant="standard">
