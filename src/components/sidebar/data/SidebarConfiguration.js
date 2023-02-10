@@ -127,7 +127,6 @@ const SidebarConfiguration = () => {
         sidebars: state.counterReducer.sidebars,
     }));
     const dispatch = useDispatch();
-    console.log("sidebars",sidebars)
     useEffect(() => {
         dispatch(
             GitAction.CallFetchSidebar({
@@ -173,9 +172,7 @@ const SidebarConfiguration = () => {
             sidebars.map((data) => {
             if (data.submenus !== null && data.submenus !== "[]") {
                 let submenu = [];
-                console.log("menu",data.title)
                 JSON.parse(data.submenus).map((x) => {
-                    console.log("submenu",x)
                     let data = {
                         to: x.page,
                         title: x.title,

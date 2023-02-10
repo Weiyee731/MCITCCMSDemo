@@ -1,0 +1,8 @@
+.inputForm {
+    display: flex;
+    align-items: center;
+}
+.asterisk {
+    color: red;
+    padding-right: 0.5vw;
+}

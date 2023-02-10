@@ -71,6 +71,9 @@ import QuotationListing from "../../../pages/Report/QuotationListing";
 import { PromotionDetails } from "../../../pages/Promotion/PromotionDetails";
 import { PromotionListing } from "../../../pages/Promotion/PromotionListing";
 
+// Register
+import RegisterMerchant from "../../../pages/Register/RegisterMerchant";
+
 const routes = [
     {
         path: "/",
@@ -143,6 +146,11 @@ const routes = [
     //     element: <AddUser />,
     // },
 
+    {
+        path: "/register",
+        exact: true,
+        element: <RegisterMerchant />,
+    },
     {
         path: "/viewProduct",
         exact: true,

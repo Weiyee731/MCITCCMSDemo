@@ -28,6 +28,7 @@ import TransactionDetailsComponent from "../../pages/Transaction/transactionDeta
 import ViewMerchantsComponent from "../../pages/UserManagement/Merchant/viewMerchant.component";
 import ViewUserComponent from "../../pages/UserManagement/User/viewUser.component";
 import EditShopProfile from "../../pages/Shop/viewShopProfile";
+import RegisterMerchant from '../../pages/Register/RegisterMerchant';
 
 
 
@@ -36,7 +37,7 @@ function Layout() {
   const [toggled, setToggled] = useState(false);
   const [isLogon, setIsLogon] = useState(isUserLogon());
   const [sidebaritem, setSidebaritem] = useState(getSidebaritems());
-
+  let promptUserID = 14
 
   // set sidebar to the right
   const handleRtlChange = (checked) => {
@@ -56,27 +57,32 @@ function Layout() {
     }
   }
 
+  const setPromptedUserID = () => {
+
+  };
+
   return (
-    <div className={`app ${rtl ? 'rtl' : ''} ${toggled ? 'toggled' : ''}`}>
-      <ToastContainer />
-      {
-        isLogon === true ?
-          <>
-            <Aside
-              image={false} // can set the background image for the sidebar here
-              rtl={rtl}
-              sidebarItems={isArrayNotEmpty(renderSidebarItems()) ? renderSidebarItems() : SidebarConfiguration()}
-              toggled={toggled}
-              handleToggleSidebar={handleToggleSidebar}
-            />
-            <Main
-              image={false} // can set the background image for the sidebar here
-              toggled={toggled}
-              rtl={rtl}
-              handleToggleSidebar={handleToggleSidebar}
-              handleRtlChange={handleRtlChange}
-            />
-            {/* <Route path="/viewProduct" component={ViewProductComponent} />
+    <>
+      <div className={`app ${rtl ? 'rtl' : ''} ${toggled ? 'toggled' : ''}`}>
+        <ToastContainer />
+        {
+          isLogon === true ?
+            <>
+              <Aside
+                image={false} // can set the background image for the sidebar here
+                rtl={rtl}
+                sidebarItems={isArrayNotEmpty(renderSidebarItems()) ? renderSidebarItems() : SidebarConfiguration()}
+                toggled={toggled}
+                handleToggleSidebar={handleToggleSidebar}
+              />
+              <Main
+                image={false} // can set the background image for the sidebar here
+                toggled={toggled}
+                rtl={rtl}
+                handleToggleSidebar={handleToggleSidebar}
+                handleRtlChange={handleRtlChange}
+              />
+              {/* <Route path="/viewProduct" component={ViewProductComponent} />
             <Route path="/addProductsAllIn" component={AddProductAllInOne} />
             <Route
               exact
@@ -122,11 +128,22 @@ function Layout() {
 
             <Route path="/viewShopProfile" component={EditShopProfile} /> */}
 
-          </>
-          :
-          <Login />
-      }
-    </div >
+            </>
+            :
+            <Login />
+          // <>
+          //   {promptUserID === 0 &&
+          //   <RegisterMerchant />
+          // }
+          // </>
+
+        }
+      </div >
+      {/* {console.log(promptUserID)}
+      {promptUserID !== 0 &&
+        <RegisterMerchant />} */}
+    </>
+
   )
 }
 

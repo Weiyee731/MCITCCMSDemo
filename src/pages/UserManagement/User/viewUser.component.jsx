@@ -221,7 +221,7 @@ class ViewUserComponent extends Component {
         const DataList = this.props.allUser.length > 0 &&
             this.props.allUser !== undefined &&
             this.props.allUser[0].ReturnVal !== "0" ? this.props.allUser : []
-
+console.log(this.props.allUser)
 
         const tableHeadCells = [
             {

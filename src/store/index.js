@@ -36,6 +36,7 @@ const rootEpic = combineEpics(
   // Merchant
   gitEpic.Merchants_ViewProfile,
   gitEpic.Merchants_ViewAllOrder,
+  gitEpic.User_UpdateMerchantProfile,
 
   // // Product
   gitEpic.Product_Add,
@@ -99,6 +100,7 @@ const rootEpic = combineEpics(
   // General
   gitEpic.Country_ViewAll,
   gitEpic.CourierService_ViewAll,
+  gitEpic.General_ViewState,
 
   // Shoplot
   gitEpic.Shoplot_ShopListing,

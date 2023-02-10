@@ -66,6 +66,7 @@ export class GitAction {
       payload: propsData,
     };
   }
+
   static ClearCurrentUser = "CLEAR-CURRENTUSER";
   static CallClearCurrentUser() {
     return {
@@ -92,11 +93,11 @@ export class GitAction {
 
   ///////////////////////////////////////////////////  Shop  ///////////////////////////////////////////////////
 
-  static UpdateShopDetail = "UPDATE-SHOP-DETAIL";
-  static UpdatedShopDetail = "UPDATED-SHOP-DETAIL";
-  static CallUpdateShopDetail(prodData) {
+  static UpdateShopDetails = "UPDATE-SHOP-DETAIL";
+  static UpdatedShopDetails = "UPDATED-SHOP-DETAIL";
+  static CallUpdateShopDetails(prodData) {
     return {
-      type: GitAction.UpdateShopDetail,
+      type: GitAction.UpdateShopDetails,
       payload: prodData,
     };
   }
@@ -271,6 +272,15 @@ export class GitAction {
   static CallGetMerchantsOrders(propsData) {
     return {
       type: GitAction.GetMerchantOrders,
+      payload: propsData,
+    };
+  }
+
+  static GetUpdateMerchantProfile = "GET-MERCHANTUPDATEPROFILE";
+  static GotUpdateMerchantProfile = "GOT-MERCHANTUPDATEPROFILA";
+  static CallGetUpdateMerchantProfile(propsData) {
+    return {
+      type: GitAction.GetUpdateMerchantProfile,
       payload: propsData,
     };
   }
@@ -774,6 +784,14 @@ export class GitAction {
   static CallCountry() {
     return {
       type: GitAction.GetCountry,
+    };
+  }
+
+  static GetState = "GET-STATE";
+  static GotState = "GOT-STATE";
+  static CallState() {
+    return {
+      type: GitAction.GetState,
     };
   }
 

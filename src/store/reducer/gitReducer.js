@@ -15,6 +15,7 @@ const INITIAL_STATE = {
   // Merchant
   merchant: [],
   merchantOrders: [],
+  merchantUpdateProfile: [],
 
   // Product
   addResult: [],
@@ -53,6 +54,7 @@ const INITIAL_STATE = {
   //General
   countries: [],
   logistic: [],
+  states: [],
 
 
   // Quotation
@@ -160,9 +162,9 @@ export function counterReducer(state = INITIAL_STATE, action) {
 
     ///////////////////////////////////////////////////  Shop  ///////////////////////////////////////////////////
 
-    case GitAction.UpdateShopDetail:
+    case GitAction.UpdateShopDetails:
       return Object.assign({}, state, { loading: true });
-    case GitAction.UpdatedShopDetail:
+    case GitAction.UpdatedShopDetails:
       return Object.assign({}, state, {
         loading: false,
         shopUpdated: action.payload,
@@ -286,6 +288,14 @@ export function counterReducer(state = INITIAL_STATE, action) {
       return Object.assign({}, state, {
         loading: false,
         merchantOrders: action.payload,
+      });
+
+    case GitAction.GetUpdateMerchantProfile:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotUpdateMerchantProfile:
+      return Object.assign({}, state, {
+        loading: false,
+        merchantUpdateProfile: action.payload,
       });
 
 
@@ -750,6 +760,14 @@ export function counterReducer(state = INITIAL_STATE, action) {
       return Object.assign({}, state, {
         loading: false,
         logistic: action.payload,
+      });
+
+    case GitAction.GetState:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotState:
+      return Object.assign({}, state, {
+        loading: false,
+        states: action.payload,
       });
 
     ///////////////////////////////////////////////////  Shoplot  ///////////////////////////////////////////////////
