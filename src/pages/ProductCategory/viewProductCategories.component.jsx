@@ -135,29 +135,32 @@ export const ProductCategory = (props) => {
   }
 
   const submitData = (type, HierarchyID, parentCategoryID, categoryID, Category, mainIndex, subIndex, subdetailIndex) => {
-    if (productCategories.filter((x) => x.ProductCategory === Category)) {
-      switch (HierarchyID) {
-        case 1:
+    // check duplication
+    const dupe_subCategories = categoryListingDetails[mainIndex].SubDetails.filter((x)=>(x.ProductCategory === Category))
+
+    const dupe_subDetails = categoryListingDetails[mainIndex].SubDetails[subIndex].SubDetails.filter((y)=>(y.ProductCategory === Category))
+
+    console.log('dupe subDetails', dupe_subDetails.length, Category)
+
+
+    if (type !== 'delete' && HierarchyID === 1 && productCategories.filter((x) => x.ProductCategory.toLowerCase() === Category.toLowerCase()) && productCategories.filter((x) => x.ProductCategory.toLowerCase() === Category.toLowerCase()).length >= 1) {
           toast.error("The category is existed, please double check before submitting.")
           categoryListingDetails.splice(mainIndex, 1)
           setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
-          break;
+   
+    }
 
-        case 2:
-          toast.error("The category is existed, please double check before submitting.")
+    else if(type !== 'delete' && HierarchyID === 2 && dupe_subCategories.length > 1 )
+    {
+          toast.error("The sub category is existed, please double check before submitting.")
           categoryListingDetails[mainIndex].SubDetails.splice(subIndex, 1)
           setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
-          break;
-
-        case 3:
-          toast.error("The category is existed, please double check before submitting.")
+    }
+    else if(type !== 'delete' && HierarchyID === 3 && dupe_subDetails.length > 1 )
+    {
+          toast.error("The sub detail category is existed, please double check before submitting.")
           categoryListingDetails[mainIndex].SubDetails[subIndex].SubDetails.splice(subdetailIndex, 1)
           setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
-          break;
-
-        default:
-          break;
-      }
     }
     else {
       if (categoryID === "" && productCategories.filter((x) => x.ProductCategory !== Category)) {
@@ -166,8 +169,10 @@ export const ProductCategory = (props) => {
           ProductCategory: Category,
           HierarchyID: HierarchyID,
           ParentProductCategoryID: parentCategoryID,
-          ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
-          UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+          // ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+          // UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+          ProjectID:2,
+          UserID: 0, 
         }
         dispatch(GitAction.CallAddProductCategory(propsData))
         toast.success("Successfully added product category")
@@ -291,7 +296,8 @@ export const ProductCategory = (props) => {
       }
 
       if (type === "edit")
-        listing.isEdit = !listing.isEdit
+      {console.log('idEdit', listing )
+        listing.isEdit = !listing.isEdit}
     }
     setListingDetails(listingData)
   }
@@ -486,6 +492,7 @@ export const ProductCategory = (props) => {
     }
   }
 
+
   return (
     <div style={{ width: "100%" }}>
       <h3>Product Category List</h3>
@@ -529,7 +536,7 @@ export const ProductCategory = (props) => {
                               <div className="row">
                                 <div className="col">
                                   <Typography variant="h6" gutterBottom component="div">
-                                    Sub Category
+                                    Sub Category Level 1
                                   </Typography>
                                 </div>
                                 <div className="col" style={{ textAlign: "right" }}>
@@ -557,7 +564,7 @@ export const ProductCategory = (props) => {
                                                         <div className="row" >
                                                           <div className="col">
                                                             <Typography variant="h6" gutterBottom component="div">
-                                                              Sub Category
+                                                              Sub Category Level 2
                                                             </Typography>
                                                           </div>
                                                           <div className="col" style={{ textAlign: "right" }}>

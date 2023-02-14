@@ -630,7 +630,7 @@ class Dashboard extends Component {
                             </Card>
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} >
-                            <Card elevation={3}>
+                            <Card elevation={3} style={{height:"35vh"}}>
                                 <CardHeader title={<Typography variant="h6" style={{ fontWeight: 700 }}>Marketing Campaigns</Typography>} />
                                 <CardContent>
                                     <MarketingCampaigns />

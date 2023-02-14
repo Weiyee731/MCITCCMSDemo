@@ -176,7 +176,7 @@ class MarketingCampaigns extends Component {
                         tableOrderBy: 'asc',
                         sortingIndex: "",
                         stickyTableHeader: true,
-                        stickyTableHeight: 215,
+                        stickyTableHeight: 300,
                         elevation: 0,
                     }}
                     // paginationOptions={[5, 10, 20, { label: 'All', value: -1 }]}

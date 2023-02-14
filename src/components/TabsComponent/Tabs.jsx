@@ -58,7 +58,7 @@ export default function FullWidthTabs(props) {
   const { Headers, Body } = props.settings
   return (
     <Box sx={{ bgcolor: 'background.paper', width: '100%' }}>
-      <AppBar position="static">
+      {/* <AppBar position="static"> */}
         <Tabs
           value={value}
           onChange={handleChange}
@@ -74,7 +74,7 @@ export default function FullWidthTabs(props) {
             })
           }
         </Tabs>
-      </AppBar>
+      {/* </AppBar> */}
       <SwipeableViews
         axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
         index={value}

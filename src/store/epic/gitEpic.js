@@ -185,7 +185,7 @@ export class GitEpic {
   ///////////////////////////////////////////////////  Shop  ///////////////////////////////////////////////////
 
   Shop_UpdateDetails = action$ =>
-    action$.pipe(filter(action => action.type === GitAction.UpdateShopDetail), map(action => {
+    action$.pipe(filter(action => action.type === GitAction.UpdateShopDetails), map(action => {
       return dispatch => {
         try {
           return fetch(url + project + "/" +
@@ -200,15 +200,15 @@ export class GitEpic {
             .then(json => {
               json = JSON.parse(json)
               if (json[0].ReturnVal === 1) {
-                return dispatch({ type: GitAction.UpdatedUserStatus, payload: JSON.parse(json[0].ReturnData) });
+                return dispatch({ type: GitAction.UpdatedShopDetails, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                // toast.error(json[0].ReturnMsg)
-                return dispatch({ type: GitAction.UpdatedUserStatus, payload: [] });
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.UpdatedShopDetails, payload: [] });
               }
             });
         } catch (error) {
           toast.error("Error Code: Shop_UpdateDetails. Please check on URL")
-          return dispatch({ type: GitAction.UpdatedUserStatus, payload: [] });
+          return dispatch({ type: GitAction.UpdatedShopDetails, payload: [] });
         }
       }
     }));
@@ -587,6 +587,44 @@ export class GitEpic {
         } catch (error) {
           toast.error("Error Code: Merchants_ViewAllOrder. Please check on URL")
           return dispatch({ type: GitAction.GotMerchantOrders, payload: [] });
+        }
+      }
+    }));
+    User_UpdateMerchantProfile = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetUpdateMerchantProfile), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "User_UpdateMerchantProfile?USERID=" +
+            action.payload.USERID +
+            "&FIRSTNAME=" +
+            action.payload.FIRSTNAME +
+            "&LASTNAME=" +
+            action.payload.LASTNAME+
+            "&USEREMAIL=" +
+            action.payload.USEREMAIL+
+            "&USERGENDER=" +
+            action.payload.USERGENDER+
+            "&USERCONTACTNO=" +
+            action.payload.USERCONTACTNO+
+            "&USERDOB=" +
+            action.payload.USERDOB+
+            "&USERNRIC=" +
+            action.payload.USERNRIC)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotUpdateMerchantProfile, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                // toast.error(json[0].ReturnMsg)
+                toast("The current user has no purchase history at the moment")
+                return dispatch({ type: GitAction.GotUpdateMerchantProfile, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Merchants_ViewAllOrder. Please check on URL")
+          return dispatch({ type: GitAction.GotUpdateMerchantProfile, payload: [] });
         }
       }
     }));
@@ -1771,6 +1809,29 @@ export class GitEpic {
         } catch (error) {
           toast.error("Error Code: Country_ViewAll. Please check on URL")
           return dispatch({ type: GitAction.GotCountry, payload: [] });
+        }
+      }
+    }));
+    
+    General_ViewState = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetState), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "General_ViewState")
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotState, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotState, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Country_ViewAll. Please check on URL")
+          return dispatch({ type: GitAction.GotState, payload: [] });
         }
       }
     }));
