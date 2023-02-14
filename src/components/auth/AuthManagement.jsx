@@ -19,7 +19,7 @@ export const setLogonUser = (loginUser, sidebarItem, project, SLD, projectURL) =
             localStorage.setItem("project", project)
             localStorage.setItem("projectURL", projectURL)
             localStorage.setItem("projectDomain", project + "." + SLD)
-            history.push("/")
+            history.push("/ecommerceCMSDev/viewProduct")
             window.location.reload(false);
         }
         catch (e) {

@@ -47,7 +47,7 @@ function mapDispatchToProps(dispatch) {
     CallProductDetail: (prodData) => dispatch(GitAction.CallProductDetail(prodData)),
     CallResetProductDetails: () => dispatch(GitAction.CallResetProductDetails()),
 
-    CallAllProductCategoryListing: () => dispatch(GitAction.CallAllProductCategoryListing()),
+    CallAllProductCategoryListing: (prodData) => dispatch(GitAction.CallAllProductCategoryListing(prodData)),
     CallProductReviewByProductID: (propsData) => dispatch(GitAction.CallProductReviewByProductID(propsData)),
     CallAddProductReview: (propsData) => dispatch(GitAction.CallAddProductReview(propsData)),
     CallViewAllProductVariationStock: (propsData) => dispatch(GitAction.CallViewAllProductVariationStock(propsData)),

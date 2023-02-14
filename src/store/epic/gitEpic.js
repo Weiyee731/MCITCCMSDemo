@@ -31,7 +31,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.LoginSuccess, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.LoginSuccess, payload: [] });
               }
             });
@@ -59,7 +59,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.LoginServerSuccess, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.LoginServerSuccess, payload: [] });
               }
             });
@@ -82,7 +82,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.LoggedOutSuccess, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.LoggedOutSuccess, payload: [] });
               }
             });
@@ -110,7 +110,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.UserRegistered, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.UserRegistered, payload: [] });
               }
             });
@@ -125,13 +125,13 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.GetUserProfile), map(action => {
       return dispatch => {
         console.log(url + project + "/" +
-            "User_ProfileListByType?TYPE=" + action.payload.TYPE +
-            "&TYPEVALUE=" + action.payload.TYPEVALUE +
-            "&USERID=" + action.payload.USERID +
-            "&UserRoleID=" + action.payload.USERROLEID +
-            "&LISTPERPAGE=" + action.payload.LISTPERPAGE +
-            "&PAGE=" + action.payload.PAGE +
-            "&ProjectID=" + action.payload.ProjectID)
+          "User_ProfileListByType?TYPE=" + action.payload.TYPE +
+          "&TYPEVALUE=" + action.payload.TYPEVALUE +
+          "&USERID=" + action.payload.USERID +
+          "&UserRoleID=" + action.payload.USERROLEID +
+          "&LISTPERPAGE=" + action.payload.LISTPERPAGE +
+          "&PAGE=" + action.payload.PAGE +
+          "&ProjectID=" + action.payload.ProjectID)
         try {
           return fetch(url + project + "/" +
             "User_ProfileListByType?TYPE=" + action.payload.TYPE +
@@ -147,7 +147,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotUserProfile, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotUserProfile, payload: [] });
               }
             });
@@ -171,7 +171,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.UpdatedUserStatus, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.UpdatedUserStatus, payload: [] });
               }
             });
@@ -202,7 +202,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.UpdatedUserStatus, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.UpdatedUserStatus, payload: [] });
               }
             });
@@ -231,7 +231,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.UpdatedProfileImage, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.UpdatedProfileImage, payload: [] });
               }
             });
@@ -256,7 +256,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotAllAddress, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotAllAddress, payload: [] });
               }
             });
@@ -335,7 +335,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotTransactions, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotTransactions, payload: [] });
               }
             });
@@ -386,7 +386,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.OrderedCreateShipment, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.OrderedCreateShipment, payload: [] });
               }
             });
@@ -414,7 +414,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.OrderRequestedShipmentStatus, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.OrderRequestedShipmentStatus, payload: [] });
               }
             });
@@ -438,7 +438,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.OrderTrackingStatusUpdated, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.OrderTrackingStatusUpdated, payload: [] });
               }
             });
@@ -472,7 +472,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.OrderUserDetailsUpdated, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.OrderUserDetailsUpdated, payload: [] });
               }
             });
@@ -495,7 +495,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotTransactionStatus, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotTransactionStatus, payload: [] });
               }
             });
@@ -521,7 +521,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.updatedTrackingNumber, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.updatedTrackingNumber, payload: [] });
               }
             });
@@ -553,7 +553,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotMerchants, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotMerchants, payload: [] });
               }
             });
@@ -579,7 +579,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotMerchantOrders, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                // toast.error(json[0].ReturnMsg)
+                // // toast.error(json[0].ReturnMsg)
                 toast("The current user has no purchase history at the moment")
                 return dispatch({ type: GitAction.GotMerchantOrders, payload: [] });
               }
@@ -628,7 +628,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.AddedProduct, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.AddedProduct, payload: [] });
               }
             });
@@ -675,7 +675,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.UpdatedProduct, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.UpdatedProduct, payload: [] });
               }
             });
@@ -699,7 +699,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.DeletedProduct, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.DeletedProduct, payload: [] });
               }
             });
@@ -718,6 +718,7 @@ export class GitEpic {
             "Product_ItemListByType?Type=" + action.payload.type +
             "&TypeValue=" + action.payload.typeValue +
             "&USERID=" + action.payload.userId +
+            "&PLATFORMTYPE=CMS" +
             "&PRODUCTPERPAGE=" + action.payload.productPage +
             "&PAGE=" + action.payload.page +
             "&ProjectID=" + action.payload.ProjectID)
@@ -727,7 +728,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotProduct, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotProduct, payload: [] });
               }
             });
@@ -755,7 +756,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotProductListing, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotProductListing, payload: [] });
               }
             });
@@ -773,6 +774,7 @@ export class GitEpic {
           return fetch(url + project + "/" +
             "Product_ItemDetailByProductID?ProductID=" + action.payload.productId +
             "&USERID=" + action.payload.userId +
+            "&PLATFORMTYPE=CMS"+
             "&ProjectID=" + action.payload.ProjectID)
             .then(response => response.json())
             .then(json => {
@@ -780,7 +782,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotProductDetail, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotProductDetail, payload: [] });
               }
             });
@@ -804,7 +806,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.ProductEndorsed, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.ProductEndorsed, payload: [] });
               }
             });
@@ -828,7 +830,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.ProductChecked, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.ProductChecked, payload: [] });
               }
             });
@@ -853,7 +855,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.ProductCheckedSKU, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.ProductCheckedSKU, payload: [] });
               }
             });
@@ -881,7 +883,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.AddedProductVariation, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.AddedProductVariation, payload: [] });
               }
             });
@@ -908,7 +910,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.UpdatedProductVariation, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.UpdatedProductVariation, payload: [] });
               }
             });
@@ -932,7 +934,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.DeletedProductVariation, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.DeletedProductVariation, payload: [] });
               }
             });
@@ -966,7 +968,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.AddedProductVariationDetail, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.AddedProductVariationDetail, payload: [] });
               }
             });
@@ -995,7 +997,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.UpdatedProductVariationDetail, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.UpdatedProductVariationDetail, payload: [] });
               }
             });
@@ -1019,7 +1021,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.DeletedProductVariationDetail, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.DeletedProductVariationDetail, payload: [] });
               }
             });
@@ -1042,7 +1044,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotProductVariationByCategoryID, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                // toast.error(json[0].ReturnMsg)
+                // // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotProductVariationByCategoryID, payload: [] });
               }
             });
@@ -1073,7 +1075,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.AddedProductVariationStock, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.AddedProductVariationStock, payload: [] });
               }
             });
@@ -1098,7 +1100,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.ViewedProductVariationStock, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.ViewedProductVariationStock, payload: [] });
               }
             });
@@ -1125,7 +1127,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.ViewedProductVariationStockWithID, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.ViewedProductVariationStockWithID, payload: [] });
               }
             });
@@ -1149,7 +1151,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.ViewedProductVariationStockWithVariationDetailsID, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.ViewedProductVariationStockWithVariationDetailsID, payload: [] });
               }
             });
@@ -1177,7 +1179,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.UpdatedProductVariationStockDetails, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.UpdatedProductVariationStockDetails, payload: [] });
               }
             });
@@ -1202,7 +1204,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.DeletedProductVariationStock, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.DeletedProductVariationStock, payload: [] });
               }
             });
@@ -1231,7 +1233,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.AddedProductSpecsDetail, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.AddedProductSpecsDetail, payload: [] });
               }
             });
@@ -1258,7 +1260,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.UpdatedProductSpecsDetail, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.UpdatedProductSpecsDetail, payload: [] });
               }
             });
@@ -1282,7 +1284,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.DeletedProductSpecsDetail, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.DeletedProductSpecsDetail, payload: [] });
               }
             });
@@ -1315,7 +1317,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.ProductMediaAdded, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.ProductMediaAdded, payload: [] });
               }
             });
@@ -1340,7 +1342,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.deletedProductMedia, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.deletedProductMedia, payload: [] });
               }
             });
@@ -1370,7 +1372,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.AddedProductCategory, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.AddedProductCategory, payload: [] });
               }
             });
@@ -1395,7 +1397,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.UpdatedProductCategory, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.UpdatedProductCategory, payload: [] });
               }
             });
@@ -1419,7 +1421,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.DeletedProductCategory, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.DeletedProductCategory, payload: [] });
               }
             });
@@ -1442,7 +1444,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotProductCategory, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotProductCategory, payload: [] });
               }
             });
@@ -1458,14 +1460,14 @@ export class GitEpic {
       return dispatch => {
         try {
           return fetch(url + project + "/" +
-            "Product_CategoryListing?ProjectID=" + action.payload)
+            "Product_CategoryListing?ProjectID=" + action.payload.ProjectID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotProductCategoryListing, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotProductCategoryListing, payload: [] });
               }
             });
@@ -1494,7 +1496,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotProductReviewByProductID, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                // toast.error(json[0].ReturnMsg)
+                // // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotProductReviewByProductID, payload: [] });
               }
             });
@@ -1566,7 +1568,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotPromotion, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                // toast.error(json[0].ReturnMsg)
+                // // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotPromotion, payload: [] });
               }
             });
@@ -1589,7 +1591,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotPromotionByID, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                // toast.error(json[0].ReturnMsg)
+                // // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotPromotionByID, payload: [] });
               }
             });
@@ -1625,7 +1627,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.AddedPromotion, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.AddedPromotion, payload: [] });
               }
             });
@@ -1664,7 +1666,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.UpdatedPromotion, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.UpdatedPromotion, payload: [] });
               }
             });
@@ -1689,7 +1691,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.UpdatedPromotionInd, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.UpdatedPromotionInd, payload: [] });
               }
             });
@@ -1714,7 +1716,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.DeletedPromotion, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.DeletedPromotion, payload: [] });
               }
             });
@@ -1739,7 +1741,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotCourierService, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotCourierService, payload: [] });
               }
             });
@@ -1762,7 +1764,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotCountry, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotCountry, payload: [] });
               }
             });
@@ -1787,7 +1789,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotShopListing, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotShopListing, payload: [] });
               }
             });
@@ -1811,7 +1813,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotShopListingByID, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotShopListingByID, payload: [] });
               }
             });
@@ -1841,7 +1843,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.AddedShoplot, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.AddedShoplot, payload: [] });
               }
             });
@@ -1869,7 +1871,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.UpdatedShoplot, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.UpdatedShoplot, payload: [] });
               }
             });
@@ -1892,7 +1894,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.DeletedShoplot, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.DeletedShoplot, payload: [] });
               }
             });
@@ -1919,7 +1921,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.AddedShoplotCoordinateListing, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.AddedShoplotCoordinateListing, payload: [] });
               }
             });
@@ -1944,7 +1946,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.UpdatedShoplotCoordinateListing, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.UpdatedShoplotCoordinateListing, payload: [] });
               }
             });
@@ -1969,7 +1971,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotBlockListing, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotBlockListing, payload: [] });
               }
             });
@@ -1993,7 +1995,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.AddedBlockListing, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.AddedBlockListing, payload: [] });
               }
             });
@@ -2017,7 +2019,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.UpdatedBlockListing, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.UpdatedBlockListing, payload: [] });
               }
             });
@@ -2040,7 +2042,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.DeletedBlockListing, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.DeletedBlockListing, payload: [] });
               }
             });
@@ -2065,7 +2067,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.GotStorage, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.GotStorage, payload: [] });
               }
             });
@@ -2091,7 +2093,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.AddedGridListing, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.AddedGridListing, payload: [] });
               }
             });
@@ -2117,7 +2119,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.UpdatedGridListing, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.UpdatedGridListing, payload: [] });
               }
             });
@@ -2140,7 +2142,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.DeletedGridListing, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.DeletedGridListing, payload: [] });
               }
             });
@@ -2158,9 +2160,9 @@ export class GitEpic {
       return dispatch => {
         try {
           console.log(url + project + "/" +
-          "User_ViewPage?" +
-          "ROLEGROUPID=" + action.payload.ROLEGROUPID +
-          "&PROJECTID=" + action.payload.PROJECTID)
+            "User_ViewPage?" +
+            "ROLEGROUPID=" + action.payload.ROLEGROUPID +
+            "&PROJECTID=" + action.payload.PROJECTID)
           return fetch(url + project + "/" +
             "User_ViewPage?" +
             "ROLEGROUPID=" + action.payload.ROLEGROUPID +
@@ -2171,7 +2173,7 @@ export class GitEpic {
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.SidebarFetched, payload: JSON.parse(json[0].ReturnData) });
               } else {
-                toast.error(json[0].ReturnMsg)
+                // toast.error(json[0].ReturnMsg)
                 return dispatch({ type: GitAction.SidebarFetched, payload: [] });
               }
             });

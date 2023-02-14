@@ -31,7 +31,7 @@ export const ProductCategory = (props) => {
   const [isFiltered, setisFiltered] = useState(false)
 
   useEffect(() => {
-    dispatch(GitAction.CallAllProductCategoryListing())
+    dispatch(GitAction.CallAllProductCategoryListing({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID }))
   }, [])
 
   useEffect(() => {
@@ -88,7 +88,7 @@ export const ProductCategory = (props) => {
   }, [productCategories])
 
   useEffect(() => {
-    dispatch(GitAction.CallAllProductCategoryListing())
+    dispatch(GitAction.CallAllProductCategoryListing({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID }))
     setHierachy(false)
   }, [categories])
 
