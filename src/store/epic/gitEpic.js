@@ -9,6 +9,7 @@ const url = ServerConfiguration.DevServerUrl;
 const loginUrl = ServerConfiguration.LoginUrl;
 const LiveServerLoginUrl = ServerConfiguration.LiveServerLoginUrl;
 
+// const project = 'emporia'
 const project = window.localStorage.getItem("project")
 
 export class GitEpic {
@@ -18,7 +19,9 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.Login), map(action => {
       return dispatch => {
         try {
-          return fetch(loginUrl + action.payload.ProjectDomainName + "/" +
+          return fetch(
+            loginUrl + action.payload.ProjectDomainName + "/" +
+            // url + project + "/" +
             "User_Login?username=" +
             action.payload.username +
             "&password=" +
@@ -38,6 +41,102 @@ export class GitEpic {
         } catch (error) {
           toast.error("Error Code: User_Login. Please check on URL")
           return dispatch({ type: GitAction.LoginSuccess, payload: [] });
+        }
+      }
+    }));
+
+
+    User_CheckEmail_Dupe = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.CheckMail_Dupe), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "User_CheckDuplicate?email=" +
+            action.payload.email +
+            "&ProjectID=" +
+            action.payload.ProjectID )
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.CheckedMail_Dupe, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.CheckedMail_Dupe, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: Check email duplication. Please check on URL")
+          return dispatch({ type: GitAction.CheckedMail_Dupe, payload: [] });
+        }
+      }
+    }));
+
+    SendEmail_OTP = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.Send_OTPVerification), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "User_SentOTPVerification?USERID=" +
+            action.payload.UserID +
+            "&TYPE=" +
+            action.payload.Type +
+            "&VALIDATIONFIELD=" +
+            action.payload.ValidationField)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.Sent_OTPVerification, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.Sent_OTPVerification, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: OTP Verification error. Please check on URL")
+          return dispatch({ type: GitAction.Sent_OTPVerification, payload: [] });
+        }
+      }
+    }));
+
+
+    UpdateForgotten_Pass = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.Update_ForgotPassword), map(action => {
+      return dispatch => {
+        try {
+          console.log(url + project + "/" +
+          "User_UpdateProfileSpecificField?USERID=" +
+          action.payload.UserID +
+          "&TYPE=" +
+          action.payload.Type +
+          "&OTP=" +
+          action.payload.OTP +
+          "&UPDATEDFIELD=" +
+          action.payload.UpdatedField)
+          return fetch(url + project + "/" +
+            "User_UpdateProfileSpecificField?USERID=" +
+            action.payload.UserID +
+            "&TYPE=" +
+            action.payload.Type +
+            "&OTP=" +
+            action.payload.OTP +
+            "&UPDATEDFIELD=" +
+            action.payload.UpdatedField
+            )
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.Updated_ForgotPassword, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.Updated_ForgotPassword, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: OTP Verification error. Please check on URL")
+          return dispatch({ type: GitAction.Updated_ForgotPassword, payload: [] });
         }
       }
     }));
@@ -124,14 +223,6 @@ export class GitEpic {
   User_ViewProfile = action$ =>
     action$.pipe(filter(action => action.type === GitAction.GetUserProfile), map(action => {
       return dispatch => {
-        console.log(url + project + "/" +
-            "User_ProfileListByType?TYPE=" + action.payload.TYPE +
-            "&TYPEVALUE=" + action.payload.TYPEVALUE +
-            "&USERID=" + action.payload.USERID +
-            "&UserRoleID=" + action.payload.USERROLEID +
-            "&LISTPERPAGE=" + action.payload.LISTPERPAGE +
-            "&PAGE=" + action.payload.PAGE +
-            "&ProjectID=" + action.payload.ProjectID)
         try {
           return fetch(url + project + "/" +
             "User_ProfileListByType?TYPE=" + action.payload.TYPE +
@@ -708,7 +799,7 @@ export class GitEpic {
             })
             .then(response => response.json())
             .then(json => {
-              console.log("dsadasda1", json)
+           
               // json = JSON.parse(json)
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.UpdatedProduct, payload: JSON.parse(json[0].ReturnData) });
@@ -2218,6 +2309,7 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.FetchSidebar), map(action => {
       return dispatch => {
         try {
+          console.log('project', project)
           console.log(url + project + "/" +
           "User_ViewPage?" +
           "ROLEGROUPID=" + action.payload.ROLEGROUPID +

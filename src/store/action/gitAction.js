@@ -10,6 +10,33 @@ export class GitAction {
     };
   }
 
+  static CheckMail_Dupe = "CHECKMAIL_DUPE";
+  static CheckedMail_Dupe = "CHECKEDMAIL_DUPE";
+  static CheckEmail_Duplication(propsData) {
+    return {
+      type: GitAction.CheckMail_Dupe,
+      payload: propsData
+    };
+  }
+
+  static Send_OTPVerification = "SEND_OTPVERIFICATION";
+  static Sent_OTPVerification = "SENT_OTPVERIFICATION";
+  static SendOTP_Email(propsData) {
+    return {
+      type: GitAction.Send_OTPVerification,
+      payload: propsData
+    };
+  }
+
+  static Update_ForgotPassword = "UPDATE_FORGOTPASSWORD";
+  static Updated_ForgotPassword = "UPDATED_FORGOTPASSWORD";
+  static Update_NewPassword(propsData) {
+    return {
+      type: GitAction.Update_ForgotPassword,
+      payload: propsData
+    };
+  }
+
   static LoginServer = "USER_LOGINSERVER";
   static LoginServerSuccess = "USER_LOGINSERVER_SUCCESS";
   static CallUserLoginServer(propsData) {

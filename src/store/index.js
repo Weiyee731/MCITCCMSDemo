@@ -14,6 +14,9 @@ const rootEpic = combineEpics(
   gitEpic.User_ViewProfile,
   gitEpic.User_ViewPage,
   gitEpic.User_UpdateProfileStatus,
+  gitEpic.User_CheckEmail_Dupe,
+  gitEpic.SendEmail_OTP,
+  gitEpic.UpdateForgotten_Pass,
 
   // Shop
   gitEpic.Shop_UpdateDetails,

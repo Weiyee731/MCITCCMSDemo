@@ -6,6 +6,9 @@ const INITIAL_STATE = {
   currentUser: [],
   registrationReturn: [],
   sidebars: [],
+  check_Mail:[],
+  otp_verification:[],
+  new_password:[],
 
   // Shop
   shopUpdated: [],
@@ -100,6 +103,30 @@ export function counterReducer(state = INITIAL_STATE, action) {
       return Object.assign({}, state, {
         loading: false,
         logonUser: action.payload
+      });
+
+    case GitAction.CheckMail_Dupe:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.CheckedMail_Dupe:
+      return Object.assign({}, state, {
+        loading: false,
+        check_Mail: action.payload
+      });
+
+    case GitAction.Send_OTPVerification:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.Sent_OTPVerification:
+      return Object.assign({}, state, {
+        loading: false,
+        otp_verification: action.payload
+      });
+
+    case GitAction.Update_ForgotPassword:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.Updated_ForgotPassword:
+      return Object.assign({}, state, {
+        loading: false,
+        new_password: action.payload
       });
 
     case GitAction.LoginServer:

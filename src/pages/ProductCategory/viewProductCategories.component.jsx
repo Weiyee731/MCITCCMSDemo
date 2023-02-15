@@ -140,8 +140,6 @@ export const ProductCategory = (props) => {
 
     const dupe_subDetails = categoryListingDetails[mainIndex].SubDetails[subIndex].SubDetails.filter((y)=>(y.ProductCategory === Category))
 
-    console.log('dupe subDetails', dupe_subDetails.length, Category)
-
 
     if (type !== 'delete' && HierarchyID === 1 && productCategories.filter((x) => x.ProductCategory.toLowerCase() === Category.toLowerCase()) && productCategories.filter((x) => x.ProductCategory.toLowerCase() === Category.toLowerCase()).length >= 1) {
           toast.error("The category is existed, please double check before submitting.")
