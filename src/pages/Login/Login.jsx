@@ -135,7 +135,7 @@ class Dashboard extends Component {
             Type: 'EMAIL',
             ValidationField: 'PASSWORD'
         }
-        // this.props.SendOTP_Email(data)
+        this.props.SendOTP_Email(data)
     }
 
 
@@ -254,6 +254,8 @@ class Dashboard extends Component {
     }
 
     handleSubmit_email = (type) => {
+
+        console.log('type', type)
         const check_Email = {
             email: this.state.email,
             ProjectID:2
@@ -280,6 +282,7 @@ class Dashboard extends Component {
                 this.props.CheckEmail_Duplication(check_Email)
                 break;
             case 'hasOTP':
+                console.log('woiii')
                 this.props.Update_NewPassword(retrieve_OTP)
                 this.handleModal()
                 toast.success('Password updated successfully. Please log in with your new password.')
@@ -287,7 +290,7 @@ class Dashboard extends Component {
             default:
                 break;
         }
-        
+
     }
 
     handleOTP = (e,i) => {
@@ -469,10 +472,9 @@ class Dashboard extends Component {
                 toast.error('Please enter required information')
             }
 
-            else if(this.state.OTP.length !== 0 && this.state.isSubmit === true)
+            else if(this.state.OTP.length !== 0 && this.state.newPassword.length !== 0 && this.state.isSubmitEmail === true)
             {
                 this.handleSubmit_email(type)
-                toast.success('Password successfully updated. Please log in with your new password.')
             }
         break;
 

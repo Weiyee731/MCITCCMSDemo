@@ -20,7 +20,7 @@ export class GitEpic {
       return dispatch => {
         try {
           return fetch(
-            loginUrl + action.payload.ProjectDomainName + "/" +
+            url + project + "/" +
             // url + project + "/" +
             "User_Login?username=" +
             action.payload.username +
@@ -76,6 +76,13 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.Send_OTPVerification), map(action => {
       return dispatch => {
         try {
+          console.log(url + project + "/" +
+          "User_SentOTPVerification?USERID=" +
+          action.payload.UserID +
+          "&TYPE=" +
+          action.payload.Type +
+          "&VALIDATIONFIELD=" +
+          action.payload.ValidationField)
           return fetch(url + project + "/" +
             "User_SentOTPVerification?USERID=" +
             action.payload.UserID +
@@ -105,7 +112,15 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.Update_ForgotPassword), map(action => {
       return dispatch => {
         try {
-
+          console.log(url + project + "/" +
+          "User_UpdateProfileSpecificField?USERID=" +
+          action.payload.UserID +
+          "&TYPE=" +
+          action.payload.Type +
+          "&OTP=" +
+          action.payload.OTP +
+          "&UPDATEDFIELD=" +
+          action.payload.UpdatedField)
           return fetch(url + project + "/" +
             "User_UpdateProfileSpecificField?USERID=" +
             action.payload.UserID +
