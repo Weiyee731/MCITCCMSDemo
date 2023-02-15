@@ -294,7 +294,7 @@ export const ProductCategory = (props) => {
       }
 
       if (type === "edit")
-    
+      {
         listing.isEdit = !listing.isEdit}
     }
     setListingDetails(listingData)
