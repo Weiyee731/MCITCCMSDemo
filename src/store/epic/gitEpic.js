@@ -105,15 +105,7 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.Update_ForgotPassword), map(action => {
       return dispatch => {
         try {
-          console.log(url + project + "/" +
-          "User_UpdateProfileSpecificField?USERID=" +
-          action.payload.UserID +
-          "&TYPE=" +
-          action.payload.Type +
-          "&OTP=" +
-          action.payload.OTP +
-          "&UPDATEDFIELD=" +
-          action.payload.UpdatedField)
+
           return fetch(url + project + "/" +
             "User_UpdateProfileSpecificField?USERID=" +
             action.payload.UserID +
@@ -223,14 +215,7 @@ export class GitEpic {
   User_ViewProfile = action$ =>
     action$.pipe(filter(action => action.type === GitAction.GetUserProfile), map(action => {
       return dispatch => {
-        console.log(url + project + "/" +
-          "User_ProfileListByType?TYPE=" + action.payload.TYPE +
-          "&TYPEVALUE=" + action.payload.TYPEVALUE +
-          "&USERID=" + action.payload.USERID +
-          "&UserRoleID=" + action.payload.USERROLEID +
-          "&LISTPERPAGE=" + action.payload.LISTPERPAGE +
-          "&PAGE=" + action.payload.PAGE +
-          "&ProjectID=" + action.payload.ProjectID)
+     
         try {
           return fetch(url + project + "/" +
             "User_ProfileListByType?TYPE=" + action.payload.TYPE +
@@ -479,9 +464,9 @@ export class GitEpic {
             .then(response => response.json())
             .then(json => {
 
-              console.log("return ddsdsadsada", json)
+     
               json = JSON.parse(json)
-              console.log("return1 ddsdsadsada", json)
+      
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.OrderedCreateShipment, payload: JSON.parse(json[0].ReturnData) });
               } else {
@@ -507,9 +492,9 @@ export class GitEpic {
             .then(response => response.json())
             .then(json => {
 
-              console.log("return ddsdsadsada", json)
+         
               json = JSON.parse(json)
-              console.log("return1 ddsdsadsada", json)
+          
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.OrderRequestedShipmentStatus, payload: JSON.parse(json[0].ReturnData) });
               } else {
@@ -761,7 +746,7 @@ export class GitEpic {
             .then(response => response.json())
             .then(json => {
               // json = JSON.parse(json)
-              console.log("dsadasda2", json)
+          
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.AddedProduct, payload: JSON.parse(json[0].ReturnData) });
               } else {
@@ -2350,11 +2335,7 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.FetchSidebar), map(action => {
       return dispatch => {
         try {
-          console.log('project', project)
-          console.log(url + project + "/" +
-            "User_ViewPage?" +
-            "ROLEGROUPID=" + action.payload.ROLEGROUPID +
-            "&PROJECTID=" + action.payload.PROJECTID)
+    
           return fetch(url + project + "/" +
             "User_ViewPage?" +
             "ROLEGROUPID=" + action.payload.ROLEGROUPID +

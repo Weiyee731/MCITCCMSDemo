@@ -167,7 +167,7 @@ class Dashboard extends Component {
 
         if (window.location.hostname === "localhost") {
             project = window.location.pathname !== "/" && window.location.pathname.split(".")[1];
-            console.log('project', window.location.pathname)
+
             if (window.location.pathname !== "/") {
                 if (this.isInputsVerified(username, password)) {
                     let object = {
@@ -177,7 +177,7 @@ class Dashboard extends Component {
                         ProjectDomainName: 'emporia'
                     }
                     this.props.CallUserLogin(object)
-                    console.log('oi')
+                   
                 }
                 this.setState({ isSubmit: true })
             }
@@ -185,8 +185,7 @@ class Dashboard extends Component {
                 toast.error("Error: 1101.2: Unable to login. Project Error")
         }
         else {
-            console.log("dasdadasda", window.location.hostname)
-            console.log("dasdadasda2", window.location.hostname.split(".")[1])
+   
             project = window.location.hostname !== "/" && window.location.hostname.split(".")[1];
             if (window.location.hostname !== "/") {
                 if (this.isInputsVerified(username, password)) {
@@ -226,16 +225,10 @@ class Dashboard extends Component {
            
         // if (path !== undefined && path.length > 0 && path[1] !== "" && path[1] !== undefined && path[1].toUpperCase() === "CMS.MYEMPORIA.MY" && path[2] !== undefined && path[2] !== "" && path[2].toUpperCase() !== "") {
             credential = path[path.length - 1];
-
-            // console.log("credential", credential.split("_"))
-
-            // console.log(credential.split("_")[0].replace(/p1L2u3S/g, '+').replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '='))
-            // console.log(credential.split("_")[1].replace(/p1L2u3S/g, '+').replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '='))
             let username = decryptData(credential.split("_")[0].replace(/p1L2u3S/g, '+').replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '='))
             let password = decryptData(credential.split("_")[1].replace(/p1L2u3S/g, '+').replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '='))
 
-            console.log(username)
-            console.log(password)
+
 
             if (username !== "" && password !== "")
                 this.OnSubmitLogin(username, password)
@@ -280,7 +273,7 @@ class Dashboard extends Component {
     }
 
     handleOTP = (e,i) => {
-        console.log(e.target.value.slice(0,1))
+
         let array1 = []
         array1.push(e.target.value.slice(0,1))
 
@@ -290,7 +283,7 @@ class Dashboard extends Component {
 
             let newArr = this.state.arr1
             newArr[i].push(e.target.value.slice(0,1))
-            console.log('newArr', newArr)
+
         }
       } 
     
@@ -378,7 +371,7 @@ class Dashboard extends Component {
                             />
                      </FormControl>
                     
-                     {console.log(this.props.check_Mail)}
+
                   </div>
           
                   {
