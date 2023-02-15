@@ -21,6 +21,8 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import IconButton from '@mui/material/IconButton';
 import { toast } from "react-toastify";
 import AlertDialog from "../../components/ModalComponent/ModalComponent";
+import CircularProgress from '@mui/material/CircularProgress';
+import CheckIcon from '@mui/icons-material/Check';
 
 // import css
 import "./Login.css"
@@ -62,6 +64,12 @@ const INITIAL_STATE = {
     OTP: "",
     newPassword:"",
     isSubmitEmail: false,
+
+    //Error validation:
+    //-- Forget Password
+    isRecoveryEmail_Empty: false,
+    isOTP_Empty: false,
+    isNewPassword_Empty: false,
    
 }
 
@@ -115,6 +123,7 @@ class Dashboard extends Component {
 
         if(prevProps.check_Mail !== this.props.check_Mail){
          this.setState({checkMail_Data:this.props.check_Mail})
+
          this.getOTP()
         }
     }
@@ -180,6 +189,7 @@ class Dashboard extends Component {
                    
                 }
                 this.setState({ isSubmit: true })
+       
             }
             else
                 toast.error("Error: 1101.2: Unable to login. Project Error")
@@ -228,10 +238,11 @@ class Dashboard extends Component {
             let username = decryptData(credential.split("_")[0].replace(/p1L2u3S/g, '+').replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '='))
             let password = decryptData(credential.split("_")[1].replace(/p1L2u3S/g, '+').replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '='))
 
-
-
             if (username !== "" && password !== "")
+            {
                 this.OnSubmitLogin(username, password)
+            }
+             
 
         } else {
             return false
@@ -255,7 +266,14 @@ class Dashboard extends Component {
             UpdatedField: this.state.newPassword
         }
 
-        this.setState({isSubmitEmail: true})
+        // this.setState({isSubmitEmail: true})
+        setTimeout(
+            function() {
+                this.setState({ isSubmitEmail: true });
+            }
+            .bind(this),
+            2000
+        );
 
         switch(type){
             case 'checkMail':
@@ -313,6 +331,9 @@ class Dashboard extends Component {
                             size="small"
                             
                         />
+                          {this.state.isOTP_Empty === true &&
+                                <Typography variant="caption" color="error">Please enter received OTP.</Typography>
+                            }
                     </FormControl>
                 </div>
                 <div className="col-6">
@@ -341,6 +362,11 @@ class Dashboard extends Component {
                                     </InputAdornment>
                                 }
                             />
+
+              
+                             {this.state.isNewPassword_Empty === true &&
+                                <Typography variant="caption" color="error">Please set your new password.</Typography>
+                            }
                         </FormControl>
                 </div>
             </div>
@@ -367,8 +393,22 @@ class Dashboard extends Component {
                                 value={this.state.email}
                                 onChange={(e) => this.handleInputChange(e)}
                                 size="small"
+                                endAdornment={
+                                    <InputAdornment position="start">
+                                        {this.state.email.length > 0 && this.state.isSubmitEmail === true && this.props.check_Mail.length > 0 ?
+                                        <CheckIcon color="success"/>
+                                        :
+                                        this.state.email.length > 0 && 
+                                        <CircularProgress size={20}/>
+                                        }
+                                    </InputAdornment>
+                                }
                                
                             />
+
+                            {this.state.isRecoveryEmail_Empty === true &&
+                                <Typography variant="caption" color="error">Please Fill in your email</Typography>
+                            }
                      </FormControl>
                     
 
@@ -385,23 +425,64 @@ class Dashboard extends Component {
 
                     :
 
-                    this.state.checkMail_Data.length === 0 && this.state.isSubmitEmail === true ?
+                    this.state.isSubmitEmail === true && this.props.check_Mail.length === 0 &&
                         <div style={{margin:'2%', backgroundColor:'#F3A5A5', padding:'2%'}}>
                         <Typography>Email not exist. Please re-enter valid email.</Typography>
                         </div>
 
-                    :
-                    null
                   }
                 </div>
                 <div style={{display:'flex', flexDirection:'row', justifyContent:'center', marginTop:'5%'}}>
-                            <Button variant="contained" color="primary" onClick={()=>this.state.checkMail_Data.length > 0 ? this.handleSubmit_email('hasOTP') : this.handleSubmit_email('checkMail')}>Submit</Button>
+                            <Button variant="contained" color="primary" onClick={()=>this.state.checkMail_Data.length > 0 ? this.error_Validation('hasOTP') : this.error_Validation('checkMail')}>Submit</Button>
                 </div>
               </AlertDialog >
             )
     }
 
+    error_Validation = (type) => {
+        switch(type){
+            case 'checkMail':
+        
+                if (this.state.email.length === 0 && this.state.isSubmitEmail === true){
+                    this.setState({isRecoveryEmail_Empty:true})
+                    toast.error('Please fill in required information.')
+                }
+                else{
+                    this.handleSubmit_email(type)
+                }
+            break;
+
+        case 'hasOTP':
+            if(this.state.OTP.length === 0 && this.state.newPassword.length !== 0 && this.state.isSubmitEmail === true)
+            {
+                this.setState({isOTP_Empty:true})
+                toast.error('Please enter required information')
+            }
+    
+            else if (this.state.newPassword.length === 0 && this.state.OTP.length !== 0 &&  this.state.isSubmitEmail === true){
+                this.setState({isNewPassword_Empty: true})
+                toast.error('Please enter required information')
+            }
+
+            else if (this.state.newPassword.length === 0 && this.state.OTP.length === 0 && this.state.isSubmitEmail === true){
+                this.setState({isNewPassword_Empty: true, isOTP_Empty: true})
+                toast.error('Please enter required information')
+            }
+
+            else if(this.state.OTP.length !== 0 && this.state.isSubmit === true)
+            {
+                this.handleSubmit_email(type)
+                toast.success('Password successfully updated. Please log in with your new password.')
+            }
+        break;
+
+        }
+      
+    }
+
     render() {
+
+        {console.log('ss', this.state.newPassword.length, this.state.isSubmitEmail === true)}
 
         return (
             <div style={{ display: 'flex', width: '100%', height: '100vh', }}>
