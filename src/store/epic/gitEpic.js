@@ -590,7 +590,7 @@ export class GitEpic {
         }
       }
     }));
-    User_UpdateMerchantProfile = action$ =>
+  User_UpdateMerchantProfile = action$ =>
     action$.pipe(filter(action => action.type === GitAction.GetUpdateMerchantProfile), map(action => {
       return dispatch => {
         try {
@@ -600,15 +600,15 @@ export class GitEpic {
             "&FIRSTNAME=" +
             action.payload.FIRSTNAME +
             "&LASTNAME=" +
-            action.payload.LASTNAME+
+            action.payload.LASTNAME +
             "&USEREMAIL=" +
-            action.payload.USEREMAIL+
+            action.payload.USEREMAIL +
             "&USERGENDER=" +
-            action.payload.USERGENDER+
+            action.payload.USERGENDER +
             "&USERCONTACTNO=" +
-            action.payload.USERCONTACTNO+
+            action.payload.USERCONTACTNO +
             "&USERDOB=" +
-            action.payload.USERDOB+
+            action.payload.USERDOB +
             "&USERNRIC=" +
             action.payload.USERNRIC)
             .then(response => response.json())
@@ -812,7 +812,7 @@ export class GitEpic {
           return fetch(url + project + "/" +
             "Product_ItemDetailByProductID?ProductID=" + action.payload.productId +
             "&USERID=" + action.payload.userId +
-            "&PLATFORMTYPE=CMS"+
+            "&PLATFORMTYPE=CMS" +
             "&ProjectID=" + action.payload.ProjectID)
             .then(response => response.json())
             .then(json => {
@@ -1590,6 +1590,37 @@ export class GitEpic {
   //     }
   //   });
 
+
+  ProductReview_Add = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.addProductReview), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Product_AddReview?PARENTPRODUCTREVIEWID=" + action.payload.parentProductReviewID
+            + "&PRODUCTID=" + action.payload.productID
+            + "&USERID=" + action.payload.UserID
+            + "&PRODUCTREVIEWRATING=" + action.payload.productReviewRating
+            + "&PRODUCTREVIEWCOMMENT=" + action.payload.productReviewComment
+            + "&REPLYPARENTID=" + action.payload.replyParentID
+
+          )
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.addedProductReview, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                // // toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.addedProductReview, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: addedProductReview. Please check on URL")
+          return dispatch({ type: GitAction.addedProductReview, payload: [] });
+        }
+      }
+    }));
+
   ///////////////////////////////////////////////////  Promotion  ///////////////////////////////////////////////////
 
   Promotion_ViewAll = action$ =>
@@ -1812,8 +1843,8 @@ export class GitEpic {
         }
       }
     }));
-    
-    General_ViewState = action$ =>
+
+  General_ViewState = action$ =>
     action$.pipe(filter(action => action.type === GitAction.GetState), map(action => {
       return dispatch => {
         try {

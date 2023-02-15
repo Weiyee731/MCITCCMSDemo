@@ -11,7 +11,7 @@ import 'react-bootstrap-accordion/dist/index.css'
 
 // Share components
 import Pagination from "../../../tools/Pagination";
-import { url } from "../../../tools/Helpers";
+import { isArrayNotEmpty, url } from "../../../tools/Helpers";
 import PageHeader from "../../../tools/breadcrumb/breadcrumb";
 import LoadingPanel from "../../../tools/LoadingPanel";
 import USER from "../../../assets/user.jpg";
@@ -195,15 +195,16 @@ class ViewProductGeneralInfo extends Component {
       })
     }
 
-    if (this.props.reviews !== undefined && this.props.reviews.length > 0 && JSON.parse(this.props.reviews)[0].ReturnVal === undefined) {
-      this.getReviewList(JSON.parse(this.props.reviews))
+    console.log("dsadasdsa", this.props.reviews)
+    if (this.props.reviews !== undefined && isArrayNotEmpty(this.props.reviews) && this.props.reviews[0].ReturnVal === undefined) {
+      this.getReviewList(this.props.reviews)
     }
 
     if (this.props.reviews !== prevProps.reviews) {
       this.setState({ isReviewSet: false })
 
-      if (this.props.reviews.length > 0 && JSON.parse(this.props.reviews)[0].ReturnVal === undefined) {
-        this.getReviewList(JSON.parse(this.props.reviews))
+      if (isArrayNotEmpty(this.props.reviews) && this.props.reviews[0].ReturnVal === undefined) {
+        this.getReviewList(this.props.reviews)
       }
     }
 
@@ -511,6 +512,7 @@ class ViewProductGeneralInfo extends Component {
   }
 
   handleSubmitReview(review, parentID) {
+    console.log("handleSubmitReview")
     this.props.CallAddProductReview({
       parentProductReviewID: parentID,
       productID: review.ProductID,

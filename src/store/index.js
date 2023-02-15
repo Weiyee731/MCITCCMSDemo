@@ -25,7 +25,7 @@ const rootEpic = combineEpics(
   // // Order
   // gitEpic.Order_Add,
   gitEpic.Order_ViewAll,
-  gitEpic.Order_CreateOrderShipment,  
+  gitEpic.Order_CreateOrderShipment,
   gitEpic.Order_RequestOrderShipmentStatus,
   gitEpic.Order_UpdateUserDetails,
   gitEpic.Transaction_ViewStatus,
@@ -86,7 +86,7 @@ const rootEpic = combineEpics(
 
   // Product Review
   gitEpic.ProductReview_ViewByID,
-  // gitEpic.ProductReview_Add,
+  gitEpic.ProductReview_Add,
 
   //Promotion
   gitEpic.Promotion_ViewAll,
@@ -134,6 +134,6 @@ const middleware = [
   epicMiddleware
 ]
 const initialState = {};
-const store = createStore(rootReducer,initialState, applyMiddleware(...middleware))
+const store = createStore(rootReducer, initialState, applyMiddleware(...middleware))
 epicMiddleware.run(rootEpic);
 export default store
