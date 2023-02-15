@@ -9,7 +9,7 @@ import './App_modified.css';
  * For example 
  * if put basename_setting as "/ABC", then it will render the url as "/ABC/Page_a"
  */
-const basename_setting = "/" 
+const basename_setting = "/ecommerceCMSDev/" 
 const App = () => (
   <Router basename={basename_setting}>
     <Layout />

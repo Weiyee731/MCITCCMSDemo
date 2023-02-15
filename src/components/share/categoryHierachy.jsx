@@ -10,7 +10,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        CallAllProductCategoryListing: () => dispatch(GitAction.CallAllProductCategoryListing()),
+        CallAllProductCategoryListing: (prodData) => dispatch(GitAction.CallAllProductCategoryListing(prodData)),
     };
 }
 
@@ -23,7 +23,7 @@ class CategoryHierachy extends Component {
             CategoryHierachyID: [],
             categoryHierachy: 0,
         };
-        this.props.CallAllProductCategoryListing()
+        this.props.CallAllProductCategoryListing({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
     }
 
     getCategoryListing(productInfo, categoryInfo) {
