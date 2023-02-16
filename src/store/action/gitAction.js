@@ -822,6 +822,15 @@ export class GitAction {
     };
   }
 
+  static GetPaymentMethod = "GET-PAYMENTMETHOD";
+  static GotPaymentMethod = "GOT-PAYMENTMETHOD";
+  static CallPaymentMethod(prodData) {
+    return {
+      type: GitAction.GetPaymentMethod,
+      payload: prodData,
+    };
+  }
+
 
   ///////////////////////////////////////////////////  Shoplot  ///////////////////////////////////////////////////
   static GetShopListing = "GET-SHOPLISTING";

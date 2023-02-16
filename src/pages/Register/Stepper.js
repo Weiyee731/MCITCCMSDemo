@@ -10,6 +10,7 @@ import { styled } from '@mui/material/styles';
 import InfoIcon from '@mui/icons-material/Info';
 import StoreIcon from '@mui/icons-material/Store';
 import DoneIcon from '@mui/icons-material/Done';
+import { isArrayNotEmpty } from '../../tools/Helpers';
 
 const steps = ['Seller Information', 'Shop Information', 'Submit'];
 
@@ -29,51 +30,51 @@ export default function HorizontalLinearStepper(props) {
 
     const handleNext = () => {
         //page 1
-        if(activeStep === 0){
-            if(props.Data.firstname !== "" && props.Data.lastname !== "" && props.Data.icnumber !== "" && props.Data.contactno !== "" &&
-            props.Data.email !== "" && props.Data.DOB !== ""){
-            let newSkipped = skipped;
-        if (isStepSkipped(activeStep)) {
-            newSkipped = new Set(newSkipped.values());
-            newSkipped.delete(activeStep);
+        if (activeStep === 0) {
+            if (props.Data.firstname !== "" && props.Data.lastname !== "" && props.Data.icnumber !== "" && props.Data.contactno !== "" &&
+                props.Data.email !== "" && props.Data.DOB !== "" && props.Data.userName !== "" && props.Data.accNo !== "" && props.Data.bankName !== "" && props.Data.file1Added == true) {
+                let newSkipped = skipped;
+                if (isStepSkipped(activeStep)) {
+                    newSkipped = new Set(newSkipped.values());
+                    newSkipped.delete(activeStep);
+                }
+                setActiveStep((prevActiveStep) => prevActiveStep + 1);
+                setSkipped(newSkipped);
+                props.propsData(parseInt(activeStep + 1), false)
+            } else {
+                props.propsData(parseInt(activeStep), true)
+            }
         }
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-        setSkipped(newSkipped);
-        props.propsData(parseInt(activeStep+1),false)
-        }else {
-            props.propsData(parseInt(activeStep),true)
+        if (activeStep === 1) {
+            if (props.Data.ShopName !== "" &&
+                props.Data.postcode !== "" && props.Data.city !== "" && props.Data.country !== "") {
+                let newSkipped = skipped;
+                if (isStepSkipped(activeStep)) {
+                    newSkipped = new Set(newSkipped.values());
+                    newSkipped.delete(activeStep);
+                }
+                setActiveStep((prevActiveStep) => prevActiveStep + 1);
+                setSkipped(newSkipped);
+                props.propsData(parseInt(activeStep + 1), false)
+            } else {
+                props.propsData(parseInt(activeStep), true)
+            }
+
+            if (props.Data.ShopName === "" || props.Data.address1 === "" ||
+                props.Data.postcode === "" || props.Data.city === "" || props.Data.country === "") {
+                props.propsData(parseInt(activeStep), true)
+            }
         }
-        }
-        if(activeStep === 1){
-            if( props.Data.ShopName !== "" && 
-            props.Data.postcode !== "" && props.Data.city !== "" && props.Data.country !== ""){
-            let newSkipped = skipped;
-        if (isStepSkipped(activeStep)) {
-            newSkipped = new Set(newSkipped.values());
-            newSkipped.delete(activeStep);
-        }
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-        setSkipped(newSkipped);
-        props.propsData(parseInt(activeStep+1),false)
-        }else {
-            props.propsData(parseInt(activeStep),true)
+        if (activeStep === 2) {
+            props.propsData(parseInt(activeStep+1), false)
         }
 
-        if(props.Data.ShopName === "" || props.Data.address1 === "" ||
-        props.Data.postcode === "" || props.Data.city === "" || props.Data.country === ""){
-            props.propsData(parseInt(activeStep),true)
-        }
-        }
-        if(activeStep === 2){
-            props.propsData(parseInt(activeStep),false)
-        }
 
-        
     };
 
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
-        props.propsData(parseInt(activeStep-1),false)
+        props.propsData(parseInt(activeStep - 1), false)
     };
 
     // const handleSkip = () => {
@@ -93,6 +94,7 @@ export default function HorizontalLinearStepper(props) {
 
     const handleReset = () => {
         setActiveStep(0);
+        props.propsData(0, false)
     };
 
     const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
@@ -191,24 +193,30 @@ export default function HorizontalLinearStepper(props) {
                 </React.Fragment> */}
             {/* ) :  */}
             {/* ( */}
-                <React.Fragment>
-                    <Typography sx={{ mt: 2, mb: 1 }}>{props.data}</Typography>
-                    <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                        <Button
-                            color="inherit"
-                            disabled={activeStep === 0 || activeStep === 2}
-                            onClick={handleBack}
+            <React.Fragment>
+                <Typography sx={{ mt: 2, mb: 1 }}>{props.data}</Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                    <Button
+                        color="inherit"
+                        disabled={activeStep === 0 || activeStep === 2}
+                        onClick={handleBack}
+                        sx={{ mr: 1 }}
+                    >
+                        Back
+                    </Button>
+                    <Box sx={{ flex: '1 1 auto' }} />
+                    {
+                        activeStep === (steps.length - 1) &&
+                        <Button color="inherit"
                             sx={{ mr: 1 }}
-                        >
-                            Back
-                        </Button>
-                        <Box sx={{ flex: '1 1 auto' }} />
+                            onClick={handleReset}>Retry</Button>
+                    }
 
-                        <Button onClick={handleNext}>
-                            {activeStep === steps.length - 1 ? 'Login Now' : 'Next'}
-                        </Button>
-                    </Box>
-                </React.Fragment>
+                    <Button onClick={handleNext}>
+                        {activeStep === steps.length - 1 ? 'Login Now' : 'Next'}
+                    </Button>
+                </Box>
+            </React.Fragment>
             {/* ) */}
             {/* } */}
         </Box>

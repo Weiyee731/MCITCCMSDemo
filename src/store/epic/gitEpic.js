@@ -692,6 +692,31 @@ export class GitEpic {
   User_UpdateMerchantProfile = action$ =>
     action$.pipe(filter(action => action.type === GitAction.GetUpdateMerchantProfile), map(action => {
       return dispatch => {
+        console.log(url + project + "/" +
+        "User_UpdateMerchantProfile?USERID=" +
+        action.payload.USERID +
+        "&FIRSTNAME=" +
+        action.payload.FIRSTNAME +
+        "&LASTNAME=" +
+        action.payload.LASTNAME+
+        "&USEREMAIL=" +
+        action.payload.USEREMAIL+
+        "&USERGENDER=" +
+        action.payload.USERGENDER+
+        "&USERCONTACTNO=" +
+        action.payload.USERCONTACTNO+
+        "&USERDOB=" +
+        action.payload.USERDOB+
+        "&USERNRIC=" +
+        action.payload.USERNRIC+
+        "&SHOPBANK=" +
+        action.payload.SHOPBANK+
+        "&SHOPBANKACCOUNTNAME=" +
+        action.payload.SHOPBANKACCOUNTNAME+
+        "&SHOPBANKACCOUNTNO=" +
+        action.payload.SHOPBANKACCOUNTNO+
+        "&SHOPBANKACCOUNTHEADER=" +
+        action.payload.SHOPBANKACCOUNTHEADER)
         try {
           return fetch(url + project + "/" +
             "User_UpdateMerchantProfile?USERID=" +
@@ -709,7 +734,15 @@ export class GitEpic {
             "&USERDOB=" +
             action.payload.USERDOB +
             "&USERNRIC=" +
-            action.payload.USERNRIC)
+            action.payload.USERNRIC+
+            "&SHOPBANK=" +
+            action.payload.SHOPBANK+
+            "&SHOPBANKACCOUNTNAME=" +
+            action.payload.SHOPBANKACCOUNTNAME+
+            "&SHOPBANKACCOUNTNO=" +
+            action.payload.SHOPBANKACCOUNTNO+
+            "&SHOPBANKACCOUNTHEADER=" +
+            action.payload.SHOPBANKACCOUNTHEADER)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -1962,6 +1995,29 @@ export class GitEpic {
         } catch (error) {
           toast.error("Error Code: Country_ViewAll. Please check on URL")
           return dispatch({ type: GitAction.GotState, payload: [] });
+        }
+      }
+    }));
+
+    getAllPaymentMethod = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetPaymentMethod), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" + 
+          "General_ViewPaymentMethod")
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotPaymentMethod, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                //toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotPaymentMethod, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: getAllPaymentMethod. Please check on URL")
+          return dispatch({ type: GitAction.GotPaymentMethod, payload: [] });
         }
       }
     }));
