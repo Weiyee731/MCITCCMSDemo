@@ -64,14 +64,14 @@ function Layout() {
   return (
     <>
       {
-        isLogon === true && path === "/ecommerceCMSDev/register" ?
+        isLogon === true && (path === "/ecommerceCMSDev/register" || path === "/cms.myemporia.my/register") ?
             <RegisterMerchant />
             :
         <div className={`app ${rtl ? 'rtl' : ''} ${toggled ? 'toggled' : ''}`}>
         <ToastContainer />
         {
           isLogon === true ?
-            path !== "/ecommerceCMSDev/register" &&
+            (path !== "/ecommerceCMSDev/register" || path !== "cms.myemporia.my" )&&
               <>
                 <Aside
                   image={false} // can set the background image for the sidebar here
