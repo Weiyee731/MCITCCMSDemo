@@ -104,6 +104,7 @@ const rootEpic = combineEpics(
   gitEpic.Country_ViewAll,
   gitEpic.CourierService_ViewAll,
   gitEpic.General_ViewState,
+  gitEpic.getAllPaymentMethod,
 
   // Shoplot
   gitEpic.Shoplot_ShopListing,

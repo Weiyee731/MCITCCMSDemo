@@ -37,7 +37,7 @@ function Layout() {
   const [toggled, setToggled] = useState(false);
   const [isLogon, setIsLogon] = useState(isUserLogon());
   const [sidebaritem, setSidebaritem] = useState(getSidebaritems());
-  let promptUserID = 14
+  const [path, setPath] = useState(window.location.pathname);
 
   // set sidebar to the right
   const handleRtlChange = (checked) => {
@@ -63,26 +63,31 @@ function Layout() {
 
   return (
     <>
-      <div className={`app ${rtl ? 'rtl' : ''} ${toggled ? 'toggled' : ''}`}>
+      {
+        localStorage.getItem("isLogin") === "true" && (path === "/ecommerceCMSDev/register" || path === "/cms.myemporia.my/register") ?
+            <RegisterMerchant />
+            :
+        <div className={`app ${rtl ? 'rtl' : ''} ${toggled ? 'toggled' : ''}`}>
         <ToastContainer />
         {
           isLogon === true ?
-            <>
-              <Aside
-                image={false} // can set the background image for the sidebar here
-                rtl={rtl}
-                sidebarItems={isArrayNotEmpty(renderSidebarItems()) ? renderSidebarItems() : SidebarConfiguration()}
-                toggled={toggled}
-                handleToggleSidebar={handleToggleSidebar}
-              />
-              <Main
-                image={false} // can set the background image for the sidebar here
-                toggled={toggled}
-                rtl={rtl}
-                handleToggleSidebar={handleToggleSidebar}
-                handleRtlChange={handleRtlChange}
-              />
-              {/* <Route path="/viewProduct" component={ViewProductComponent} />
+            (path !== "/ecommerceCMSDev/register" || path !== "cms.myemporia.my" )&&
+              <>
+                <Aside
+                  image={false} // can set the background image for the sidebar here
+                  rtl={rtl}
+                  sidebarItems={isArrayNotEmpty(renderSidebarItems()) ? renderSidebarItems() : SidebarConfiguration()}
+                  toggled={toggled}
+                  handleToggleSidebar={handleToggleSidebar}
+                />
+                <Main
+                  image={false} // can set the background image for the sidebar here
+                  toggled={toggled}
+                  rtl={rtl}
+                  handleToggleSidebar={handleToggleSidebar}
+                  handleRtlChange={handleRtlChange}
+                />
+                {/* <Route path="/viewProduct" component={ViewProductComponent} />
             <Route path="/addProductsAllIn" component={AddProductAllInOne} />
             <Route
               exact
@@ -128,20 +133,14 @@ function Layout() {
 
             <Route path="/viewShopProfile" component={EditShopProfile} /> */}
 
-            </>
+              </>
             :
             <Login />
-          // <>
-          //   {promptUserID === 0 &&
-          //   <RegisterMerchant />
-          // }
-          // </>
 
         }
-      </div >
-      {/* {console.log(promptUserID)}
-      {promptUserID !== 0 &&
-        <RegisterMerchant />} */}
+      </div >   
+      }
+      
     </>
 
   )

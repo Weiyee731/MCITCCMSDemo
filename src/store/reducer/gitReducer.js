@@ -59,6 +59,7 @@ const INITIAL_STATE = {
   countries: [],
   logistic: [],
   states: [],
+  paymentMethod: [],
 
 
   // Quotation
@@ -797,6 +798,14 @@ export function counterReducer(state = INITIAL_STATE, action) {
       return Object.assign({}, state, {
         loading: false,
         states: action.payload,
+      });
+
+    case GitAction.GetPaymentMethod:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotPaymentMethod:
+      return Object.assign({}, state, {
+        loading: false,
+        paymentMethod: action.payload,
       });
 
     ///////////////////////////////////////////////////  Shoplot  ///////////////////////////////////////////////////
