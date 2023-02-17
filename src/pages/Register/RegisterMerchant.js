@@ -1013,7 +1013,7 @@ class RegisterMerchant extends Component {
         return (
             <Card style={{margin:"3vw"}} elevation={3}>
                 <CardContent>
-                    <h1>Register Shop</h1>
+                    <h2>Register Shop</h2>
                     <HorizontalLinearStepper
                         Data={this.state}
                         propsData={this.getProps}
