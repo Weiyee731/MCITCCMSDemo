@@ -4,6 +4,7 @@ const INITIAL_STATE = {
   loading: false,
   logonUser: [],
   currentUser: [],
+  userProfile:[],
   registrationReturn: [],
   sidebars: [],
   check_Mail:[],
@@ -158,9 +159,10 @@ export function counterReducer(state = INITIAL_STATE, action) {
     case GitAction.GetUserProfile:
       return Object.assign({}, state, { loading: true });
     case GitAction.GotUserProfile:
+      console.log('sss',action.payload)
       return Object.assign({}, state, {
         loading: false,
-        currentUser: action.payload
+        userProfile: action.payload
       });
     case GitAction.ResetUserProfile:
       return Object.assign({}, state, { currentUser: [] });

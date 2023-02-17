@@ -29,6 +29,7 @@ export const ProductCategory = (props) => {
   const [searchKeywords, setsearchKeywords] = useState("")
   const [filteredList, setfilteredList] = useState([])
   const [isFiltered, setisFiltered] = useState(false)
+  const [edit, setEdit] = useState(false);
 
   useEffect(() => {
     dispatch(GitAction.CallAllProductCategoryListing({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID }))
@@ -136,27 +137,64 @@ export const ProductCategory = (props) => {
 
   const submitData = (type, HierarchyID, parentCategoryID, categoryID, Category, mainIndex, subIndex, subdetailIndex) => {
     // check duplication
-    const dupe_subCategories = categoryListingDetails[mainIndex].SubDetails.filter((x)=>(x.ProductCategory === Category))
 
-    const dupe_subDetails = categoryListingDetails[mainIndex].SubDetails[subIndex].SubDetails.filter((y)=>(y.ProductCategory === Category))
 
+    let dupe_subCategories = ""
+    let dupe_subDetails =""
+    if(HierarchyID === 3){
+        const subCat = JSON.parse(productCategories[mainIndex].HierarchyItem)[subIndex]
+        dupe_subDetails = JSON.parse(subCat.HierarchyItem).filter((x)=>(x.ProductCategory === Category))
+    }
+
+    else if (HierarchyID === 2){
+  
+        dupe_subCategories = JSON.parse(productCategories[mainIndex].HierarchyItem).filter((f=>(f.ProductCategory === Category)))
+     
+    }
 
     if (type !== 'delete' && HierarchyID === 1 && productCategories.filter((x) => x.ProductCategory.toLowerCase() === Category.toLowerCase()) && productCategories.filter((x) => x.ProductCategory.toLowerCase() === Category.toLowerCase()).length >= 1) {
-          toast.error("The category is existed, please double check before submitting.")
-          categoryListingDetails.splice(mainIndex, 1)
-          setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
+
+      if(edit === true){
+        toast.info("Category name unchanged. No changes applied.")
+      }
+
+      else if(edit === false)
+      {
+        toast.error("The category is existed, please double check before submitting.")
+        categoryListingDetails.splice(mainIndex, 1)
+        setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
+      }
    
     }
 
-    else if(type !== 'delete' && HierarchyID === 2 && dupe_subCategories.length > 1 )
+    else if(type !== 'delete' && HierarchyID === 2 && dupe_subCategories.length >= 1 )
     {
-          toast.error("The sub category is existed, please double check before submitting.")
-          categoryListingDetails[mainIndex].SubDetails.splice(subIndex, 1)
-          setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
+          if(edit === true ){
+            toast.info("Sub category name unchanged. No changes applied.")
+          }
+          
+          else if(edit === false)
+          {
+            toast.error("The Sub category is existed, please double check before submitting.")
+            categoryListingDetails[mainIndex].SubDetails.splice(subIndex, 1)
+            setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
+          }
+       
+          
     }
-    else if(type !== 'delete' && HierarchyID === 3 && dupe_subDetails.length > 1 )
+    else if(type !== 'delete' && HierarchyID === 3 && dupe_subDetails.length >= 1 )
     {
-          toast.error("The sub detail category is existed, please double check before submitting.")
+      if(edit === true){
+        toast.info("The sub category detail unchanged. No changes applied.")
+      }
+
+      else if(edit === false)
+      {
+        toast.error("The sub category detail is existed, please double check before submitting.")
+        categoryListingDetails[mainIndex].SubDetails.splice(subIndex, 1)
+          setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
+      }
+       
           categoryListingDetails[mainIndex].SubDetails[subIndex].SubDetails.splice(subdetailIndex, 1)
           setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
     }
@@ -167,10 +205,10 @@ export const ProductCategory = (props) => {
           ProductCategory: Category,
           HierarchyID: HierarchyID,
           ParentProductCategoryID: parentCategoryID,
-          // ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
-          // UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
-          ProjectID:2,
-          UserID: 0, 
+          ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+          UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+          // ProjectID:2,
+          // UserID: 0, 
         }
         dispatch(GitAction.CallAddProductCategory(propsData))
         toast.success("Successfully added product category")
@@ -198,6 +236,8 @@ export const ProductCategory = (props) => {
 
   const clickIsEdit = (data, type, mainIndex, subindex, subdetailIndex) => {
     let listingData = [...categoryListingDetails]
+
+    setEdit(true)
 
     if (data.HierarchyID === 1) {
       let listing = listingData[mainIndex]
@@ -361,7 +401,7 @@ export const ProductCategory = (props) => {
 
   const handleNewCategory = (hierachy, index, subIndex,) => {
     let listingData = [...categoryListingDetails]
-
+    setEdit(false)
     let mainListing = {
       HierarchyID: "",
       ProductCategory: "",

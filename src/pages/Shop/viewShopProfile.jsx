@@ -7,7 +7,6 @@ import { Modal, ModalBody } from "reactstrap";
 // data stubs
 // import { DropzoneArea } from 'material-ui-dropzone'
 import Dropzone from "react-dropzone";
-// import Dropzone from "react-dropzone";
 import { connect } from "react-redux";
 import { GitAction } from "../../store/action/gitAction";
 import { Link, matchPath, Redirect, Switch, Route } from "react-router-dom";
@@ -18,17 +17,21 @@ import {
 } from "@mui/material";
 import CardContent from "@mui/material/CardContent";
 import FormControl from "@mui/material/FormControl";
+import FormLabel from '@mui/material/FormLabel';
 import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography"
+import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import axios from "axios";
 // import moment from 'moment';
 
 import CloseIcon from '@mui/icons-material/Close';
-import DoneIcon from '@mui/icons-material/Done';
-import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
-import SmsOutlinedIcon from '@mui/icons-material/SmsOutlined';
-import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
-import GradeOutlinedIcon from '@mui/icons-material/GradeOutlined';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import Rating from '@mui/material/Rating';
+
 // import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 // import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 import Logo from "../../assets/logos/logo.png";
@@ -42,6 +45,7 @@ function mapStateToProps(state) {
         merchant: state.counterReducer["merchant"],
         shopUpdated: state.counterReducer["shopUpdated"],
         currentUser: state.counterReducer["currentUser"],
+        userProfile: state.counterReducer["userProfile"],
         productsListing: state.counterReducer["productsListing"],
     };
 }
@@ -55,11 +59,13 @@ function mapDispatchToProps(dispatch) {
         CallClearCurrentUser: () => dispatch(GitAction.CallClearCurrentUser()),
         CallClearShopUpdate: () => dispatch(GitAction.CallClearShopUpdate()),
         CallAllProductsListing: (propData) => dispatch(GitAction.CallAllProductsListing(propData)),
+        CallUserProfile: (propData) => dispatch(GitAction.CallUserProfile(propData)),
     };
 }
 
 const group = {
 
+    UserInfo : localStorage.getItem("loginUser") !== null ? JSON.parse(localStorage.getItem("loginUser"))[0] : 0,
     USERID: localStorage.getItem("loginUser") !== null ? JSON.parse(localStorage.getItem("loginUser"))[0].UserID : 0,
     USERFIRSTNAME: "",
     USERLASTNAME: "",
@@ -88,7 +94,8 @@ const group = {
     validEmail: false,
 
     type: "MerchantProfile",
-    typeValue: localStorage.getItem("loginUser") !== null && JSON.parse(localStorage.getItem("loginUser"))[0].UserID !== undefined ? JSON.parse(localStorage.getItem("loginUser"))[0].UserID : 0,
+    type2: "UserProfile",
+    typeValue: localStorage.getItem("loginUser") !== null ? JSON.parse(localStorage.getItem("loginUser"))[0].UserID : 0,
     userRoleID: localStorage.getItem("loginUser") !== null ? JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID : 0,
     productPage: 999,
     page: 1,
@@ -127,6 +134,7 @@ class EditShopProfile extends Component {
     componentDidMount() {
         if (this.state.USERID !== undefined && this.state.USERID !== null && this.state.typeValue !== undefined) {
             this.props.CallMerchants(this.state);
+            this.props.CallUserProfile(this.state);
             this.props.CallCountry();
 
             this.props.CallAllProductsListing({
@@ -185,6 +193,7 @@ class EditShopProfile extends Component {
             this.props.CallClearCurrentUser()
             this.modalClose()
         }
+
     }
     // componentWillUnmount(){ 
     //   this.setState(group); 
@@ -230,7 +239,7 @@ class EditShopProfile extends Component {
             .then((res) => {
                 if (res.status === 200) {
                     this.props.CallUpdateProfileImage(file);
-                    // this.props.CallUserProfile(this.state);
+                
                 }
             });
     };
@@ -336,31 +345,33 @@ class EditShopProfile extends Component {
     }
 
     render() {
-
+        console.log('userProfile', this.props.userProfile)
         const merchantDetails = this.props.merchant.length > 0 &&
             this.props.merchant[0].ReturnVal === undefined && this.props.merchant[0];
 
         const imgurl = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/shopProfile/" + JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID + "/"
+        console.log(imgurl)
+        console.log('userInfo', this.state.UserInfo)
 
-        const links = [
-            { title: "Products", url: "", data: merchantDetails ? merchantDetails.MerchantTotalProduct : [0], icons: <ListAltOutlinedIcon className="titleicon" /> },
+        // const links = [
+        //     { title: "Products", url: "", data: merchantDetails ? merchantDetails.MerchantTotalProduct : [0], icons: <ListAltOutlinedIcon className="titleicon" /> },
      
-            {
-                title: "Shop Rating",
-                url: "",
-                data: this.state.shopRating,
-                icons: <GradeOutlinedIcon className="titleicon" />
-            },
-        ].map((link) => {
-            return (
-                <div key={link.title} className="info-row">
-                    <div className="info-row-left">
-                        {link.icons}{link.title}
-                    </div>
-                    <div className="info-row-right">{link.data}</div>
-                </div>
-            );
-        })
+        //     {
+        //         title: "Shop Rating",
+        //         url: "",
+        //         data: this.state.shopRating,
+        //         icons: <GradeOutlinedIcon className="titleicon" />
+        //     },
+        // ].map((link) => {
+        //     return (
+        //         <div key={link.title} className="info-row">
+        //             <div className="info-row-left">
+        //                 {link.icons}{link.title}
+        //             </div>
+        //             <div className="info-row-right">{link.data}</div>
+        //         </div>
+        //     );
+        // })
 
         const getUploadParams = () => {
             return { url: "http://pmappapi.com/Memo/uploads/uploads/" };
@@ -377,79 +388,319 @@ class EditShopProfile extends Component {
             <div className="MainContainer" style={{ flex: 1 }}>
                 <Card>
                     <CardContent>
-                        <div className="row">
-                            <div className="col-6 ">
+                        <div className="row" style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly', margin:'4%'}}>
+                            <div className="col m-auto">
                                 <div
                                     style={{
                                         textAlign: "left",
-                                        fontWeight: 800
+                                        fontWeight: 800,
+                                        marginBottom:'4%',
                                     }}
                                 >
-                                    Shop Profile
+                                      <h3> Shop Profile </h3>
+                                  
                                 </div>
 
                                 <div className="font font-subtitle">
                                     Manage your shop information
                                 </div>
+                             
                             </div>
-                            <div className="col-6 " style={{ textAlign: "right" }}>
-                                <button
-                                    variant="contained"
-                                    className="btn btn-primary"
-                                    onClick={() => this.updateShop()}
-                                >
-                                    <DoneIcon className="saveicon" />
-                                    Submit Edit
-                                </button>
+                            <div className="col p-4 shop_Box" >
+                                <Typography variant="caption" >Shop Review Count</Typography>
+                                <div className="mt-3"style={{display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+                                <Typography variant="h4">{merchantDetails.ShopReviewCount}</Typography>
+                                </div>
                             </div>
+                            <div className="col p-4 shop_Box">
+                                <Typography variant="caption" >Shop Rating</Typography>
+                                <div className="mt-3" style={{display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+                                    <Rating name="read-only" value={merchantDetails.ShopRating} readOnly size="medium"></Rating>
+                                </div>
+                            </div>
+                            <div className="col p-4 shop_Box" >
+                                <Typography variant='caption'>Total Product</Typography>
+                                <div className="mt-3" style={{display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+                                <Typography variant="h4">{merchantDetails.MerchantTotalProduct}</Typography>
+                                </div>
+                            </div>
+                        
                         </div>
                         <Divider variant="fullWidth" className="dividerbottom" />
 
-                        <div className="row">
-                            <div className="col-4 col-md-4 col-lg-4 border-line-right">
-                                <div className="row">
-                                    <div onClick={() => this.modalOpen()} className="imagecontainer">
+                        <div className="row" style={{marginTop:'5%', marginBottom:'5%'}}>
+                            <div className="col-4 col-md-4 col-lg-4 ">
+                            <div className="description row d-flex justify-content-center ml-4 mr-2"><Typography variant='subtitle2' >Last Joined: {merchantDetails.LastJoined} </Typography></div>
+                                <div className="row" style={{marginBottom:'3%'}}>
+                                    
+                                    <div onClick={() => this.modalOpen()} className="imagecontainer" style={{border: '3px solid #E1DCDC', borderStyle:'dashed'}}>
                                         <img
                                             // className="profilePic"
                                             src={merchantDetails.ShopImage && merchantDetails.ShopImage.length ? imgurl + merchantDetails.ShopImage : Logo}
                                             alt="Profile"
-                                            width="100px"
-                                            height="100px"
+                                            width="100%"
+                                            height="auto"
                                             onError={(e) => {
                                                 e.target.onerror = null;
                                                 e.target.src =
-                                                    "https://img-cdn.tid.al/o/4858a4b2723b7d0c7d05584ff57701f7b0c54ce3.jpg";
+                                                    "https://cdn4.iconfinder.com/data/icons/small-n-flat/24/user-512.png";
                                             }}
                                         />
                                         <div className="overlay">Edit</div>
                                     </div>
                                 </div>
-                                <div className="description row d-flex justify-content-center ml-2 mr-2"><br /> Click on the image above to edit profile picture</div>
+                                <div className="description row d-flex justify-content-center ml-4 mr-2"><br /> Click on the image above to edit profile picture</div>
 
-                                <div className="description row">
-                                    <div className="col">
-                                        <div className=" display-button">
-                                            <SmsOutlinedIcon className="titleicon" />Response Rate: 37% </div>
+
+{this.props.userProfile && this.props.userProfile.map((userData)=> (
+    <div>
+                                <div className="col mt-4" style={{display:'flex', flexDirection:'row'}}>
+                                    <div className="col-6 m-1">
+                                        <TextField
+                                            fullWidth
+                                            variant="outlined"
+                                            size="small"
+                                            label="First Name"
+                                            id="firstName"
+                                            defaultValue={userData.FirstName === null ? '-' : userData.FirstName}
+                                            onChange={this.handleChangeforShopName.bind(this)}
+                                        />
                                     </div>
-                                    <div className="col">
-                                        <div className=" display-button">
-                                            <AccessTimeOutlinedIcon className="titleicon" />Response Time: Within Hour </div>
+                                    <div className="col-6 m-1">
+                                        <TextField
+                                            fullWidth
+                                            variant="outlined"
+                                            size="small"
+                                            label="Last Name"
+                                            id="lastName"
+                                            defaultValue={userData.LastName=== null ? '-' : userData.LastName}
+                                            onChange={this.handleChangeforShopName.bind(this)}
+                                        />
                                     </div>
                                 </div>
-                                {links}
+
+                                <div className="col mt-4" style={{display:'flex', flexDirection:'row'}}>
+                                    <div className="col-6 m-1">
+                                        <FormControl>
+                                            <FormLabel id="demo-controlled-radio-buttons-group">Gender</FormLabel>
+                                            <RadioGroup
+                                                aria-labelledby="demo-controlled-radio-buttons-group"
+                                                name="controlled-radio-buttons-group"
+                                                value={this.state.Gender}
+                                                // onChange={handleChange}
+                                            >
+                                                <FormControlLabel value="Female" control={<Radio />} label="Female" checked={userData.UserGender.toLowercase === 'Female'}/>
+                                                <FormControlLabel value="Male" control={<Radio />} label="Male" checked={userData.UserGender === 'Male'}/>
+                                            </RadioGroup>
+                                        </FormControl>
+                                    </div>
+                                    <div className="col-6 m-1" style={{display:'flex', flexDirection:'column', justifyContent:'space-between'}}>
+                                        <TextField
+                                            fullWidth
+                                            variant="outlined"
+                                            size="small"
+                                            label="Date of Birth"
+                                            id="dob" 
+                                            defaultValue={this.state.UserInfo.LastName=== null ? '-' : this.state.UserInfo.LastName}
+                                            onChange={this.handleChangeforShopName.bind(this)}
+                                        />
+
+                                        <TextField
+                                            fullWidth
+                                            variant="outlined"
+                                            size="small"
+                                            label="NRIC"
+                                            id="dob"
+                                            defaultValue={this.state.UserInfo.UserNRIC === null ? '-' : this.state.UserInfo.UserNRIC}
+                                            onChange={this.handleChangeforShopName.bind(this)}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="col mt-4" style={{display:'flex', flexDirection:'row'}}>
+                                <div className="col-6 m-1">
+                                        <TextField
+                                            fullWidth
+                                            variant="outlined"
+                                            size="small"
+                                            label="Contact No"
+                                            id="contactNo"
+                                            defaultValue={this.state.UserInfo.UserContactNo === null ? '-' : this.state.UserInfo.UserContactNo}
+                                            onChange={this.handleChangeforShopName.bind(this)}
+                                        />
+                                    </div>
+                                    <div className="col-6 m-1">
+                                        <TextField
+                                            fullWidth
+                                            variant="outlined"
+                                            size="small"
+                                            label="Email"
+                                            id="email"
+                                            defaultValue={this.state.UserInfo.UserEmailAddress === null ? '-' : this.state.UserInfo.UserEmailAddress}
+                                            onChange={this.handleChangeforShopName.bind(this)}
+                                        />
+                                    </div>
+                                </div>
+</div>
+
+))}
+
+                                
                             </div>
-   
-                            <div className="col-8 col-md-8 col-lg-8">
+
+                            <div className="col-4 col-md-4 col-lg-4 border-line-right">
+                            <div className="container">
+                                <div className="row" >
+                                    <Typography variant='caption'>Bank Information</Typography>
+                                    </div>
+                                </div>
                                 {this.props.merchant && this.props.merchant.length > 0 && this.props.merchant[0] !== null &&
                                     this.props.merchant.map((row) => (
                                         <div className="container" key={row.ShopName}>
                                             <div className="row" >
-                                                <div className="col-2 rowStyle vertical-align">Shop Name</div>
-                                                <div className="col-9 ">
+                                                <div className="col mt-4">
+                                                    <TextField
+                                                        fullWidth
+                                                        variant="outlined"
+                                                        size="small"
+                                                        label="Shop Bank"
+                                                        id="shopBank"
+                                                        defaultValue={row.ShopBank === null ? 'None' : row.ShopBank}
+                                                        onChange={this.handleChangeforShopName.bind(this)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col mt-4">
+                                                    <TextField
+                                                        className="font"
+                                                        variant="outlined"
+                                                        multiline
+                                                        maxRows={5}
+                                                        size="small"
+                                                        label="Bank Account Name"
+                                                        id="bankAccName"
+                                                        defaultValue={row.ShopBankAccountName === null ? 'None' : row.ShopBankAccountName}
+                                                        onChange={this.handleChangeforSHOPDESC.bind(this)}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col mt-4">
+                                                    <TextField
+                                                        className="font"
+                                                        variant="outlined"
+                                                        multiline
+                                                        maxRows={5}
+                                                        size="small"
+                                                        label="Bank Account Number"
+                                                        id="bankAccNo"
+                                                        defaultValue={row.ShopBankAccountNo === null ? 'None' : row.ShopBankAccountNo}
+                                                        onChange={this.handleChangeforSHOPDESC.bind(this)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col mt-4" >
+                                                    <Dropzone
+                                                    style={{ width: "100%"}}
+                                                    onDrop={(acceptedFiles) => {
+                                                        if (acceptedFiles.length > 0) {
+                                                            this.setState({
+                                                                preview: acceptedFiles.map(file => URL.createObjectURL(file)),
+                                                                imageName: acceptedFiles[0].name,
+                                                                fileAdded: true,
+                                                                imageFile: acceptedFiles,
+                                                            });
+                                                            return;
+                                                        } else {
+                                                            this.setState({
+                                                                imageName: "",
+                                                                fileAdded: false,
+                                                                fileUpload: [],
+                                                            });
+                                                        }
+                                                    }}
+                                                    accept="image/*"
+                                                    maxFiles={1}
+                                                    multiple={false}
+                                                    getUploadParams={getUploadParams}
+                                                    onChangeStatus={handleChangeStatus}
+                                                    onSubmit={handleSubmit}
+                                                >
+                                                    {({
+                                                        getRootProps,
+                                                        getInputProps,
+                                                        isDragActive,
+                                                        isDragAccept,
+                                                        isDragReject,
+                                                    }) => (
+                                                        <section>
+                                                            <div
+                                                                {...getRootProps({
+                                                                    className: "dropzone",
+                                                                })}
+                                                      
+                                                                style={{
+                                                                    width:'100%',
+                                                                    borderColor: isDragActive
+                                                                        ? isDragReject
+                                                                            ? "#fc5447"
+                                                                            : "#a0d100"
+                                                                        : "#b8b8b8",
+                                                                    color: isDragActive
+                                                                        ? isDragReject
+                                                                            ? "#a31702"
+                                                                            : "#507500"
+                                                                        : "#828282",
+                                                                }}
+                                                            >
+                                                                <input {...getInputProps()} />
+                                                                {this.state.fileAdded ? (
+                                                                    <div className="droppedFileImage">
+                                                                        <img className="bankHeaderStatement" src={this.state.preview} alt={this.state.imageName} />
+                                                                    </div>
+                                                                ) : (
+                                                                    <div style={{margin:'auto'}}>
+                                                                        {!isDragActive && "Upload Bank Statement Header"}
+                                                                        {isDragActive &&
+                                                                            !isDragReject &&
+                                                                            "Upload Bank Statement Header"}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </section>
+                                                    )}
+                                                </Dropzone>
+                                                </div></div>
+                                            <br />
+                                        </div>
+                                    ))}
+                            </div>
+
+   
+                            <div className="col-4 col-md-4 col-lg-4">
+                            <div className="container">
+                                <div style={{display:'flex', flexDirection:"row", justifyContent:'space-between'}}>
+                                    <div style={{marginTop:'auto', marginBottom:'auto'}}>
+                                        <Typography variant='caption' >Shop Information</Typography>
+                                    </div>
+                                    <div>
+                                        <Button color="primary" variant="contained" size="small">Update Shop Info</Button>
+                                    </div>
+                                </div>
+                                </div>
+                                {this.props.merchant && this.props.merchant.length > 0 && this.props.merchant[0] !== null &&
+                                    this.props.merchant.map((row) => (
+                                        <div className="container" key={row.ShopName}>
+                                            <div className="row" >
+                                                <div className="col mt-4">
                                                     <TextField
                                                         className="font"
                                                         variant="outlined"
                                                         size="small"
+                                                        label="Shop Name"
                                                         id="userfirstname"
                                                         defaultValue={row.ShopName}
                                                         onChange={this.handleChangeforShopName.bind(this)}
@@ -457,13 +708,13 @@ class EditShopProfile extends Component {
                                                 </div>
                                             </div>
                                             <div className="row">
-                                                <div className="col-2 rowStyle vertical-align">Description</div>
-                                                <div className="col-9">
+                                                <div className="col mt-4">
                                                     <TextField
                                                         className="font"
                                                         variant="outlined"
                                                         multiline
                                                         maxRows={5}
+                                                        label="Shop Description"
                                                         size="small"
                                                         id="userlastname"
                                                         defaultValue={row.ShopDescription}
@@ -473,21 +724,18 @@ class EditShopProfile extends Component {
                                             </div>
                                             <br />
                                             <div className="row">
-                                                <div className="col-2 rowStyle vertical-align">Country</div>
-                                                <div className="col-9">
+                                                <div className="col">
                                                     <FormControl
-                                                        variant="filled"
-                                                        size="small"
-                                                        style={{ width: "100%" }}
+                                                        fullWidth
                                                     >
+                                                         <InputLabel id="demo-simple-select-label">Country</InputLabel>
                                                         <Select
                                                             id="Country"
                                                             variant="outlined"
                                                             defaultValue={row.ShopCountryID ? row.ShopCountryID : 148}
-                                                            // {this.state.SHOPCOUNTRYID}
+                                                            label="Country"
                                                             size="small"
                                                             onChange={this.handleChange.bind(this, "SHOPCOUNTRYID")}
-                                                            className="font"
                                                         >
                                                             {this.props.countrylist.map((country) => (
                                                                 <option
@@ -502,25 +750,25 @@ class EditShopProfile extends Component {
                                                 </div>
                                             </div>
                                             <div className="row" >
-                                                <div className="col-2 rowStyle vertical-align">State</div>
-                                                <div className="col-9 ">
+                                                <div className="col mt-4 ">
                                                     <TextField
                                                         className="font"
                                                         variant="outlined"
                                                         size="small"
                                                         id="userfirstname"
+                                                        label="State"
                                                         defaultValue={row.ShopState}
                                                         onChange={this.handleChange.bind(this, "SHOPSTATE")}
                                                     />
                                                 </div>
                                             </div>
                                             <div className="row" >
-                                                <div className="col-2 rowStyle vertical-align">City</div>
-                                                <div className="col-9 ">
+                                                <div className="col mt-4 ">
                                                     <TextField
                                                         className="font"
                                                         variant="outlined"
                                                         size="small"
+                                                        label="City"
                                                         id="userfirstname"
                                                         defaultValue={row.ShopCity}
                                                         onChange={this.handleChange.bind(this, "SHOPCITY")}
@@ -528,13 +776,13 @@ class EditShopProfile extends Component {
                                                 </div>
                                             </div>
                                             <div className="row" >
-                                                <div className="col-2 rowStyle vertical-align">Poscode</div>
-                                                <div className="col-9 ">
+                                                <div className="col mt-4 ">
                                                     <TextField
                                                         className="font"
                                                         variant="outlined"
                                                         size="small"
                                                         id="userfirstname"
+                                                        label="Poscode"
                                                         defaultValue={row.ShopPoscode}
                                                         onChange={this.handleChange.bind(this, "SHOPPOSCODE")}
                                                     />
@@ -543,7 +791,7 @@ class EditShopProfile extends Component {
                                         </div>
                                     ))}
                             </div>
-
+                         
                         </div>
                     </CardContent>
 

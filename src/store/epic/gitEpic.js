@@ -230,16 +230,17 @@ export class GitEpic {
   User_ViewProfile = action$ =>
     action$.pipe(filter(action => action.type === GitAction.GetUserProfile), map(action => {
       return dispatch => {
-     
         try {
           return fetch(url + project + "/" +
-            "User_ProfileListByType?TYPE=" + action.payload.TYPE +
-            "&TYPEVALUE=" + action.payload.TYPEVALUE +
-            "&USERID=" + action.payload.USERID +
-            "&UserRoleID=" + action.payload.USERROLEID +
-            "&LISTPERPAGE=" + action.payload.LISTPERPAGE +
-            "&PAGE=" + action.payload.PAGE +
-            "&ProjectID=" + action.payload.ProjectID)
+          "User_ProfileListByType?TYPE=" + action.payload.type2 +
+          "&TYPEVALUE=" + action.payload.typeValue +
+          "&USERID=" + action.payload.USERID +
+          "&UserRoleID=" + action.payload.userRoleID +
+          "&LISTPERPAGE=" + action.payload.productPage +
+          "&PAGE=" + action.payload.page +
+          "&ProjectID=" + action.payload.ProjectID
+            
+            )
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -637,7 +638,14 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.GetMerchants), map(action => {
       return dispatch => {
         try {
-
+          console.log(url + project + "/" +
+          "User_ProfileListByType?TYPE=" + action.payload.type +
+          "&TYPEVALUE=" + action.payload.typeValue +
+          "&USERID=" + action.payload.USERID +
+          "&UserRoleID=" + action.payload.userRoleID +
+          "&LISTPERPAGE=" + action.payload.productPage +
+          "&PAGE=" + action.payload.page +
+          "&ProjectID=" + action.payload.ProjectID)
           return fetch(url + project + "/" +
             "User_ProfileListByType?TYPE=" + action.payload.type +
             "&TYPEVALUE=" + action.payload.typeValue +
@@ -689,10 +697,38 @@ export class GitEpic {
         }
       }
     }));
+
+
   User_UpdateMerchantProfile = action$ =>
     action$.pipe(filter(action => action.type === GitAction.GetUpdateMerchantProfile), map(action => {
       return dispatch => {
         try {
+          console.log(url + project + "/" +
+          "User_UpdateMerchantProfile?USERID=" +
+          action.payload.USERID +
+          "&FIRSTNAME=" +
+          action.payload.FIRSTNAME +
+          "&LASTNAME=" +
+          action.payload.LASTNAME +
+          "&USEREMAIL=" +
+          action.payload.USEREMAIL +
+          "&USERGENDER=" +
+          action.payload.USERGENDER +
+          "&USERCONTACTNO=" +
+          action.payload.USERCONTACTNO +
+          "&USERDOB=" +
+          action.payload.USERDOB +
+          "&USERNRIC=" +
+          action.payload.USERNRIC +
+          "&SHOPBANK=" +
+          action.payload.SHOPBANK +
+          "&SHOPBANKACCOUNTNAME=" +
+          action.payload.SHOPBANKACCOUNTNAME +
+          "&SHOPBANKACCOUNTNO=" +
+          action.payload.SHOPBANKACCOUNTNO +
+          "&SHOPBANKACCOUNTHEADER=" +
+          action.payload.SHOPBANKACCOUNTHEADER
+          )
           return fetch(url + project + "/" +
             "User_UpdateMerchantProfile?USERID=" +
             action.payload.USERID +
@@ -709,7 +745,16 @@ export class GitEpic {
             "&USERDOB=" +
             action.payload.USERDOB +
             "&USERNRIC=" +
-            action.payload.USERNRIC)
+            action.payload.USERNRIC +
+            "&SHOPBANK=" +
+            action.payload.SHOPBANK +
+            "&SHOPBANKACCOUNTNAME=" +
+            action.payload.SHOPBANKACCOUNTNAME +
+            "&SHOPBANKACCOUNTNO=" +
+            action.payload.SHOPBANKACCOUNTNO +
+            "&SHOPBANKACCOUNTHEADER=" +
+            action.payload.SHOPBANKACCOUNTHEADER
+            )
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -1496,6 +1541,13 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.AddProductCategory), map(action => {
       return dispatch => {
         try {
+          console.log(url + project + "/" +
+          "Product_AddProductCategory?PRODUCTCATEGORY=" + action.payload.ProductCategory +
+          "&PRODUCTCATEGORYIMAGE=" + action.payload.ProductCategoryImage +
+          "&HIERARCHYID=" + action.payload.HierarchyID +
+          "&PARENTPRODUCTCATEGORYID=" + action.payload.ParentProductCategoryID +
+          "&PROJECTID=" + action.payload.ProjectID +
+          "&USERID=" + action.payload.UserID)
           return fetch(url + project + "/" +
             "Product_AddProductCategory?PRODUCTCATEGORY=" + action.payload.ProductCategory +
             "&PRODUCTCATEGORYIMAGE=" + action.payload.ProductCategoryImage +

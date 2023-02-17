@@ -250,12 +250,11 @@ class Dashboard extends Component {
     }
 
     handleModal = () =>{
-        this.setState({openModal: !this.state.openModal})
+        this.setState({openModal: !this.state.openModal, email: "", OTP:"", newPassword:"", isSubmitEmail:false, checkMail_Data:[]})
     }
 
     handleSubmit_email = (type) => {
 
-        console.log('type', type)
         const check_Email = {
             email: this.state.email,
             ProjectID:2
