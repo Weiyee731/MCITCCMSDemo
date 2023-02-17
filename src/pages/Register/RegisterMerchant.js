@@ -1000,7 +1000,7 @@ class RegisterMerchant extends Component {
             case 3:
                 return (
                     <>
-                        {window.location.replace("/")}
+                        {window.location.replace("/CMS.myemporia.my/")}
                     </>
                 )
 

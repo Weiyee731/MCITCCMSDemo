@@ -64,7 +64,7 @@ function Layout() {
   return (
     <>
       {
-        isLogon === true && (path === "/ecommerceCMSDev/register" || path === "/cms.myemporia.my/register") ?
+        localStorage.getItem("isLogin") === "true" && (path === "/ecommerceCMSDev/register" || path === "/cms.myemporia.my/register") ?
             <RegisterMerchant />
             :
         <div className={`app ${rtl ? 'rtl' : ''} ${toggled ? 'toggled' : ''}`}>
