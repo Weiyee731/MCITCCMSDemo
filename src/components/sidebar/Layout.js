@@ -82,12 +82,10 @@ function Layout() {
 
     let systemPath = path.split("/")
     let pathLength = systemPath.length
-    console.log("USESFAFA", systemPath)
-    console.log("USESFAFA333", systemPath !== undefined && isArrayNotEmpty(systemPath))
-    console.log("USESFAFA3334", !isNaN(systemPath[pathLength - 1]))
 
+    console.log("dsddsada",)
     if (systemPath !== undefined && isArrayNotEmpty(systemPath) && !isNaN(systemPath[pathLength - 1])) {
-
+      console.log("dsddsada22",)
       setEncryptData({
         UserID: systemPath[pathLength - 1],
         UserName: systemPath[pathLength - 2],
@@ -95,8 +93,6 @@ function Layout() {
       localStorage.setItem("project", "myemporia")
       localStorage.setItem("projectURL", "CMS.myemporia.my")
       localStorage.setItem("projectDomain", "myemporia" + "." + "MY")
-
-      console.log("USESFAFA22")
       dispatch(GitAction.CallUserProfile({
         TYPE: "UserProfile",
         TYPEVALUE: systemPath[pathLength - 1],
@@ -107,6 +103,9 @@ function Layout() {
         ProjectID: 2
       }))
     }
+    if (isNaN(systemPath[pathLength - 1]) || systemPath[pathLength - 3] !== "register")
+      checkProfile("wrongpath")
+
   }, [])
 
   useEffect(() => {
@@ -128,26 +127,26 @@ function Layout() {
     let pathLength = systemPath.length
     let isRegister = false
 
-    if (systemPath[pathLength - 3] === "register")
+    if (systemPath.filter((x) => x === "register"))
       isRegister = true
+    // if (systemPath[pathLength - 3] === "register")
+    //   isRegister = true
 
     return isRegister
   }
 
   return (
     <>
-      {console.log("dsdadasda", window.location)}
       {
-        // localStorage.getItem("isLogin") === "true" && (path === "/ecommerceCMSDev/register" || path === "/cms.myemporia.my/register")
-        // checkPathName() === true
-        //   ?
-        //   <RegisterMerchant isProfileCheck={}/>
-          // :
+        checkPathName() === true
+          ?
+          <RegisterMerchant isProfileCheck={isProfileCheck} userData={encryptData} />
+          :
           <div className={`app ${rtl ? 'rtl' : ''} ${toggled ? 'toggled' : ''}`}>
             <ToastContainer />
             {
               isLogon === true ?
-                (path !== "/ecommerceCMSDev/register" || path !== "cms.myemporia.my") &&
+                // (path !== "/ecommerceCMSDev/register" || path !== "cms.myemporia.my") &&
                 <>
                   <Aside
                     image={false} // can set the background image for the sidebar here
@@ -163,52 +162,6 @@ function Layout() {
                     handleToggleSidebar={handleToggleSidebar}
                     handleRtlChange={handleRtlChange}
                   />
-                  {/* <Route path="/viewProduct" component={ViewProductComponent} />
-            <Route path="/addProductsAllIn" component={AddProductAllInOne} />
-            <Route
-              exact
-              path="/viewProductDetail/:productId"
-              render={(props) => (
-                <>
-                  <ViewProductGeneralInfo
-                    {...props}
-                    layout="standard"
-                    productId={props.match.params.productId}
-                  />
-                </>
-              )}
-            />
-            <Route
-              exact
-              path="/viewProductDetailList/:productId"
-              render={(props) => (
-                <>
-                  <ProductDetailsComponent
-                    {...props}
-                    layout="standard"
-                    productId={props.match.params.productId}
-                  />
-                </>
-              )}
-            />
-
-            <Route
-              path="/viewProductEndorsement"
-              component={viewProductEndorsementComponent}
-            />
-
-            <Route path="/viewTransactions" component={ViewTransactionsComponent} />
-
-            <Route path="/viewMerchants" component={ViewMerchantsComponent} />
-            <Route path="/viewUser" component={ViewUserComponent} />
-
-            <Route
-              path="/viewTransactioDetails"
-              component={TransactionDetailsComponent}
-            />
-
-            <Route path="/viewShopProfile" component={EditShopProfile} /> */}
-
                 </>
                 :
                 <Login />
