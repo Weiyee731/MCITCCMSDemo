@@ -105,6 +105,7 @@ class Dashboard extends Component {
                     //         window.location.pathname.split(".")[2],
                     //         window.location.pathname.split("/")[1]
                     //     )
+                    console.log("HERE")
 
                     setLogonUser(
                         this.props.logonUser,

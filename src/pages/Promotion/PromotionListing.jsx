@@ -48,9 +48,28 @@ export const PromotionListing = (props) => {
 
     useEffect(() => {
 
-        if (isPromoListSet === false && isArrayNotEmpty(promotions)) {
-            setPromotionList(promotions)
-            setPromo(isPromoListSet)
+        let listing = promotions
+        let toUpdatePromoID = []
+        let toUpdateInd = []
+        listing.map((data) => {
+            if (checkPromotionPeriod(data.BeginDate, data.EndDate, "period") === "Expired" && data.ActiveInd === 1) {
+                toUpdatePromoID.push(data.PromotionID)
+                toUpdateInd.push(0)
+            }
+        })
+
+        if (toUpdatePromoID.length > 0 && promotionList.length === 0) {
+            dispatch(GitAction.CallUpdatePromotionStatus({
+                PromotionID: toUpdatePromoID,
+                ActiveInd: toUpdateInd,
+                UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+            }))
+            setSubmitStatus(true)
+        } else {
+            if (isPromoListSet === false && isArrayNotEmpty(promotions)) {
+                setPromotionList(promotions)
+                setPromo(true)
+            }
         }
     }, [promotions])
 
@@ -183,6 +202,7 @@ export const PromotionListing = (props) => {
             isActive = type === "color" ? "orange" : "Upcoming"
         return isActive
     }
+
     const renderTableRows = (data, index) => {
 
         const propPage = (ID) => {
@@ -218,7 +238,7 @@ export const PromotionListing = (props) => {
                     }
                     <TableCell align="left" onClick={() => propPage(data.PromotionID)}>
                         <Button variant="contained" size="sm" style={{ backgroundColor: data.ActiveInd == 1 ? checkPromotionPeriod(data.BeginDate, data.EndDate, "color",) : "grey", fontWeight: "bold" }}>
-                            {data.ActiveInd == 1 ? checkPromotionPeriod(data.BeginDate, data.EndDate, "period") : "Inactive"}
+                            {data.ActiveInd === 0 && checkPromotionPeriod(data.BeginDate, data.EndDate, "period") !== "Expired" ? "Inactive" : checkPromotionPeriod(data.BeginDate, data.EndDate, "period")}
                         </Button>
                     </TableCell>
                     <TableCell align="left" onClick={() => propPage(data.PromotionID)} >{data.BeginDate !== undefined && data.EndDate !== undefined && data.BeginDate + " to " + data.EndDate}</TableCell>

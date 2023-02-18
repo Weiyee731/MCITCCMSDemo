@@ -213,7 +213,7 @@ export const TransactionManagement = (props) => {
             <TableHead style={{ backgroundColor: "#f8f9fa" }}>
                 <TableRow>
                     <TableCell width="5%" />
-                    {value + 1 === 1 && <TableCell width="5%"></TableCell>}
+                    {value + 1 === 2 && <TableCell width="5%"></TableCell>}
                     <TableCell width="10%" style={HeaderStyle} >Order Date</TableCell>
                     <TableCell width="10%" align="left" style={HeaderStyle}  >Order ID</TableCell>
                     <TableCell width="15%" align="left" style={HeaderStyle} >Customer</TableCell>
@@ -221,7 +221,7 @@ export const TransactionManagement = (props) => {
                     <TableCell width="15%" align="left" style={HeaderStyle} >Status</TableCell>
                     <TableCell width="15%" align="left" style={HeaderStyle} >No Item</TableCell>
                     <TableCell width="10%" align="left" style={HeaderStyle} >Total</TableCell>
-                    {value + 1 === 1 && <TableCell width="10%" align="left" style={HeaderStyle}>Action</TableCell>}
+                    {value + 1 !== 1 && <TableCell width="10%" align="left" style={HeaderStyle}>Action</TableCell>}
                 </TableRow>
             </TableHead>
         )
@@ -330,7 +330,8 @@ export const TransactionManagement = (props) => {
                         {checkCollapseOpen(index) ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
-                {value + 1 === 1 &&
+                {console.log("dsdasdasd", value)}
+                {value + 1 === 2 &&
                     <TableCell>
                         <Checkbox color="primary"
                             checked={data.isCheckBoxSelected}
@@ -348,7 +349,7 @@ export const TransactionManagement = (props) => {
                 <TableCell align="left">{data.OrderProductDetail !== undefined ? JSON.parse(data.OrderProductDetail).length : 0}</TableCell>
                 <TableCell align="left">{isNaN(data.OrderTotalAmount) === false && parseFloat(data.OrderTotalAmount).toFixed(2)}</TableCell>
                 {
-                    value + 1 === 1 &&
+                    value + 1 === 2 &&
                     <TableCell align="left">
                         <IconButton>
                             <Button style={{ backgroundColor: "#e74c3c" }} onClick={() => {
@@ -359,6 +360,83 @@ export const TransactionManagement = (props) => {
                             }}>
                                 Cancel
                             </Button>
+                            <Button style={{ backgroundColor: "#F05E16", margin: "10px" }} onClick={() => {
+                                dispatch(GitAction.CallUpdateOrderTrackingStatus({
+                                    OrderID: data.OrderID,
+                                    TrackingStatusID: 7
+                                }))
+                            }}>
+                                Refund
+                            </Button>
+                        </IconButton>
+                        <IconButton>
+                        </IconButton>
+                    </TableCell>
+                }
+                {
+                    value + 1 === 3 &&
+                    <TableCell align="left">
+                        <IconButton>
+                            <Button style={{ backgroundColor: "#e74c3c" }} onClick={() => {
+                                dispatch(GitAction.CallUpdateOrderTrackingStatus({
+                                    OrderID: data.OrderID,
+                                    TrackingStatusID: 6
+                                }))
+                            }}>
+                                Cancel
+                            </Button>
+                            <Button style={{ backgroundColor: "#F05E16", margin: "10px" }} onClick={() => {
+                                dispatch(GitAction.CallUpdateOrderTrackingStatus({
+                                    OrderID: data.OrderID,
+                                    TrackingStatusID: 7
+                                }))
+                            }}>
+                                Refund
+                            </Button>
+                        </IconButton>
+                        <IconButton>
+                        </IconButton>
+                    </TableCell>
+                }
+                {
+                    value + 1 === 5 &&
+                    <TableCell align="left">
+                        <IconButton>
+                            <Button style={{ backgroundColor: "#F05E16", margin: "10px" }} onClick={() => {
+                                dispatch(GitAction.CallUpdateOrderTrackingStatus({
+                                    OrderID: data.OrderID,
+                                    TrackingStatusID: 7
+                                }))
+                            }}>
+                                Refund
+                            </Button>
+                        </IconButton>
+                        <IconButton>
+                        </IconButton>
+                    </TableCell>
+                }
+                {
+                    value + 1 === 8 &&
+                    <TableCell align="left">
+                        <IconButton>
+                            <Button style={{ backgroundColor: "#86DC3D" }} onClick={() => {
+                                dispatch(GitAction.CallUpdateOrderTrackingStatus({
+                                    OrderID: data.OrderID,
+                                    TrackingStatusID: 5
+                                }))
+                            }}>
+                                Complete
+                            </Button>
+                            <Button style={{ backgroundColor: "#F05E16", margin: "10px" }} onClick={() => {
+                                dispatch(GitAction.CallUpdateOrderTrackingStatus({
+                                    OrderID: data.OrderID,
+                                    TrackingStatusID: 7
+                                }))
+                            }}>
+                                Refund
+                            </Button>
+                        </IconButton>
+                        <IconButton>
                         </IconButton>
                     </TableCell>
                 }
@@ -660,7 +738,7 @@ export const TransactionManagement = (props) => {
                         </div>
                     </div>
                     <div className="row">
-                        <div className={value + 1 === 1 ? "col-3" : "col-2"}></div>
+                        <div className={value + 1 === 2 ? "col-3" : "col-2"}></div>
                         <div className="col-3">  <Typography style={TitleStyle} > Product Variation</Typography></div>
                         <div className="col-2">  <Typography style={TitleStyle} > Order Details</Typography></div>
                         {
@@ -672,7 +750,7 @@ export const TransactionManagement = (props) => {
                         data.orderDetails.map((details, subindex) => {
                             return (
                                 <div className="row" >
-                                    {value + 1 === 1 &&
+                                    {value + 1 === 2 &&
                                         <div className="col-1">
                                             {
                                                 details.TrackingNumber === null || details.TrackingNumber === undefined || details.TrackingNumber === "-" ?
@@ -1010,7 +1088,7 @@ export const TransactionManagement = (props) => {
                                                                                     <Typography style={TitleStyle} > Delivery Details </Typography>
                                                                                 </div>
                                                                                 {
-                                                                                    value + 1 === 1 &&
+                                                                                    value + 1 === 2 &&
                                                                                     <div className="col" style={{ textAlign: "right" }}>
                                                                                         <Button color="primary" onClick={() => {
                                                                                             let newArr = OrderListing
@@ -1063,7 +1141,7 @@ export const TransactionManagement = (props) => {
                                                                                                 </FormControl>
                                                                                             </div>
                                                                                             <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
-                                                                                                <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt", paddingLeft: value + 1 === 1 ? "0px" : "15px" }}>Delivery Method</InputLabel>
+                                                                                                <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt", paddingLeft: value + 1 === 2 ? "0px" : "15px" }}>Delivery Method</InputLabel>
                                                                                                 <FormControl fullWidth size="small" variant="outlined">
 
                                                                                                     <Select

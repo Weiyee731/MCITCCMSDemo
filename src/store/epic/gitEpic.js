@@ -31,6 +31,7 @@ export class GitEpic {
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
+              console.log("dsdsadsada", json)
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.LoginSuccess, payload: JSON.parse(json[0].ReturnData) });
               } else {
@@ -46,7 +47,7 @@ export class GitEpic {
     }));
 
 
-    User_CheckEmail_Dupe = action$ =>
+  User_CheckEmail_Dupe = action$ =>
     action$.pipe(filter(action => action.type === GitAction.CheckMail_Dupe), map(action => {
       return dispatch => {
         try {
@@ -54,7 +55,7 @@ export class GitEpic {
             "User_CheckDuplicate?email=" +
             action.payload.email +
             "&ProjectID=" +
-            action.payload.ProjectID )
+            action.payload.ProjectID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -72,17 +73,17 @@ export class GitEpic {
       }
     }));
 
-    SendEmail_OTP = action$ =>
+  SendEmail_OTP = action$ =>
     action$.pipe(filter(action => action.type === GitAction.Send_OTPVerification), map(action => {
       return dispatch => {
         try {
           console.log(url + project + "/" +
-          "User_SentOTPVerification?USERID=" +
-          action.payload.UserID +
-          "&TYPE=" +
-          action.payload.Type +
-          "&VALIDATIONFIELD=" +
-          action.payload.ValidationField)
+            "User_SentOTPVerification?USERID=" +
+            action.payload.UserID +
+            "&TYPE=" +
+            action.payload.Type +
+            "&VALIDATIONFIELD=" +
+            action.payload.ValidationField)
           return fetch(url + project + "/" +
             "User_SentOTPVerification?USERID=" +
             action.payload.UserID +
@@ -108,19 +109,19 @@ export class GitEpic {
     }));
 
 
-    UpdateForgotten_Pass = action$ =>
+  UpdateForgotten_Pass = action$ =>
     action$.pipe(filter(action => action.type === GitAction.Update_ForgotPassword), map(action => {
       return dispatch => {
         try {
           console.log(url + project + "/" +
-          "User_UpdateProfileSpecificField?USERID=" +
-          action.payload.UserID +
-          "&TYPE=" +
-          action.payload.Type +
-          "&OTP=" +
-          action.payload.OTP +
-          "&UPDATEDFIELD=" +
-          action.payload.UpdatedField)
+            "User_UpdateProfileSpecificField?USERID=" +
+            action.payload.UserID +
+            "&TYPE=" +
+            action.payload.Type +
+            "&OTP=" +
+            action.payload.OTP +
+            "&UPDATEDFIELD=" +
+            action.payload.UpdatedField)
           return fetch(url + project + "/" +
             "User_UpdateProfileSpecificField?USERID=" +
             action.payload.UserID +
@@ -130,7 +131,7 @@ export class GitEpic {
             action.payload.OTP +
             "&UPDATEDFIELD=" +
             action.payload.UpdatedField
-            )
+          )
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -232,15 +233,14 @@ export class GitEpic {
       return dispatch => {
         try {
           return fetch(url + project + "/" +
-          "User_ProfileListByType?TYPE=" + action.payload.type2 +
-          "&TYPEVALUE=" + action.payload.typeValue +
-          "&USERID=" + action.payload.USERID +
-          "&UserRoleID=" + action.payload.userRoleID +
-          "&LISTPERPAGE=" + action.payload.productPage +
-          "&PAGE=" + action.payload.page +
-          "&ProjectID=" + action.payload.ProjectID
-            
-            )
+            "User_ProfileListByType?TYPE=" + action.payload.TYPE +
+            "&TYPEVALUE=" + action.payload.TYPEVALUE +
+            "&USERID=" + action.payload.USERID +
+            "&UserRoleID=" + action.payload.USERROLEID +
+            "&LISTPERPAGE=" + action.payload.LISTPERPAGE +
+            "&PAGE=" + action.payload.PAGE +
+            "&ProjectID=" + action.payload.ProjectID
+          )
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -480,9 +480,9 @@ export class GitEpic {
             .then(response => response.json())
             .then(json => {
 
-     
+
               json = JSON.parse(json)
-      
+
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.OrderedCreateShipment, payload: JSON.parse(json[0].ReturnData) });
               } else {
@@ -508,9 +508,9 @@ export class GitEpic {
             .then(response => response.json())
             .then(json => {
 
-         
+
               json = JSON.parse(json)
-          
+
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.OrderRequestedShipmentStatus, payload: JSON.parse(json[0].ReturnData) });
               } else {
@@ -639,13 +639,13 @@ export class GitEpic {
       return dispatch => {
         try {
           console.log(url + project + "/" +
-          "User_ProfileListByType?TYPE=" + action.payload.type +
-          "&TYPEVALUE=" + action.payload.typeValue +
-          "&USERID=" + action.payload.USERID +
-          "&UserRoleID=" + action.payload.userRoleID +
-          "&LISTPERPAGE=" + action.payload.productPage +
-          "&PAGE=" + action.payload.page +
-          "&ProjectID=" + action.payload.ProjectID)
+            "User_ProfileListByType?TYPE=" + action.payload.type +
+            "&TYPEVALUE=" + action.payload.typeValue +
+            "&USERID=" + action.payload.USERID +
+            "&UserRoleID=" + action.payload.userRoleID +
+            "&LISTPERPAGE=" + action.payload.productPage +
+            "&PAGE=" + action.payload.page +
+            "&ProjectID=" + action.payload.ProjectID)
           return fetch(url + project + "/" +
             "User_ProfileListByType?TYPE=" + action.payload.type +
             "&TYPEVALUE=" + action.payload.typeValue +
@@ -703,32 +703,6 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.GetUpdateMerchantProfile), map(action => {
       return dispatch => {
         console.log(url + project + "/" +
-        "User_UpdateMerchantProfile?USERID=" +
-        action.payload.USERID +
-        "&FIRSTNAME=" +
-        action.payload.FIRSTNAME +
-        "&LASTNAME=" +
-        action.payload.LASTNAME+
-        "&USEREMAIL=" +
-        action.payload.USEREMAIL+
-        "&USERGENDER=" +
-        action.payload.USERGENDER+
-        "&USERCONTACTNO=" +
-        action.payload.USERCONTACTNO+
-        "&USERDOB=" +
-        action.payload.USERDOB+
-        "&USERNRIC=" +
-        action.payload.USERNRIC+
-        "&SHOPBANK=" +
-        action.payload.SHOPBANK+
-        "&SHOPBANKACCOUNTNAME=" +
-        action.payload.SHOPBANKACCOUNTNAME+
-        "&SHOPBANKACCOUNTNO=" +
-        action.payload.SHOPBANKACCOUNTNO+
-        "&SHOPBANKACCOUNTHEADER=" +
-        action.payload.SHOPBANKACCOUNTHEADER)
-        try {
-          console.log(url + project + "/" +
           "User_UpdateMerchantProfile?USERID=" +
           action.payload.USERID +
           "&FIRSTNAME=" +
@@ -752,7 +726,33 @@ export class GitEpic {
           "&SHOPBANKACCOUNTNO=" +
           action.payload.SHOPBANKACCOUNTNO +
           "&SHOPBANKACCOUNTHEADER=" +
-          action.payload.SHOPBANKACCOUNTHEADER
+          action.payload.SHOPBANKACCOUNTHEADER)
+        try {
+          console.log(url + project + "/" +
+            "User_UpdateMerchantProfile?USERID=" +
+            action.payload.USERID +
+            "&FIRSTNAME=" +
+            action.payload.FIRSTNAME +
+            "&LASTNAME=" +
+            action.payload.LASTNAME +
+            "&USEREMAIL=" +
+            action.payload.USEREMAIL +
+            "&USERGENDER=" +
+            action.payload.USERGENDER +
+            "&USERCONTACTNO=" +
+            action.payload.USERCONTACTNO +
+            "&USERDOB=" +
+            action.payload.USERDOB +
+            "&USERNRIC=" +
+            action.payload.USERNRIC +
+            "&SHOPBANK=" +
+            action.payload.SHOPBANK +
+            "&SHOPBANKACCOUNTNAME=" +
+            action.payload.SHOPBANKACCOUNTNAME +
+            "&SHOPBANKACCOUNTNO=" +
+            action.payload.SHOPBANKACCOUNTNO +
+            "&SHOPBANKACCOUNTHEADER=" +
+            action.payload.SHOPBANKACCOUNTHEADER
           )
           return fetch(url + project + "/" +
             "User_UpdateMerchantProfile?USERID=" +
@@ -770,13 +770,13 @@ export class GitEpic {
             "&USERDOB=" +
             action.payload.USERDOB +
             "&USERNRIC=" +
-            action.payload.USERNRIC+
+            action.payload.USERNRIC +
             "&SHOPBANK=" +
-            action.payload.SHOPBANK+
+            action.payload.SHOPBANK +
             "&SHOPBANKACCOUNTNAME=" +
-            action.payload.SHOPBANKACCOUNTNAME+
+            action.payload.SHOPBANKACCOUNTNAME +
             "&SHOPBANKACCOUNTNO=" +
-            action.payload.SHOPBANKACCOUNTNO+
+            action.payload.SHOPBANKACCOUNTNO +
             "&SHOPBANKACCOUNTHEADER=" +
             action.payload.SHOPBANKACCOUNTHEADER)
             .then(response => response.json())
@@ -830,7 +830,7 @@ export class GitEpic {
             .then(response => response.json())
             .then(json => {
               // json = JSON.parse(json)
-          
+
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.AddedProduct, payload: JSON.parse(json[0].ReturnData) });
               } else {
@@ -876,7 +876,7 @@ export class GitEpic {
             })
             .then(response => response.json())
             .then(json => {
-           
+
               // json = JSON.parse(json)
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.UpdatedProduct, payload: JSON.parse(json[0].ReturnData) });
@@ -1566,12 +1566,12 @@ export class GitEpic {
       return dispatch => {
         try {
           console.log(url + project + "/" +
-          "Product_AddProductCategory?PRODUCTCATEGORY=" + action.payload.ProductCategory +
-          "&PRODUCTCATEGORYIMAGE=" + action.payload.ProductCategoryImage +
-          "&HIERARCHYID=" + action.payload.HierarchyID +
-          "&PARENTPRODUCTCATEGORYID=" + action.payload.ParentProductCategoryID +
-          "&PROJECTID=" + action.payload.ProjectID +
-          "&USERID=" + action.payload.UserID)
+            "Product_AddProductCategory?PRODUCTCATEGORY=" + action.payload.ProductCategory +
+            "&PRODUCTCATEGORYIMAGE=" + action.payload.ProductCategoryImage +
+            "&HIERARCHYID=" + action.payload.HierarchyID +
+            "&PARENTPRODUCTCATEGORYID=" + action.payload.ParentProductCategoryID +
+            "&PROJECTID=" + action.payload.ProjectID +
+            "&USERID=" + action.payload.UserID)
           return fetch(url + project + "/" +
             "Product_AddProductCategory?PRODUCTCATEGORY=" + action.payload.ProductCategory +
             "&PRODUCTCATEGORYIMAGE=" + action.payload.ProductCategoryImage +
@@ -2042,12 +2042,12 @@ export class GitEpic {
       }
     }));
 
-    getAllPaymentMethod = action$ =>
+  getAllPaymentMethod = action$ =>
     action$.pipe(filter(action => action.type === GitAction.GetPaymentMethod), map(action => {
       return dispatch => {
         try {
-          return fetch(url + project + "/" + 
-          "General_ViewPaymentMethod")
+          return fetch(url + project + "/" +
+            "General_ViewPaymentMethod")
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -2449,7 +2449,7 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.FetchSidebar), map(action => {
       return dispatch => {
         try {
-    
+
           return fetch(url + project + "/" +
             "User_ViewPage?" +
             "ROLEGROUPID=" + action.payload.ROLEGROUPID +
