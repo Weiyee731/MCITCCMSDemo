@@ -223,7 +223,6 @@ class Dashboard extends Component {
         let credential = ""
         let path = ""
 
-
         if (window.location.hostname === "localhost")
             path = window.location.pathname !== "/" && window.location.pathname.split("/")
         else
@@ -232,14 +231,12 @@ class Dashboard extends Component {
         if (path !== undefined && path.length > 0 && path[1] !== "" && path[1] !== undefined && path[1].toUpperCase() === "CMS.MYEMPORIA.MY" && path[2] !== undefined && path[2] !== "" && path[2].toUpperCase() !== "ECOMMERCECMS") {
 
             // if (path !== undefined && path.length > 0 && path[1] !== "" && path[1] !== undefined && path[1].toUpperCase() === "CMS.MYEMPORIA.MY" && path[2] !== undefined && path[2] !== "" && path[2].toUpperCase() !== "") {
-            credential = path[path.length - 1];
-            let username = decryptData(credential.split("_")[0].replace(/p1L2u3S/g, '+').replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '='))
-            let password = decryptData(credential.split("_")[1].replace(/p1L2u3S/g, '+').replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '='))
-
+            // credential = path[path.length - 1];
+            let username = decryptData(path[path.length - 2].replace(/p1L2u3S/g, '+').replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '='))
+            let password = decryptData(path[path.length - 1].replace(/p1L2u3S/g, '+').replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '='))
             if (username !== "" && password !== "") {
                 this.OnSubmitLogin(username, password)
             }
-
 
         } else {
             return false

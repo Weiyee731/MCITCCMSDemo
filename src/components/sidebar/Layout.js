@@ -79,13 +79,10 @@ function Layout() {
   }
 
   useEffect(() => {
-
     let systemPath = path.split("/")
     let pathLength = systemPath.length
 
-    console.log("dsddsada",)
     if (systemPath !== undefined && isArrayNotEmpty(systemPath) && !isNaN(systemPath[pathLength - 1])) {
-      console.log("dsddsada22",)
       setEncryptData({
         UserID: systemPath[pathLength - 1],
         UserName: systemPath[pathLength - 2],
@@ -127,10 +124,8 @@ function Layout() {
     let pathLength = systemPath.length
     let isRegister = false
 
-    if (systemPath.filter((x) => x === "register"))
+    if (systemPath.filter((x) => x === "register").length > 0)
       isRegister = true
-    // if (systemPath[pathLength - 3] === "register")
-    //   isRegister = true
 
     return isRegister
   }
