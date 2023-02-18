@@ -323,6 +323,7 @@ export function counterReducer(state = INITIAL_STATE, action) {
     case GitAction.GetUpdateMerchantProfile:
       return Object.assign({}, state, { loading: true });
     case GitAction.GotUpdateMerchantProfile:
+      console.log('action', action.payload)
       return Object.assign({}, state, {
         loading: false,
         merchantUpdateProfile: action.payload,

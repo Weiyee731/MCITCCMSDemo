@@ -24,7 +24,14 @@ import Typography from "@mui/material/Typography"
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import axios from "axios";
-// import moment from 'moment';
+import IconButton from "@mui/material/IconButton";
+import CancelIcon from '@mui/icons-material/Cancel';
+import moment from 'moment';
+
+import { Dayjs } from 'dayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import CloseIcon from '@mui/icons-material/Close';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -47,6 +54,7 @@ function mapStateToProps(state) {
         currentUser: state.counterReducer["currentUser"],
         userProfile: state.counterReducer["userProfile"],
         productsListing: state.counterReducer["productsListing"],
+        merchantUpdateProfile: state.counterReducer["merchantUpdateProfile"],
     };
 }
 
@@ -60,6 +68,7 @@ function mapDispatchToProps(dispatch) {
         CallClearShopUpdate: () => dispatch(GitAction.CallClearShopUpdate()),
         CallAllProductsListing: (propData) => dispatch(GitAction.CallAllProductsListing(propData)),
         CallUserProfile: (propData) => dispatch(GitAction.CallUserProfile(propData)),
+        CallGetUpdateMerchantProfile: (propData) => dispatch(GitAction.CallGetUpdateMerchantProfile(propData)),
     };
 }
 
@@ -67,16 +76,25 @@ const group = {
 
     UserInfo : localStorage.getItem("loginUser") !== null ? JSON.parse(localStorage.getItem("loginUser"))[0] : 0,
     USERID: localStorage.getItem("loginUser") !== null ? JSON.parse(localStorage.getItem("loginUser"))[0].UserID : 0,
-    USERFIRSTNAME: "",
-    USERLASTNAME: "",
+    FIRSTNAME: "",
+    LASTNAME: "",
     USERCONTACTNO: "",
-    USERDATEBIRTH: "",
+    USERDOB: "",
     USEREMAIL: "",
     USERGENDER: "",
+    USERNRIC:"",
+    SHOPBANK:"",
+    SHOPBANKACCOUNTNAME:"",
+    SHOPBANKACCOUNTNO:"", 
+    SHOPBANKACCOUNTHEADER:"",
+    SHOPBANKACCOUNTHEADER_NAME:"",
+    SHOPBANKACCOUNTHEADER_FILE:"",
+
     open: false,
     open1: false,
     showBoxForImage: false,
     fileAdded: false,
+    newFile: false,
     file: "",
     fileInfo: "",
     url: "",
@@ -108,6 +126,7 @@ const group = {
     SHOPSTATE: "",
     SHOPCITY: "",
     shopRating: 0,
+
 }
 class EditShopProfile extends Component {
     constructor(props) {
@@ -117,10 +136,13 @@ class EditShopProfile extends Component {
         // this.handleChange = this.handleChange.bind(this);
         this.uploadHandler = this.uploadHandler.bind(this);
         this.setDetails = this.setDetails.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
 
 
     setDetails(shopDetails) {
+        
+        const imgurl = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/userbank/" + JSON.parse(localStorage.getItem("loginUser"))[0].UserID + "/"
         this.setState({
             SHOPNAME: shopDetails.ShopName !== undefined ? shopDetails.ShopName : "",
             SHOPDESC: shopDetails.ShopDescription !== undefined ? shopDetails.ShopDescription : "",
@@ -128,13 +150,53 @@ class EditShopProfile extends Component {
             SHOPPOSCODE: shopDetails.ShopPoscode !== undefined ? shopDetails.ShopPoscode : "",
             SHOPSTATE: shopDetails.ShopState !== undefined ? shopDetails.ShopState : "",
             SHOPCITY: shopDetails.ShopCity !== undefined ? shopDetails.ShopCity : "",
+            SHOPBANK:shopDetails.ShopBank,
+            SHOPBANKACCOUNTNAME:shopDetails.ShopBankAccountName,
+            SHOPBANKACCOUNTNO:shopDetails.ShopBankAccountNo, 
+            SHOPBANKACCOUNTHEADER:imgurl + shopDetails.ShopBankAccountHeader,
+            fileAdded: shopDetails.ShopBankAccountHeader.length > 0 ? true : false,
+        })
+    }
+
+    getDate = (d) => {
+        const dob_Date = d && Number(d.replace(/\D/g, ""))
+        
+        const convertDate = new Date(dob_Date)
+
+        return convertDate
+    }
+
+    setProfileDetails(data){
+        console.log('datadata', data)
+        this.setState({
+            FIRSTNAME: data.FirstName,
+            LASTNAME: data.LastName,
+            USERCONTACTNO: data.UserContactNo,
+            USERDOB: this.getDate(data.UserDOB),
+            USEREMAIL: data.UserEmailAddress1,
+            USERGENDER: data.UserGender,
+            USERNRIC:data.UserNRIC
         })
     }
 
     componentDidMount() {
         if (this.state.USERID !== undefined && this.state.USERID !== null && this.state.typeValue !== undefined) {
+
+
+            const userProfile = {
+                TYPE: this.state.type2,
+                TYPEVALUE: this.state.typeValue,
+                USERID: this.state.USERID,
+                USERROLEID: this.state.userRoleID,
+                LISTPERPAGE: this.state.productPage,
+                PAGE: this.state.page,
+                PROJECTID: this.state.ProjectID,
+            }
+          
+
+
             this.props.CallMerchants(this.state);
-            this.props.CallUserProfile(this.state);
+            this.props.CallUserProfile(userProfile);
             this.props.CallCountry();
 
             this.props.CallAllProductsListing({
@@ -194,6 +256,21 @@ class EditShopProfile extends Component {
             this.modalClose()
         }
 
+        if(prevProps.userProfile !== this.props.userProfile){
+            let data = this.props.userProfile[0]
+            this.setProfileDetails(data)
+        }
+
+        
+        if(prevProps.merchant !== this.props.merchant){
+            let data = this.props.userProfile[0]
+            let shopDetails = this.props.merchant[0];
+            if (shopDetails !== undefined) {
+                this.setDetails(shopDetails)
+            }
+        }
+
+     
     }
     // componentWillUnmount(){ 
     //   this.setState(group); 
@@ -202,46 +279,55 @@ class EditShopProfile extends Component {
 
 
     /////////////////////UPLOAD PROFILE PHOTO/////////////////////////////////////////////////
-    onFileUpload = () => {
+    onFileUpload_BankStatement = () => {
         const formData = new FormData();
 
         let imageName = new Date().valueOf();
-        let fileExt = this.state.imageFile.map((imagedetails) =>
+        this.setState({SHOPBANKACCOUNTHEADER:imageName})
+        let fileExt = this.state.SHOPBANKACCOUNTHEADER_FILE.map((imagedetails) =>
             imagedetails.name.split('.').pop());
 
-        let FullImageName = JSON.stringify(imageName) + "." + fileExt;
+        const targetFolder = "userbank" 
 
-        formData.append("ID", JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID);
-        formData.append("targetFolder", "shopProfile");
+        formData.append("ID", JSON.parse(localStorage.getItem("loginUser"))[0].UserID);
+        formData.append("targetFolder", targetFolder);
         formData.append("projectDomain", localStorage.getItem("projectDomain"));
-        formData.append("upload[]", this.state.imageFile[0]);
+        formData.append("upload[]", this.state.SHOPBANKACCOUNTHEADER_FILE[0]);
         formData.append("imageName[]", imageName);
 
-        // formData.append("imageFile", this.state.imageFile[0]);
-        // formData.append("imageName", imageName);
+        let uploadImageURL = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/uploadImages.php"
 
-        let file = {
-            USERID: localStorage.getItem("loginUser") !== null && JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
-            USERPROFILEIMAGE: FullImageName,
-            TYPE: "SHOPIMAGE",
-        };
+        const updateData = {
+            USERID: this.state.USERID,
+            FIRSTNAME: this.state.FIRSTNAME,
+            LASTNAME: this.state.LASTNAME,
+            USEREMAIL: this.state.USEREMAIL,
+            USERGENDER: this.state.USERGENDER,
+            USERCONTACTNO: this.state.USERCONTACTNO,
+            USERDOB: this.state.USERDOB,
+            USERNRIC: this.state.USERNRIC,
+            SHOPBANK: this.state.SHOPBANK,
+            SHOPBANKACCOUNTNAME: this.state.SHOPBANKACCOUNTNAME,
+            SHOPBANKACCOUNTNO: this.state.SHOPBANKACCOUNTNO,
+            SHOPBANKACCOUNTHEADER: this.state.fileAdded === true && this.state.newFile === true ? imageName : this.props.merchant[0].map((x)=>(x.ShopBankAccountHeader)),
+        }
 
-        let imageURL = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/uploadImages.php"
-
-        axios
-            .post(
-                // "https://" + localStorage.getItem("projectDomain") + "/emporiaimage/uploaduserprofilepicture.php",
-                //  "https://" + localStorage.getItem("projectDomain") + "/images/uploadproductImages.php"
-                imageURL,
-                formData,
-                {}
+        if(this.state.fileAdded === true && this.state.newFile === false){
+            axios.post(
+                uploadImageURL,
+                formData
             )
             .then((res) => {
                 if (res.status === 200) {
-                    this.props.CallUpdateProfileImage(file);
-                
+                    this.props.CallGetUpdateMerchantProfile(updateData)
                 }
             });
+        }
+
+        else if(this.state.fileAdded === true && this.state.newFile === true) {
+            this.props.CallGetUpdateMerchantProfile(updateData)
+        }
+      
     };
 
     ///////////////////////////DELETE PHOTO SELECTED////////////////////////////////
@@ -272,52 +358,72 @@ class EditShopProfile extends Component {
     }
 
     //////////////////////GET INPUT FROM USER///////////////////////////////////////////////////////////
-    handleChangeforShopName = (e) => {
-        var { value } = e.target;
-        var chars = { ' ': '%20', '\n': 'C285' };
-        // value = value.replace(/ /g , "%20","C285");
-        value = value.replace(/[ ]/g, m => chars[m]);
-        if (value !== null) {
-            value = value.replace(/ /g, "%20");
-            this.setState({
-                SHOPNAME: value,
-            });
-        } else {
-        }
-    };
-
-    handleChangeforSHOPDESC = (e) => {
-        var { value } = e.target;
-        var chars = { ' ': '%20', '\n': 'C285' };
-        // value = value.replace(/ /g , "%20","C285");
-        value = value.replace(/[ ]/g, m => chars[m]);
-        if (value !== null) {
-            this.setState({
-                SHOPDESC: value
-            });
-        } else {
-        }
-    };
 
     handleChange(data, e) {
-        if (data === "SHOPPOSCODE") {
-            this.setState({
-                SHOPPOSCODE: e.target.value,
-            });
-        } else if (data === "SHOPSTATE") {
-            this.setState({
-                SHOPSTATE: e.target.value,
-            });
-        } else if (data === "SHOPCOUNTRYID") {
-            this.setState({
-                SHOPCOUNTRYID: e.target.value,
-            });
-        } else if (data === "SHOPCITY") {
-            this.setState({
-                SHOPCITY: e.target.value,
-            });
-        } else {
-        }
+
+       switch(data){
+        case 'FIRSTNAME':
+            this.setState({FIRSTNAME: e.target.value})
+            break;
+        
+        case 'LASTNAME' :
+            this.setState({LASTNAME: e.target.value})
+            break;
+        
+        case 'NRIC' :
+            this.setState({USERNRIC: e.target.value})
+            break;
+
+        case 'GENDER' :
+            console.log('s', e.target.value)
+            this.setState({USERGENDER: e.target.value})
+            break;
+
+        case 'CONTACTNO' :
+            this.setState({USERCONTACTNO: e.target.value})
+            break;
+
+        case 'EMAIL' :
+            this.setState({USEREMAIL: e.target.value})
+            break;
+        
+        case 'SHOPBANK':
+            this.setState({SHOPBANK: e.target.value})
+            break;
+        
+        case 'SHOPBANKNAME' :
+            this.setState({SHOPBANKACCOUNTNAME: e.target.value})
+            break;
+
+        case 'SHOPBANKACCOUNTNO':
+            this.setState({SHOPBANKACCOUNTNO: e.target.value})
+            break;
+
+        case 'SHOPNAME' :
+            this.setState({SHOPNAME: e.target.value})
+            break;
+        
+        case 'SHOPDESC':
+            this.setState({SHOPDESC: e.target.value})
+            break;
+
+        case 'SHOPSTATE' :
+            this.setState({SHOPSTATE: e.target.value})
+            break;
+        
+        case 'SHOPCITY' :
+            this.setState({SHOPCITY: e.target.value})
+            break;
+
+        case 'POSCODE' :
+            this.setState({POSCODE: e.target.value})
+            break;
+
+        case 'default':
+            break;
+            
+
+       }
     }
 
     updateShop() {
@@ -345,45 +451,26 @@ class EditShopProfile extends Component {
     }
 
     render() {
-        console.log('userProfile', this.props.userProfile)
+
         const merchantDetails = this.props.merchant.length > 0 &&
             this.props.merchant[0].ReturnVal === undefined && this.props.merchant[0];
-
-        const imgurl = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/shopProfile/" + JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID + "/"
-        console.log(imgurl)
-        console.log('userInfo', this.state.UserInfo)
-
-        // const links = [
-        //     { title: "Products", url: "", data: merchantDetails ? merchantDetails.MerchantTotalProduct : [0], icons: <ListAltOutlinedIcon className="titleicon" /> },
-     
-        //     {
-        //         title: "Shop Rating",
-        //         url: "",
-        //         data: this.state.shopRating,
-        //         icons: <GradeOutlinedIcon className="titleicon" />
-        //     },
-        // ].map((link) => {
-        //     return (
-        //         <div key={link.title} className="info-row">
-        //             <div className="info-row-left">
-        //                 {link.icons}{link.title}
-        //             </div>
-        //             <div className="info-row-right">{link.data}</div>
-        //         </div>
-        //     );
-        // })
 
         const getUploadParams = () => {
             return { url: "http://pmappapi.com/Memo/uploads/uploads/" };
         };
 
         const handleChangeStatus = ({ meta }, status) => {
-            console.log(status, meta);
+            console.log('ss', status, meta);
         };
 
         const handleSubmit = (files, allFiles) => {
             allFiles.forEach((f) => f.remove());
         };
+
+     
+
+        const imgurl = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/userbank/" + JSON.parse(localStorage.getItem("loginUser"))[0].UserID + "/"
+
         return (
             <div className="MainContainer" style={{ flex: 1 }}>
                 <Card>
@@ -407,19 +494,19 @@ class EditShopProfile extends Component {
                              
                             </div>
                             <div className="col p-4 shop_Box" >
-                                <Typography variant="caption" >Shop Review Count</Typography>
+                                <Typography variant="body1" >Shop Review Count</Typography>
                                 <div className="mt-3"style={{display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
                                 <Typography variant="h4">{merchantDetails.ShopReviewCount}</Typography>
                                 </div>
                             </div>
                             <div className="col p-4 shop_Box">
-                                <Typography variant="caption" >Shop Rating</Typography>
+                                <Typography variant="body1"  >Shop Rating</Typography>
                                 <div className="mt-3" style={{display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
-                                    <Rating name="read-only" value={merchantDetails.ShopRating} readOnly size="medium"></Rating>
+                                    <Rating name="read-only" value={merchantDetails.ShopRating} readOnly size="large"></Rating>
                                 </div>
                             </div>
                             <div className="col p-4 shop_Box" >
-                                <Typography variant='caption'>Total Product</Typography>
+                                <Typography variant="body1" >Total Product</Typography>
                                 <div className="mt-3" style={{display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
                                 <Typography variant="h4">{merchantDetails.MerchantTotalProduct}</Typography>
                                 </div>
@@ -430,7 +517,19 @@ class EditShopProfile extends Component {
 
                         <div className="row" style={{marginTop:'5%', marginBottom:'5%'}}>
                             <div className="col-4 col-md-4 col-lg-4 ">
-                            <div className="description row d-flex justify-content-center ml-4 mr-2"><Typography variant='subtitle2' >Last Joined: {merchantDetails.LastJoined} </Typography></div>
+                            <div className="container" style={{marginBottom:'3%'}}>
+                                <div className="row" >
+                                    <div >
+                                        <Typography variant='caption'>Profile Information</Typography>
+                                    </div>
+                                    
+                                    <div >
+                                        <Typography variant="subtitle2">Last Joined {merchantDetails.LastJoined} </Typography>
+                                    </div>
+                                    
+                                    </div>
+                                </div>
+                          
                                 <div className="row" style={{marginBottom:'3%'}}>
                                     
                                     <div onClick={() => this.modalOpen()} className="imagecontainer" style={{border: '3px solid #E1DCDC', borderStyle:'dashed'}}>
@@ -462,8 +561,8 @@ class EditShopProfile extends Component {
                                             size="small"
                                             label="First Name"
                                             id="firstName"
-                                            defaultValue={userData.FirstName === null ? '-' : userData.FirstName}
-                                            onChange={this.handleChangeforShopName.bind(this)}
+                                            value={this.state.FIRSTNAME === null ? '-' : this.state.FIRSTNAME}
+                                            onChange={(e) => this.handleChange('FIRSTNAME', e)}
                                         />
                                     </div>
                                     <div className="col-6 m-1">
@@ -473,8 +572,8 @@ class EditShopProfile extends Component {
                                             size="small"
                                             label="Last Name"
                                             id="lastName"
-                                            defaultValue={userData.LastName=== null ? '-' : userData.LastName}
-                                            onChange={this.handleChangeforShopName.bind(this)}
+                                            value={this.state.LASTNAME === null ? '-' : this.state.LASTNAME}
+                                            onChange={(e) => this.handleChange('LASTNAME', e)}
                                         />
                                     </div>
                                 </div>
@@ -486,33 +585,35 @@ class EditShopProfile extends Component {
                                             <RadioGroup
                                                 aria-labelledby="demo-controlled-radio-buttons-group"
                                                 name="controlled-radio-buttons-group"
-                                                value={this.state.Gender}
-                                                // onChange={handleChange}
+                                                value={this.state.USERGENDER}
+                                                onChange={(e) => this.handleChange('GENDER', e)}
                                             >
-                                                <FormControlLabel value="Female" control={<Radio />} label="Female" checked={userData.UserGender.toLowercase === 'Female'}/>
-                                                <FormControlLabel value="Male" control={<Radio />} label="Male" checked={userData.UserGender === 'Male'}/>
+                                                <FormControlLabel value="Female" control={<Radio />} label="Female" checked={this.state.USERGENDER === 'Female'}/>
+                                                <FormControlLabel value="Male" control={<Radio />} label="Male" checked={this.state.USERGENDER === 'Male'}/>
                                             </RadioGroup>
                                         </FormControl>
                                     </div>
                                     <div className="col-6 m-1" style={{display:'flex', flexDirection:'column', justifyContent:'space-between'}}>
-                                        <TextField
-                                            fullWidth
-                                            variant="outlined"
-                                            size="small"
+       
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DatePicker
                                             label="Date of Birth"
-                                            id="dob" 
-                                            defaultValue={this.state.UserInfo.LastName=== null ? '-' : this.state.UserInfo.LastName}
-                                            onChange={this.handleChangeforShopName.bind(this)}
+                                            value={this.state.USERDOB}
+                                            onChange={(newValue) => {
+                                            this.setState({USERDOB: newValue});
+                                            }}
+                                            renderInput={(params) => <TextField {...params} />}
                                         />
+                                        </LocalizationProvider>
 
                                         <TextField
                                             fullWidth
                                             variant="outlined"
                                             size="small"
                                             label="NRIC"
-                                            id="dob"
-                                            defaultValue={this.state.UserInfo.UserNRIC === null ? '-' : this.state.UserInfo.UserNRIC}
-                                            onChange={this.handleChangeforShopName.bind(this)}
+                                            id="nric"
+                                            value={this.state.USERNRIC === null ? '-' : this.state.USERNRIC}
+                                            onChange={(e) => this.handleChange('NRIC', e)}
                                         />
                                     </div>
                                 </div>
@@ -525,8 +626,8 @@ class EditShopProfile extends Component {
                                             size="small"
                                             label="Contact No"
                                             id="contactNo"
-                                            defaultValue={this.state.UserInfo.UserContactNo === null ? '-' : this.state.UserInfo.UserContactNo}
-                                            onChange={this.handleChangeforShopName.bind(this)}
+                                            value={this.state.USERCONTACTNO === null ? '-' : this.state.USERCONTACTNO}
+                                            onChange={(e) => this.handleChange('CONTACTNO', e)}
                                         />
                                     </div>
                                     <div className="col-6 m-1">
@@ -536,24 +637,22 @@ class EditShopProfile extends Component {
                                             size="small"
                                             label="Email"
                                             id="email"
-                                            defaultValue={this.state.UserInfo.UserEmailAddress === null ? '-' : this.state.UserInfo.UserEmailAddress}
-                                            onChange={this.handleChangeforShopName.bind(this)}
+                                            value={this.state.USEREMAIL === null ? '-' : this.state.USEREMAIL}
+                                            onChange={(e) => this.handleChange('EMAIL', e)}
                                         />
                                     </div>
                                 </div>
-</div>
+                        </div>
 
-))}
-
-                                
+                        ))}
+                                                        
                             </div>
 
                             <div className="col-4 col-md-4 col-lg-4 border-line-right">
-                            <div className="container">
-                                <div className="row" >
-                                    <Typography variant='caption'>Bank Information</Typography>
+                            <div className="container" style={{display:'flex', flexDirection:'row', justifyContent:"flex-end", marginTop:0}} onClick={() => this.onFileUpload_BankStatement()}>
+                                        <Button variant="contained" color="primary">Update Profile Info</Button>
                                     </div>
-                                </div>
+                          
                                 {this.props.merchant && this.props.merchant.length > 0 && this.props.merchant[0] !== null &&
                                     this.props.merchant.map((row) => (
                                         <div className="container" key={row.ShopName}>
@@ -563,10 +662,10 @@ class EditShopProfile extends Component {
                                                         fullWidth
                                                         variant="outlined"
                                                         size="small"
-                                                        label="Shop Bank"
+                                                        label="Bank"
                                                         id="shopBank"
-                                                        defaultValue={row.ShopBank === null ? 'None' : row.ShopBank}
-                                                        onChange={this.handleChangeforShopName.bind(this)}
+                                                        value={this.state.SHOPBANK === null ? 'None' : this.state.SHOPBANK}
+                                                        onChange={(e) => this.handleChange('SHOPBANK', e)}
                                                     />
                                                 </div>
                                             </div>
@@ -580,8 +679,8 @@ class EditShopProfile extends Component {
                                                         size="small"
                                                         label="Bank Account Name"
                                                         id="bankAccName"
-                                                        defaultValue={row.ShopBankAccountName === null ? 'None' : row.ShopBankAccountName}
-                                                        onChange={this.handleChangeforSHOPDESC.bind(this)}
+                                                        value={this.state.SHOPBANKACCOUNTNAME === null ? 'None' : this.state.SHOPBANKACCOUNTNAME}
+                                                        onChange={(e) => this.handleChange('SHOPBANKNAME', e)}
                                                     />
                                                 </div>
                                             </div>
@@ -596,87 +695,102 @@ class EditShopProfile extends Component {
                                                         size="small"
                                                         label="Bank Account Number"
                                                         id="bankAccNo"
-                                                        defaultValue={row.ShopBankAccountNo === null ? 'None' : row.ShopBankAccountNo}
-                                                        onChange={this.handleChangeforSHOPDESC.bind(this)}
+                                                        value={this.state.SHOPBANKACCOUNTNO === null ? 'None' : this.state.SHOPBANKACCOUNTNO }
+                                                        onChange={(e) => this.handleChange('SHOPBANKACCOUNTNO', e)}
                                                     />
                                                 </div>
                                             </div>
                                             <div className="row">
                                                 <div className="col mt-4" >
-                                                    <Dropzone
-                                                    style={{ width: "100%"}}
-                                                    onDrop={(acceptedFiles) => {
-                                                        if (acceptedFiles.length > 0) {
-                                                            this.setState({
-                                                                preview: acceptedFiles.map(file => URL.createObjectURL(file)),
-                                                                imageName: acceptedFiles[0].name,
-                                                                fileAdded: true,
-                                                                imageFile: acceptedFiles,
-                                                            });
-                                                            return;
-                                                        } else {
-                                                            this.setState({
-                                                                imageName: "",
-                                                                fileAdded: false,
-                                                                fileUpload: [],
-                                                            });
-                                                        }
-                                                    }}
-                                                    accept="image/*"
-                                                    maxFiles={1}
-                                                    multiple={false}
-                                                    getUploadParams={getUploadParams}
-                                                    onChangeStatus={handleChangeStatus}
-                                                    onSubmit={handleSubmit}
-                                                >
-                                                    {({
-                                                        getRootProps,
-                                                        getInputProps,
-                                                        isDragActive,
-                                                        isDragAccept,
-                                                        isDragReject,
-                                                    }) => (
-                                                        <section>
-                                                            <div
-                                                                {...getRootProps({
-                                                                    className: "dropzone",
-                                                                })}
-                                                      
-                                                                style={{
-                                                                    width:'100%',
-                                                                    borderColor: isDragActive
-                                                                        ? isDragReject
-                                                                            ? "#fc5447"
-                                                                            : "#a0d100"
-                                                                        : "#b8b8b8",
-                                                                    color: isDragActive
-                                                                        ? isDragReject
-                                                                            ? "#a31702"
-                                                                            : "#507500"
-                                                                        : "#828282",
-                                                                }}
-                                                            >
-                                                                <input {...getInputProps()} />
-                                                                {this.state.fileAdded ? (
-                                                                    <div className="droppedFileImage">
-                                                                        <img className="bankHeaderStatement" src={this.state.preview} alt={this.state.imageName} />
-                                                                    </div>
-                                                                ) : (
-                                                                    <div style={{margin:'auto'}}>
+
+                                                    {this.state.fileAdded === true ? (
+                                                        <div style={{border:'2px solid #E1DCDC', borderStyle:'dashed'}}>
+                                                        <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-end', padding:'2%'}}>
+                                                            <IconButton onClick={() =>  this.removeFile()}>
+                                                                <CancelIcon color="error" />
+                                                            </IconButton>
+                                                        </div>
+                                                        <div className="droppedFileImage" style={{padding:'2%'}}>
+                                                            <img src={this.state.SHOPBANKACCOUNTHEADER} alt={this.state.bankHeaderStatement} style={{width:'100%'}} />
+                                                        </div>
+                                     
+                                                        </div>
+                                                    ) : (
+                                                        <Dropzone
+                                                        style={{ width: "100%"}}
+                                                        onDrop={(acceptedFiles) => {
+                                                            if (acceptedFiles.length > 0) {
+                                                                this.setState({
+                                                                    SHOPBANKACCOUNTHEADER: acceptedFiles.map(file => URL.createObjectURL(file)),
+                                                                    SHOPBANKACCOUNTHEADER_NAME: acceptedFiles[0].name,
+                                                                    fileAdded: true,
+                                                                    SHOPBANKACCOUNTHEADER_FILE: acceptedFiles,
+                                                                    newFile: true,
+                                                                });
+                                                                return;
+                                                            } else {
+                                                                this.setState({
+                                                                    imageName: "",
+                                                                    fileAdded: false,
+                                                                    fileUpload: [],
+                                                                    newFile: false,
+                                                                });
+                                                            }
+                                                        }}
+                                                        accept="image/*"
+                                                        maxFiles={1}
+                                                        multiple={false}
+                                                        getUploadParams={getUploadParams}
+                                                        onChangeStatus={handleChangeStatus}
+                                                        // onSubmit={handleSubmit}
+                                                    >
+                                                        {({
+                                                            getRootProps,
+                                                            getInputProps,
+                                                            isDragActive,
+                                                            isDragAccept,
+                                                            isDragReject,
+                                                        }) => (
+                                                            <section>
+                                                                <div
+                                                                    {...getRootProps({
+                                                                        className: "dropzone",
+                                                                    })}
+                                                          
+                                                                    style={{
+                                                                        width:'100%',
+                                                                        borderColor: isDragActive
+                                                                            ? isDragReject
+                                                                                ? "#fc5447"
+                                                                                : "#a0d100"
+                                                                            : "#b8b8b8",
+                                                                        color: isDragActive
+                                                                            ? isDragReject
+                                                                                ? "#a31702"
+                                                                                : "#507500"
+                                                                            : "#828282",
+                                                                    }}
+                                                                >
+                                                                    <input {...getInputProps()} />
+                                                                    <div className="preview-word" >
                                                                         {!isDragActive && "Upload Bank Statement Header"}
                                                                         {isDragActive &&
                                                                             !isDragReject &&
-                                                                            "Upload Bank Statement Header"}
+                                                                            "Upload Bank Statement Header ..."}
                                                                     </div>
-                                                                )}
-                                                            </div>
-                                                        </section>
+                                                                </div>
+                                                            </section>
+                                                        )}
+                                                    </Dropzone>
                                                     )}
-                                                </Dropzone>
+
+                                                    
                                                 </div></div>
                                             <br />
                                         </div>
                                     ))}
+
+                                    
                             </div>
 
    
@@ -686,8 +800,9 @@ class EditShopProfile extends Component {
                                     <div style={{marginTop:'auto', marginBottom:'auto'}}>
                                         <Typography variant='caption' >Shop Information</Typography>
                                     </div>
-                                    <div>
-                                        <Button color="primary" variant="contained" size="small">Update Shop Info</Button>
+                             
+                                    <div style={{display:'flex', flexDirection:"row", justifyContent:'flex-end'}}>
+                                        <Button color="primary" variant="contained" >Update Shop Info</Button>
                                     </div>
                                 </div>
                                 </div>
@@ -701,9 +816,9 @@ class EditShopProfile extends Component {
                                                         variant="outlined"
                                                         size="small"
                                                         label="Shop Name"
-                                                        id="userfirstname"
-                                                        defaultValue={row.ShopName}
-                                                        onChange={this.handleChangeforShopName.bind(this)}
+                                                        id="shopName"
+                                                        value={this.state.SHOPNAME}
+                                                        onChange={(e) => this.handleChange('SHOPNAME', e)}
                                                     />
                                                 </div>
                                             </div>
@@ -716,9 +831,9 @@ class EditShopProfile extends Component {
                                                         maxRows={5}
                                                         label="Shop Description"
                                                         size="small"
-                                                        id="userlastname"
-                                                        defaultValue={row.ShopDescription}
-                                                        onChange={this.handleChangeforSHOPDESC.bind(this)}
+                                                        id="shopDesc"
+                                                        value={this.state.SHOPDESC}
+                                                        onChange={(e) => this.handleChange('SHOPDESC', e)}
                                                     />
                                                 </div>
                                             </div>
@@ -735,7 +850,7 @@ class EditShopProfile extends Component {
                                                             defaultValue={row.ShopCountryID ? row.ShopCountryID : 148}
                                                             label="Country"
                                                             size="small"
-                                                            onChange={this.handleChange.bind(this, "SHOPCOUNTRYID")}
+                                                            onChange={(e)=>(this.setState({COUNTRY: e.target.value }))}
                                                         >
                                                             {this.props.countrylist.map((country) => (
                                                                 <option
@@ -758,7 +873,7 @@ class EditShopProfile extends Component {
                                                         id="userfirstname"
                                                         label="State"
                                                         defaultValue={row.ShopState}
-                                                        onChange={this.handleChange.bind(this, "SHOPSTATE")}
+                                                        onChange={(e) => this.handleChange('STATE', e)}
                                                     />
                                                 </div>
                                             </div>
@@ -769,9 +884,9 @@ class EditShopProfile extends Component {
                                                         variant="outlined"
                                                         size="small"
                                                         label="City"
-                                                        id="userfirstname"
+                                                        id="City"
                                                         defaultValue={row.ShopCity}
-                                                        onChange={this.handleChange.bind(this, "SHOPCITY")}
+                                                        onChange={(e) => this.handleChange('CITY', e)}
                                                     />
                                                 </div>
                                             </div>
@@ -781,15 +896,18 @@ class EditShopProfile extends Component {
                                                         className="font"
                                                         variant="outlined"
                                                         size="small"
-                                                        id="userfirstname"
+                                                        id="Poscode"
                                                         label="Poscode"
                                                         defaultValue={row.ShopPoscode}
-                                                        onChange={this.handleChange.bind(this, "SHOPPOSCODE")}
+                                                        onChange={(e) => this.handleChange('POSCODE', e)}
                                                     />
                                                 </div>
                                             </div>
                                         </div>
                                     ))}
+                                    
+                             
+                                  
                             </div>
                          
                         </div>
@@ -816,9 +934,11 @@ class EditShopProfile extends Component {
                                     className="form-content p-2"
                                 >
                                     <div>
+                                       
                                         <Dropzone
                                             style={{ width: "150vw", height: "60vh" }}
                                             onDrop={(acceptedFiles) => {
+                                                {console.log('accepted files', acceptedFiles)}
                                                 if (acceptedFiles.length > 0) {
                                                     this.setState({
                                                         preview: acceptedFiles.map(file => URL.createObjectURL(file)),

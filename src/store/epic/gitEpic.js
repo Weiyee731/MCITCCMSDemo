@@ -112,15 +112,7 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.Update_ForgotPassword), map(action => {
       return dispatch => {
         try {
-          console.log(url + project + "/" +
-          "User_UpdateProfileSpecificField?USERID=" +
-          action.payload.UserID +
-          "&TYPE=" +
-          action.payload.Type +
-          "&OTP=" +
-          action.payload.OTP +
-          "&UPDATEDFIELD=" +
-          action.payload.UpdatedField)
+     
           return fetch(url + project + "/" +
             "User_UpdateProfileSpecificField?USERID=" +
             action.payload.UserID +
@@ -232,13 +224,13 @@ export class GitEpic {
       return dispatch => {
         try {
           return fetch(url + project + "/" +
-          "User_ProfileListByType?TYPE=" + action.payload.type2 +
-          "&TYPEVALUE=" + action.payload.typeValue +
+          "User_ProfileListByType?TYPE=" + action.payload.TYPE +
+          "&TYPEVALUE=" + action.payload.TYPEVALUE +
           "&USERID=" + action.payload.USERID +
-          "&UserRoleID=" + action.payload.userRoleID +
-          "&LISTPERPAGE=" + action.payload.productPage +
-          "&PAGE=" + action.payload.page +
-          "&ProjectID=" + action.payload.ProjectID
+          "&UserRoleID=" + action.payload.USERROLEID +
+          "&LISTPERPAGE=" + action.payload.LISTPERPAGE +
+          "&PAGE=" + action.payload.PAGE +
+          "&ProjectID=" + action.payload.PROJECTID
             
             )
             .then(response => response.json())
@@ -638,14 +630,6 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.GetMerchants), map(action => {
       return dispatch => {
         try {
-          console.log(url + project + "/" +
-          "User_ProfileListByType?TYPE=" + action.payload.type +
-          "&TYPEVALUE=" + action.payload.typeValue +
-          "&USERID=" + action.payload.USERID +
-          "&UserRoleID=" + action.payload.userRoleID +
-          "&LISTPERPAGE=" + action.payload.productPage +
-          "&PAGE=" + action.payload.page +
-          "&ProjectID=" + action.payload.ProjectID)
           return fetch(url + project + "/" +
             "User_ProfileListByType?TYPE=" + action.payload.type +
             "&TYPEVALUE=" + action.payload.typeValue +
@@ -708,52 +692,28 @@ export class GitEpic {
         "&FIRSTNAME=" +
         action.payload.FIRSTNAME +
         "&LASTNAME=" +
-        action.payload.LASTNAME+
+        action.payload.LASTNAME +
         "&USEREMAIL=" +
-        action.payload.USEREMAIL+
+        action.payload.USEREMAIL +
         "&USERGENDER=" +
-        action.payload.USERGENDER+
+        action.payload.USERGENDER +
         "&USERCONTACTNO=" +
-        action.payload.USERCONTACTNO+
+        action.payload.USERCONTACTNO +
         "&USERDOB=" +
-        action.payload.USERDOB+
+        action.payload.USERDOB +
         "&USERNRIC=" +
-        action.payload.USERNRIC+
+        action.payload.USERNRIC +
         "&SHOPBANK=" +
-        action.payload.SHOPBANK+
+        action.payload.SHOPBANK +
         "&SHOPBANKACCOUNTNAME=" +
-        action.payload.SHOPBANKACCOUNTNAME+
+        action.payload.SHOPBANKACCOUNTNAME +
         "&SHOPBANKACCOUNTNO=" +
-        action.payload.SHOPBANKACCOUNTNO+
+        action.payload.SHOPBANKACCOUNTNO +
         "&SHOPBANKACCOUNTHEADER=" +
-        action.payload.SHOPBANKACCOUNTHEADER)
+        action.payload.SHOPBANKACCOUNTHEADER
+        )
         try {
-          console.log(url + project + "/" +
-          "User_UpdateMerchantProfile?USERID=" +
-          action.payload.USERID +
-          "&FIRSTNAME=" +
-          action.payload.FIRSTNAME +
-          "&LASTNAME=" +
-          action.payload.LASTNAME +
-          "&USEREMAIL=" +
-          action.payload.USEREMAIL +
-          "&USERGENDER=" +
-          action.payload.USERGENDER +
-          "&USERCONTACTNO=" +
-          action.payload.USERCONTACTNO +
-          "&USERDOB=" +
-          action.payload.USERDOB +
-          "&USERNRIC=" +
-          action.payload.USERNRIC +
-          "&SHOPBANK=" +
-          action.payload.SHOPBANK +
-          "&SHOPBANKACCOUNTNAME=" +
-          action.payload.SHOPBANKACCOUNTNAME +
-          "&SHOPBANKACCOUNTNO=" +
-          action.payload.SHOPBANKACCOUNTNO +
-          "&SHOPBANKACCOUNTHEADER=" +
-          action.payload.SHOPBANKACCOUNTHEADER
-          )
+
           return fetch(url + project + "/" +
             "User_UpdateMerchantProfile?USERID=" +
             action.payload.USERID +
