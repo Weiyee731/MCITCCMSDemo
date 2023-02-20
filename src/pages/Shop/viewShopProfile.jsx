@@ -24,6 +24,9 @@ import Typography from "@mui/material/Typography"
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import axios from "axios";
+import { MenuItem } from "@mui/material";
+import { isArrayNotEmpty } from "../../tools/Helpers";
+
 import IconButton from "@mui/material/IconButton";
 import CancelIcon from '@mui/icons-material/Cancel';
 import moment from 'moment';
@@ -44,6 +47,7 @@ import Rating from '@mui/material/Rating';
 import Logo from "../../assets/logos/logo.png";
 
 import './viewShopProfile.scss';
+import { ignoreElements } from "rxjs/operator/ignoreElements";
 
 
 function mapStateToProps(state) {
@@ -54,6 +58,8 @@ function mapStateToProps(state) {
         currentUser: state.counterReducer["currentUser"],
         userProfile: state.counterReducer["userProfile"],
         productsListing: state.counterReducer["productsListing"],
+        states: state.counterReducer["states"],
+        paymentMethod: state.counterReducer["paymentMethod"],
         merchantUpdateProfile: state.counterReducer["merchantUpdateProfile"],
     };
 }
@@ -68,13 +74,15 @@ function mapDispatchToProps(dispatch) {
         CallClearShopUpdate: () => dispatch(GitAction.CallClearShopUpdate()),
         CallAllProductsListing: (propData) => dispatch(GitAction.CallAllProductsListing(propData)),
         CallUserProfile: (propData) => dispatch(GitAction.CallUserProfile(propData)),
+        CallState: () => dispatch(GitAction.CallState()),
+        CallPaymentMethod: (data) => dispatch(GitAction.CallPaymentMethod(data)),
         CallGetUpdateMerchantProfile: (propData) => dispatch(GitAction.CallGetUpdateMerchantProfile(propData)),
     };
 }
 
 const group = {
 
-    UserInfo : localStorage.getItem("loginUser") !== null ? JSON.parse(localStorage.getItem("loginUser"))[0] : 0,
+    UserInfo: localStorage.getItem("loginUser") !== null ? JSON.parse(localStorage.getItem("loginUser"))[0] : 0,
     USERID: localStorage.getItem("loginUser") !== null ? JSON.parse(localStorage.getItem("loginUser"))[0].UserID : 0,
     FIRSTNAME: "",
     LASTNAME: "",
@@ -180,6 +188,7 @@ class EditShopProfile extends Component {
     }
 
     componentDidMount() {
+
         if (this.state.USERID !== undefined && this.state.USERID !== null && this.state.typeValue !== undefined) {
 
 
@@ -198,6 +207,8 @@ class EditShopProfile extends Component {
             this.props.CallMerchants(this.state);
             this.props.CallUserProfile(userProfile);
             this.props.CallCountry();
+            this.props.CallState();
+            this.props.CallPaymentMethod();
 
             this.props.CallAllProductsListing({
                 type: "Merchant",
@@ -225,6 +236,10 @@ class EditShopProfile extends Component {
         } else {
             // browserHistory.push("/login");
             // window.location.reload(false);
+        }
+
+        if(this.props.merchant.lenght > 0){
+            this.props.merchant((x)=>this.setState({SHOPSTATE:x.ShopState}))
         }
     }
     componentDidUpdate(prevProps) {
@@ -319,7 +334,8 @@ class EditShopProfile extends Component {
             )
             .then((res) => {
                 if (res.status === 200) {
-                    this.props.CallGetUpdateMerchantProfile(updateData)
+                    this.props.CallUpdateProfileImage(file);
+
                 }
             });
         }
@@ -455,6 +471,28 @@ class EditShopProfile extends Component {
         const merchantDetails = this.props.merchant.length > 0 &&
             this.props.merchant[0].ReturnVal === undefined && this.props.merchant[0];
 
+        const imgurl = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/shopProfile/" + JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID + "/"
+
+        // const links = [
+        //     { title: "Products", url: "", data: merchantDetails ? merchantDetails.MerchantTotalProduct : [0], icons: <ListAltOutlinedIcon className="titleicon" /> },
+
+        //     {
+        //         title: "Shop Rating",
+        //         url: "",
+        //         data: this.state.shopRating,
+        //         icons: <GradeOutlinedIcon className="titleicon" />
+        //     },
+        // ].map((link) => {
+        //     return (
+        //         <div key={link.title} className="info-row">
+        //             <div className="info-row-left">
+        //                 {link.icons}{link.title}
+        //             </div>
+        //             <div className="info-row-right">{link.data}</div>
+        //         </div>
+        //     );
+        // })
+
         const getUploadParams = () => {
             return { url: "http://pmappapi.com/Memo/uploads/uploads/" };
         };
@@ -466,6 +504,8 @@ class EditShopProfile extends Component {
         const handleSubmit = (files, allFiles) => {
             allFiles.forEach((f) => f.remove());
         };
+        const selectedCity = this.props.states.filter((x) => x.State === this.state.SHOPSTATE).map((y) => JSON.parse(y.CityDetail))
+        let bankName = this.props.paymentMethod.filter((x) => x.PaymentMethodType === "Direct Bank").map((y) => JSON.parse(y.PaymentMethod))
 
      
 
@@ -475,49 +515,49 @@ class EditShopProfile extends Component {
             <div className="MainContainer" style={{ flex: 1 }}>
                 <Card>
                     <CardContent>
-                        <div className="row" style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly', margin:'4%'}}>
+                        <div className="row" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', margin: '4%' }}>
                             <div className="col m-auto">
                                 <div
                                     style={{
                                         textAlign: "left",
                                         fontWeight: 800,
-                                        marginBottom:'4%',
+                                        marginBottom: '4%',
                                     }}
                                 >
-                                      <h3> Shop Profile </h3>
-                                  
+                                    <h3> Shop Profile </h3>
+
                                 </div>
 
                                 <div className="font font-subtitle">
                                     Manage your shop information
                                 </div>
-                             
+
                             </div>
                             <div className="col p-4 shop_Box" >
                                 <Typography variant="body1" >Shop Review Count</Typography>
-                                <div className="mt-3"style={{display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
-                                <Typography variant="h4">{merchantDetails.ShopReviewCount}</Typography>
+                                <div className="mt-3" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                    <Typography variant="h4">{merchantDetails.ShopReviewCount}</Typography>
                                 </div>
                             </div>
                             <div className="col p-4 shop_Box">
                                 <Typography variant="body1"  >Shop Rating</Typography>
-                                <div className="mt-3" style={{display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+                                <div className="mt-3" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                     <Rating name="read-only" value={merchantDetails.ShopRating} readOnly size="large"></Rating>
                                 </div>
                             </div>
                             <div className="col p-4 shop_Box" >
                                 <Typography variant="body1" >Total Product</Typography>
-                                <div className="mt-3" style={{display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
-                                <Typography variant="h4">{merchantDetails.MerchantTotalProduct}</Typography>
+                                <div className="mt-3" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                    <Typography variant="h4">{merchantDetails.MerchantTotalProduct}</Typography>
                                 </div>
                             </div>
-                        
+
                         </div>
                         <Divider variant="fullWidth" className="dividerbottom" />
 
-                        <div className="row" style={{marginTop:'5%', marginBottom:'5%'}}>
+                        <div className="row" style={{ marginTop: '5%', marginBottom: '5%' }}>
                             <div className="col-4 col-md-4 col-lg-4 ">
-                            <div className="container" style={{marginBottom:'3%'}}>
+                                <div className="container" style={{marginBottom:'3%'}}>
                                 <div className="row" >
                                     <div >
                                         <Typography variant='caption'>Profile Information</Typography>
@@ -530,9 +570,9 @@ class EditShopProfile extends Component {
                                     </div>
                                 </div>
                           
-                                <div className="row" style={{marginBottom:'3%'}}>
-                                    
-                                    <div onClick={() => this.modalOpen()} className="imagecontainer" style={{border: '3px solid #E1DCDC', borderStyle:'dashed'}}>
+                                <div className="row" style={{ marginBottom: '3%' }}>
+
+                                    <div onClick={() => this.modalOpen()} className="imagecontainer" style={{ border: '3px solid #E1DCDC', borderStyle: 'dashed' }}>
                                         <img
                                             // className="profilePic"
                                             src={merchantDetails.ShopImage && merchantDetails.ShopImage.length ? imgurl + merchantDetails.ShopImage : Logo}
@@ -551,32 +591,32 @@ class EditShopProfile extends Component {
                                 <div className="description row d-flex justify-content-center ml-4 mr-2"><br /> Click on the image above to edit profile picture</div>
 
 
-{this.props.userProfile && this.props.userProfile.map((userData)=> (
-    <div>
-                                <div className="col mt-4" style={{display:'flex', flexDirection:'row'}}>
-                                    <div className="col-6 m-1">
-                                        <TextField
-                                            fullWidth
-                                            variant="outlined"
-                                            size="small"
-                                            label="First Name"
-                                            id="firstName"
-                                            value={this.state.FIRSTNAME === null ? '-' : this.state.FIRSTNAME}
-                                            onChange={(e) => this.handleChange('FIRSTNAME', e)}
-                                        />
-                                    </div>
-                                    <div className="col-6 m-1">
-                                        <TextField
-                                            fullWidth
-                                            variant="outlined"
-                                            size="small"
-                                            label="Last Name"
-                                            id="lastName"
-                                            value={this.state.LASTNAME === null ? '-' : this.state.LASTNAME}
-                                            onChange={(e) => this.handleChange('LASTNAME', e)}
-                                        />
-                                    </div>
-                                </div>
+                                {this.props.userProfile && this.props.userProfile.map((userData) => (
+                                    <div>
+                                        <div className="col mt-4" style={{ display: 'flex', flexDirection: 'row' }}>
+                                            <div className="col-6 m-1">
+                                                <TextField
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    size="small"
+                                                    label="First Name"
+                                                    id="firstName"
+                                                    value={this.state.FIRSTNAME === null ? '-' : this.state.FIRSTNAME}
+                                                    onChange={(e) => this.handleChange('FIRSTNAME', e)}
+                                                />
+                                            </div>
+                                            <div className="col-6 m-1">
+                                                <TextField
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    size="small"
+                                                    label="Last Name"
+                                                    id="lastName"
+                                                    value={this.state.LASTNAME  === null ? '-' : this.state.LASTNAME}
+                                                    onChange={(e) => this.handleChange('LASTNAME', e)}
+                                                />
+                                            </div>
+                                        </div>
 
                                 <div className="col mt-4" style={{display:'flex', flexDirection:'row'}}>
                                     <div className="col-6 m-1">
@@ -658,7 +698,24 @@ class EditShopProfile extends Component {
                                         <div className="container" key={row.ShopName}>
                                             <div className="row" >
                                                 <div className="col mt-4">
-                                                    <TextField
+                                                <FormControl fullWidth>
+                                                    <InputLabel id="demo-simple-select-label">Shop Bank</InputLabel>
+                                                    <Select
+                                                        id="Shop Bank"
+                                                        label="Shop Bank"
+                                                        variant="outlined"
+                                                        defaultValue={row.ShopBank}
+                                                        size="small"
+                                                        onChange={this.handleChangeforShopName.bind(this)}
+                                                    >
+                                                        {
+                                            isArrayNotEmpty(bankName) && bankName[0].map((el, idx) => {
+                                                return <MenuItem key={el.PaymentMethodID} value={el.BankName}>{el.BankName}</MenuItem>
+                                            })
+                                        }
+                                                    </Select>
+                                                </FormControl>
+                                                    {/* <TextField
                                                         fullWidth
                                                         variant="outlined"
                                                         size="small"
@@ -793,7 +850,7 @@ class EditShopProfile extends Component {
                                     
                             </div>
 
-   
+
                             <div className="col-4 col-md-4 col-lg-4">
                             <div className="container">
                                 <div style={{display:'flex', flexDirection:"row", justifyContent:'space-between'}}>
@@ -872,6 +929,7 @@ class EditShopProfile extends Component {
                                                         size="small"
                                                         id="userfirstname"
                                                         label="State"
+                                                        variant="outlined"
                                                         defaultValue={row.ShopState}
                                                         onChange={(e) => this.handleChange('STATE', e)}
                                                     />
@@ -909,7 +967,7 @@ class EditShopProfile extends Component {
                              
                                   
                             </div>
-                         
+
                         </div>
                     </CardContent>
 

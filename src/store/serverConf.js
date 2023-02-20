@@ -6,7 +6,7 @@ const URLtype = "/eCommerceCMS_DEV/"
 
 export const ServerConfiguration = {
     ServerUrl: "https://" + projectURL + "/eCommerceCMS/api/",
-    LoginUrl: "https://" + loginProjectURL + "/eCommerceCMS/api/",
+    LoginUrl: "https://" + loginProjectURL + URLtype + "api/",
     DevServerUrl: "https://" + projectURL + URLtype + "api/",
     LiveServerLoginUrl: "https://cms.myemporia.my" + URLtype + "api/",
 }

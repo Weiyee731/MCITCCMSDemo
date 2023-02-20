@@ -25,7 +25,9 @@ import CloseIcon from "@mui/icons-material/Close";
 // import css
 import "./registerMerchant.css";
 import { redirect } from "react-router";
+import LoadingPanel from "../../tools/LoadingPanel";
 
+import AlertDialog from "../../components/ModalComponent/ModalComponent";
 function mapStateToProps(state) {
     return {
         logonUser: state.counterReducer["logonUser"],
@@ -104,6 +106,7 @@ const INITIAL_STATE = {
     file: [],
     fileInfo: [],
     url: [],
+    openErrorModal: false
 }
 
 class RegisterMerchant extends Component {
@@ -120,6 +123,15 @@ class RegisterMerchant extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
+        if (this.props.isProfileCheck === "error" || this.props.isProfileCheck === "wrongpath") {
+            if (this.state.openErrorModal === false) {
+                this.setState({ openErrorModal: true })
+                setTimeout(() => {
+                    const eCommercePlatform = window.location.hostname === "localhost" ? "http://localhost:3000/EmporiaDev" : "https://myemporia.my/emporiadev/"
+                    window.location.href = eCommercePlatform
+                }, 5000);
+            }
+        }
     }
 
     getProps = (activeStep, Err) => {
@@ -133,8 +145,7 @@ class RegisterMerchant extends Component {
                     const formData = new FormData()
 
                     const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-
-                    formData.append("ID", JSON.parse(localStorage.getItem("loginUser"))[0].UserID,);
+                    formData.append("ID", this.props.userData.UserID);
                     formData.append("targetFolder", "userbank");
                     formData.append("projectDomain", localStorage.getItem("projectDomain"));
 
@@ -163,7 +174,7 @@ class RegisterMerchant extends Component {
                         formData.append("imageName[]", filename);
 
                         let param = {
-                            USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+                            USERID: this.props.userData.UserID,
                             SHOPNAME: this.state.ShopName,
                             SHOPDESC: this.state.shopdesc,
                             SHOPPOSCODE: this.state.postcode,
@@ -172,7 +183,7 @@ class RegisterMerchant extends Component {
                             SHOPCOUNTRYID: this.state.countryid,
                         }
                         let param2 = {
-                            USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+                            USERID: this.props.userData.UserID,
                             FIRSTNAME: this.state.firstname,
                             LASTNAME: this.state.lastname,
                             USEREMAIL: this.state.email,
@@ -691,7 +702,7 @@ class RegisterMerchant extends Component {
                         <div className="col-8" style={{ marginLeft: "2vw" }}><Typography variant="h6">Bank account Info</Typography></div>
                         <div className="row m-4 d-flex justify-content-center">
                             <div className="col-xl-2 col-lg-2 col-md-2 col-s-12 col-xs-12 inputForm">
-                                <div className="asterisk">*</div>User Name:
+                                <div className="asterisk">*</div>Account Holder Name:
                             </div>
                             <div className="col-xl-6 col-lg-6 col-md-6 col-s-12 col-xs-12">
                                 <FormControl fullWidth size="small" variant="outlined">
@@ -714,7 +725,7 @@ class RegisterMerchant extends Component {
                         </div>
                         <div className="row m-4 d-flex justify-content-center">
                             <div className="col-xl-2 col-lg-2 col-md-2 col-s-12 col-xs-12 inputForm">
-                                <div className="asterisk">*</div>Bank name:
+                                <div className="asterisk">*</div>Bank Name:
                             </div>
                             <div className="col-xl-6 col-lg-6 col-md-6 col-s-12 col-xs-12">
                                 <FormControl fullWidth size="small" variant="outlined">
@@ -746,7 +757,7 @@ class RegisterMerchant extends Component {
                         </div>
                         <div className="row m-4 d-flex justify-content-center">
                             <div className="col-xl-2 col-lg-2 col-md-2 col-s-12 col-xs-12 inputForm">
-                                <div className="asterisk">*</div>Account No:
+                                <div className="asterisk">*</div>Account Number:
                             </div>
                             <div className="col-xl-6 col-lg-6 col-md-6 col-s-12 col-xs-12">
                                 <FormControl fullWidth size="small" variant="outlined">
@@ -1011,14 +1022,36 @@ class RegisterMerchant extends Component {
 
     render() {
         return (
-            <Card style={{margin:"3vw"}} elevation={3}>
+            <Card style={{ margin: "3vw" }} elevation={3}>
                 <CardContent>
-                    <h2>Register Shop</h2>
-                    <HorizontalLinearStepper
-                        Data={this.state}
-                        propsData={this.getProps}
-                        data={this.renderCard(this.state.activeStep)}>
-                    </HorizontalLinearStepper>
+                    <h4>Seller Registration</h4>
+                    {
+                        this.props.isProfileCheck === false ?
+                            <LoadingPanel />
+                            :
+                            <HorizontalLinearStepper
+                                Data={this.state}
+                                propsData={this.getProps}
+                                data={this.renderCard(this.state.activeStep)}>
+                            </HorizontalLinearStepper>
+                    }
+                    <div>
+                        <AlertDialog
+                            open={this.state.openErrorModal}
+                            fullWidth={true}
+                            maxWidth="sm"
+                            handleToggleDialog={() => this.setState({ openErrorModal: false })} >
+                            <div className="container-fluid">
+                                <h4 style={{ fontWeight: "bold" }}>{this.props.isProfileCheck === "error" ? "Wrong user data is detected" : "Invalid Path detected"} </h4>
+                                <hr />
+                                <div className="container">
+                                    <Typography>Page will prompt back to Emporia Ecommerce Platform.
+                                        Relogin is required to proceed to this merchant registration page.</Typography>
+                                </div>
+                            </div>
+
+                        </AlertDialog >
+                    </div>
                 </CardContent>
             </Card>
         )
