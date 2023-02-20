@@ -176,9 +176,9 @@ class EditShopProfile extends Component {
             // window.location.reload(false);
         }
 
-        if(this.props.merchant.lenght > 0){
-            this.props.merchant((x)=>this.setState({SHOPSTATE:x.ShopState}))
-        }
+        // if(this.props.merchant !== null){
+        //     this.props.merchant((x)=>this.setState({SHOPSTATE:x.ShopState}))
+        // }
     }
     componentDidUpdate(prevProps) {
 
@@ -191,6 +191,14 @@ class EditShopProfile extends Component {
             // clearImmediate(this.props.merchant);
             // window.location.reload(false);
         }
+
+        if (this.props.merchant !== null && this.state.SHOPSTATE === "" ) {
+            let shopDetails = this.props.merchant[0];
+            if (shopDetails !== undefined) {
+                this.setDetails(shopDetails)
+            }
+        }
+
         if (this.props.shopUpdated !== undefined && this.props.shopUpdated.length > 0) {
             this.props.CallMerchants(this.state);
             this.props.CallClearShopUpdate()
@@ -208,6 +216,7 @@ class EditShopProfile extends Component {
             this.props.CallClearCurrentUser()
             this.modalClose()
         }
+
 
     }
     // componentWillUnmount(){ 
@@ -801,6 +810,7 @@ class EditShopProfile extends Component {
                                                 <FormControl fullWidth>
                                                     <InputLabel id="demo-simple-select-label">City</InputLabel>
                                                     <Select
+                                                        id="City"
                                                         label="City"
                                                         variant="outlined"
                                                         defaultValue={row.ShopCity}
