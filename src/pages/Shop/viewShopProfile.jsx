@@ -5,11 +5,10 @@ import { toast } from "react-toastify";
 import { Modal, ModalBody } from "reactstrap";
 
 // data stubs
-// import { DropzoneArea } from 'material-ui-dropzone'
+
 import Dropzone from "react-dropzone";
 import { connect } from "react-redux";
 import { GitAction } from "../../store/action/gitAction";
-import { Link, matchPath, Redirect, Switch, Route } from "react-router-dom";
 
 import {
     Card,
@@ -31,7 +30,6 @@ import IconButton from "@mui/material/IconButton";
 import CancelIcon from '@mui/icons-material/Cancel';
 import moment from 'moment';
 
-import { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -41,14 +39,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import Rating from '@mui/material/Rating';
-
-// import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-// import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
-import Logo from "../../assets/logos/logo.png";
-
 import './viewShopProfile.scss';
-import { ignoreElements } from "rxjs/operator/ignoreElements";
-import { UpdateDisabled } from "@mui/icons-material";
+
 
 
 function mapStateToProps(state) {
@@ -146,6 +138,9 @@ const group = {
     SHOPSTATE: "",
     SHOPCITY: "",
     shopRating: 0,
+
+    editMerchant_Info: false,
+    editShop_Info: false
 
 }
 class EditShopProfile extends Component {
@@ -246,26 +241,10 @@ class EditShopProfile extends Component {
             }
             this.setState({ shopRating: parseFloat(ratingCount.reduce((subtotal, item) => subtotal + item, 0) / ratingCount.length).toFixed(2) })
 
-        } else {
-            // browserHistory.push("/login");
-            // window.location.reload(false);
-        }
-
-        // if(this.props.merchant !== null){
-        //     this.props.merchant((x)=>this.setState({SHOPSTATE:x.ShopState}))
-        // }
+        } 
     }
+
     componentDidUpdate(prevProps) {
-
-        if (prevProps.shopUpdated !== this.props.shopUpdated) {
-            // browserHistory.push("/");
-            // delete this.state;
-
-            // this.setState(group);
-
-            // clearImmediate(this.props.merchant);
-            // window.location.reload(false);
-        }
 
         if (this.props.merchant !== null && this.state.SHOPSTATE === "" ) {
             let shopDetails = this.props.merchant[0];
@@ -283,6 +262,7 @@ class EditShopProfile extends Component {
                     this.setDetails(shopDetails)
                 }
             }
+            
         }
 
         if (this.props.currentUser.length > 0) {
@@ -294,6 +274,7 @@ class EditShopProfile extends Component {
         if(prevProps.userProfile !== this.props.userProfile){
             let data = this.props.userProfile[0]
             this.setProfileDetails(data)
+
         }
 
         
@@ -304,8 +285,6 @@ class EditShopProfile extends Component {
                 this.setDetails(shopDetails)
             }
         }
-
-     
     }
 
 
@@ -352,8 +331,6 @@ class EditShopProfile extends Component {
         formData.append("upload[]", upload );
         formData.append("imageName[]", imageName);
 
-        
-
         let uploadImageURL = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/uploadImages.php"
 
         const updateData = {
@@ -391,15 +368,18 @@ class EditShopProfile extends Component {
                 )
                 .then((res) => {
                     if (res.status === 200) {
-                        console.log('header image changed')
                         this.props.CallGetUpdateMerchantProfile(updateData)
+                   
                     }
                 });
             }
     
             else if(this.state.fileAdded === true && this.state.newFile === false) {
                 this.props.CallGetUpdateMerchantProfile(updateData)
+                
             }
+
+           
         }
 
         else if(type === 'shopBank_Profile'){
@@ -410,11 +390,13 @@ class EditShopProfile extends Component {
                 )
                 .then((res) => {
                     if (res.status === 200) {
-                       console.log('profile image changed!', update_ShopProfile)
                        this.props.CallUpdateShopDetails(update_ShopProfile)
+                       
                     }
                 });
             }
+
+           
            
         }
 
@@ -434,9 +416,11 @@ class EditShopProfile extends Component {
            
             else{
                 this.props.CallUpdateShopDetails(update_ShopProfile)
-                console.log('cover remained same')
+    
             }
         }
+
+        
     };
 
     ///////////////////////////DELETE PHOTO SELECTED////////////////////////////////
@@ -708,7 +692,7 @@ class EditShopProfile extends Component {
 
         return(
             <div className="row">
-            <div className="col mt-4" >
+            <div className="col mt-4">
 
                 {this.state.fileAdded3 === true  ? (
                     <div style={{border:'2px solid #E1DCDC', borderStyle:'dashed'}}>
@@ -866,8 +850,40 @@ class EditShopProfile extends Component {
                         </div>
                         <Divider variant="fullWidth" className="dividerbottom" />
 
-                        <div className="row" style={{ marginTop: '5%', marginBottom: '5%' }}>
-                            <div className="col-4 col-md-4 col-lg-4 ">
+                        <div className="row" style={{ marginTop: '2%', marginBottom: '5%' }}>
+                            <div className="container" style={{display:'flex', flexDirection:'row', justifyContent:"space-between" ,margin:'1%'}} >
+
+                                <div className="col-8">
+                                    {this.state.editMerchant_Info === true ?
+                                    <div style={{display:'flex', flexDirection:'row'}}>
+                                        <Button variant="contained" color="primary" disabled={this.disabled_SubmitButton('user_Profile')} onClick={() => this.onFileUpload('shopBank_Header')} style={{marginRight:'2%'}}>Update Profile</Button>
+                                        <Button variant="contained" color="secondary"  onClick={() => this.setState({editMerchant_Info:false})}>Cancel</Button>
+                                    </div>
+                                        
+                                        :
+
+                                        <Button variant="contained" color="primary"  onClick={() => this.setState({editMerchant_Info:true})}>Edit User Info</Button>
+                                    }
+
+                                </div>
+
+                                <div className="col-4">
+                                    {this.state.editShop_Info === true ?
+                                    <div style={{display:'flex', flexDirection:'row'}}>
+                                            <Button variant="contained" color="primary" disabled={this.disabled_SubmitButton('shop_Profile')} onClick={() => this.onFileUpload('shop_CoverImage')} style={{marginRight:'2%'}} >Update Shop</Button>
+                                            <Button variant="contained" color="secondary"  onClick={() => this.setState({editShop_Info:false})}>Cancel</Button>
+                                    </div>
+                                        
+                                        :
+
+                                        <Button variant="contained" color="primary"  onClick={() => this.setState({editShop_Info:true})}>Edit Shop Info</Button>
+                                    }
+
+                                </div>
+
+                            </div>
+                            <div className="col-4 col-md-4 col-lg-4 " style={{opacity:this.state.editMerchant_Info === false ? '0.6' : '1',  pointerEvents:this.state.editMerchant_Info === false ? 'none': 'auto', zIndex:1, position:'relative'}}>
+                          
                                 <div className="container" style={{marginBottom:'3%'}}>
                                 <div className="row" >
                                     <div >
@@ -880,10 +896,10 @@ class EditShopProfile extends Component {
                                     
                                     </div>
                                 </div>
-                          
+                          <div>
                                 <div className="row" style={{ display:'flex', flexDirection:'row', justifyContent:'center', alignItem:'center' }} >
 
-                                    <div onClick={() => this.modalOpen()} style={{width:'150px', height:'auto', }} className="imagecontainer">
+                                    <div onClick={() => this.modalOpen()} style={{width:'150px', height:'auto', display:'flex', flexDirection:'column', justifyContent:'center'}} className="imagecontainer">
                                         <img
                                             className="profilePic"
                                             src={this.state.SHOP_PROFILEIMAGE}
@@ -899,11 +915,9 @@ class EditShopProfile extends Component {
                                 </div>
                                 <div className="description row d-flex justify-content-center ml-4 mr-2"><br /> Click on the image above to edit profile picture</div>
 
-
-                                {this.props.userProfile && this.props.userProfile.map((userData) => (
-                                    <div>
+                                   <div>
                                         <div className="col mt-4" style={{ display: 'flex', flexDirection: 'row' }}>
-                                            <div className="col-6 m-1">
+                                            <div className="col m-1">
                                                 <TextField
                                                     fullWidth
                                                     variant="outlined"
@@ -914,7 +928,7 @@ class EditShopProfile extends Component {
                                                     onChange={(e) => this.handleChange('FIRSTNAME', e)}
                                                 />
                                             </div>
-                                            <div className="col-6 m-1">
+                                            <div className="col m-1">
                                                 <TextField
                                                     fullWidth
                                                     variant="outlined"
@@ -928,7 +942,7 @@ class EditShopProfile extends Component {
                                         </div>
 
                                 <div className="col mt-4" style={{display:'flex', flexDirection:'row'}}>
-                                    <div className="col-6 m-1">
+                                    <div className="col m-1">
                                         <FormControl>
                                             <FormLabel id="demo-controlled-radio-buttons-group">Gender</FormLabel>
                                             <RadioGroup
@@ -942,7 +956,7 @@ class EditShopProfile extends Component {
                                             </RadioGroup>
                                         </FormControl>
                                     </div>
-                                    <div className="col-6 m-1" style={{display:'flex', flexDirection:'column', justifyContent:'space-between'}}>
+                                    <div className="col m-1" style={{display:'flex', flexDirection:'column', justifyContent:'space-between'}}>
        
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <DatePicker
@@ -968,7 +982,7 @@ class EditShopProfile extends Component {
                                 </div>
 
                                 <div className="col mt-4" style={{display:'flex', flexDirection:'row'}}>
-                                <div className="col-6 m-1">
+                                <div className="col m-1">
                                         <TextField
                                             fullWidth
                                             variant="outlined"
@@ -979,7 +993,7 @@ class EditShopProfile extends Component {
                                             onChange={(e) => this.handleChange('CONTACTNO', e)}
                                         />
                                     </div>
-                                    <div className="col-6 m-1">
+                                    <div className="col m-1">
                                         <TextField
                                             fullWidth
                                             variant="outlined"
@@ -991,16 +1005,14 @@ class EditShopProfile extends Component {
                                         />
                                     </div>
                                 </div>
+                              
                         </div>
 
-                        ))}
-                                                        
+              
+                                   </div>                       
                             </div>
 
-                            <div className="col-4 col-md-4 col-lg-4 border-line-right">
-                            <div className="container" style={{display:'flex', flexDirection:'row', justifyContent:"flex-end", marginTop:0}} onClick={() => this.onFileUpload('shopBank_Header')}>
-                                        <Button variant="contained" color="primary" disabled={this.disabled_SubmitButton('user_Profile')}>Update Profile Info</Button>
-                            </div>
+                            <div className="col-4 col-md-4 col-lg-4 border-line-right" style={{opacity:this.state.editMerchant_Info === false ? '0.6' : '1',  pointerEvents:this.state.editMerchant_Info === false ? 'none': 'auto', zIndex:1, position:'relative'}}>
                           
                                 {this.props.merchant && this.props.merchant.length > 0 && this.props.merchant[0] !== null &&
                                     this.props.merchant.map((row) => (
@@ -1069,15 +1081,11 @@ class EditShopProfile extends Component {
                             </div>
 
 
-                            <div className="col-4 col-md-4 col-lg-4">
+                            <div className="col-4 col-md-4 col-lg-4" style={{opacity:this.state.editShop_Info === false ? '0.6' : '1',  pointerEvents:this.state.editShop_Info === false ? 'none': 'auto' }}>
                             <div className="container">
                                 <div style={{display:'flex', flexDirection:"row", justifyContent:'space-between'}}>
                                     <div style={{marginTop:'auto', marginBottom:'auto'}}>
                                         <Typography variant='caption' >Shop Information</Typography>
-                                    </div>
-                             
-                                    <div style={{display:'flex', flexDirection:"row", justifyContent:'flex-end'}} onClick={() => this.onFileUpload('shop_CoverImage')}>
-                                        <Button color="primary" variant="contained" disabled={this.disabled_SubmitButton('shop_Profile')}>Update Shop Info</Button>
                                     </div>
                                 </div>
                                 </div>
