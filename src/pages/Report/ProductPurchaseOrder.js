@@ -67,20 +67,17 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         CallCountry: () => dispatch(GitAction.CallCountry()),
-        CallUpdateProfileImage: (propsData) => dispatch(GitAction.CallUpdateProfileImage(propsData)),
         CallMerchants: (propData) => dispatch(GitAction.CallMerchants(propData)),
         CallUpdateShopDetail: (propData) => dispatch(GitAction.CallUpdateShopDetail(propData)),
         CallClearCurrentUser: () => dispatch(GitAction.CallClearCurrentUser()),
         CallClearShopUpdate: () => dispatch(GitAction.CallClearShopUpdate()),
         CallAllProductsListing: (propData) => dispatch(GitAction.CallAllProductsListing(propData)),
-
         CallUpdatePurchaseOrderStatus: (orderData) =>
             dispatch(GitAction.CallUpdatePurchaseOrderStatus(orderData)),
         CallGetPurchaseOrders: (orderData) =>
             dispatch(GitAction.CallGetPurchaseOrders(orderData)),
         CallDeletePurchaseOrder: (orderData) =>
             dispatch(GitAction.CallDeletePurchaseOrder(orderData)),
-
     };
 }
 

@@ -65,11 +65,11 @@
   }
 
   .imagecontainer {
-    width: 140px;
-    height: 140px;
+    width:150px;
+    height: 150px;
     position: relative;
     overflow: hidden;
-    border-radius: 50%;
+   
     margin: auto;
   }
   
@@ -146,11 +146,8 @@
   }
   
   .profilePic {
-    display: inline;
-    margin: 0 auto;
-    // margin-left: -29%;
-    height: 140px;
-    /* width: auto!important; */
+    width: 100%;
+    height: 100%;
     cursor: pointer;
   }
   

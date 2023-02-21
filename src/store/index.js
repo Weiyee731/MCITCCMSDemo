@@ -20,7 +20,6 @@ const rootEpic = combineEpics(
 
   // Shop
   gitEpic.Shop_UpdateDetails,
-  gitEpic.Shop_UpdateProfileImage,
 
   // Address
   gitEpic.Address_ViewAll,

@@ -129,15 +129,6 @@ export class GitAction {
     };
   }
 
-  static UpdateProfileImage = "UPDATE-PROFILEIMAGE";
-  static UpdatedProfileImage = "UPDATED-PROFILEIMAGE";
-  static CallUpdateProfileImage(propsData) {
-    return {
-      type: GitAction.UpdateProfileImage,
-      payload: propsData,
-    };
-  }
-
   static ClearUpdateShop = "CLEAR-UPDATE-SHOP"
   static CallClearShopUpdate() {
     return {
