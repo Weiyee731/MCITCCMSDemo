@@ -18,7 +18,7 @@ import Collapse from "@mui/material/Collapse";
 import PrintIcon from '@mui/icons-material/Print';
 // import ReactToPrint from 'react-to-print';
 
-import { Viewer } from '@react-pdf-viewer/core';
+// import { Viewer } from '@react-pdf-viewer/core';
 import { useReactToPrint } from 'react-to-print';
 import { Document, Page, pdfjs } from "react-pdf";
 import { toast } from "react-toastify";
@@ -474,8 +474,6 @@ function Row(props) {
                         }
                     </div>
                     <div className="col-2">
-                        {console.log("dsadasdad", props)}
-                        {console.log("dsadasdad111", product.PDFLabel)}
                         {product.PDFLabel != null &&
                             <div>
                                 <Button onClick={handlePrint}>Print</Button>
@@ -701,12 +699,6 @@ function Row(props) {
                 senderposcode: "93350",
             }
             let error = false
-            if (row.OrderProductDetail !== undefined) {
-                JSON.parse(row.OrderProductDetail).map((x) => {
-                    console.log("trackingviewtrackingview", x)
-                })
-            }
-
             if (parcelMeasurement.length == 0 || parcelMeasurement[0].m_quantity == "" || parcelMeasurement[0].m_height == "" || parcelMeasurement[0].m_length == "" || parcelMeasurement[0].m_weight == "" || parcelMeasurement[0].m_width == "") {
                 error = true
                 toast.error("Please fill in all required parcel information")
@@ -752,17 +744,14 @@ function Row(props) {
                     PROJECTID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
                 }
                 prop.CallAddOrderShipment(object)
-                console.log("trackingviewtrackingview objectobject", object)
             }
         }
-        { console.log("dsdaad", parcelMeasurement) }
         // let props = {
         //     ORDERTRACKINGNUMBER: encodeURIComponent(tracking),
         //     LOGISTICID: LogisticID,
         //     ORDERPRODUCTDETAILSID: ProductDetailsID
         // }
         toast.warning("IN PROGRESS WORKING ON IT")
-        console.log("trackingview testing", ProductDetailsID)
         // prop.CallUpdateOrderTracking({
         //     ORDERTRACKINGNUMBER: encodeURIComponent(tracking),
         //     LOGISTICID: LogisticID,

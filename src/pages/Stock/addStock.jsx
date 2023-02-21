@@ -155,10 +155,8 @@ class AddStock extends Component {
 
     componentDidUpdate(prevProps, prevState) {
 
-        if (this.props.variationAction.length > 0 && this.props.variationAction[0].ReturnVal === "1") {
+        if (this.props.variationAction.length > 0 && this.props.variationAction[0].ProductVariationStockID !== undefined) {
             this.props.CallResetProductVariationStock()
-            toast.success("Stock is update")
-
             let statelisting = this.DataState
             let localListing = localStorage.getItem("DataSetDraft") !== null ? JSON.parse(localStorage.getItem("DataSetDraft")) : []
             let stateDraftNo = []
@@ -176,6 +174,14 @@ class AddStock extends Component {
             this.DataState = []
             localStorage.setItem("DataSetDraft", JSON.stringify(localListing))
             this.setState({ selectedListID: [] })
+
+            toast.success("The product stock is updated successfully", {
+                autoClose: 3000,
+                onClose: () => {
+                    history.push("/stockList");
+                    window.location.reload(false);
+                }
+            })
         }
     }
 
@@ -339,8 +345,6 @@ class AddStock extends Component {
 
     // Search for corresponsing SKU
     searchSpace = (value) => {
-
-        console.log("dsdasdsad", this.props)
         if (isStringNullOrEmpty(value)) {
             this.setState({ filteredProduct: [], searchKeywords: value })
         }
@@ -519,13 +523,6 @@ class AddStock extends Component {
                     ProductStock: ProductStock,
                     ProductVariationCost: ProductVariationCost,
                     GridStorageID: GridStorageID
-                })
-                toast.success("The product stock is updated successfully", {
-                    autoClose: 3000,
-                    onClose: () => {
-                        history.push("/stockList");
-                        window.location.reload(false);
-                    }
                 })
             }
             else {
