@@ -377,13 +377,13 @@ export const TransactionManagement = (props) => {
                     value + 1 === 3 &&
                     <TableCell align="left">
                         <IconButton>
-                            <Button style={{ backgroundColor: "#e74c3c" }} onClick={() => {
+                            <Button style={{ backgroundColor: "#86DC3D" }} onClick={() => {
                                 dispatch(GitAction.CallUpdateOrderTrackingStatus({
                                     OrderID: data.OrderID,
-                                    TrackingStatusID: 6
+                                    TrackingStatusID: 5
                                 }))
                             }}>
-                                Cancel
+                                Complete
                             </Button>
                             <Button style={{ backgroundColor: "#F05E16", margin: "10px" }} onClick={() => {
                                 dispatch(GitAction.CallUpdateOrderTrackingStatus({

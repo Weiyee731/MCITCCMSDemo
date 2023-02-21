@@ -340,6 +340,7 @@ class AddStock extends Component {
     // Search for corresponsing SKU
     searchSpace = (value) => {
 
+        console.log("dsdasdsad", this.props)
         if (isStringNullOrEmpty(value)) {
             this.setState({ filteredProduct: [], searchKeywords: value })
         }
