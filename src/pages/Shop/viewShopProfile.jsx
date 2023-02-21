@@ -25,7 +25,7 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import axios from "axios";
 import { MenuItem } from "@mui/material";
-import { isArrayNotEmpty } from "../../tools/Helpers";
+import { isArrayNotEmpty, isStringNullOrEmpty } from "../../tools/Helpers";
 
 import IconButton from "@mui/material/IconButton";
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -559,6 +559,36 @@ class EditShopProfile extends Component {
        }
     }
 
+    disabled_SubmitButton = (type) => {
+
+        switch(type){
+            case 'user_Profile':
+                if(isStringNullOrEmpty(this.state.FIRSTNAME) || isStringNullOrEmpty(this.state.LASTNAME) || isStringNullOrEmpty(this.state.USERCONTACTNO) || isStringNullOrEmpty(this.state.USERGENDER) || isStringNullOrEmpty(this.state.USERDOB) || isStringNullOrEmpty(this.state.USERNRIC) || isStringNullOrEmpty(this.state.USEREMAIL) || isStringNullOrEmpty(this.state.SHOPBANK) || isStringNullOrEmpty(this.state.SHOPBANKACCOUNTHEADER) || isStringNullOrEmpty(this.state.SHOPBANKACCOUNTNAME) || isStringNullOrEmpty(this.state.SHOPBANKACCOUNTNO))
+                {
+                    return true
+                }
+
+                else
+                {
+                    return false
+                }
+                break;
+            case 'shop_Profile':
+                if(isStringNullOrEmpty(this.state.SHOPNAME) || isStringNullOrEmpty(this.state.SHOPDESC) || isStringNullOrEmpty(this.state.SHOPCOUNTRYID) || isStringNullOrEmpty(this.state.SHOPCITY) || isStringNullOrEmpty(this.state.SHOPSTATE)  || isStringNullOrEmpty(this.state.SHOP_COVERIMAGE) || isStringNullOrEmpty(this.state.SHOPPOSCODE) || isStringNullOrEmpty(this.state.SHOP_PROFILEIMAGE))
+                {
+                    return true
+                }
+
+                else{
+                    return false
+                }
+                break;
+            default:
+                break;
+        }
+        
+    }
+
     uploadHandler(e) {
         this.setState({ file: e });
     }
@@ -969,8 +999,8 @@ class EditShopProfile extends Component {
 
                             <div className="col-4 col-md-4 col-lg-4 border-line-right">
                             <div className="container" style={{display:'flex', flexDirection:'row', justifyContent:"flex-end", marginTop:0}} onClick={() => this.onFileUpload('shopBank_Header')}>
-                                        <Button variant="contained" color="primary">Update Profile Info</Button>
-                                    </div>
+                                        <Button variant="contained" color="primary" disabled={this.disabled_SubmitButton('user_Profile')}>Update Profile Info</Button>
+                            </div>
                           
                                 {this.props.merchant && this.props.merchant.length > 0 && this.props.merchant[0] !== null &&
                                     this.props.merchant.map((row) => (
@@ -1047,7 +1077,7 @@ class EditShopProfile extends Component {
                                     </div>
                              
                                     <div style={{display:'flex', flexDirection:"row", justifyContent:'flex-end'}} onClick={() => this.onFileUpload('shop_CoverImage')}>
-                                        <Button color="primary" variant="contained" >Update Shop Info</Button>
+                                        <Button color="primary" variant="contained" disabled={this.disabled_SubmitButton('shop_Profile')}>Update Shop Info</Button>
                                     </div>
                                 </div>
                                 </div>
