@@ -9,6 +9,7 @@ import FormControl from '@mui/material/FormControl';
 import NativeSelect from '@mui/material/NativeSelect';
 import InputBase from '@mui/material/InputBase';
 import MarketingCampaigns from "./MarketingCampaign";
+import moment from 'moment';
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
     'label + &': {
@@ -45,11 +46,13 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
 
 function mapStateToProps(state) {
     return {
+        maindashboard: state.counterReducer["maindashboard"],
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
+        CallMainDashboard: (prodData) => dispatch(GitAction.CallMainDashboard(prodData)),
     };
 }
 
@@ -128,7 +131,7 @@ class Dashboard extends Component {
     }
 
     componentDidMount() {
-
+        this.props.CallMainDashboard()
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -140,21 +143,40 @@ class Dashboard extends Component {
     };
 
     render() {
+        // console.log(this.props.maindashboard)
         const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const d = new Date();
         let day = days[d.getDay()];
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         let month = months[d.getMonth()];
-        const get_Complete_Today = d.getDate() + " " + month + " " + d.getFullYear()
+        const get_Complete_Today = d.getDate() + " " + month + " " + d.getFullYear();
+
+
+        const bestMerchants = this.props.maindashboard[0] !== undefined && JSON.parse(this.props.maindashboard[0].BestMerchant)
+        const latestProducts = this.props.maindashboard[0] !== undefined && JSON.parse(this.props.maindashboard[0].LatestProducts)
+        const yearlySalesSeriesData = this.props.maindashboard[0] !== undefined &&
+            JSON.parse(this.props.maindashboard[0].SalesByYear).filter((y) => y.TransactionYear == this.state.year).map((x) => x.OrderTotalPaidAmount)
+        const yearlySalesMonthlyData = this.props.maindashboard[0] !== undefined &&
+            JSON.parse(this.props.maindashboard[0].SalesByYear).filter((y) => y.TransactionYear == this.state.year).map((x) => x.TransactionMonth)
+
+        // const dbYearData = []
+        // const dbYearlySaleYearData = this.props.maindashboard[0] !== undefined &&
+        //     JSON.parse(this.props.maindashboard[0].SalesByYear).map((x) => {
+        //         // !dbYearData.map((y) => y.includes(x.TransactionYear)) ? 
+        //         //     dbYearData.push(x.TransactionYear)
+        //         //     : ""
+        //     })
+        // console.log(dbYearlySaleYearData)
+
 
         const SalesBreakdownoptions = {
             chart: {
                 width: 250,
-                type: 'donut', 
+                type: 'donut',
                 // foreColor: "white",
             },
             plotOptions: {
-                pie: { 
+                pie: {
                     // offsetY: 20,
                     startAngle: -90,
                     endAngle: 270,
@@ -231,7 +253,7 @@ class Dashboard extends Component {
                     dataLabels: {
                         position: 'top', // top, center, bottom
                     },
-                    toolbar: { show: false }, 
+                    toolbar: { show: false },
                     // columnWidth: '40vw',
                 }
             },
@@ -313,7 +335,7 @@ class Dashboard extends Component {
                 },
             },
             xaxis: {
-                categories: selectedData[0].items.filter((z) => z.saleType === "Total Income").map((data) => data.month),
+                categories: yearlySalesMonthlyData,
             },
             legend: {
                 position: 'top',
@@ -324,13 +346,13 @@ class Dashboard extends Component {
 
         const yearlySaleseries = [
             {
-                name: "Total Income",
-                data: selectedData[0].items.filter((z) => z.saleType === "Total Income").map((data) => data.amount)
+                name: "Total Sale Income",
+                data: yearlySalesSeriesData
             },
-            {
-                name: "Total Expenses",
-                data: selectedData[0].items.filter((z) => z.saleType === "Total Expenses").map((data) => data.amount)
-            }
+            // {
+            //     name: "Total Expenses",
+            //     data: selectedData[0].items.filter((z) => z.saleType === "Total Expenses").map((data) => data.amount)
+            // }
         ]
 
         const productCategorySaleSeries = [44, 33, 54, 45]
@@ -511,7 +533,7 @@ class Dashboard extends Component {
                                                         onChange={(e) => this.handleChange(e)}
                                                         input={<BootstrapInput />}
                                                     >
-                                                        <option aria-label="None" value="" />
+                                                        <option value={2021}>2021</option>
                                                         <option value={2022}>2022</option>
                                                         <option value={2023}>2023</option>
                                                     </NativeSelect>
@@ -554,18 +576,18 @@ class Dashboard extends Component {
                                             <Grid item>
                                                 <Grid item container spacing={2}>
                                                     {
-                                                        this.state.bestMerchants.map((merchant) => {
+                                                        bestMerchants.length > 0 && bestMerchants.map((merchant) => {
                                                             return (
                                                                 <>
                                                                     <Grid item xs={12} sm={2} md={2} style={{ display: "flex", justifyContent: "center" }}>
-                                                                        <img src={merchant.merchantProfile} width="80%" style={{ objectFit: "contain" }} />
+                                                                        <img src={merchant.merchantProfile === undefined ? 'https://img.icons8.com/bubbles/50/null/gemologist-male.png' : merchant.merchantProfile} width="80%" style={{ objectFit: "contain" }} />
                                                                     </Grid>
                                                                     <Grid item xs={12} sm={5} md={5}>
-                                                                        <Typography variant="subtitle2" style={{ fontWeight: "bold", }}>{merchant.merchantName}</Typography>
-                                                                        <Typography variant="caption" style={{ color: "grey" }}>{merchant.merchantShop}</Typography>
+                                                                        <Typography variant="subtitle2" style={{ fontWeight: "bold", }}>{merchant.FirstName !== null ? merchant.FirstName : "Anonymous"}</Typography>
+                                                                        {/* <Typography variant="caption" style={{ color: "grey" }}>{merchant.FirstName !== null ? merchant.FirstName : "Anonymous"}</Typography> */}
                                                                     </Grid>
                                                                     <Grid item xs={12} sm={5} md={5}>
-                                                                        <Typography variant="caption" style={{ fontWeight: "bold", }}>{merchant.productName}</Typography>
+                                                                        <Typography variant="caption" style={{ fontWeight: "bold", }}>{merchant.NumberOfTransaction}</Typography>
                                                                     </Grid>
                                                                 </>
                                                             )
@@ -585,15 +607,15 @@ class Dashboard extends Component {
                                             <Grid item>
                                                 <Grid item container spacing={2}>
                                                     {
-                                                        this.state.latestProducts.map((product) => {
+                                                        latestProducts.length > 0 && latestProducts.map((product) => {
                                                             return (
                                                                 <>
                                                                     <Grid item xs={4} sm={4} md={4} style={{ display: "flex", justifyContent: "center" }}>
-                                                                        <img src={product.productImage} width="60%" style={{ objectFit: "contain" }} />
+                                                                        <img src={product.productImage === undefined ? Logo : product.productImage} width="60%" style={{ objectFit: "contain" }} />
                                                                     </Grid>
                                                                     <Grid item xs={7} sm={7} md={7}>
-                                                                        <Typography variant="subtitle2" style={{ fontWeight: "bold", }}>{product.productName}</Typography>
-                                                                        <Typography variant="subtitle2" style={{ color: "grey" }}>RM {product.productPrice}</Typography>
+                                                                        <Typography variant="subtitle2" style={{ fontWeight: "bold", }}>{product.ProductName}</Typography>
+                                                                        <Typography variant="subtitle2" style={{ color: "grey" }}>RM {product.ProductVariationPrice}</Typography>
                                                                     </Grid>
                                                                 </>
                                                             )
@@ -630,7 +652,7 @@ class Dashboard extends Component {
                             </Card>
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} >
-                            <Card elevation={3} style={{height:"35vh"}}>
+                            <Card elevation={3} style={{ height: "35vh" }}>
                                 <CardHeader title={<Typography variant="h6" style={{ fontWeight: 700 }}>Marketing Campaigns</Typography>} />
                                 <CardContent>
                                     <MarketingCampaigns />
