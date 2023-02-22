@@ -1073,6 +1073,15 @@ export class GitAction {
     };
   }
 
+  static GetMainDashboard = "GET-MAINDASHBOARD";
+  static GotMainDashboard = "GOT-MAINDASHBOARD";
+  static CallMainDashboard(prodData) {
+    return {
+      type: GitAction.GetMainDashboard,
+      payload: prodData,
+    };
+  }
+
 
 }
 

@@ -280,15 +280,15 @@ export class GitEpic {
       return dispatch => {
         try {
           console.log(url + project + "/" +
-          "User_UpdateShopDetail?USERID=" + action.payload.USERID +
-          "&SHOPNAME=" + action.payload.SHOPNAME +
-          "&SHOPDESC=" + action.payload.SHOPDESC +
-          "&SHOPPOSCODE=" + action.payload.SHOPPOSCODE +
-          "&SHOPCITY=" + action.payload.SHOPCITY +
-          "&SHOPSTATE=" + action.payload.SHOPSTATE +
-          "&SHOPCOUNTRYID=" + action.payload.SHOPCOUNTRYID +
-          "&SHOPIMAGE=" + action.payload.SHOPIMAGE +
-          "&SHOPCOVERIMAGE=" + action.payload.SHOPCOVERIMAGE)
+            "User_UpdateShopDetail?USERID=" + action.payload.USERID +
+            "&SHOPNAME=" + action.payload.SHOPNAME +
+            "&SHOPDESC=" + action.payload.SHOPDESC +
+            "&SHOPPOSCODE=" + action.payload.SHOPPOSCODE +
+            "&SHOPCITY=" + action.payload.SHOPCITY +
+            "&SHOPSTATE=" + action.payload.SHOPSTATE +
+            "&SHOPCOUNTRYID=" + action.payload.SHOPCOUNTRYID +
+            "&SHOPIMAGE=" + action.payload.SHOPIMAGE +
+            "&SHOPCOVERIMAGE=" + action.payload.SHOPCOVERIMAGE)
           return fetch(url + project + "/" +
             "User_UpdateShopDetail?USERID=" + action.payload.USERID +
             "&SHOPNAME=" + action.payload.SHOPNAME +
@@ -299,7 +299,7 @@ export class GitEpic {
             "&SHOPCOUNTRYID=" + action.payload.SHOPCOUNTRYID +
             "&SHOPIMAGE=" + action.payload.SHOPIMAGE +
             "&SHOPCOVERIMAGE=" + action.payload.SHOPCOVERIMAGE
-            )
+          )
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -2383,6 +2383,31 @@ export class GitEpic {
         } catch (error) {
           toast.error("Error Code: User_ViewPage. Please check on URL")
           return dispatch({ type: GitAction.SidebarFetched, payload: [] });
+        }
+      }
+    }));
+
+  ///////////////////////////////////////////////////  Dashboard  ///////////////////////////////////////////////////
+
+  Reporting_MainDashboard = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetMainDashboard), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Reporting_MainDashboard")
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotMainDashboard, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                // toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotMainDashboard, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: MainDashboard. Please check on URL")
+          return dispatch({ type: GitAction.GotMainDashboard, payload: [] });
         }
       }
     }));

@@ -449,7 +449,7 @@ class StockDetail extends Component {
         }
 
         const goBack = () => {
-            history.push("./stockList")
+            history.push("/stockList")
             window.location.reload(false)
         }
 
