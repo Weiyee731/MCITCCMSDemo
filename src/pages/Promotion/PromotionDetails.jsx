@@ -113,7 +113,7 @@ export const PromotionDetails = (props) => {
             toast.success("Successfully Upload Promotion")
             setTimeout(
                 window.location.href = "./PromotionListing"
-                , 5000
+                , 10000
             );
         }
     }, [promoAction])
@@ -558,14 +558,14 @@ export const PromotionDetails = (props) => {
 
                 isArrayNotEmpty(data.detailListing) && data.detailListing.map((details, detailsIndex) => {
                     if (details.isEnable === true) {
-                        if (details.discountPercent === "" || details.discountPercent < 0)
+                        if (details.discountPercent === "" || details.discountPercent <= 0)
                             isError.discountError.push({
                                 listingIndex: index,
                                 detailsIndex: detailsIndex
                             })
 
                         if (details.stockLimitType !== "No Limit")
-                            if (details.stockLimitQty === "" || details.stockLimitQty > 0)
+                            if (details.stockLimitQty === "" || details.stockLimitQty <= 0)
                                 isError.stockError.push({
                                     listingIndex: index,
                                     detailsIndex: detailsIndex
