@@ -180,6 +180,8 @@ class MerchantDashboard extends Component {
                 })
             }
 
+            listing.dateDetails.reverse()
+            listing.amountDetails.reverse()
             let listingLength = listing.amountDetails.length
 
             if (listingLength > 0) {
