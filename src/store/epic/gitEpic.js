@@ -31,7 +31,6 @@ export class GitEpic {
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
-              console.log("dsdsadsada", json)
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.LoginSuccess, payload: JSON.parse(json[0].ReturnData) });
               } else {
@@ -77,13 +76,6 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.Send_OTPVerification), map(action => {
       return dispatch => {
         try {
-          console.log(url + project + "/" +
-            "User_SentOTPVerification?USERID=" +
-            action.payload.UserID +
-            "&TYPE=" +
-            action.payload.Type +
-            "&VALIDATIONFIELD=" +
-            action.payload.ValidationField)
           return fetch(url + project + "/" +
             "User_SentOTPVerification?USERID=" +
             action.payload.UserID +
@@ -279,16 +271,6 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.UpdateShopDetails), map(action => {
       return dispatch => {
         try {
-          console.log(url + project + "/" +
-            "User_UpdateShopDetail?USERID=" + action.payload.USERID +
-            "&SHOPNAME=" + action.payload.SHOPNAME +
-            "&SHOPDESC=" + action.payload.SHOPDESC +
-            "&SHOPPOSCODE=" + action.payload.SHOPPOSCODE +
-            "&SHOPCITY=" + action.payload.SHOPCITY +
-            "&SHOPSTATE=" + action.payload.SHOPSTATE +
-            "&SHOPCOUNTRYID=" + action.payload.SHOPCOUNTRYID +
-            "&SHOPIMAGE=" + action.payload.SHOPIMAGE +
-            "&SHOPCOVERIMAGE=" + action.payload.SHOPCOVERIMAGE)
           return fetch(url + project + "/" +
             "User_UpdateShopDetail?USERID=" + action.payload.USERID +
             "&SHOPNAME=" + action.payload.SHOPNAME +
@@ -1482,13 +1464,6 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.AddProductCategory), map(action => {
       return dispatch => {
         try {
-          console.log(url + project + "/" +
-            "Product_AddProductCategory?PRODUCTCATEGORY=" + action.payload.ProductCategory +
-            "&PRODUCTCATEGORYIMAGE=" + action.payload.ProductCategoryImage +
-            "&HIERARCHYID=" + action.payload.HierarchyID +
-            "&PARENTPRODUCTCATEGORYID=" + action.payload.ParentProductCategoryID +
-            "&PROJECTID=" + action.payload.ProjectID +
-            "&USERID=" + action.payload.UserID)
           return fetch(url + project + "/" +
             "Product_AddProductCategory?PRODUCTCATEGORY=" + action.payload.ProductCategory +
             "&PRODUCTCATEGORYIMAGE=" + action.payload.ProductCategoryImage +
