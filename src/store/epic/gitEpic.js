@@ -2385,6 +2385,29 @@ export class GitEpic {
       }
     }));
 
+  Reporting_MerchantDashboard = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetMerchantDashboard), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Reporting_MerchantDashboard?USERID=" + action.payload.USERID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotMerchantDashboard, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                // toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotMerchantDashboard, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: MainDashboard. Please check on URL")
+          return dispatch({ type: GitAction.GotMerchantDashboard, payload: [] });
+        }
+      }
+    }));
+
 
   ///////////////////////////////////////////////////  Purchase Order  ///////////////////////////////////////////////////
 

@@ -111,10 +111,11 @@ export const TransactionManagement = (props) => {
 
 
     useEffect(() => {
+  
         if (isStatusViewClick === true)
             setViewTracking(true)
     }, [orderShipmentStatus])
-
+    
     useEffect(() => {
         if (isOrderSet === false && isArrayNotEmpty(transactions)) {
             let listing = []
@@ -831,6 +832,7 @@ export const TransactionManagement = (props) => {
                                     >
                                         <div className="container-fluid">
                                             <div className="container">
+                                                {console.log("dasdsasa", orderShipmentStatus)}
                                                 {orderShipmentStatus !== undefined && orderShipmentStatus.returncode !== undefined ?
                                                     <>
                                                         {isArrayNotEmpty(orderShipmentStatus.trackHeader) &&

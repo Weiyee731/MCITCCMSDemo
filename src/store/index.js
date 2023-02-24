@@ -130,6 +130,7 @@ const rootEpic = combineEpics(
 
   //Dashboard 
   gitEpic.Reporting_MainDashboard,
+  gitEpic.Reporting_MerchantDashboard
 
 );
 

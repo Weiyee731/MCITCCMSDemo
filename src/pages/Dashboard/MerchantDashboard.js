@@ -17,6 +17,7 @@ import MarketingCampaigns from "./MarketingCampaign";
 import FullWidthTabs from "../../components/TabsComponent/Tabs";
 import ProductRanking from "./ProductRanking";
 import Logo from "../../assets/MyEmporia Logo.png";
+import moment from 'moment';
 
 const LightTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} classes={{ popper: className }} />
@@ -32,17 +33,23 @@ const LightTooltip = styled(({ className, ...props }) => (
 
 function mapStateToProps(state) {
     return {
+        merchantdashboard: state.counterReducer["merchantdashboard"],
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
+        CallMerchantDashboard: (prodData) => dispatch(GitAction.CallMerchantDashboard(prodData)),
     };
 }
+
 
 const INITIAL_STATE = {
     openModal: false,
     openFullScreenModal: false,
+    isDashboardDataSet: false,
+    ToDoList: [],
+    MarketingCampaigns: [],
     cardData: [
         {
             id: 1, title: 'Sales', amount: "RM530.50", color: "#30b566", difference: "21.5%", icon: Up,
@@ -133,10 +140,141 @@ class MerchantDashboard extends Component {
             }]
             this.setState({ graphData: selectedData, })
         }
+        if (JSON.parse(localStorage.getItem("loginUser"))[0].UserID !== undefined)
+            this.props.CallMerchantDashboard({
+                USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+            })
     }
 
     componentDidUpdate(prevProps, prevState) {
 
+        const productRanking = (dataList) => {
+            let listing = []
+            if (dataList !== undefined && dataList !== "[]" && isArrayNotEmpty(JSON.parse(dataList))) {
+                JSON.parse(dataList).map((x, index) => {
+                    listing.push({
+                        productID: x.ProductID,
+                        productName: x.ProductName,
+                        productPrice: x.ProductPrice,
+                        ranking: index + 1,
+                        total: x.ProductSales,
+                        productImg: x.ProductImage !== null ? x.ProductImage : Logo,
+                    })
+                })
+            }
+            return listing
+        }
+
+        const keyMetric = (dataList) => {
+            let listing = {
+                dateDetails: [],
+                amountDetails: [],
+                amount: 0,
+                difference: 0,
+                icon: Up,
+            }
+            if (dataList !== undefined && dataList !== "[]" && isArrayNotEmpty(JSON.parse(dataList))) {
+                JSON.parse(dataList).map((x, index) => {
+                    listing.dateDetails.push(moment(x.DateDetails).format("DD/MM/YYYY"))
+                    listing.amountDetails.push(x.DataDetails)
+                })
+            }
+
+            let listingLength = listing.amountDetails.length
+
+            if (listingLength > 0) {
+                listing.amount = listing.amountDetails[listingLength - 1]
+                if (listingLength > 1) {
+                    if (listing.amountDetails[listingLength - 1] >= listing.amountDetails[listingLength - 2]) {
+                        listing.difference = parseFloat((listing.amountDetails[listingLength - 1] - listing.amountDetails[listingLength - 2]) / listing.amountDetails[listingLength - 2] * 100).toFixed(2)
+                        listing.icon = Up
+                    } else {
+                        listing.difference = parseFloat((listing.amountDetails[listingLength - 2] - listing.amountDetails[listingLength - 1]) / listing.amountDetails[listingLength - 2] * 100).toFixed(2)
+                        listing.icon = Down
+                    }
+
+                }
+            }
+            return listing
+        }
+
+
+        if (this.props.merchantdashboard !== undefined && isArrayNotEmpty(this.props.merchantdashboard) && this.state.isDashboardDataSet === false) {
+            let listing = []
+            let rankingBySales = productRanking(this.props.merchantdashboard[0].ProductRankingbySales)
+            let rankingByUnit = productRanking(this.props.merchantdashboard[0].ProductRankingbyUnit)
+            let rankingByCart = productRanking(this.props.merchantdashboard[0].ProductRankingbyCart)
+
+
+            let TotalSales = keyMetric(this.props.merchantdashboard[0].OverallSales)
+            let TotalOrder = keyMetric(this.props.merchantdashboard[0].OverallOrders)
+            let TotalVisitor = keyMetric(this.props.merchantdashboard[0].OverallVisitor)
+            let ConversionRate = keyMetric(this.props.merchantdashboard[0].ConversionRate)
+            let CancelledOrder = keyMetric(this.props.merchantdashboard[0].CancelledOrders)
+            let RefundOrder = keyMetric(this.props.merchantdashboard[0].RefundOrders)
+
+
+            let cardData = [
+                {
+                    id: 1, title: 'Sales', color: TotalSales.icon === Up ? "#30b566" : "#A10B0B", amount: TotalSales.amount, difference: TotalSales.difference + "%", icon: TotalSales.icon,
+                    dateDetails: TotalSales.dateDetails, amountDetails: TotalSales.amountDetails,
+                    tooltipdetails: "Total value of paid orders over the selected time period, including sales from cancelled and return/refund orders. This value is equivalent to the final amount during checkout.",
+                },
+                {
+                    id: 2, title: 'Orders', color: TotalOrder.icon === Up ? "#30b566" : "#A10B0B", dateDetails: TotalOrder.dateDetails, amountDetails: TotalOrder.amountDetails,
+                    amount: TotalOrder.amount, difference: TotalOrder.difference + "%", icon: TotalOrder.icon,
+                    tooltipdetails: "Total number of paid orders, including cancelled or return/refund orders.",
+                },
+                {
+                    id: 3, title: 'Visitors', color: TotalVisitor.icon === Up ? "#30b566" : "#A10B0B", dateDetails: TotalVisitor.dateDetails, amountDetails: TotalVisitor.amountDetails,
+                    amount: TotalVisitor.amount, difference: TotalVisitor.difference + "%", icon: TotalVisitor.icon,
+                    tooltipdetails: "Total number of unique visitors who viewed your shop and product detail pages. Multiple views of one page by the same visitor is counted as 1 unique visitor.",
+                },
+                {
+                    id: 4, title: 'Conversion Rate', color: ConversionRate.icon === Up ? "#30b566" : "#A10B0B", dateDetails: ConversionRate.dateDetails, amountDetails: ConversionRate.amountDetails,
+                    amount: ConversionRate.amount, difference: ConversionRate.difference + "%", icon: ConversionRate.icon,
+                    tooltipdetails: "The number of unique buyers who paid orders divided by total number of unique visitors.",
+                },
+                {
+                    id: 5, title: 'Cancelled Orders', color: CancelledOrder.icon === Up ? "#30b566" : "#A10B0B", dateDetails: CancelledOrder.dateDetails, amountDetails: CancelledOrder.amountDetails,
+                    amount: CancelledOrder.amount, difference: CancelledOrder.difference + "%", icon: CancelledOrder.icon,
+                    tooltipdetails: "Total number of paid orders that were cancelled. Cancelled orders are recorded based on the date they were placed, and not the date of cancellation.",
+                },
+                {
+                    id: 6, title: 'Returned/Refunded Orders', color: RefundOrder.icon === Up ? "#A10B0B" : "#30b566", dateDetails: RefundOrder.dateDetails, amountDetails: RefundOrder.amountDetails,
+                    amount: RefundOrder.amount, difference: RefundOrder.difference + "%", icon: RefundOrder.icon,
+                    tooltipdetails: "Total number of paid orders that were returned/refunded, recorded based on the date these orders were paid for, and not the date of return/refund. An order is counted as returned/refunded only if all products in the same order were returned/refunded.",
+                },
+
+            ]
+            let productByType = [
+                { typeid: 1, typeName: "Sales", productDetails: rankingBySales },
+                { typeid: 2, typeName: "Units", productDetails: rankingByUnit },
+                { typeid: 3, typeName: "Added to Cart", productDetails: rankingByCart }
+            ]
+
+            if (isArrayNotEmpty(JSON.parse(this.props.merchantdashboard[0].OverallMarketing))) {
+                JSON.parse(this.props.merchantdashboard[0].OverallMarketing).map((x) => {
+                    listing.push({
+                        campaignID: x.PromotionID,
+                        campaignsImg: x.BannerImage !== null ? x.BannerImage : Logo,
+                        campaigns: x.PromotionTitle,
+                        charges: x.PromotionSales,
+                        status: x.ActiveInd !== 1 ? "CLOSED" : "ACTIVE",
+                        isActive: x.ActiveInd !== 1 ? false : true,
+                        color: x.ActiveInd !== 1 ? "red" : "green",
+                    })
+                })
+            }
+
+            this.setState({
+                ToDoList: this.props.merchantdashboard[0].ToDoList !== undefined ? JSON.parse(this.props.merchantdashboard[0].ToDoList) : [],
+                MarketingCampaigns: listing,
+                productByType: productByType,
+                cardData: cardData,
+                isDashboardDataSet: true
+            })
+        }
     }
 
     handleClick(data) {
@@ -218,7 +356,7 @@ class MerchantDashboard extends Component {
             <Grid container spacing={2} style={{ padding: '25pt' }}>
                 <Grid item xs={12} sm={12} style={{ display: 'flex', }} >
                     <Grid item xs={6} style={{ display: "flex", }}>
-                        <Typography variant="h5" style={{ fontWeight: 700 }}>Welcome back, Brandon!</Typography>
+                        <Typography variant="h5" style={{ fontWeight: 700 }}>Welcome back,       {localStorage.getItem("loginUser") !== undefined && JSON.parse(localStorage.getItem("loginUser"))[0].UserFullName} !</Typography>
                     </Grid>
                     <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
                         <Typography variant="h6" style={{ color: '#1f7429', }}>{day},&nbsp; {get_Complete_Today}</Typography>
@@ -236,19 +374,19 @@ class MerchantDashboard extends Component {
                         <CardContent>
                             <Grid item container rowSpacing={2} spacing={2}>
                                 <Grid item xs={12} sm={4} md={3} style={{ display: "flex", flexDirection: "column", alignItems: "center", borderRight: "1px solid grey" }}>
-                                    <Typography variant="subtitle1" style={{ color: "blue", }}>0</Typography>
+                                    <Typography variant="subtitle1" style={{ color: "blue", }}>{this.state.ToDoList.length === 0 ? 0 : this.state.ToDoList[0].PendingShippingOrder}</Typography>
                                     <Typography variant="caption" style={{ color: "grey" }}>To Process Shipping</Typography>
                                 </Grid>
                                 <Grid item xs={12} sm={4} md={3} style={{ display: "flex", flexDirection: "column", alignItems: "center", borderRight: "1px solid grey" }}>
-                                    <Typography variant="subtitle1" style={{ color: "blue", }}>0</Typography>
+                                    <Typography variant="subtitle1" style={{ color: "blue", }}>{this.state.ToDoList.length === 0 ? 0 : this.state.ToDoList[0].CancelledOrder}</Typography>
                                     <Typography variant="caption" style={{ color: "grey" }}>Pending cancellation</Typography>
                                 </Grid>
                                 <Grid item xs={12} sm={4} md={3} style={{ display: "flex", flexDirection: "column", alignItems: "center", borderRight: "1px solid grey" }}>
-                                    <Typography variant="subtitle1" style={{ color: "blue", }}>0</Typography>
+                                    <Typography variant="subtitle1" style={{ color: "blue", }}>{this.state.ToDoList.length === 0 ? 0 : this.state.ToDoList[0].RefundOrder}</Typography>
                                     <Typography variant="caption" style={{ color: "grey" }}>Pending Refund</Typography>
                                 </Grid>
                                 <Grid item xs={12} sm={4} md={3} style={{ display: "flex", flexDirection: "column", alignItems: "center", }}>
-                                    <Typography variant="subtitle1" style={{ color: "blue", }}>0</Typography>
+                                    <Typography variant="subtitle1" style={{ color: "blue", }}>{this.state.ToDoList.length === 0 ? 0 : this.state.ToDoList[0].SoldOutProduct}</Typography>
                                     <Typography variant="caption" style={{ color: "grey" }}>Sold Out Product</Typography>
                                 </Grid>
                             </Grid>
@@ -302,7 +440,7 @@ class MerchantDashboard extends Component {
                             <Typography variant="caption" style={{ color: "grey" }}>Marketing Tools & Nominations for Promotion</Typography>
                         </>} />
                         <CardContent>
-                            <MarketingCampaigns />
+                            <MarketingCampaigns MarketingCampaigns={this.state.MarketingCampaigns} />
                         </CardContent>
                     </Card>
                 </Grid>

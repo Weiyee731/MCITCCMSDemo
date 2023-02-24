@@ -7,7 +7,7 @@ import { Button } from "@mui/material";
 
 import Decrease from '../../assets/decrease.png';
 import Increase from '../../assets/increase.png';
-
+import Logo from "../../assets/MyEmporia Logo.png";
 
 function mapStateToProps(state) {
     return {};
@@ -89,7 +89,7 @@ class MarketingCampaigns extends Component {
                     scope="row"
                     padding="normal"
                 >
-                    <img src={data.campaignsImg} width={25} />
+                    <img src={data.campaignsImg} width={25} onError={(e) => { e.target.onerror = null; e.target.src = Logo; }} />
                     <div><Typography variant="subtitle" style={{ color: "black" }}>{data.campaigns}</Typography></div>
                 </TableCell>
                 <TableCell align="center" style={{ color: data.color }}>
@@ -123,7 +123,7 @@ class MarketingCampaigns extends Component {
             <div >
                 {/* <Card sx={{ borderRadius: 4, height: "25vh", overflowY: "scroll", marginTop: "0.5vw" }}> */}
                 <TableComponents
-                    tableTopLeft= "empty"
+                    tableTopLeft="empty"
                     // {
                     //     <>
                     //         <h5 variant="title" style={{ marginTop: "1vw", fontSize: "0.92vw", fontWeight: "bold", }} >Marketing Campaigns</h5>
@@ -188,7 +188,7 @@ class MarketingCampaigns extends Component {
                         onRowClickSelect: false,
                     }}
                     Data={
-                        this.state.dummyMarket
+                        this.props.MarketingCampaigns
                     }
                     onSelectRow={(e) => console.log(e)}
                     onSelectAllRows={(e) => console.log(e)}

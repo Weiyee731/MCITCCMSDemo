@@ -96,6 +96,7 @@ const INITIAL_STATE = {
 
   //dashboard
   maindashboard: [],
+  merchantdashboard: []
 
 };
 
@@ -1008,6 +1009,14 @@ export function counterReducer(state = INITIAL_STATE, action) {
       return Object.assign({}, state, {
         loading: false,
         maindashboard: action.payload,
+      });
+
+    case GitAction.GetMerchantDashboard:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotMerchantDashboard:
+      return Object.assign({}, state, {
+        loading: false,
+        merchantdashboard: action.payload,
       });
 
     /////////////////////////////////////////////////// Default ///////////////////////////////////////////////////

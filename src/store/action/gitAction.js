@@ -1082,6 +1082,16 @@ export class GitAction {
     };
   }
 
+  
+  static GetMerchantDashboard = "GET-MERCHANTDASHBOARD";
+  static GotMerchantDashboard = "GOT-MERCHANTDASHBOARD";
+  static CallMerchantDashboard(prodData) {
+    return {
+      type: GitAction.GetMerchantDashboard,
+      payload: prodData,
+    };
+  }
+
 
 }
 

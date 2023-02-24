@@ -76,7 +76,7 @@ import RegisterMerchant from "../../../pages/Register/RegisterMerchant";
 
 const routes = [
     {
-        path: "/",
+        path: "/Dashboard",
         exact: true,
         element: <Dashboard />,
     },
