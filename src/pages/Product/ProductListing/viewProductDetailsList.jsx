@@ -4019,10 +4019,6 @@ class ProductDetailsComponent extends Component {
     }
 
     render() {
-
-        console.log("CHECKKK", this.props)
-        console.log("CHECKKK11", this.state)
-
         const { isOnViewState } = this.props  //this props used to indicate it is on the state of viewing product details or it is adding product
         const { description } = this.state
 
@@ -4511,8 +4507,6 @@ class ProductDetailsComponent extends Component {
             } */}
                         </div>
                         {/* <Button onClick={() => this.setState({toBeEdited: !this.state.toBeEdited})}>{this.state.toBeEdited? "Cancel" : "Edit"}</Button> */}
-                        {console.log("dsadsadsad", this.props)}
-                        {console.log("dsadsadsad11", this.state)}
                         <div>
                             <Card id="basicInfo" className="SubContainer">
                                 <CardContent id="basicInfo">
@@ -4817,8 +4811,6 @@ class ProductDetailsComponent extends Component {
                                             variant="outlined"
                                             className="InputField"
                                         />}
-                                    {console.log("check", this.state)}
-                                    {console.log("check", this.props)}
                                     {this.state.productSupplierEmpty && this.state.toBeEdited && (
                                         <p className="error">Product supplier cannot be empty.</p>
                                     )}
@@ -5378,8 +5370,6 @@ class ProductDetailsComponent extends Component {
                                                 <p>Product Variation</p>
                                             </div>
                                             <div className="VariantOptionsSection">
-                                                {console.log("fasfafsafa", this.state)}
-                                                {console.log("fasfafsafa", this.props)}
                                                 <FormControl variant="outlined" className="w-100" size="small">
                                                     <InputLabel id="demo-simple-select-outlined-label">Product Variation</InputLabel>
                                                     <Select

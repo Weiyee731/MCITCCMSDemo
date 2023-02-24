@@ -868,7 +868,8 @@ export class GitEpic {
           return fetch(url + project + "/" +
             "Product_ItemListByType?Type=" + action.payload.type +
             "&TypeValue=" + action.payload.typeValue +
-            "&USERID=" + action.payload.userId +
+            "&USERID=" + action.payload.userId +            
+            "&PLATFORMTYPE=CMS" +
             "&PRODUCTPERPAGE=" + action.payload.productPage +
             "&PAGE=" + action.payload.page +
             "&ProjectID=" + action.payload.ProjectID)

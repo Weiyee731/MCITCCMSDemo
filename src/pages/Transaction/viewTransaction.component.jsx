@@ -1337,12 +1337,10 @@ function Row(props) {
                             </div>
                         )
                     })}
-                {console.log("ddasdsad", this)}
             </>
         )
     }
 
-    { console.log("selectedProductDetailsID", selectedProductDetailsID) }
     return (
         <React.Fragment>
             <>
@@ -1508,8 +1506,6 @@ function Row(props) {
                                     addressList(row, row)
                                 }
                                 <p className="subHeading">Products Ordered</p>
-                                {console.log("OrderProductDetail", row.OrderProductDetail)}
-                                {console.log("aaaaaaa", props)}
 
                                 {row.OrderProductDetail ? (eCommerceLayout()) : (<p className="fadedText">No Products To Display</p>
                                 )}
@@ -1616,13 +1612,11 @@ class DisplayTable extends Component {
 
     handleChangePage = (event, newPage) => {
 
-        console.log("handleChangePage", newPage)
         this.setState({ page: newPage });
     };
 
     handleChangeRowsPerPage = (event) => {
 
-        console.log("handleChangeRowsPerPage", event.target.value)
         this.setState({ rowsPerPage: parseInt(event.target.value, 10) });
         this.setState({ page: 0 });
     };
@@ -1671,8 +1665,6 @@ class DisplayTable extends Component {
         })
 
         let removeDeplicate = this.state.filteredProduct.filter((ele, ind) => ind === this.state.filteredProduct.findIndex(elem => elem.OrderID === ele.OrderID))
-        if (removeDeplicate.length < 5)
-            console.log("removeDeplicate YES")
         this.setState({ isFiltered: true, filteredProduct: removeDeplicate })
     }
 
@@ -1888,10 +1880,8 @@ class ViewTransactionsComponent extends Component {
 
 
     componentDidUpdate(prevProps) {
-        console.log("orderShipment", this.props.orderShipment)
 
         // if (isArrayNotEmpty(this.props.orderShipment) && this.props.orderShipment[0].PDFLabel !== undefined && this.props.orderShipment[0].PDFLabel !== null && this.props.orderShipment[0].PDFLabel !== "-") {
-        //     console.log("dsadasdad", this.props.orderShipment)
         //     this.setState({ PDFLabel: this.props.orderShipment[0].PDFLabel })
         //     this.props.CallResetOrderShipment()
         // }
@@ -1916,8 +1906,6 @@ class ViewTransactionsComponent extends Component {
             });
             this.setState({ setting: true })
         }
-
-        console.log("componentDidUpdate", this.props.orderShipmentStatus)
     }
 
     setTabsHidden = (value) => {
@@ -2008,7 +1996,6 @@ class ViewTransactionsComponent extends Component {
 
 
         const senderAddressLayout = () => {
-            console.log("sdasdasdsa", this.state)
             return (
                 <div className="row" style={{ padding: "10px" }}>
                     <div className="col-xl-3 col-lg-3 col-md-3 col-s-3 col-xs-3">

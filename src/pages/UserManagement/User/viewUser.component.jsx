@@ -24,7 +24,7 @@ import { Dataset } from "@mui/icons-material";
 
 function mapStateToProps(state) {
     return {
-        allUser: state.counterReducer["currentUser"],
+        allUser: state.counterReducer["userProfile"],
     };
 }
 
@@ -76,20 +76,20 @@ class ViewUserComponent extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if(prevProps.allUser !== this.props.allUser && this.props.allUser.length === 0){
+        if (prevProps.allUser !== this.props.allUser && this.props.allUser.length === 0) {
             this.props.CallUserProfile({
-            TYPE: "Usertype",
-            TYPEVALUE: localStorage.getItem("loginUser") !== null && JSON.parse(localStorage.getItem("loginUser"))[0].UserID !== undefined ?
-                JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID
-                : 0,
-            USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID ? JSON.parse(localStorage.getItem("loginUser"))[0].UserID : 0,
-            USERROLEID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID ? JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID : 0,
-            LISTPERPAGE: 999,
-            PAGE: 1,
-            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
-        });
+                TYPE: "Usertype",
+                TYPEVALUE: localStorage.getItem("loginUser") !== null && JSON.parse(localStorage.getItem("loginUser"))[0].UserID !== undefined ?
+                    JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID
+                    : 0,
+                USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID ? JSON.parse(localStorage.getItem("loginUser"))[0].UserID : 0,
+                USERROLEID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID ? JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID : 0,
+                LISTPERPAGE: 999,
+                PAGE: 1,
+                ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
+            });
         }
-        
+
     }
 
     componentWillUnmount() {
@@ -109,20 +109,20 @@ class ViewUserComponent extends Component {
 
 
     searchSpace = (value, e) => {
-        let DataSet = this.props.allUser.length > 0 ? this.props.allUser.filter((x)=>x.UserTypeID === 16 || x.UserTypeID === 17) : []
+        let DataSet = this.props.allUser.length > 0 ? this.props.allUser.filter((x) => x.UserTypeID === 16 || x.UserTypeID === 17) : []
         this.state.filteredProduct.splice(0, this.state.filteredProduct.length)
 
         //filter by user type
         e.id !== null && e.id !== 0 && e.id !== undefined &&
             this.setState({ selectedFilter: { id: e.id, value: e.value, label: e.label } })
-        if (parseInt(e.id) === 0){
+        if (parseInt(e.id) === 0) {
             if (DataSet.length > 0) {
                 DataSet.map((x) =>
                     this.state.filteredProduct.push(x)
                 )
             }
         }
-            
+
         else {
             if (DataSet.length > 0) {
                 DataSet.filter((x) => x.UserTypeID === parseInt(e.id)).map((x) =>
@@ -171,41 +171,42 @@ class ViewUserComponent extends Component {
     }
 
     onTableRowClick = (event, row) => {
-        if(row.UserTypeID === 17){
+        if (row.UserTypeID === 17) {
             this.setState({
-            name: row,
-            firstName: row.FirstName,
-            lastName: row.LastName,
-            userTypeId: row.UserTypeID,
-            userContact: row.UserContactNo,
-            companyDesc: row.CompanyDescription,
-            companyName: row.CompanyName,
-            companyWebsite: row.CompanyWebsite,
-            companyAddressLine1: row.CompanyAddressLine1,
-            companyAddressLine2: row.CompanyAddressLine2,
-            companyPoscode: row.CompanyPosCode,
-            companyCity: row.CompanyCity,
-            companyState: row.CompanyState
-        });
-        }else if (row.UserTypeID === 16){
+                name: row,
+                firstName: row.FirstName,
+                lastName: row.LastName,
+                userTypeId: row.UserTypeID,
+                userContact: row.UserContactNo,
+                companyDesc: row.CompanyDescription,
+                companyName: row.CompanyName,
+                companyWebsite: row.CompanyWebsite,
+                companyAddressLine1: row.CompanyAddressLine1,
+                companyAddressLine2: row.CompanyAddressLine2,
+                companyPoscode: row.CompanyPosCode,
+                companyCity: row.CompanyCity,
+                companyState: row.CompanyState
+            });
+        } else if (row.UserTypeID === 16) {
             this.setState({
-            userId: row.UserID,
-            name: row.ShopName,
-            userTypeId: row.UserTypeID,
-            companyContactNo: row.UserContactNo,
-            firstName: row.FirstName,
-            lastName: row.LastName,
-            companyDescription: row.ShopDescription,
-            companyWebsite: row.CompanyWebsite,
-            companyAddressLine1: row.CompanyAddressLine1,
-            companyAddressLine2: row.CompanyAddressLine2,
-            companyPoscode: row.ShopPoscode,
-            companyCity: row.ShopCity,
-            companyState: row.ShopState,
-            UserStatus: row.Userstatus,
-            isdetailsShown: false,})
+                userId: row.UserID,
+                name: row.ShopName,
+                userTypeId: row.UserTypeID,
+                companyContactNo: row.UserContactNo,
+                firstName: row.FirstName,
+                lastName: row.LastName,
+                companyDescription: row.ShopDescription,
+                companyWebsite: row.CompanyWebsite,
+                companyAddressLine1: row.CompanyAddressLine1,
+                companyAddressLine2: row.CompanyAddressLine2,
+                companyPoscode: row.ShopPoscode,
+                companyCity: row.ShopCity,
+                companyState: row.ShopState,
+                UserStatus: row.Userstatus,
+                isdetailsShown: false,
+            })
         }
-        
+
         if (this.state.isdetailsShown) {
             this.setState({
                 isdetailsShown: false,
@@ -221,7 +222,6 @@ class ViewUserComponent extends Component {
         const DataList = this.props.allUser.length > 0 &&
             this.props.allUser !== undefined &&
             this.props.allUser[0].ReturnVal !== "0" ? this.props.allUser : []
-console.log(this.props.allUser)
 
         const tableHeadCells = [
             {
@@ -279,7 +279,7 @@ console.log(this.props.allUser)
                 // { id: "13", value: "Staffs" },
                 // { id: "14", value: "Staffs" },
                 // { id: "15", value: "Supplier" },
-                {id:"0", value: "All"},
+                { id: "0", value: "All" },
                 { id: "16", value: "Merchant" },
                 { id: "17", value: "User" }
             ]
@@ -289,22 +289,22 @@ console.log(this.props.allUser)
                 <div className="row">
                     {
                         this.state.isdetailsShown === true ?
-                        <>
-                            {this.state.userTypeId === 16 &&
-                                <MerchantDetails
-                                    data={this.state}
-                                    data2={this.props}
-                                    history={this.props.history}
-                                    setDetailsShown={setDetailsShown}
-                                    setfilter={setFilter}
-                                />}
-                            {this.state.userTypeId === 17 &&
-                                <UserDetailsComponent
-                                    data={this.state}
-                                    setDetailsShown={setDetailsShown}
-                                    setfilter={setFilter}
-                                />}
-                        </>
+                            <>
+                                {this.state.userTypeId === 16 &&
+                                    <MerchantDetails
+                                        data={this.state}
+                                        data2={this.props}
+                                        history={this.props.history}
+                                        setDetailsShown={setDetailsShown}
+                                        setfilter={setFilter}
+                                    />}
+                                {this.state.userTypeId === 17 &&
+                                    <UserDetailsComponent
+                                        data={this.state}
+                                        setDetailsShown={setDetailsShown}
+                                        setfilter={setFilter}
+                                    />}
+                            </>
                             :
                             <>
                                 <div className="col-2 d-inline-flex">
@@ -358,7 +358,7 @@ console.log(this.props.allUser)
                                     selectedIndexKey={"UserID"}                    // required, as follow the data targetting key of the row, else the data will not be chosen when checkbox is click. 
                                     Data={
                                         this.state.isFiltered === false ?
-                                            DataList.filter((x)=>x.UserTypeID === 16 || x.UserTypeID === 17) : this.state.filteredProduct
+                                            DataList.filter((x) => x.UserTypeID === 16 || x.UserTypeID === 17) : this.state.filteredProduct
                                     }                                 // required, the data that listing in the table
                                     onSelectRow={(e) => this.setState({ selectedListID: e })}
                                     onSelectAllRows={(e) => this.setState({ selectedListID: e })}

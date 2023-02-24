@@ -194,7 +194,6 @@ const ViewReviewDetails = (props) => {
                             onChange={(e) => handleOnChange(e)}
                         />
                     </div>
-                    {console.log("data", data)}
                     <div className="col-1">
                         <IconButton className="icon" disabled={data.replyComment !== "" && data.selectedCommentReply.length !== 0 ? false : true}>
                             <SendIcon style={{ color: data.replyComment !== "" && data.selectedCommentReply.length !== 0 ? "green" : "grey" }} onClick={() => handleAddReview(data.selectedCommentReply, state.ProductReviewID)} />

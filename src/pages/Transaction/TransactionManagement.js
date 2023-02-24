@@ -330,7 +330,6 @@ export const TransactionManagement = (props) => {
                         {checkCollapseOpen(index) ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
-                {console.log("dsdasdasd", value)}
                 {value + 1 === 2 &&
                     <TableCell>
                         <Checkbox color="primary"
@@ -1063,18 +1062,11 @@ export const TransactionManagement = (props) => {
     const checkSelectedMerchant = (listing, MerchantID) => {
         let dataSet = []
         let OverallListing = listing
-        // console.log("OverallListing", OverallListing)
-
 
         if (MerchantID === 0)
             dataSet = OverallListing
         else {
             isArrayNotEmpty(OverallListing) && OverallListing.map((data) => {
-                console.log("dsadsadsa11", data)
-
-                if (data.OrderID === 2008) {
-                    console.log("YESYESYESYES", data)
-                }
 
                 let detailsListing = []
                 detailsListing = data.orderDetails !== undefined ? data.orderDetails.filter((x) => x.MerchantID === MerchantID) : []
@@ -1083,13 +1075,12 @@ export const TransactionManagement = (props) => {
 
                     // data.map((x) => {
                     data.OrderID === 2008 && data.OrderProductDetail !== undefined && JSON.parse(data.OrderProductDetail).map((y) => {
-                        console.log("OrderListingOrderListing", y)
+            
                     })
                     // })
 
-                    console.log("detailsListingdetailsListing12345", detailsListing)
                     // dataSet.push(data)
-                    dataSet = [...dataSet, data ]
+                    dataSet = [...dataSet, data]
                     dataSet.map((y, index) => {
                         if (y.OrderID === data.OrderID) {
                             dataSet[index].orderDetails = detailsListing
@@ -1098,7 +1089,6 @@ export const TransactionManagement = (props) => {
                 }
             })
 
-            console.log("dssadadda", dataSet)
             dataSet = isArrayNotEmpty(dataSet) ? dataSet.filter((ele, ind) => ind === dataSet.findIndex(elem => parseInt(elem.OrderID) === parseInt(ele.OrderID))) : []
         }
         return dataSet
@@ -1452,7 +1442,6 @@ export const TransactionManagement = (props) => {
                                 className="select"
                             >
                                 <MenuItem value={0}>All Merchant Shop</MenuItem>
-                                {console.log("sdsadsada", currentUser)}
                                 {
                                     currentUser.filter(x => x.UserTypeID < 17)
                                         .map((data, i) => {
@@ -1465,7 +1454,6 @@ export const TransactionManagement = (props) => {
                         </FormControl>
                     </div>
                 }
-                {console.log("selectedMerchant", selectedMerchant)}
             </div>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">

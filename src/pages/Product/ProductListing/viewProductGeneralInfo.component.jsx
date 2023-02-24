@@ -195,7 +195,6 @@ class ViewProductGeneralInfo extends Component {
       })
     }
 
-    console.log("dsadasdsa", this.props.reviews)
     if (this.props.reviews !== undefined && isArrayNotEmpty(this.props.reviews) && this.props.reviews[0].ReturnVal === undefined) {
       this.getReviewList(this.props.reviews)
     }
@@ -512,7 +511,6 @@ class ViewProductGeneralInfo extends Component {
   }
 
   handleSubmitReview(review, parentID) {
-    console.log("handleSubmitReview")
     this.props.CallAddProductReview({
       parentProductReviewID: parentID,
       productID: review.ProductID,
@@ -710,7 +708,6 @@ class ViewProductGeneralInfo extends Component {
                               : "-"}</label>
                           </div>
                         </div>
-                        {console.log("dasdsadsad", this.props)}
                         <div key="Merchant" className="row">
                           <div className="col-lg-2">
                             <label style={productInfoLabelStyle}>Merchant Shop :</label>
