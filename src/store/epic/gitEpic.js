@@ -464,11 +464,8 @@ export class GitEpic {
             "&PROJECTID=" + action.payload.PROJECTID)
             .then(response => response.json())
             .then(json => {
-
-
               json = JSON.parse(json)
-
-              if (json[0].ReturnVal === 1) {
+              if (json[0].ReturnVal === 0) {
                 return dispatch({ type: GitAction.OrderRequestedShipmentStatus, payload: JSON.parse(json[0].ReturnData) });
               } else {
                 // toast.error(json[0].ReturnMsg)
@@ -850,7 +847,7 @@ export class GitEpic {
           return fetch(url + project + "/" +
             "Product_ItemListByType?Type=" + action.payload.type +
             "&TypeValue=" + action.payload.typeValue +
-            "&USERID=" + action.payload.userId +            
+            "&USERID=" + action.payload.userId +
             "&PLATFORMTYPE=CMS" +
             "&PRODUCTPERPAGE=" + action.payload.productPage +
             "&PAGE=" + action.payload.page +

@@ -831,7 +831,7 @@ export const TransactionManagement = (props) => {
                                     >
                                         <div className="container-fluid">
                                             <div className="container">
-                                                {isArrayNotEmpty(orderShipmentStatus) ?
+                                                {orderShipmentStatus !== undefined && orderShipmentStatus.returncode !== undefined ?
                                                     <>
                                                         {isArrayNotEmpty(orderShipmentStatus.trackHeader) &&
                                                             <Typography style={{ fontSize: "11px", fontWeight: "bold" }}>Tracking Number :{orderShipmentStatus.trackHeader[0].hawb}</Typography>
@@ -1075,7 +1075,7 @@ export const TransactionManagement = (props) => {
 
                     // data.map((x) => {
                     data.OrderID === 2008 && data.OrderProductDetail !== undefined && JSON.parse(data.OrderProductDetail).map((y) => {
-            
+
                     })
                     // })
 
@@ -1097,7 +1097,6 @@ export const TransactionManagement = (props) => {
         return (
             <>
                 <TableContainer component={Paper} style={{ overflow: "hidden" }}>
-                    {isOrderSelected && senderInformationLayout()}
                     <Table aria-label="collapsible table" size="small">
                         {isShipmentSubmit === true && <LoadingPanel />}
                         {headerLayout()}
@@ -1114,6 +1113,15 @@ export const TransactionManagement = (props) => {
                                                             <Collapse in={checkCollapseOpen(checkIndex(index))} timeout="auto" unmountOnExit>
                                                                 <Box sx={{ margin: 1 }}>
                                                                     {OrderDetailLayout(data, checkIndex(index))}
+                                                                    {
+                                                                        isOrderSelected &&
+                                                                        <Card style={{ marginTop: "10px" }}>
+                                                                            <CardContent>
+                                                                                {senderInformationLayout()}
+                                                                            </CardContent>
+                                                                        </Card>
+                                                                    }
+
                                                                     <Card style={{ marginTop: "10px" }}>
                                                                         <CardContent>
                                                                             <div className="row">
