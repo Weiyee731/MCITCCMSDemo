@@ -183,12 +183,17 @@ class Dashboard extends Component {
             let statisticData = [
                 { title: "Total Sales", amount: 0, iconImg: 'https://img.icons8.com/ios/50/null/economic-improvement.png' },
                 { title: "Total Order", amount: 0, iconImg: 'https://img.icons8.com/external-kiranshastry-lineal-kiranshastry/64/null/external-revenue-investment-kiranshastry-lineal-kiranshastry.png' },
+                { title: "Total User", amount: 0, iconImg: 'https://img.icons8.com/ios/256/groups.png' },
+                { title: "Total Visitor", amount: 0, iconImg: 'https://img.icons8.com/external-outline-wichaiwi/256/external-visitors-digital-marketing-outline-wichaiwi.png' },
             ]
 
+            console.log("dsadsada", this.props.maindashboard[0].OverallSales)
             if (this.props.maindashboard[0].OverallSales !== undefined && this.props.maindashboard[0].OverallSales !== "[]" && isArrayNotEmpty(JSON.parse(this.props.maindashboard[0].OverallSales))) {
                 let x = JSON.parse(this.props.maindashboard[0].OverallSales)[0]
                 statisticData[0].amount = x.OrderTotalAmount !== null ? "RM" + parseFloat(x.OrderTotalAmount).toFixed(2) : 0
                 statisticData[1].amount = x.TotalOrderAmount !== null ? x.TotalOrderAmount : 0
+                statisticData[2].amount = x.TotalUser !== null ? x.TotalUser : 0
+                statisticData[3].amount = x.TotalVisitor !== null ? x.TotalVisitor : 0
             }
 
 
@@ -577,7 +582,7 @@ class Dashboard extends Component {
                                             {
                                                 this.state.statisticData.filter((y) => y.key === this.state.key).map((x) => {
                                                     return (
-                                                        <Grid item xs={6} sm={6} md={6} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                                        <Grid item xs={6} sm={6} md={3} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                                                             <Grid>
                                                                 <img src={x.iconImg} width="35vw" height="35vw" />
                                                             </Grid>
