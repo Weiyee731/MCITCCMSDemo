@@ -175,7 +175,7 @@ class MerchantDashboard extends Component {
             }
             if (dataList !== undefined && dataList !== "[]" && isArrayNotEmpty(JSON.parse(dataList))) {
                 JSON.parse(dataList).map((x, index) => {
-                    listing.dateDetails.push(moment(x.DateDetails).format("DD/MM/YYYY"))
+                    listing.dateDetails.push(x.DateDetails !== null ? moment(x.DateDetails).format("DD/MM/YYYY") : "-")
                     listing.amountDetails.push(x.DataDetails)
                 })
             }
