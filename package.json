@@ -1,7 +1,7 @@
 {
   "name": "eCommerceCMS",
   "version": "0.1.0",
-  "homepage": "/ecommerceCMSDev/",
+  "homepage": "/",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.7.1",
