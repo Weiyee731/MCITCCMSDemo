@@ -333,6 +333,8 @@ class EditShopProfile extends Component {
 
         let uploadImageURL = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/uploadImages.php"
 
+        console.log('uploadImageURL', uploadImageURL)
+
         const updateData = {
             USERID: this.state.USERID,
             FIRSTNAME: this.state.FIRSTNAME,

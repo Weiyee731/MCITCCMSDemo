@@ -19,6 +19,14 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.Login), map(action => {
       return dispatch => {
         try {
+          console.log( url + project + "/" +
+          // url + project + "/" +
+          "User_Login?username=" +
+          action.payload.username +
+          "&password=" +
+          action.payload.password +
+          "&ProjectDomainName=" +
+          action.payload.ProjectDomainName)
           return fetch(
             url + project + "/" +
             // url + project + "/" +

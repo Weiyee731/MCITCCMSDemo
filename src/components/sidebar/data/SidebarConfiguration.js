@@ -138,6 +138,10 @@ const SidebarConfiguration = () => {
 
     let overallListing = [];
 
+    const eCommercePlatform = window.location.hostname === "localhost" ? "http://localhost:3000/EmporiaDev" : "https://myemporia.my/emporiadev/"
+
+    console.log('sidebar', sidebars)
+
     sidebars.length > 0 &&
         JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID !== 1 ?
             sidebars.filter((x)=> x.PageID !== 15).map((data) => {
@@ -190,7 +194,7 @@ const SidebarConfiguration = () => {
                 overallListing.push(listing);
             } else {
                 let listing = {
-                    to: data.page,
+                    to: data.page === '/' ? eCommercePlatform : data.page,
                     title: data.title,
                     icon: data.icon,
                 };

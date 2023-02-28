@@ -16,6 +16,7 @@ import LoadingPanel from "../../tools/LoadingPanel";
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import SearchBar from "../../components/SearchBar/SearchBar"
+import { ContactsOutlined } from "@mui/icons-material";
 
 export const ProductCategory = (props) => {
   const { categories, productCategories } = useSelector(state => ({
@@ -107,7 +108,7 @@ export const ProductCategory = (props) => {
   }
 
   const clickCollapseOpen = (data, mainIndex, subindex, subdetailIndex) => {
-    let listingData = [...categoryListingDetails]
+    let listingData = [...filteredList]
     if (data.HierarchyID === 1) {
       listingData[mainIndex].isOpen = !listingData[mainIndex].isOpen
     }
@@ -119,7 +120,7 @@ export const ProductCategory = (props) => {
   }
 
   const checkCollapseOpen = (data, mainIndex, subindex, subdetailIndex) => {
-    let listingData = [...categoryListingDetails]
+    let listingData = [...filteredList]
     let isOpen = false
     if (isArrayNotEmpty(listingData)) {
       if (data.HierarchyID === 1) {
@@ -235,7 +236,7 @@ export const ProductCategory = (props) => {
   }
 
   const clickIsEdit = (data, type, mainIndex, subindex, subdetailIndex) => {
-    let listingData = [...categoryListingDetails]
+    let listingData = [...filteredList]
 
     setEdit(true)
 
@@ -341,7 +342,7 @@ export const ProductCategory = (props) => {
   }
 
   const checkEdit = (data, mainIndex, subindex, subdetailIndex) => {
-    let listingData = [...categoryListingDetails]
+    let listingData = [...filteredList]
     let isEdit = false
 
     if (isArrayNotEmpty(listingData)) {
@@ -360,13 +361,14 @@ export const ProductCategory = (props) => {
           listingData[mainIndex].SubDetails[subindex].SubDetails !== undefined && listingData[mainIndex].SubDetails[subindex].SubDetails.length !== 0 &&
           listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex] !== undefined && listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex].length !== 0)
           isEdit = listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex].isEdit
+  
       }
     }
     return isEdit
   }
 
   const handleChanges = (type, value, data, mainIndex, subindex, subdetailIndex) => {
-    let listingData = [...categoryListingDetails]
+    let listingData = [...filteredList]
     switch (type) {
       case "Category":
         if (data.HierarchyID === 1)
@@ -400,7 +402,7 @@ export const ProductCategory = (props) => {
   }
 
   const handleNewCategory = (hierachy, index, subIndex,) => {
-    let listingData = [...categoryListingDetails]
+    let listingData = [...filteredList]
     setEdit(false)
     let mainListing = {
       HierarchyID: "",
@@ -519,12 +521,16 @@ export const ProductCategory = (props) => {
   const searchSpace = (event) => {
     setsearchKeywords(event.target.value)
 
+    let allCategory = categoryListingDetails
+    let searchString = event.target.value.toLowerCase().split(' ')
+ 
     if (event.target.value === "") {
-      setfilteredList(categoryListingDetails)
+      setfilteredList(allCategory)
     }
     else {
-      let filteredList = []
-      filteredList = categoryListingDetails.filter((item) => item.ProductCategory.toLowerCase().includes(event.target.value.toLowerCase()))
+      let filteredList = ""
+      filteredList = allCategory.filter(category => 
+        searchString.some(searchString => category.ProductCategory.toLowerCase().includes(searchString)))
       setfilteredList(filteredList)
       setisFiltered(true)
     }
