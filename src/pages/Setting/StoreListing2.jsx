@@ -181,9 +181,18 @@ class ShoplotListing extends Component {
         }]
 
         this.BlockListing = DUMMYBLOCK
-        this.props.CallGridList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
-        this.props.CallBlockList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
-        this.props.CallShopList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
+        this.props.CallGridList({
+            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+            USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+        })
+        this.props.CallBlockList({
+            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+            USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+        })
+        this.props.CallShopList({
+            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+            USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+        })
     }
 
 
@@ -197,7 +206,10 @@ class ShoplotListing extends Component {
                 toast.success("Data is uploaded")
             }
             else
-                this.props.CallShopList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
+                this.props.CallShopList({
+                    ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+                    USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+                })
         }
 
         // if (prevProps.shoplot !== this.props.shoplot) {
@@ -566,7 +578,8 @@ class ShoplotListing extends Component {
                 ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
                 ShoplotPolygon: this.state.Location,
                 Longitude: longitude,
-                Latitude: latitude
+                Latitude: latitude,
+                USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
             })
             this.setState(INITIAL_STATE)
             this.setState({ isShopModal: false })

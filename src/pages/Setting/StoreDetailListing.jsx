@@ -125,10 +125,22 @@ class StoreDetailListing extends Component {
         this.state = INITIAL_STATE
         this.ShoplotListing = []
         this.GridListing = []
-        this.props.CallGridList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
-        this.props.CallBlockList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
-        this.props.CallShopList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
-        this.props.CallShopListByID({ ShoplotID: this.props.match.params.shoplotID })
+        this.props.CallGridList({
+            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+            USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+        })
+        this.props.CallBlockList({
+            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+            USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+        })
+        this.props.CallShopList({
+            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+            USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+        })
+        this.props.CallShopListByID({
+            ShoplotID: this.props.match.params.shoplotID,
+            USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+        })
     }
 
     componentDidMount() {
@@ -136,7 +148,10 @@ class StoreDetailListing extends Component {
             if (parseInt(this.props.shoplotByID[0].ShoplotID) === parseInt(this.props.match.params.shoplotID))
                 this.setShoplot(this.props.shoplotByID)
             else
-                this.props.CallShopListByID({ ShoplotID: this.props.match.params.shoplotID })
+                this.props.CallShopListByID({
+                    ShoplotID: this.props.match.params.shoplotID,
+                    USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+                })
         }
         if (this.props.grid !== null && this.props.grid.length > 0 && this.state.isGridtSet === false) {
             this.GridListing = this.props.grid.filter((x) => parseInt(x.ShoplotID) === parseInt(this.props.match.params.shoplotID))
@@ -157,7 +172,10 @@ class StoreDetailListing extends Component {
                         window.location.reload(false);
                     }, 1000)
                 else
-                    this.props.CallShopListByID({ ShoplotID: this.props.match.params.shoplotID })
+                    this.props.CallShopListByID({
+                        ShoplotID: this.props.match.params.shoplotID,
+                        USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+                    })
             }
         }
 
@@ -166,7 +184,10 @@ class StoreDetailListing extends Component {
                 this.props.CallResetGridAction()
             }
             else
-                this.props.CallGridList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
+                this.props.CallGridList({
+                    ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+                    USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+                })
         }
 
         if (prevProps.shoplotByID !== this.props.shoplotByID) {
@@ -174,7 +195,10 @@ class StoreDetailListing extends Component {
                 if (parseInt(this.props.shoplotByID[0].ShoplotID) === parseInt(this.props.match.params.shoplotID))
                     this.setShoplot(this.props.shoplotByID)
                 else
-                    this.props.CallShopListByID({ ShoplotID: this.props.match.params.shoplotID })
+                    this.props.CallShopListByID({
+                        ShoplotID: this.props.match.params.shoplotID,
+                        USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+                    })
             }
         }
     }
@@ -369,7 +393,8 @@ class StoreDetailListing extends Component {
                     ShoplotID: this.state.ShopModalData[0].ShoplotID,
                     ShoplotBlock: this.state.ShopModalData[0].ShoplotBlock[0].value,
                     StorageBlockID: this.state.ShopModalData[0].ShoplotBlock[0].id,
-                    ShoplotPolygon: this.state.ShopModalData[0].ShoplotPolygonString
+                    ShoplotPolygon: this.state.ShopModalData[0].ShoplotPolygonString,
+                    USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
                 })
             }
             else {
@@ -398,12 +423,14 @@ class StoreDetailListing extends Component {
                     ShoplotID: this.state.ShopModalData[0].ShoplotID,
                     ShoplotBlock: this.state.ShopModalData[0].ShoplotBlock[0].value,
                     StorageBlockID: this.state.ShopModalData[0].ShoplotBlock[0].id,
-                    ShoplotPolygon: this.state.Location
+                    ShoplotPolygon: this.state.Location,
+                    USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
                 })
                 this.props.CallUpdateShoplotCoordinate({
                     ShoplotID: this.state.ShopModalData[0].ShoplotID,
                     Longitude: longitude,
-                    Latitude: latitude
+                    Latitude: latitude,
+                    USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
                 })
             }
             this.setState(INITIAL_STATE)
@@ -473,7 +500,8 @@ class StoreDetailListing extends Component {
                 GridStorageCode: this.state.GridModalData[0].gridStorageCode,
                 ShoplotID: this.state.GridModalData[0].shopLot[0].id,
                 ShoplotName: this.state.GridModalData[0].shopLot[0].value,
-                ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID
+                ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+                USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
             })
             this.setState(INITIAL_STATE)
             this.setState({ isGridModal: false })
@@ -489,7 +517,8 @@ class StoreDetailListing extends Component {
                 GridStorageID: this.state.GridModalData[0].gridId,
                 GridStorageCode: this.state.GridModalData[0].gridStorageCode,
                 ShoplotID: this.state.GridModalData[0].shopLot[0].id,
-                ShoplotName: this.state.GridModalData[0].shopLot[0].value
+                ShoplotName: this.state.GridModalData[0].shopLot[0].value,
+                USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
             })
             this.setState(INITIAL_STATE)
             this.setState({ isGridModal: false })
@@ -504,7 +533,10 @@ class StoreDetailListing extends Component {
         this.state.selectedListID.length > 0 && this.state.selectedListID.map((data) => {
             selectedID.push(data.GridStorageID)
         })
-        this.props.CallDeleteGridList({ GridStorageID: selectedID })
+        this.props.CallDeleteGridList({
+            GridStorageID: selectedID,
+            USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+        })
     }
 
     render() {
@@ -557,7 +589,10 @@ class StoreDetailListing extends Component {
                                     <IconButton
                                         onClick={() =>
                                             <>
-                                                {this.props.CallDeleteShopList({ ShoplotID: this.props.match.params.shoplotID })}
+                                                {this.props.CallDeleteShopList({
+                                                    ShoplotID: this.props.match.params.shoplotID,
+                                                    USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+                                                })}
                                                 {this.setState({ isDeleteShop: true })}
                                             </>
                                         }
