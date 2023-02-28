@@ -130,9 +130,18 @@ class ShoplotListing extends Component {
     }
 
     componentDidMount() {
-        this.props.CallGridList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
-        this.props.CallBlockList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
-        this.props.CallShopList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
+        this.props.CallGridList({
+            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+            USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+        })
+        this.props.CallBlockList({
+            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+            USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+        })
+        this.props.CallShopList({
+            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+            USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+        })
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -142,7 +151,10 @@ class ShoplotListing extends Component {
                 toast.success("Data is uploaded")
             }
             else
-                this.props.CallShopList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
+                this.props.CallShopList({
+                    ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+                    USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+                })
         }
 
         if (prevProps.blockAction !== this.props.blockAction) {
@@ -151,7 +163,10 @@ class ShoplotListing extends Component {
                 toast.success("Data is uploaded")
             }
             else
-                this.props.CallBlockList({ ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID })
+                this.props.CallBlockList({
+                    ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+                    USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+                })
         }
     }
 
@@ -484,7 +499,8 @@ class ShoplotListing extends Component {
         if (!this.errorChecking("block")) {
             this.props.CallAddBlockList({
                 ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
-                BlockName: this.state.BlockName
+                BlockName: this.state.BlockName,
+                USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
             })
             this.setState(INITIAL_STATE)
         }
@@ -509,7 +525,10 @@ class ShoplotListing extends Component {
             this.setState({ selectedID: selectedID, isBlockAlert: true })
         }
         else {
-            this.props.CallDeleteBlockList({ StorageBlockID: selectedID })
+            this.props.CallDeleteBlockList({
+                StorageBlockID: selectedID,
+                USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+            })
             this.setState(INITIAL_STATE)
         }
     }
@@ -549,6 +568,7 @@ class ShoplotListing extends Component {
                 ShoplotPolygon: '-',
                 Longitude: '-',
                 Latitude: '-',
+                USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
             })
             this.setState(INITIAL_STATE)
         }
@@ -562,7 +582,8 @@ class ShoplotListing extends Component {
 
             this.props.CallUpdateBlockList({
                 StorageBlockID: this.state.selectedBlockID,
-                BlockName: this.state.BlockName
+                BlockName: this.state.BlockName,
+                USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
             })
             this.setState(INITIAL_STATE)
             this.PagingListing = [{
@@ -728,7 +749,7 @@ class ShoplotListing extends Component {
                         <div className="container-fluid" >
                             <div className="container" style={{ padding: "10px" }}>
                                 <div className="row" >
-                                    <div className="col-4 col-md-4" style={{ paddingBottom: "10px", height:"90px"}}>
+                                    <div className="col-4 col-md-4" style={{ paddingBottom: "10px", height: "90px" }}>
                                         <FormControl variant="standard" size="small" fullWidth >
                                             <InputLabel id="Store-label">Block</InputLabel>
                                             <Select
@@ -742,7 +763,7 @@ class ShoplotListing extends Component {
                                                 styles={{
                                                     menuList: () => ({
                                                         overflowY: "scroll",
-                                                        height:"80px"
+                                                        height: "80px"
                                                     }),
                                                 }}
                                                 options={
@@ -825,7 +846,10 @@ class ShoplotListing extends Component {
                                 <div style={{ textAlign: "right" }}>
                                     <Button variant="contained" color="primary" style={{ margin: "10px" }} onClick={() => {
                                         <>
-                                            {this.props.CallDeleteBlockList({ StorageBlockID: this.state.selectedID })}
+                                            {this.props.CallDeleteBlockList({
+                                                StorageBlockID: this.state.selectedID,
+                                                USERID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID
+                                            })}
                                             {this.clearState()}
                                         </>
                                     }}>

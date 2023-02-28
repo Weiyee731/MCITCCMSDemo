@@ -19,14 +19,14 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.Login), map(action => {
       return dispatch => {
         try {
-          console.log( url + project + "/" +
-          // url + project + "/" +
-          "User_Login?username=" +
-          action.payload.username +
-          "&password=" +
-          action.payload.password +
-          "&ProjectDomainName=" +
-          action.payload.ProjectDomainName)
+          console.log(url + project + "/" +
+            // url + project + "/" +
+            "User_Login?username=" +
+            action.payload.username +
+            "&password=" +
+            action.payload.password +
+            "&ProjectDomainName=" +
+            action.payload.ProjectDomainName)
           return fetch(
             url + project + "/" +
             // url + project + "/" +
@@ -1971,7 +1971,8 @@ export class GitEpic {
       return dispatch => {
         try {
           return fetch(url + project + "/" +
-            "Storage_ShoplotList?PROJECTID=" + action.payload.ProjectID)
+            "Storage_ShoplotList?PROJECTID=" + action.payload.ProjectID
+            + "&USERID=" + action.payload.USERID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -2025,7 +2026,8 @@ export class GitEpic {
             "&PROJECTID=" + action.payload.ProjectID +
             "&SHOPLOTPOLYGONSTRING=" + action.payload.ShoplotPolygon +
             "&LONGITUDE=" + action.payload.Longitude +
-            "&LATITUDE=" + action.payload.Latitude)
+            "&LATITUDE=" + action.payload.Latitude
+            + "&USERID=" + action.payload.USERID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -2053,7 +2055,8 @@ export class GitEpic {
             "&CONTACTNO=" + action.payload.ContactNo +
             "&SHOPLOTBLOCK=" + action.payload.ShoplotBlock +
             "&STORAGEBLOCKID=" + action.payload.StorageBlockID +
-            "&SHOPLOTPOLYGONSTRING=" + action.payload.ShoplotPolygon)
+            "&SHOPLOTPOLYGONSTRING=" + action.payload.ShoplotPolygon
+            + "&USERID=" + action.payload.USERID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -2076,7 +2079,8 @@ export class GitEpic {
       return dispatch => {
         try {
           return fetch(url + project + "/" +
-            "Storage_DeleteShoplot?SHOPLOTID=" + action.payload.ShoplotID)
+            "Storage_DeleteShoplot?SHOPLOTID=" + action.payload.ShoplotID
+            + "&USERID=" + action.payload.USERID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -2103,7 +2107,8 @@ export class GitEpic {
           return fetch(url + project + "/" +
             "Storage_AddShoplotCoordinate?SHOPLOTID=" + action.payload.ShoplotID
             + "&LONGITUDE=" + action.payload.Longitude
-            + "&LATITUDE=" + action.payload.Latitude)
+            + "&LATITUDE=" + action.payload.Latitude
+            + "&USERID=" + action.payload.USERID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -2128,7 +2133,8 @@ export class GitEpic {
           return fetch(url + project + "/" +
             "Storage_UpdateShoplotCoordinate?SHOPLOTID=" + action.payload.ShoplotID
             + "&LONGITUDE=" + action.payload.Longitude
-            + "&LATITUDE=" + action.payload.Latitude)
+            + "&LATITUDE=" + action.payload.Latitude
+            + "&USERID=" + action.payload.USERID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -2153,7 +2159,8 @@ export class GitEpic {
       return dispatch => {
         try {
           return fetch(url + project + "/" +
-            "Storage_BlockList?PROJECTID=" + action.payload.ProjectID)
+            "Storage_BlockList?PROJECTID=" + action.payload.ProjectID
+            + "&USERID=" + action.payload.USERID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -2177,7 +2184,8 @@ export class GitEpic {
         try {
           return fetch(url + project + "/" +
             "Storage_AddBlock?PROJECTID=" + action.payload.ProjectID
-            + "&BLOCKNAME=" + action.payload.BlockName)
+            + "&BLOCKNAME=" + action.payload.BlockName
+            + "&USERID=" + action.payload.USERID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -2201,7 +2209,8 @@ export class GitEpic {
         try {
           return fetch(url + project + "/" +
             "Storage_UpdateBlock?STORAGEBLOCKID=" + action.payload.StorageBlockID +
-            "&BLOCKNAME=" + action.payload.BlockName)
+            "&BLOCKNAME=" + action.payload.BlockName
+            + "&USERID=" + action.payload.USERID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -2224,7 +2233,8 @@ export class GitEpic {
       return dispatch => {
         try {
           return fetch(url + project + "/" +
-            "Storage_DeleteBlock?STORAGEBLOCKID=" + action.payload.StorageBlockID)
+            "Storage_DeleteBlock?STORAGEBLOCKID=" + action.payload.StorageBlockID
+            + "&USERID=" + action.payload.USERID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -2249,7 +2259,8 @@ export class GitEpic {
       return dispatch => {
         try {
           return fetch(url + project + "/" +
-            "Storage_GridStorageList?PROJECTID=" + action.payload.ProjectID)
+            "Storage_GridStorageList?PROJECTID=" + action.payload.ProjectID
+            + "&USERID=" + action.payload.USERID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -2275,7 +2286,8 @@ export class GitEpic {
             "Storage_AddGrid?PROJECTID=" + action.payload.ProjectID
             + "&GRIDSTORAGECODE=" + action.payload.GridStorageCode
             + "&SHOPLOTID=" + action.payload.ShoplotID
-            + "&SHOPLOTNAME=" + action.payload.ShoplotName)
+            + "&SHOPLOTNAME=" + action.payload.ShoplotName
+            + "&USERID=" + action.payload.USERID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -2301,7 +2313,8 @@ export class GitEpic {
             "Storage_UpdateGrid?GRIDSTORAGEID=" + action.payload.GridStorageID
             + "&GRIDSTORAGECODE=" + action.payload.GridStorageCode
             + "&SHOPLOTID=" + action.payload.ShoplotID
-            + "&SHOPLOTNAME=" + action.payload.ShoplotName)
+            + "&SHOPLOTNAME=" + action.payload.ShoplotName
+            + "&USERID=" + action.payload.USERID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -2324,7 +2337,8 @@ export class GitEpic {
       return dispatch => {
         try {
           return fetch(url + project + "/" +
-            "Storage_DeleteGrid?GRIDSTORAGEID=" + action.payload.GridStorageID)
+            "Storage_DeleteGrid?GRIDSTORAGEID=" + action.payload.GridStorageID
+            + "&USERID=" + action.payload.USERID)
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
