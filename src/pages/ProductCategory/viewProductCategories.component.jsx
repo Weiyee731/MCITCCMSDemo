@@ -16,7 +16,6 @@ import LoadingPanel from "../../tools/LoadingPanel";
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import SearchBar from "../../components/SearchBar/SearchBar"
-import { ContactsOutlined } from "@mui/icons-material";
 
 export const ProductCategory = (props) => {
   const { categories, productCategories } = useSelector(state => ({
@@ -38,6 +37,7 @@ export const ProductCategory = (props) => {
 
   useEffect(() => {
     let listing = []
+    // console.log((JSON.parse(productCategories[9].HierarchyItem)))
     if (isArrayNotEmpty(productCategories) && isHierachySet === false) {
       let mainListing = {
         HierarchyID: "",
@@ -49,6 +49,7 @@ export const ProductCategory = (props) => {
         SubDetails: []
       }
       productCategories.map((main, index) => {
+        // hierarchy 1
         mainListing = {
           HierarchyID: main.HierarchyID,
           ProductCategory: main.ProductCategory,
@@ -58,16 +59,20 @@ export const ProductCategory = (props) => {
           isEdit: false,
           SubDetails: []
         }
+        // hierarchy 2
         main.HierarchyItem !== undefined && main.HierarchyItem != "[]" && JSON.parse(main.HierarchyItem).map((details, detailsIndex) => {
+          // console.log(details)
           let detailsList = {
             HierarchyID: details.HierarchyID,
             ProductCategoryID: details.ProductCategoryID,
             ProductCategory: details.ProductCategory,
+            ParentProductCategoryID: details.ParentProductCategoryID,
             Tag: details.Tag,
             isOpen: false,
             isEdit: false,
             SubDetails: []
           }
+          // hierarchy 3
           details.HierarchyItem !== undefined && details.HierarchyItem != "[]" && JSON.parse(details.HierarchyItem).map((subdetails) => {
             let subDetailsList = {
               HierarchyID: subdetails.HierarchyID,
@@ -108,7 +113,8 @@ export const ProductCategory = (props) => {
   }
 
   const clickCollapseOpen = (data, mainIndex, subindex, subdetailIndex) => {
-    let listingData = [...filteredList]
+    let listingData = [...categoryListingDetails]
+
     if (data.HierarchyID === 1) {
       listingData[mainIndex].isOpen = !listingData[mainIndex].isOpen
     }
@@ -116,129 +122,164 @@ export const ProductCategory = (props) => {
     if (data.HierarchyID === 2) {
       listingData[mainIndex].SubDetails[subindex].isOpen = !listingData[mainIndex].SubDetails[subindex].isOpen
     }
+
     setListingDetails(listingData)
+    // setfilteredList(listingData)
   }
 
   const checkCollapseOpen = (data, mainIndex, subindex, subdetailIndex) => {
-    let listingData = [...filteredList]
-    let isOpen = false
+    let listingData = [...categoryListingDetails]
     if (isArrayNotEmpty(listingData)) {
       if (data.HierarchyID === 1) {
         if (listingData[mainIndex] !== undefined)
-          isOpen = listingData[mainIndex].isOpen
-      }
-
-      if (data.HierarchyID === 2) {
+          return listingData[mainIndex].isOpen
+      } else if (data.HierarchyID === 2) {
         if (listingData[mainIndex].SubDetails[subindex] !== undefined)
-          isOpen = listingData[mainIndex].SubDetails[subindex].isOpen
+          return listingData[mainIndex].SubDetails[subindex].isOpen
+      } else {
+        return false
       }
     }
-    return isOpen
   }
 
   const submitData = (type, HierarchyID, parentCategoryID, categoryID, Category, mainIndex, subIndex, subdetailIndex) => {
     // check duplication
 
+    if (type !== 'delete') {
 
-    let dupe_subCategories = ""
-    let dupe_subDetails =""
-    if(HierarchyID === 3){
-        const subCat = JSON.parse(productCategories[mainIndex].HierarchyItem)[subIndex]
-        dupe_subDetails = JSON.parse(subCat.HierarchyItem).filter((x)=>(x.ProductCategory === Category))
-    }
-
-    else if (HierarchyID === 2){
-  
-        dupe_subCategories = JSON.parse(productCategories[mainIndex].HierarchyItem).filter((f=>(f.ProductCategory === Category)))
-     
-    }
-
-    if (type !== 'delete' && HierarchyID === 1 && productCategories.filter((x) => x.ProductCategory.toLowerCase() === Category.toLowerCase()) && productCategories.filter((x) => x.ProductCategory.toLowerCase() === Category.toLowerCase()).length >= 1) {
-
-      if(edit === true){
-        toast.info("Category name unchanged. No changes applied.")
-      }
-
-      else if(edit === false)
-      {
-        toast.error("The category is existed, please double check before submitting.")
-        categoryListingDetails.splice(mainIndex, 1)
-        setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
-      }
-   
-    }
-
-    else if(type !== 'delete' && HierarchyID === 2 && dupe_subCategories.length >= 1 )
-    {
-          if(edit === true ){
-            toast.info("Sub category name unchanged. No changes applied.")
-          }
-          
-          else if(edit === false)
-          {
-            toast.error("The Sub category is existed, please double check before submitting.")
-            categoryListingDetails[mainIndex].SubDetails.splice(subIndex, 1)
-            setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
-          }
-       
-          
-    }
-    else if(type !== 'delete' && HierarchyID === 3 && dupe_subDetails.length >= 1 )
-    {
-      if(edit === true){
-        toast.info("The sub category detail unchanged. No changes applied.")
-      }
-
-      else if(edit === false)
-      {
-        toast.error("The sub category detail is existed, please double check before submitting.")
-        categoryListingDetails[mainIndex].SubDetails.splice(subIndex, 1)
-          setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
-      }
-       
-          categoryListingDetails[mainIndex].SubDetails[subIndex].SubDetails.splice(subdetailIndex, 1)
-          setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
-    }
-    else {
-      if (categoryID === "" && productCategories.filter((x) => x.ProductCategory !== Category)) {
-        let propsData = {
-          ProductCategoryImage: "NULL",
-          ProductCategory: Category,
-          HierarchyID: HierarchyID,
-          ParentProductCategoryID: parentCategoryID,
-          ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
-          UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
-          // ProjectID:2,
-          // UserID: 0, 
-        }
-        dispatch(GitAction.CallAddProductCategory(propsData))
-        toast.success("Successfully added product category")
-      } else {
-        if (type === "delete") {
-          let propsData = {
-            ProductCategoryID: categoryID,
+      switch (type) {
+        case 'add':
+          const data_Create = {
+            ProductCategoryImage: "NULL",
+            ProductCategory: Category,
+            HierarchyID: HierarchyID,
+            ParentProductCategoryID: parentCategoryID,
+            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
             UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
           }
-          dispatch(GitAction.CallDeleteProductCategory(propsData))
-          toast.success("Successfully deleted product category")
-        }
-        else {
-          let propsData = {
+
+
+
+          break;
+
+        case 'edit':
+          let data_Update = {
             ProductCategoryID: categoryID,
             ProductCategory: Category,
             UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
           }
-          dispatch(GitAction.CallUpdateProductCategory(propsData))
-          toast.success("Successfully updated product category")
-        }
+
+
+          break;
+
+        default:
+          break;
+      }
+
+    } else {
+      const data_Delete = {
+        ProductCategoryID: categoryID,
+        UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
       }
     }
+
+    // let dupe_subCategories = ""
+    // let dupe_subDetails =""
+    // if(HierarchyID === 3){
+    //     const subCat = JSON.parse(productCategories[mainIndex].HierarchyItem)[subIndex]
+    //     dupe_subDetails = JSON.parse(subCat.HierarchyItem).filter((x)=>(x.ProductCategory === Category))
+    // }
+
+    // else if (HierarchyID === 2){
+    //     dupe_subCategories = JSON.parse(productCategories[mainIndex].HierarchyItem).filter((f=>(f.ProductCategory === Category)))
+    // }
+
+    // if (type !== 'delete' && HierarchyID === 1 && productCategories.filter((x) => x.ProductCategory.toLowerCase() === Category.toLowerCase()) && productCategories.filter((x) => x.ProductCategory.toLowerCase() === Category.toLowerCase()).length >= 1) {
+
+    //   if(edit === true){
+    //     toast.info("Category name unchanged. No changes applied.")
+    //   }
+
+    //   else if(edit === false)
+    //   {
+    //     toast.error("The category is existed, please double check before submitting.")
+    //     categoryListingDetails.splice(mainIndex, 1)
+    //     setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
+    //   }
+
+    // }
+
+    // else if(type !== 'delete' && HierarchyID === 2 && dupe_subCategories.length >= 1 )
+    // {
+    //       if(edit === true ){
+    //         toast.info("Sub category name unchanged. No changes applied.")
+    //       }
+
+    //       else if(edit === false)
+    //       {
+    //         toast.error("The Sub category is existed, please double check before submitting.")
+    //         categoryListingDetails[mainIndex].SubDetails.splice(subIndex, 1)
+    //         setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
+    //       }
+
+
+    // }
+    // else if(type !== 'delete' && HierarchyID === 3 && dupe_subDetails.length >= 1 )
+    // {
+    //   if(edit === true){
+    //     toast.info("The sub category detail unchanged. No changes applied.")
+    //   }
+
+    //   else if(edit === false)
+    //   {
+    //     toast.error("The sub category detail is existed, please double check before submitting.")
+    //     categoryListingDetails[mainIndex].SubDetails.splice(subIndex, 1)
+    //       setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
+    //   }
+
+    //       categoryListingDetails[mainIndex].SubDetails[subIndex].SubDetails.splice(subdetailIndex, 1)
+    //       setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
+    // }
+    // else {
+    //   if (categoryID === "" && productCategories.filter((x) => x.ProductCategory !== Category)) {
+    //     let propsData = {
+    //       ProductCategoryImage: "NULL",
+    //       ProductCategory: Category,
+    //       HierarchyID: HierarchyID,
+    //       ParentProductCategoryID: parentCategoryID,
+    //       ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+    //       UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+    //     }
+    //     dispatch(GitAction.CallAddProductCategory(propsData))
+    //     toast.success("Successfully added product category")
+    //   } else {
+    //     if (type === "delete") {
+    //       let propsData = {
+    //         ProductCategoryID: categoryID,
+    //         UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+    //       }
+    //       dispatch(GitAction.CallDeleteProductCategory(propsData))
+    //       toast.success("Successfully deleted product category")
+    //     }
+    //     else {
+    //       let propsData = {
+    //         ProductCategoryID: categoryID,
+    //         ProductCategory: Category,
+    //         UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+    //       }
+    //       console.log('propsData', propsData)
+    //       dispatch(GitAction.CallUpdateProductCategory(propsData))
+    //       toast.success("Successfully updated product category")
+    //     }
+    //   }
+    // }
   }
 
   const clickIsEdit = (data, type, mainIndex, subindex, subdetailIndex) => {
-    let listingData = [...filteredList]
-
+    let listingData = !isFiltered ? [...categoryListingDetails] : filteredList
     setEdit(true)
+
+    console.log('edit', type)
 
     if (data.HierarchyID === 1) {
       let listing = listingData[mainIndex]
@@ -248,9 +289,10 @@ export const ProductCategory = (props) => {
           listingData.splice(mainIndex, 1)
         } else {
           listingData[mainIndex] = productCategories[mainIndex]
+          listing.isEdit = !listing.isEdit
         }
-        // listingData = listingData.filter((x) => x.ProductCategoryID !== "")
-        listing.isEdit = !listing.isEdit
+
+
       }
 
       if (type === "done") {
@@ -267,8 +309,10 @@ export const ProductCategory = (props) => {
         listing.isEdit = !listing.isEdit
       }
 
-      if (type === "edit")
+      if (type === "edit") {
         listing.isEdit = !listing.isEdit
+      }
+
     }
 
     if (data.HierarchyID === 2) {
@@ -280,8 +324,6 @@ export const ProductCategory = (props) => {
         } else {
           listingData[mainIndex].SubDetails[subindex] = JSON.parse(productCategories[mainIndex].HierarchyItem)[0]
         }
-        // let filterHierachy = listingData[mainIndex].SubDetails.filter((x) => x.ProductCategoryID !== "")
-        // listingData[mainIndex].SubDetails = filterHierachy
         listing.isEdit = !listing.isEdit
       }
 
@@ -334,15 +376,15 @@ export const ProductCategory = (props) => {
         listing.isEdit = !listing.isEdit
       }
 
-      if (type === "edit")
-      {
-        listing.isEdit = !listing.isEdit}
+      if (type === "edit") {
+        listing.isEdit = !listing.isEdit
+      }
     }
     setListingDetails(listingData)
   }
 
   const checkEdit = (data, mainIndex, subindex, subdetailIndex) => {
-    let listingData = [...filteredList]
+    let listingData = isFiltered ? filteredList : [...categoryListingDetails]
     let isEdit = false
 
     if (isArrayNotEmpty(listingData)) {
@@ -354,45 +396,55 @@ export const ProductCategory = (props) => {
       if (data.HierarchyID === 2) {
         if (listingData[mainIndex].SubDetails[subindex] !== undefined && listingData[mainIndex].SubDetails[subindex].length !== 0)
           isEdit = listingData[mainIndex].SubDetails[subindex].isEdit
+
       }
 
       if (data.HierarchyID === 3) {
-        if (listingData[mainIndex].SubDetails !== undefined && listingData[mainIndex].SubDetails.length !== 0 &&
-          listingData[mainIndex].SubDetails[subindex].SubDetails !== undefined && listingData[mainIndex].SubDetails[subindex].SubDetails.length !== 0 &&
+        if (listingData[mainIndex].SubDetails[subindex] !== undefined && listingData[mainIndex].SubDetails[subindex].SubDetails.length !== 0 &&
           listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex] !== undefined && listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex].length !== 0)
           isEdit = listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex].isEdit
-  
       }
     }
     return isEdit
   }
 
   const handleChanges = (type, value, data, mainIndex, subindex, subdetailIndex) => {
-    let listingData = [...filteredList]
+
+    let listingData = [...categoryListingDetails]
+
+    let target_data;
+
+    if(data.HierarchyID === 1) {
+      target_data = listingData.findIndex(x => x.ProductCategoryID === data.ProductCategoryID)
+    } else if (data.HierarchyID === 2) {
+      target_data = listingData.findIndex(x => x.ProductCategoryID === data.ProductCategoryID)
+    }
+
     switch (type) {
       case "Category":
         if (data.HierarchyID === 1)
-          listingData[mainIndex].ProductCategory = value
+          listingData[target_data].ProductCategory = value
 
         if (data.HierarchyID === 2)
-          listingData[mainIndex].SubDetails[subindex].ProductCategory = value
+        console.log(data)
+          listingData[target_data].SubDetails[subindex].ProductCategory = value
 
         if (data.HierarchyID === 3)
-          listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex].ProductCategory = value
+          listingData[target_data].SubDetails[subindex].SubDetails[subdetailIndex].ProductCategory = value
 
         break;
 
       case "Tag":
         if (data.HierarchyID === 1)
-          listingData[mainIndex].Tag = value
+          listingData[target_data].Tag = value
 
 
         if (data.HierarchyID === 2)
-          listingData[mainIndex].SubDetails[subindex].Tag = value
+          listingData[target_data].SubDetails[subindex].Tag = value
 
 
         if (data.HierarchyID === 3)
-          listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex].Tag = value
+          listingData[target_data].SubDetails[subindex].SubDetails[subdetailIndex].Tag = value
         break;
 
       default:
@@ -402,7 +454,7 @@ export const ProductCategory = (props) => {
   }
 
   const handleNewCategory = (hierachy, index, subIndex,) => {
-    let listingData = [...filteredList]
+    let listingData = [...categoryListingDetails]
     setEdit(false)
     let mainListing = {
       HierarchyID: "",
@@ -518,21 +570,27 @@ export const ProductCategory = (props) => {
   const baseColor = "#c4c4c4"
   const highlightColor = "#ffffff"
 
-  const searchSpace = (event) => {
-    setsearchKeywords(event.target.value)
+  const searchSpace = () => {
+    console.log('abc')
+    // setsearchKeywords(event.target.value)
 
-    let allCategory = categoryListingDetails
-    let searchString = event.target.value.toLowerCase().split(' ')
- 
-    if (event.target.value === "") {
-      setfilteredList(allCategory)
-    }
-    else {
-      let filteredList = ""
-      filteredList = allCategory.filter(category => 
-        searchString.some(searchString => category.ProductCategory.toLowerCase().includes(searchString)))
-      setfilteredList(filteredList)
-      setisFiltered(true)
+    // let allCategory = categoryListingDetails
+    let searchString = searchKeywords.toLowerCase().split(' ')
+
+    if (searchKeywords !== "") {
+      // setfilteredList(allCategory)
+      // setListingDetails(categoryListingDetails.filter(category =>
+      //   searchString.some(searchString => category.ProductCategory.toLowerCase().includes(searchString))))
+        return categoryListingDetails.filter(category =>
+          searchString.some(searchString => category.ProductCategory.toLowerCase().includes(searchString)))
+    } else {
+      // let filteredList = ""
+      // filteredList = allCategory.filter(category =>
+      //   searchString.some(searchString => category.ProductCategory.toLowerCase().includes(searchString)))
+      // setfilteredList(filteredList)
+      // setisFiltered(true)
+      // setListingDetails(categoryListingDetails)
+      return categoryListingDetails
     }
   }
 
@@ -551,7 +609,7 @@ export const ProductCategory = (props) => {
             <SearchBar
               id=""
               placeholder="Enter Category Name"
-              onChange={(e) => searchSpace(e)}
+              onChange={(e) => setsearchKeywords(e.target.value)}
               className="searchbar-input mb-auto"
               tooltipText="Search with current data"
               value={searchKeywords}
@@ -569,7 +627,8 @@ export const ProductCategory = (props) => {
               {headerLayout()}
 
               <TableBody>
-                {!isFiltered ? categoryListingDetails.length > 0 && categoryListingDetails.map((data, index) => {
+                {searchSpace().length > 0 && searchSpace().map((data, index) => {
+                  console.log(data)
                   return (
                     <>
                       {CollapseLayout(data, index, 0, 0)}
@@ -675,114 +734,7 @@ export const ProductCategory = (props) => {
                     </>
                   )
                 }
-                ) :
-                  filteredList.map((item, index) => {
-                    return (
-                      <>
-                        {CollapseLayout(item, index, 0, 0)}
-                        <TableRow>
-                          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                            <Collapse in={checkCollapseOpen(item, index, 0, 0)} timeout="auto" unmountOnExit>
-                              <Box sx={{ margin: 1 }}>
-                                <div className="row">
-                                  <div className="col">
-                                    <Typography variant="h6" gutterBottom component="div">
-                                      Sub Category
-                                    </Typography>
-                                  </div>
-                                  <div className="col" style={{ textAlign: "right" }}>
-                                    <IconButton>
-                                      <AddIcon onClick={() => handleNewCategory(2, index, 0)} />
-                                    </IconButton>
-                                  </div>
-                                </div>
-                                {
-                                  typeof item.SubDetails !== 'undefined' && item.SubDetails.length > 0 ?
-                                    <Table size="small" aria-label="purchases">
-                                      {headerLayout()}
-                                      <TableBody>
-                                        {
-                                          typeof item.SubDetails !== 'undefined' && item.SubDetails.length > 0 && item.SubDetails.map((details, detailIndex) => {
-                                            return (
-                                              <>
-                                                {CollapseLayout(details, index, detailIndex, 0)}
-                                                <TableRow>
-                                                  <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                                                    <Collapse in={checkCollapseOpen(details, index, detailIndex, 0)} timeout="auto" unmountOnExit>
-                                                      {
-
-                                                        <Box sx={{ margin: 1 }}>
-                                                          <div className="row" >
-                                                            <div className="col">
-                                                              <Typography variant="h6" gutterBottom component="div">
-                                                                Sub Category
-                                                              </Typography>
-                                                            </div>
-                                                            <div className="col" style={{ textAlign: "right" }}>
-                                                              <IconButton>
-                                                                <AddIcon onClick={() => handleNewCategory(3, index, detailIndex)} />
-                                                              </IconButton>
-                                                            </div>
-                                                          </div>
-                                                          {
-                                                            typeof details.SubDetails !== 'undefined' && details.SubDetails.length > 0 ?
-                                                              <Table size="small" aria-label="purchases">
-                                                                {headerLayout()}
-
-                                                                <TableBody>
-                                                                  {
-                                                                    details.SubDetails.length > 0 && details.SubDetails.map((subdetails, subdetailIndex) => {
-                                                                      return (
-                                                                        <>
-                                                                          {CollapseLayout(subdetails, index, detailIndex, subdetailIndex)}
-                                                                          <TableRow>
-                                                                            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                                                                              <Collapse in={checkCollapseOpen(subdetails, index, detailIndex, 0)} timeout="auto" unmountOnExit>
-                                                                                <Box sx={{ margin: 1 }}>
-                                                                                  <Typography variant="h6" gutterBottom component="div">
-                                                                                    Sub Category3
-                                                                                  </Typography>
-                                                                                  <Table size="small" aria-label="purchases">
-                                                                                    {headerLayout()}
-                                                                                    <TableBody>
-                                                                                      {CollapseLayout(subdetails, index, detailIndex, subdetailIndex)}
-                                                                                    </TableBody>
-                                                                                  </Table>
-                                                                                </Box>
-                                                                              </Collapse>
-                                                                            </TableCell>
-                                                                          </TableRow>
-                                                                        </>
-                                                                      )
-                                                                    })
-                                                                  }
-                                                                </TableBody>
-                                                              </Table>
-                                                              :
-                                                              <Typography>There is no subcategory in this hierachy</Typography>
-                                                          }
-                                                        </Box>
-                                                      }
-                                                    </Collapse>
-                                                  </TableCell>
-                                                </TableRow>
-                                              </>
-                                            )
-                                          })
-                                        }
-                                      </TableBody>
-                                    </Table>
-                                    :
-                                    <Typography>There is no subcategory in this hierachy</Typography>
-                                }
-                              </Box>
-                            </Collapse>
-                          </TableCell>
-                        </TableRow>
-                      </>
-                    )
-                  })
-                }
+                )}
               </TableBody>
             </Table>
             :

@@ -1569,6 +1569,8 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.GetProductCategoryListing), map(action => {
       return dispatch => {
         try {
+          console.log(url + project + "/" +
+          "Product_CategoryListing?ProjectID=" + action.payload.ProjectID)
           return fetch(url + project + "/" +
             "Product_CategoryListing?ProjectID=" + action.payload.ProjectID)
             .then(response => response.json())
