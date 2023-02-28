@@ -243,12 +243,10 @@ class ViewProductComponent extends Component {
 
     if (DataList.length > 0) {
       var generateOptions = []
-      console.log("DataList", DataList)
       generateOptions = DataList.length > 0 &&
         DataList
           .filter((ele, ind) => ind === DataList.findIndex(elem => elem.MerchantID === ele.MerchantID))
           .map((data, i) => {
-            console.log("dasdsadsa", data)
             return (
               <MenuItem value={data.MerchantID}>{data.MerchantShopName}</MenuItem>
             );

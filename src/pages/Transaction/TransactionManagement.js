@@ -53,7 +53,7 @@ export const TransactionManagement = (props) => {
         logistic: state.counterReducer.logistic,
         tracking: state.counterReducer.tracking,
         trackingStatusAction: state.counterReducer.trackingStatusAction,
-        currentUser: state.counterReducer.currentUser,
+        currentUser: state.counterReducer.userProfile,
         orderShipment: state.counterReducer["orderShipment"],
         orderShipmentStatus: state.counterReducer["orderShipmentStatus"],
     }));
@@ -111,10 +111,11 @@ export const TransactionManagement = (props) => {
 
 
     useEffect(() => {
+  
         if (isStatusViewClick === true)
             setViewTracking(true)
     }, [orderShipmentStatus])
-
+    
     useEffect(() => {
         if (isOrderSet === false && isArrayNotEmpty(transactions)) {
             let listing = []
@@ -330,7 +331,6 @@ export const TransactionManagement = (props) => {
                         {checkCollapseOpen(index) ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
-                {console.log("dsdasdasd", value)}
                 {value + 1 === 2 &&
                     <TableCell>
                         <Checkbox color="primary"
@@ -377,13 +377,13 @@ export const TransactionManagement = (props) => {
                     value + 1 === 3 &&
                     <TableCell align="left">
                         <IconButton>
-                            <Button style={{ backgroundColor: "#e74c3c" }} onClick={() => {
+                            <Button style={{ backgroundColor: "#86DC3D" }} onClick={() => {
                                 dispatch(GitAction.CallUpdateOrderTrackingStatus({
                                     OrderID: data.OrderID,
-                                    TrackingStatusID: 6
+                                    TrackingStatusID: 5
                                 }))
                             }}>
-                                Cancel
+                                Complete
                             </Button>
                             <Button style={{ backgroundColor: "#F05E16", margin: "10px" }} onClick={() => {
                                 dispatch(GitAction.CallUpdateOrderTrackingStatus({
@@ -773,6 +773,7 @@ export const TransactionManagement = (props) => {
                                         <div style={{ fontWeight: "bold", fontSize: "13px" }}>  {details.ProductName} </div>
                                         <div style={{ fontSize: "11px" }}>  SKU : {details.SKU} </div>
                                         <div style={{ fontSize: "11px" }}>  Variation : {details.ProductVariationValue} </div>
+                                        <div style={{ fontSize: "11px" }}>  Merchant : {details.ShopName} </div>
                                     </div>
                                     <div className="col-2" >
                                         <div >  </div>
@@ -831,7 +832,8 @@ export const TransactionManagement = (props) => {
                                     >
                                         <div className="container-fluid">
                                             <div className="container">
-                                                {isArrayNotEmpty(orderShipmentStatus) ?
+                                                {console.log("dasdsasa", orderShipmentStatus)}
+                                                {orderShipmentStatus !== undefined && orderShipmentStatus.returncode !== undefined ?
                                                     <>
                                                         {isArrayNotEmpty(orderShipmentStatus.trackHeader) &&
                                                             <Typography style={{ fontSize: "11px", fontWeight: "bold" }}>Tracking Number :{orderShipmentStatus.trackHeader[0].hawb}</Typography>
@@ -1059,12 +1061,44 @@ export const TransactionManagement = (props) => {
         }
         return returnIndex
     }
+    const checkSelectedMerchant = (listing, MerchantID) => {
+        let dataSet = []
+        let OverallListing = listing
 
+        if (MerchantID === 0)
+            dataSet = OverallListing
+        else {
+            isArrayNotEmpty(OverallListing) && OverallListing.map((data) => {
+
+                let detailsListing = []
+                detailsListing = data.orderDetails !== undefined ? data.orderDetails.filter((x) => x.MerchantID === MerchantID) : []
+
+                if (detailsListing.length > 0) {
+
+                    // data.map((x) => {
+                    data.OrderID === 2008 && data.OrderProductDetail !== undefined && JSON.parse(data.OrderProductDetail).map((y) => {
+
+                    })
+                    // })
+
+                    // dataSet.push(data)
+                    dataSet = [...dataSet, data]
+                    dataSet.map((y, index) => {
+                        if (y.OrderID === data.OrderID) {
+                            dataSet[index].orderDetails = detailsListing
+                        }
+                    })
+                }
+            })
+
+            dataSet = isArrayNotEmpty(dataSet) ? dataSet.filter((ele, ind) => ind === dataSet.findIndex(elem => parseInt(elem.OrderID) === parseInt(ele.OrderID))) : []
+        }
+        return dataSet
+    }
     const OrderLayout = (Listing) => {
         return (
             <>
                 <TableContainer component={Paper} style={{ overflow: "hidden" }}>
-                    {isOrderSelected && senderInformationLayout()}
                     <Table aria-label="collapsible table" size="small">
                         {isShipmentSubmit === true && <LoadingPanel />}
                         {headerLayout()}
@@ -1081,6 +1115,15 @@ export const TransactionManagement = (props) => {
                                                             <Collapse in={checkCollapseOpen(checkIndex(index))} timeout="auto" unmountOnExit>
                                                                 <Box sx={{ margin: 1 }}>
                                                                     {OrderDetailLayout(data, checkIndex(index))}
+                                                                    {
+                                                                        isOrderSelected &&
+                                                                        <Card style={{ marginTop: "10px" }}>
+                                                                            <CardContent>
+                                                                                {senderInformationLayout()}
+                                                                            </CardContent>
+                                                                        </Card>
+                                                                    }
+
                                                                     <Card style={{ marginTop: "10px" }}>
                                                                         <CardContent>
                                                                             <div className="row">
@@ -1351,7 +1394,6 @@ export const TransactionManagement = (props) => {
 
     const searchSpace = (value) => {
 
-        // const [filteredListing, setFilteredListing] = useState([])
         setFilteredListing([])
 
         let DataSet = OrderListing
@@ -1432,7 +1474,7 @@ export const TransactionManagement = (props) => {
                                 let listing = ""
                                 let DataSet = isArrayNotEmpty(filteredListing) ? filteredListing : OrderListing
                                 if (isArrayNotEmpty(DataSet)) {
-                                    let listingLength = DataSet.filter((y) => y.TrackingStatusID == x.TrackingStatusID).length
+                                    let listingLength = checkSelectedMerchant(DataSet.filter((y) => y.TrackingStatusID == x.TrackingStatusID), selectedMerchant).length
                                     listing = " ( " + listingLength + " )"
                                 }
                                 return listing
@@ -1442,24 +1484,33 @@ export const TransactionManagement = (props) => {
                     }
                 </Tabs>
             </Box>
+
             {
-                isArrayNotEmpty(transactionStatus) && transactionStatus.map((x, statusIndex) => {
-                    return (<TabPanel value={value} index={statusIndex}> {
-                        OrderLayout(
-                            isArrayNotEmpty(filteredListing) ?
-                                selectedMerchant === 0 ?
-                                    filteredListing.filter((y) => y.TrackingStatusID === x.TrackingStatusID)
+                JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ?
+                    isArrayNotEmpty(transactionStatus) && transactionStatus.map((x, statusIndex) => {
+                        return (<TabPanel value={value} index={statusIndex}> {
+                            OrderLayout(
+                                isArrayNotEmpty(filteredListing) ?
+                                    checkSelectedMerchant(filteredListing.filter((y) => y.TrackingStatusID === x.TrackingStatusID), selectedMerchant)
                                     :
-                                    filteredListing.filter((y) => y.TrackingStatusID === x.TrackingStatusID && y.MerchantID === selectedMerchant)
-                                :
-                                isArrayNotEmpty(OrderListing) ?
-                                    selectedMerchant === 0 ?
-                                        OrderListing.filter((y) => y.TrackingStatusID === x.TrackingStatusID)
-                                        :
-                                        OrderListing.filter((y) => y.TrackingStatusID === x.TrackingStatusID && y.MerchantID === selectedMerchant)
-                                    : [])
-                    } </TabPanel>)
-                })
+                                    isArrayNotEmpty(OrderListing) ?
+                                        checkSelectedMerchant(OrderListing.filter((y) => y.TrackingStatusID === x.TrackingStatusID), selectedMerchant)
+                                        : [])
+                        } </TabPanel>)
+                    })
+
+                    :
+                    isArrayNotEmpty(transactionStatus) && transactionStatus.map((x, statusIndex) => {
+                        return (<TabPanel value={value} index={statusIndex}> {
+                            OrderLayout(
+                                isArrayNotEmpty(filteredListing) ?
+                                    checkSelectedMerchant(filteredListing.filter((y) => y.TrackingStatusID === x.TrackingStatusID), JSON.parse(localStorage.getItem("loginUser"))[0].UserID)
+                                    :
+                                    isArrayNotEmpty(OrderListing) ?
+                                        checkSelectedMerchant(OrderListing.filter((y) => y.TrackingStatusID === x.TrackingStatusID), JSON.parse(localStorage.getItem("loginUser"))[0].UserID)
+                                        : [])
+                        } </TabPanel>)
+                    })
             }
         </div>
     );

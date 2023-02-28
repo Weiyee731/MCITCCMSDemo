@@ -39,7 +39,6 @@ export class GitEpic {
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
-              console.log("dsdsadsada", json)
               if (json[0].ReturnVal === 1) {
                 return dispatch({ type: GitAction.LoginSuccess, payload: JSON.parse(json[0].ReturnData) });
               } else {
@@ -85,13 +84,6 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.Send_OTPVerification), map(action => {
       return dispatch => {
         try {
-          console.log(url + project + "/" +
-            "User_SentOTPVerification?USERID=" +
-            action.payload.UserID +
-            "&TYPE=" +
-            action.payload.Type +
-            "&VALIDATIONFIELD=" +
-            action.payload.ValidationField)
           return fetch(url + project + "/" +
             "User_SentOTPVerification?USERID=" +
             action.payload.UserID +
@@ -287,16 +279,6 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.UpdateShopDetails), map(action => {
       return dispatch => {
         try {
-          console.log(url + project + "/" +
-          "User_UpdateShopDetail?USERID=" + action.payload.USERID +
-          "&SHOPNAME=" + action.payload.SHOPNAME +
-          "&SHOPDESC=" + action.payload.SHOPDESC +
-          "&SHOPPOSCODE=" + action.payload.SHOPPOSCODE +
-          "&SHOPCITY=" + action.payload.SHOPCITY +
-          "&SHOPSTATE=" + action.payload.SHOPSTATE +
-          "&SHOPCOUNTRYID=" + action.payload.SHOPCOUNTRYID +
-          "&SHOPIMAGE=" + action.payload.SHOPIMAGE +
-          "&SHOPCOVERIMAGE=" + action.payload.SHOPCOVERIMAGE)
           return fetch(url + project + "/" +
             "User_UpdateShopDetail?USERID=" + action.payload.USERID +
             "&SHOPNAME=" + action.payload.SHOPNAME +
@@ -307,7 +289,7 @@ export class GitEpic {
             "&SHOPCOUNTRYID=" + action.payload.SHOPCOUNTRYID +
             "&SHOPIMAGE=" + action.payload.SHOPIMAGE +
             "&SHOPCOVERIMAGE=" + action.payload.SHOPCOVERIMAGE
-            )
+          )
             .then(response => response.json())
             .then(json => {
               json = JSON.parse(json)
@@ -490,11 +472,8 @@ export class GitEpic {
             "&PROJECTID=" + action.payload.PROJECTID)
             .then(response => response.json())
             .then(json => {
-
-
               json = JSON.parse(json)
-
-              if (json[0].ReturnVal === 1) {
+              if (json[0].ReturnVal === 0) {
                 return dispatch({ type: GitAction.OrderRequestedShipmentStatus, payload: JSON.parse(json[0].ReturnData) });
               } else {
                 // toast.error(json[0].ReturnMsg)
@@ -877,6 +856,7 @@ export class GitEpic {
             "Product_ItemListByType?Type=" + action.payload.type +
             "&TypeValue=" + action.payload.typeValue +
             "&USERID=" + action.payload.userId +
+            "&PLATFORMTYPE=CMS" +
             "&PRODUCTPERPAGE=" + action.payload.productPage +
             "&PAGE=" + action.payload.page +
             "&ProjectID=" + action.payload.ProjectID)
@@ -1489,13 +1469,6 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.AddProductCategory), map(action => {
       return dispatch => {
         try {
-          console.log(url + project + "/" +
-            "Product_AddProductCategory?PRODUCTCATEGORY=" + action.payload.ProductCategory +
-            "&PRODUCTCATEGORYIMAGE=" + action.payload.ProductCategoryImage +
-            "&HIERARCHYID=" + action.payload.HierarchyID +
-            "&PARENTPRODUCTCATEGORYID=" + action.payload.ParentProductCategoryID +
-            "&PROJECTID=" + action.payload.ProjectID +
-            "&USERID=" + action.payload.UserID)
           return fetch(url + project + "/" +
             "Product_AddProductCategory?PRODUCTCATEGORY=" + action.payload.ProductCategory +
             "&PRODUCTCATEGORYIMAGE=" + action.payload.ProductCategoryImage +
@@ -2391,6 +2364,54 @@ export class GitEpic {
         } catch (error) {
           toast.error("Error Code: User_ViewPage. Please check on URL")
           return dispatch({ type: GitAction.SidebarFetched, payload: [] });
+        }
+      }
+    }));
+
+  ///////////////////////////////////////////////////  Dashboard  ///////////////////////////////////////////////////
+
+  Reporting_MainDashboard = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetMainDashboard), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Reporting_MainDashboard")
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotMainDashboard, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                // toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotMainDashboard, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: MainDashboard. Please check on URL")
+          return dispatch({ type: GitAction.GotMainDashboard, payload: [] });
+        }
+      }
+    }));
+
+  Reporting_MerchantDashboard = action$ =>
+    action$.pipe(filter(action => action.type === GitAction.GetMerchantDashboard), map(action => {
+      return dispatch => {
+        try {
+          return fetch(url + project + "/" +
+            "Reporting_MerchantDashboard?USERID=" + action.payload.USERID)
+            .then(response => response.json())
+            .then(json => {
+              json = JSON.parse(json)
+              if (json[0].ReturnVal === 1) {
+                return dispatch({ type: GitAction.GotMerchantDashboard, payload: JSON.parse(json[0].ReturnData) });
+              } else {
+                // toast.error(json[0].ReturnMsg)
+                return dispatch({ type: GitAction.GotMerchantDashboard, payload: [] });
+              }
+            });
+        } catch (error) {
+          toast.error("Error Code: MainDashboard. Please check on URL")
+          return dispatch({ type: GitAction.GotMerchantDashboard, payload: [] });
         }
       }
     }));

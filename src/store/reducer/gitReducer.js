@@ -4,12 +4,12 @@ const INITIAL_STATE = {
   loading: false,
   logonUser: [],
   currentUser: [],
-  userProfile:[],
+  userProfile: [],
   registrationReturn: [],
   sidebars: [],
-  check_Mail:[],
-  otp_verification:[],
-  new_password:[],
+  check_Mail: [],
+  otp_verification: [],
+  new_password: [],
 
   // Shop
   shopUpdated: [],
@@ -92,7 +92,11 @@ const INITIAL_STATE = {
   POListing: [],
   POAction: [],
   ProductByStatus: [],
-  SalesOrder: []
+  SalesOrder: [],
+
+  //dashboard
+  maindashboard: [],
+  merchantdashboard: []
 
 };
 
@@ -160,7 +164,6 @@ export function counterReducer(state = INITIAL_STATE, action) {
     case GitAction.GetUserProfile:
       return Object.assign({}, state, { loading: true });
     case GitAction.GotUserProfile:
-      console.log('sss',action.payload)
       return Object.assign({}, state, {
         loading: false,
         userProfile: action.payload
@@ -315,7 +318,7 @@ export function counterReducer(state = INITIAL_STATE, action) {
     case GitAction.GetUpdateMerchantProfile:
       return Object.assign({}, state, { loading: true });
     case GitAction.GotUpdateMerchantProfile:
-  
+
       return Object.assign({}, state, {
         loading: false,
         merchantUpdateProfile: action.payload,
@@ -1000,7 +1003,21 @@ export function counterReducer(state = INITIAL_STATE, action) {
         SalesOrder: action.payload,
       });
 
+    case GitAction.GetMainDashboard:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotMainDashboard:
+      return Object.assign({}, state, {
+        loading: false,
+        maindashboard: action.payload,
+      });
 
+    case GitAction.GetMerchantDashboard:
+      return Object.assign({}, state, { loading: true });
+    case GitAction.GotMerchantDashboard:
+      return Object.assign({}, state, {
+        loading: false,
+        merchantdashboard: action.payload,
+      });
 
     /////////////////////////////////////////////////// Default ///////////////////////////////////////////////////
     default:

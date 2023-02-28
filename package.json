@@ -1,7 +1,7 @@
 {
   "name": "eCommerceCMS",
   "version": "0.1.0",
-  "homepage": "/ecommerceCMSDev/",
+  "homepage": "/",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.7.1",
@@ -26,6 +26,7 @@
     "moment": "^2.29.4",
     "node-gyp": "^9.3.1",
     "npm": "^9.1.3",
+    "pdfjs-dist": "^3.3.122",
     "popper.js": "^1.16.1",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",

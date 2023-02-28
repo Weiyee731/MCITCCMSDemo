@@ -128,6 +128,10 @@ const rootEpic = combineEpics(
   gitEpic.Storage_UpdateGrid,
   gitEpic.Storage_DeleteGrid,
 
+  //Dashboard 
+  gitEpic.Reporting_MainDashboard,
+  gitEpic.Reporting_MerchantDashboard
+
 );
 
 const epicMiddleware = createEpicMiddleware();

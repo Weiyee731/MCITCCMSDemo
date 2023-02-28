@@ -36,7 +36,7 @@ import TextField from "@mui/material/TextField";
 import Collapse from "@mui/material/Collapse";
 import { isArrayNotEmpty } from "../../../tools/Helpers";
 import { connectableObservableDescriptor } from "rxjs/observable/ConnectableObservable";
-
+import StoreIcon from '@mui/icons-material/Store';
 
 function mapStateToProps(state) {
     return {
@@ -56,7 +56,6 @@ function mapDispatchToProps(dispatch) {
             dispatch(GitAction.CallGetTransaction(transactionData)),
         CallGetTransactionStatus: () =>
             dispatch(GitAction.CallGetTransactionStatus()),
-        CallUserProfile: (prodData) => dispatch(GitAction.CallUserProfile(prodData)),
         CallCountry: () => dispatch(GitAction.CallCountry()),
         CallMerchants: (prodData) => dispatch(GitAction.CallMerchants(prodData)),
     };
@@ -448,7 +447,7 @@ class DisplayTable extends Component {
                                                             tabIndex={-1}
                                                             key={row.Username}
                                                         >
-                                                            <TableCell align="center">  {row.OrderName}   </TableCell>
+                                                            <TableCell align="left">  {row.OrderName}   </TableCell>
                                                             <TableCell align="left">{row.Username}</TableCell>
                                                             <TableCell align="left">     {row.PaymentMethod}   </TableCell>
                                                             <TableCell align="left">    {row.TrackingStatus}  </TableCell>
@@ -503,6 +502,7 @@ class DisplayTable extends Component {
                                                                                                                 return (<span style={{ fontWeight: "bold", fontSize: "15px", color: "green" }}>  {merchant.ShopName}  </span>)
                                                                                                             })}
                                                                                                         </div> */}
+                                                                                                        <h5 style={{ paddingTop: "20px", fontWeight: "bold" }}> <StoreIcon /> {listing.ShopName} </h5>
                                                                                                         {this.props.ProductProps.allmerchants.length > 0 &&
                                                                                                             this.props.ProductProps.allmerchants.filter((X) => X.UserID === listing.MerchantID).map((merchant) => {
                                                                                                             })}
@@ -605,7 +605,7 @@ class UserDetailsComponent extends Component {
             firstName: this.props.data.name.FirstName,
             lastName: this.props.data.name.LastName,
             email: this.props.data.name.UserEmailAddress,
-            trackingStatus: "Payment Confirm",
+            trackingStatusID: 0,
             fixedHeader: true,
             fixedFooter: true,
             stripedRows: false,
@@ -654,9 +654,8 @@ class UserDetailsComponent extends Component {
             UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? 0 : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
 
         });
-
         this.props.CallGetMerchantsOrders({
-            trackingStatus: this.state.trackingStatus,
+            trackingStatus: this.state.trackingStatusID,
             UserID: this.props.data.name.UserID,
         });
         this.props.CallMerchants({
