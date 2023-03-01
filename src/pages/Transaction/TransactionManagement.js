@@ -111,12 +111,13 @@ export const TransactionManagement = (props) => {
 
 
     useEffect(() => {
-  
+
         if (isStatusViewClick === true)
             setViewTracking(true)
     }, [orderShipmentStatus])
-    
+
     useEffect(() => {
+
         if (isOrderSet === false && isArrayNotEmpty(transactions)) {
             let listing = []
             transactions.map((order) => {
@@ -789,8 +790,9 @@ export const TransactionManagement = (props) => {
                                                     <div style={{ fontSize: "11px", fontWeight: "bold" }}>  {checkLogistic(details.LogisticID)} </div>
                                                     <div style={{ fontSize: "11px", fontWeight: "bold" }}>  {details.TrackingNumber}  </div>
                                                 </div>
+                                                {details.TrackingStatusID === 3 && console.log("dsadsadsa", details)}
                                                 {
-                                                    details.PDFLabel !== "" && details.PDFLabel !== undefined && details.TrackingNumber !== null && details.TrackingNumber !== undefined && details.TrackingNumber !== "-" &&
+                                                    details.PDFLabel !== "" && details.PDFLabel !== "-" && details.PDFLabel !== undefined && details.TrackingNumber !== null && details.TrackingNumber !== undefined && details.TrackingNumber !== "-" &&
                                                     <div className="col-7">
                                                         <div className="row" >
                                                             <div className="col">
@@ -894,7 +896,7 @@ export const TransactionManagement = (props) => {
                                         >
                                             {isArrayNotEmpty(logistic) && logistic.map((x) => {
                                                 return (
-                                                    <MenuItem value={x.LogisticID}> {x.LogisticName}</MenuItem>
+                                                    <MenuItem value={x.LogisticID}> {x.LogisticName}{x.LogisticID === 14 && " - Manual OSC"}</MenuItem>
                                                 )
                                             })}
                                         </Select>
@@ -1102,278 +1104,278 @@ export const TransactionManagement = (props) => {
                     <Table aria-label="collapsible table" size="small">
                         {isShipmentSubmit === true && <LoadingPanel />}
                         {headerLayout()}
-                        {
-                            isOrderSet ?
-                                <TableBody >
-                                    {isArrayNotEmpty(Listing) && Listing.slice((page) * rowsPerPage, (page) * rowsPerPage + rowsPerPage)
-                                        .map((data, index) => {
-                                            return (
-                                                <>
-                                                    {CollapseLayout(data, checkIndex(index))}
-                                                    <TableRow style={{ backgroundColor: "#f8f9fa" }} >
-                                                        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
-                                                            <Collapse in={checkCollapseOpen(checkIndex(index))} timeout="auto" unmountOnExit>
-                                                                <Box sx={{ margin: 1 }}>
-                                                                    {OrderDetailLayout(data, checkIndex(index))}
+                        {/* {
+                            isOrderSet ? */}
+                        <TableBody >
+                            {isArrayNotEmpty(Listing) && Listing.slice((page) * rowsPerPage, (page) * rowsPerPage + rowsPerPage)
+                                .map((data, index) => {
+                                    return (
+                                        <>
+                                            {CollapseLayout(data, checkIndex(index))}
+                                            <TableRow style={{ backgroundColor: "#f8f9fa" }} >
+                                                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
+                                                    <Collapse in={checkCollapseOpen(checkIndex(index))} timeout="auto" unmountOnExit>
+                                                        <Box sx={{ margin: 1 }}>
+                                                            {OrderDetailLayout(data, checkIndex(index))}
+                                                            {
+                                                                isOrderSelected &&
+                                                                <Card style={{ marginTop: "10px" }}>
+                                                                    <CardContent>
+                                                                        {senderInformationLayout()}
+                                                                    </CardContent>
+                                                                </Card>
+                                                            }
+
+                                                            <Card style={{ marginTop: "10px" }}>
+                                                                <CardContent>
+                                                                    <div className="row">
+                                                                        <div className="col">
+                                                                            <Typography style={TitleStyle} > Delivery Details </Typography>
+                                                                        </div>
+                                                                        {
+                                                                            value + 1 === 2 &&
+                                                                            <div className="col" style={{ textAlign: "right" }}>
+                                                                                <Button color="primary" onClick={() => {
+                                                                                    let newArr = OrderListing
+                                                                                    let selectedIndex = getIndex(newArr, data)
+                                                                                    newArr[selectedIndex].isEdit = newArr[selectedIndex].isEdit === undefined ? true : !newArr[selectedIndex].isEdit
+                                                                                    setOrderListing([...newArr])
+                                                                                }}>{OrderListing[getIndex(OrderListing, data)].isEdit === true ? "CANCEL" : "EDIT"}</Button>
+                                                                            </div>
+                                                                        }
+                                                                    </div>
                                                                     {
-                                                                        isOrderSelected &&
-                                                                        <Card style={{ marginTop: "10px" }}>
-                                                                            <CardContent>
-                                                                                {senderInformationLayout()}
-                                                                            </CardContent>
-                                                                        </Card>
+                                                                        OrderListing[getIndex(OrderListing, data)].isEdit === true ?
+                                                                            <div className="row">
+                                                                                <div className="row" style={{ paddingTop: "10px" }}>
+                                                                                    <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
+                                                                                        <InputLabel shrink htmlFor="bootstrap-input" style={{ paddingLeft: "15px", fontSize: "12pt" }}>Receiver Name</InputLabel>
+                                                                                        <FormControl fullWidth size="small" variant="outlined">
+                                                                                            <OutlinedInput
+                                                                                                id={"outlined-adornment-receiverName-" + index}
+                                                                                                label=""
+                                                                                                value={data.UserFullName}
+                                                                                                onChange={(e) => {
+                                                                                                    let newArr = OrderListing
+                                                                                                    let selectedIndex = getIndex(newArr, data)
+                                                                                                    newArr[selectedIndex].UserFullName = e.target.value
+                                                                                                    newArr[selectedIndex].isUserFullNameError = e.target.value === "" ? true : false
+                                                                                                    setOrderListing([...newArr]);
+                                                                                                }}
+                                                                                                required
+                                                                                            />
+                                                                                        </FormControl>
+                                                                                        {data.isUserFullNameError && <FormHelperText style={{ color: "red" }}>Insert Receiver Name</FormHelperText>}
+                                                                                    </div>
+                                                                                    <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
+                                                                                        <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt" }}>Receiver Contact</InputLabel>
+                                                                                        <FormControl fullWidth size="small" variant="outlined">
+                                                                                            <OutlinedInput
+                                                                                                id={"outlined-adornment-receiverContact-" + index}
+                                                                                                label=""
+                                                                                                value={data.UserContactNo}
+                                                                                                onChange={(e) => {
+                                                                                                    let newArr = OrderListing
+                                                                                                    let selectedIndex = getIndex(newArr, data)
+                                                                                                    newArr[selectedIndex].UserContactNo = e.target.value
+                                                                                                    newArr[selectedIndex].isUserContactNoError = e.target.value === "" ? true : false
+                                                                                                    setOrderListing([...newArr]);
+                                                                                                }}
+                                                                                                required
+                                                                                            />
+                                                                                        </FormControl>
+                                                                                    </div>
+                                                                                    <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
+                                                                                        <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt", paddingLeft: value + 1 === 2 ? "0px" : "15px" }}>Delivery Method</InputLabel>
+                                                                                        <FormControl fullWidth size="small" variant="outlined">
+
+                                                                                            <Select
+                                                                                                id={"outlined-adornment-Method-" + index} label=""
+                                                                                                value={data.PickUpInd}
+                                                                                                onChange={(e) => {
+                                                                                                    let newArr = OrderListing
+                                                                                                    let selectedIndex = getIndex(newArr, data)
+                                                                                                    newArr[selectedIndex].PickUpInd = e.target.value
+                                                                                                    setOrderListing([...newArr]);
+                                                                                                }}
+                                                                                                className="select"
+                                                                                                required
+                                                                                            >
+                                                                                                <MenuItem value={1}> Self Pick Up </MenuItem>
+                                                                                                <MenuItem value={0}> Delivery </MenuItem>
+                                                                                            </Select>
+                                                                                        </FormControl>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className="row" style={{ paddingTop: "10px" }}>
+                                                                                    <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
+                                                                                        <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt" }}>Address Line 1</InputLabel>
+                                                                                        <FormControl fullWidth size="small" variant="outlined">
+                                                                                            <OutlinedInput
+                                                                                                id={"outlined-adornment-receiverAdd1-" + index}
+                                                                                                label=""
+                                                                                                value={data.UserAddressLine1}
+                                                                                                onChange={(e) => {
+                                                                                                    let newArr = OrderListing
+                                                                                                    let selectedIndex = getIndex(newArr, data)
+                                                                                                    newArr[selectedIndex].UserAddressLine1 = e.target.value
+                                                                                                    newArr[selectedIndex].isUserAddressLine1Error = e.target.value === "" ? true : false
+                                                                                                    setOrderListing([...newArr]);
+                                                                                                }}
+                                                                                                required
+                                                                                            />
+                                                                                        </FormControl>
+                                                                                    </div>
+                                                                                    <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
+                                                                                        <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt" }}>Address Line 2</InputLabel>
+                                                                                        <FormControl fullWidth size="small" variant="outlined">
+                                                                                            <OutlinedInput
+                                                                                                id={"outlined-adornment-receiverAdd2-" + index}
+                                                                                                label=""
+                                                                                                value={data.UserAddressLine2}
+                                                                                                onChange={(e) => {
+                                                                                                    let newArr = OrderListing
+                                                                                                    let selectedIndex = getIndex(newArr, data)
+                                                                                                    newArr[selectedIndex].UserAddressLine2 = e.target.value
+                                                                                                    newArr[selectedIndex].isUserAddressLine2Error = e.target.value === "" ? true : false
+                                                                                                    setOrderListing([...newArr]);
+                                                                                                }}
+                                                                                                required
+                                                                                            />
+                                                                                        </FormControl>
+                                                                                    </div>
+                                                                                    <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
+                                                                                        <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt" }}>City</InputLabel>
+                                                                                        <FormControl fullWidth size="small" variant="outlined">
+                                                                                            <OutlinedInput
+                                                                                                id={"outlined-adornment-receiverCity-" + index}
+                                                                                                label=""
+                                                                                                value={data.UserCity}
+                                                                                                onChange={(e) => {
+                                                                                                    let newArr = OrderListing
+                                                                                                    let selectedIndex = getIndex(newArr, data)
+                                                                                                    newArr[selectedIndex].UserCity = e.target.value
+                                                                                                    newArr[selectedIndex].isUserCityError = e.target.value === "" ? true : false
+                                                                                                    setOrderListing([...newArr]);
+                                                                                                }}
+                                                                                                required
+                                                                                            />
+                                                                                        </FormControl>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div className="row" style={{ paddingTop: "10px" }}>
+                                                                                    <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
+                                                                                        <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt" }}>Receiver Poscode</InputLabel>
+                                                                                        <FormControl fullWidth size="small" variant="outlined">
+                                                                                            <OutlinedInput
+                                                                                                id={"outlined-adornment-receiverPoscode-" + index}
+                                                                                                label=""
+                                                                                                value={data.UserPoscode}
+                                                                                                onChange={(e) => {
+                                                                                                    let newArr = OrderListing
+                                                                                                    let selectedIndex = getIndex(newArr, data)
+                                                                                                    newArr[selectedIndex].UserPoscode = e.target.value
+                                                                                                    newArr[selectedIndex].isUserPoscodeError = e.target.value === "" ? true : false
+                                                                                                    setOrderListing([...newArr]);
+                                                                                                }}
+                                                                                                required
+                                                                                            />
+                                                                                        </FormControl>
+                                                                                    </div>
+                                                                                    <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
+                                                                                        <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt" }}>Receiver State</InputLabel>
+                                                                                        <FormControl fullWidth size="small" variant="outlined">
+                                                                                            <OutlinedInput
+                                                                                                id={"outlined-adornment-receiverState-" + index}
+                                                                                                label=""
+                                                                                                value={data.UserState}
+                                                                                                onChange={(e) => {
+                                                                                                    let newArr = OrderListing
+                                                                                                    let selectedIndex = getIndex(newArr, data)
+                                                                                                    newArr[selectedIndex].UserState = e.target.value
+                                                                                                    newArr[selectedIndex].isUserStateError = e.target.value === "" ? true : false
+                                                                                                    setOrderListing([...newArr]);
+                                                                                                }}
+                                                                                                required
+                                                                                            />
+                                                                                        </FormControl>
+                                                                                    </div>
+                                                                                    <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
+                                                                                        <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt" }}>Receiver Country</InputLabel>
+                                                                                        <FormControl fullWidth size="small" variant="outlined">
+                                                                                            <Select
+                                                                                                id={"outlined-adornment-receiverCountry-" + index}
+                                                                                                label=""
+                                                                                                value={data.CountryID}
+                                                                                                onChange={(e) => {
+                                                                                                    let newArr = OrderListing
+                                                                                                    let selectedIndex = getIndex(newArr, data)
+                                                                                                    newArr[selectedIndex].CountryID = e.target.value
+                                                                                                    setOrderListing([...newArr]);
+                                                                                                }}
+                                                                                                className="select"
+                                                                                                required
+                                                                                            >
+                                                                                                {countries.length > 0 && countries.map((country) => (
+                                                                                                    <MenuItem
+                                                                                                        value={country.CountryId}
+                                                                                                        key={country.CountryId}
+                                                                                                    >
+                                                                                                        {country.CountryName}
+                                                                                                    </MenuItem>
+                                                                                                ))}
+                                                                                            </Select>
+                                                                                        </FormControl>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            :
+                                                                            <div className="row" style={{ paddingTop: "10px" }}>
+                                                                                <div className="row">
+                                                                                    <div className="col-xl-2 col-lg-2 col-md-2 col-s-6 col-xs-6">
+                                                                                        <div className="row">
+                                                                                            <InputLabel shrink htmlFor="bootstrap-input" style={{ paddingLeft: "15px", fontSize: "12pt" }}>Receiver Name</InputLabel>
+                                                                                            <Typography style={DetailStyle}> {data.UserFullName}</Typography>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div className="col-xl-2 col-lg-2 col-md-2  col-s-6 col-xs-6">
+                                                                                        <div className="row">
+                                                                                            <InputLabel shrink htmlFor="bootstrap-input" style={{ paddingLeft: "15px", fontSize: "12pt" }}>Receiver Contact</InputLabel>
+                                                                                            <Typography style={DetailStyle}>  {data.UserContactNo}</Typography>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div className="col-xl-5 col-lg-5 col-md-5  col-s-6 col-xs-6">
+                                                                                        <div className="row">
+                                                                                            <InputLabel shrink htmlFor="bootstrap-input" style={{ paddingLeft: "15px", fontSize: "12pt" }}>Receiver Address</InputLabel>
+                                                                                            <Typography style={DetailStyle}> {data.UserAddressLine1 + " " + data.UserAddressLine2 + " " + data.UserCity + " " + data.UserPoscode + " , " + data.UserState}</Typography>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div className="col-xl-3 col-lg-3 col-md-3 col-s-6 col-xs-6">
+                                                                                        <div className="row">
+                                                                                            <InputLabel shrink htmlFor="bootstrap-input" style={{ paddingLeft: "15px", fontSize: "12pt" }}>Delivery Method</InputLabel>
+                                                                                            <Typography style={DetailStyle}>{data.PickUpInd === 1 ? "Self Pick Up" : "Delivery"}</Typography>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
                                                                     }
 
-                                                                    <Card style={{ marginTop: "10px" }}>
-                                                                        <CardContent>
-                                                                            <div className="row">
-                                                                                <div className="col">
-                                                                                    <Typography style={TitleStyle} > Delivery Details </Typography>
-                                                                                </div>
-                                                                                {
-                                                                                    value + 1 === 2 &&
-                                                                                    <div className="col" style={{ textAlign: "right" }}>
-                                                                                        <Button color="primary" onClick={() => {
-                                                                                            let newArr = OrderListing
-                                                                                            let selectedIndex = getIndex(newArr, data)
-                                                                                            newArr[selectedIndex].isEdit = newArr[selectedIndex].isEdit === undefined ? true : !newArr[selectedIndex].isEdit
-                                                                                            setOrderListing([...newArr])
-                                                                                        }}>{OrderListing[getIndex(OrderListing, data)].isEdit === true ? "CANCEL" : "EDIT"}</Button>
-                                                                                    </div>
-                                                                                }
-                                                                            </div>
-                                                                            {
-                                                                                OrderListing[getIndex(OrderListing, data)].isEdit === true ?
-                                                                                    <div className="row">
-                                                                                        <div className="row" style={{ paddingTop: "10px" }}>
-                                                                                            <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
-                                                                                                <InputLabel shrink htmlFor="bootstrap-input" style={{ paddingLeft: "15px", fontSize: "12pt" }}>Receiver Name</InputLabel>
-                                                                                                <FormControl fullWidth size="small" variant="outlined">
-                                                                                                    <OutlinedInput
-                                                                                                        id={"outlined-adornment-receiverName-" + index}
-                                                                                                        label=""
-                                                                                                        value={data.UserFullName}
-                                                                                                        onChange={(e) => {
-                                                                                                            let newArr = OrderListing
-                                                                                                            let selectedIndex = getIndex(newArr, data)
-                                                                                                            newArr[selectedIndex].UserFullName = e.target.value
-                                                                                                            newArr[selectedIndex].isUserFullNameError = e.target.value === "" ? true : false
-                                                                                                            setOrderListing([...newArr]);
-                                                                                                        }}
-                                                                                                        required
-                                                                                                    />
-                                                                                                </FormControl>
-                                                                                                {data.isUserFullNameError && <FormHelperText style={{ color: "red" }}>Insert Receiver Name</FormHelperText>}
-                                                                                            </div>
-                                                                                            <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
-                                                                                                <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt" }}>Receiver Contact</InputLabel>
-                                                                                                <FormControl fullWidth size="small" variant="outlined">
-                                                                                                    <OutlinedInput
-                                                                                                        id={"outlined-adornment-receiverContact-" + index}
-                                                                                                        label=""
-                                                                                                        value={data.UserContactNo}
-                                                                                                        onChange={(e) => {
-                                                                                                            let newArr = OrderListing
-                                                                                                            let selectedIndex = getIndex(newArr, data)
-                                                                                                            newArr[selectedIndex].UserContactNo = e.target.value
-                                                                                                            newArr[selectedIndex].isUserContactNoError = e.target.value === "" ? true : false
-                                                                                                            setOrderListing([...newArr]);
-                                                                                                        }}
-                                                                                                        required
-                                                                                                    />
-                                                                                                </FormControl>
-                                                                                            </div>
-                                                                                            <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
-                                                                                                <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt", paddingLeft: value + 1 === 2 ? "0px" : "15px" }}>Delivery Method</InputLabel>
-                                                                                                <FormControl fullWidth size="small" variant="outlined">
-
-                                                                                                    <Select
-                                                                                                        id={"outlined-adornment-Method-" + index} label=""
-                                                                                                        value={data.PickUpInd}
-                                                                                                        onChange={(e) => {
-                                                                                                            let newArr = OrderListing
-                                                                                                            let selectedIndex = getIndex(newArr, data)
-                                                                                                            newArr[selectedIndex].PickUpInd = e.target.value
-                                                                                                            setOrderListing([...newArr]);
-                                                                                                        }}
-                                                                                                        className="select"
-                                                                                                        required
-                                                                                                    >
-                                                                                                        <MenuItem value={1}> Self Pick Up </MenuItem>
-                                                                                                        <MenuItem value={0}> Delivery </MenuItem>
-                                                                                                    </Select>
-                                                                                                </FormControl>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div className="row" style={{ paddingTop: "10px" }}>
-                                                                                            <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
-                                                                                                <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt" }}>Address Line 1</InputLabel>
-                                                                                                <FormControl fullWidth size="small" variant="outlined">
-                                                                                                    <OutlinedInput
-                                                                                                        id={"outlined-adornment-receiverAdd1-" + index}
-                                                                                                        label=""
-                                                                                                        value={data.UserAddressLine1}
-                                                                                                        onChange={(e) => {
-                                                                                                            let newArr = OrderListing
-                                                                                                            let selectedIndex = getIndex(newArr, data)
-                                                                                                            newArr[selectedIndex].UserAddressLine1 = e.target.value
-                                                                                                            newArr[selectedIndex].isUserAddressLine1Error = e.target.value === "" ? true : false
-                                                                                                            setOrderListing([...newArr]);
-                                                                                                        }}
-                                                                                                        required
-                                                                                                    />
-                                                                                                </FormControl>
-                                                                                            </div>
-                                                                                            <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
-                                                                                                <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt" }}>Address Line 2</InputLabel>
-                                                                                                <FormControl fullWidth size="small" variant="outlined">
-                                                                                                    <OutlinedInput
-                                                                                                        id={"outlined-adornment-receiverAdd2-" + index}
-                                                                                                        label=""
-                                                                                                        value={data.UserAddressLine2}
-                                                                                                        onChange={(e) => {
-                                                                                                            let newArr = OrderListing
-                                                                                                            let selectedIndex = getIndex(newArr, data)
-                                                                                                            newArr[selectedIndex].UserAddressLine2 = e.target.value
-                                                                                                            newArr[selectedIndex].isUserAddressLine2Error = e.target.value === "" ? true : false
-                                                                                                            setOrderListing([...newArr]);
-                                                                                                        }}
-                                                                                                        required
-                                                                                                    />
-                                                                                                </FormControl>
-                                                                                            </div>
-                                                                                            <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
-                                                                                                <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt" }}>City</InputLabel>
-                                                                                                <FormControl fullWidth size="small" variant="outlined">
-                                                                                                    <OutlinedInput
-                                                                                                        id={"outlined-adornment-receiverCity-" + index}
-                                                                                                        label=""
-                                                                                                        value={data.UserCity}
-                                                                                                        onChange={(e) => {
-                                                                                                            let newArr = OrderListing
-                                                                                                            let selectedIndex = getIndex(newArr, data)
-                                                                                                            newArr[selectedIndex].UserCity = e.target.value
-                                                                                                            newArr[selectedIndex].isUserCityError = e.target.value === "" ? true : false
-                                                                                                            setOrderListing([...newArr]);
-                                                                                                        }}
-                                                                                                        required
-                                                                                                    />
-                                                                                                </FormControl>
-                                                                                            </div>
-                                                                                        </div>
-
-                                                                                        <div className="row" style={{ paddingTop: "10px" }}>
-                                                                                            <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
-                                                                                                <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt" }}>Receiver Poscode</InputLabel>
-                                                                                                <FormControl fullWidth size="small" variant="outlined">
-                                                                                                    <OutlinedInput
-                                                                                                        id={"outlined-adornment-receiverPoscode-" + index}
-                                                                                                        label=""
-                                                                                                        value={data.UserPoscode}
-                                                                                                        onChange={(e) => {
-                                                                                                            let newArr = OrderListing
-                                                                                                            let selectedIndex = getIndex(newArr, data)
-                                                                                                            newArr[selectedIndex].UserPoscode = e.target.value
-                                                                                                            newArr[selectedIndex].isUserPoscodeError = e.target.value === "" ? true : false
-                                                                                                            setOrderListing([...newArr]);
-                                                                                                        }}
-                                                                                                        required
-                                                                                                    />
-                                                                                                </FormControl>
-                                                                                            </div>
-                                                                                            <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
-                                                                                                <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt" }}>Receiver State</InputLabel>
-                                                                                                <FormControl fullWidth size="small" variant="outlined">
-                                                                                                    <OutlinedInput
-                                                                                                        id={"outlined-adornment-receiverState-" + index}
-                                                                                                        label=""
-                                                                                                        value={data.UserState}
-                                                                                                        onChange={(e) => {
-                                                                                                            let newArr = OrderListing
-                                                                                                            let selectedIndex = getIndex(newArr, data)
-                                                                                                            newArr[selectedIndex].UserState = e.target.value
-                                                                                                            newArr[selectedIndex].isUserStateError = e.target.value === "" ? true : false
-                                                                                                            setOrderListing([...newArr]);
-                                                                                                        }}
-                                                                                                        required
-                                                                                                    />
-                                                                                                </FormControl>
-                                                                                            </div>
-                                                                                            <div className="col-xl-4 col-lg-4 col-md-4  col-s-6 col-xs-6">
-                                                                                                <InputLabel shrink htmlFor="bootstrap-input" style={{ fontSize: "12pt" }}>Receiver Country</InputLabel>
-                                                                                                <FormControl fullWidth size="small" variant="outlined">
-                                                                                                    <Select
-                                                                                                        id={"outlined-adornment-receiverCountry-" + index}
-                                                                                                        label=""
-                                                                                                        value={data.CountryID}
-                                                                                                        onChange={(e) => {
-                                                                                                            let newArr = OrderListing
-                                                                                                            let selectedIndex = getIndex(newArr, data)
-                                                                                                            newArr[selectedIndex].CountryID = e.target.value
-                                                                                                            setOrderListing([...newArr]);
-                                                                                                        }}
-                                                                                                        className="select"
-                                                                                                        required
-                                                                                                    >
-                                                                                                        {countries.length > 0 && countries.map((country) => (
-                                                                                                            <MenuItem
-                                                                                                                value={country.CountryId}
-                                                                                                                key={country.CountryId}
-                                                                                                            >
-                                                                                                                {country.CountryName}
-                                                                                                            </MenuItem>
-                                                                                                        ))}
-                                                                                                    </Select>
-                                                                                                </FormControl>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    :
-                                                                                    <div className="row" style={{ paddingTop: "10px" }}>
-                                                                                        <div className="row">
-                                                                                            <div className="col-xl-2 col-lg-2 col-md-2 col-s-6 col-xs-6">
-                                                                                                <div className="row">
-                                                                                                    <InputLabel shrink htmlFor="bootstrap-input" style={{ paddingLeft: "15px", fontSize: "12pt" }}>Receiver Name</InputLabel>
-                                                                                                    <Typography style={DetailStyle}> {data.UserFullName}</Typography>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div className="col-xl-2 col-lg-2 col-md-2  col-s-6 col-xs-6">
-                                                                                                <div className="row">
-                                                                                                    <InputLabel shrink htmlFor="bootstrap-input" style={{ paddingLeft: "15px", fontSize: "12pt" }}>Receiver Contact</InputLabel>
-                                                                                                    <Typography style={DetailStyle}>  {data.UserContactNo}</Typography>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div className="col-xl-5 col-lg-5 col-md-5  col-s-6 col-xs-6">
-                                                                                                <div className="row">
-                                                                                                    <InputLabel shrink htmlFor="bootstrap-input" style={{ paddingLeft: "15px", fontSize: "12pt" }}>Receiver Address</InputLabel>
-                                                                                                    <Typography style={DetailStyle}> {data.UserAddressLine1 + " " + data.UserAddressLine2 + " " + data.UserCity + " " + data.UserPoscode + " , " + data.UserState}</Typography>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div className="col-xl-3 col-lg-3 col-md-3 col-s-6 col-xs-6">
-                                                                                                <div className="row">
-                                                                                                    <InputLabel shrink htmlFor="bootstrap-input" style={{ paddingLeft: "15px", fontSize: "12pt" }}>Delivery Method</InputLabel>
-                                                                                                    <Typography style={DetailStyle}>{data.PickUpInd === 1 ? "Self Pick Up" : "Delivery"}</Typography>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-
-                                                                            }
-
-                                                                        </CardContent>
-                                                                    </Card>
-                                                                </Box>
-                                                            </Collapse>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                </>
-                                            )
-                                        }
-                                        )}
-                                </TableBody>
-                                :
-                                <LoadingPanel />
-                        }
+                                                                </CardContent>
+                                                            </Card>
+                                                        </Box>
+                                                    </Collapse>
+                                                </TableCell>
+                                            </TableRow>
+                                        </>
+                                    )
+                                }
+                                )}
+                        </TableBody>
+                        {/* :
+                                <LoadingPanel /> */}
+                        {/* } */}
                     </Table>
                 </TableContainer >
                 <TablePagination

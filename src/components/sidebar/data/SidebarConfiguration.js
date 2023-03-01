@@ -77,7 +77,7 @@
 //         icon: "shop",
 //     },
 
-    
+
 //     {
 //         to: "/category",
 //         title: "Product Category",
@@ -140,40 +140,38 @@ const SidebarConfiguration = () => {
 
     const eCommercePlatform = window.location.hostname === "localhost" ? "http://localhost:3000/EmporiaDev" : "https://myemporia.my/emporiadev/"
 
-    console.log('sidebar', sidebars)
-
     sidebars.length > 0 &&
         JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID !== 1 ?
-            sidebars.filter((x)=> x.PageID !== 15).map((data) => {
-        if (data.submenus !== null && data.submenus !== "[]") {
-            let submenu = [];
-            JSON.parse(data.submenus).map((x) => {
-                let data = {
-                    to: x.page,
-                    title: x.title,
-                    // icon: x.icon.replace("fa fa-", ""),
-                    icon: x.icon,
+        sidebars.filter((x) => x.PageID !== 15).map((data) => {
+            if (data.submenus !== null && data.submenus !== "[]") {
+                let submenu = [];
+                JSON.parse(data.submenus).map((x) => {
+                    let data = {
+                        to: x.page,
+                        title: x.title,
+                        // icon: x.icon.replace("fa fa-", ""),
+                        icon: x.icon,
+                    };
+                    submenu.push(data);
+                });
+                let listing = {
+                    to: data.page,
+                    title: data.title,
+                    icon: data.icon,
+                    submenus: submenu,
                 };
-                submenu.push(data);
-            });
-            let listing = {
-                to: data.page,
-                title: data.title,
-                icon: data.icon,
-                submenus: submenu,
-            };
-            overallListing.push(listing);
-        } else {
-            let listing = {
-                to: data.page,
-                title: data.title,
-                icon: data.icon,
-            };
-            overallListing.push(listing);
-        }
-                })
-                :
-            sidebars.map((data) => {
+                overallListing.push(listing);
+            } else {
+                let listing = {
+                    to: data.page,
+                    title: data.title,
+                    icon: data.icon,
+                };
+                overallListing.push(listing);
+            }
+        })
+        :
+        sidebars.map((data) => {
             if (data.submenus !== null && data.submenus !== "[]") {
                 let submenu = [];
                 JSON.parse(data.submenus).map((x) => {
@@ -200,7 +198,7 @@ const SidebarConfiguration = () => {
                 };
                 overallListing.push(listing);
             }
-                });
+        });
 
     return overallListing;
 };

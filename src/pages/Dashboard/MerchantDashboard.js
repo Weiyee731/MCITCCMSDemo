@@ -50,44 +50,45 @@ const INITIAL_STATE = {
     isDashboardDataSet: false,
     ToDoList: [],
     MarketingCampaigns: [],
-    cardData: [
-        {
-            id: 1, title: 'Sales', amount: "RM530.50", color: "#30b566", difference: "21.5%", icon: Up,
-            dateDetails: ["3/2/2023", "4/2/2023", "5/2/2023", "6/2/2023", "7/2/2023", "8/2/2023",],
-            amountDetails: [100.50, 60.00, 70.50, 180.50, 50.50, 680.50],
-            tooltipdetails: "Total value of paid orders over the selected time period, including sales from cancelled and return/refund orders. This value is equivalent to the final amount during checkout.",
-        },
-        {
-            id: 2, title: 'Orders', amount: "53", color: "#30b566", difference: "21.5%", icon: Up,
-            dateDetails: ["3/2/2023", "4/2/2023", "5/2/2023", "6/2/2023", "7/2/2023", "8/2/2023",],
-            amountDetails: [25, 8, 7, 4, 5, 4],
-            tooltipdetails: "Total number of paid orders, including cancelled or return/refund orders.",
-        },
-        {
-            id: 3, title: 'Visitors', amount: "92", color: "#A10B0B", difference: "1.5%", icon: Down,
-            dateDetails: ["3/2/2023", "4/2/2023", "5/2/2023", "6/2/2023", "7/2/2023", "8/2/2023",],
-            amountDetails: [10, 20, 10, 15, 30, 7],
-            tooltipdetails: "Total number of unique visitors who viewed your shop and product detail pages. Multiple views of one page by the same visitor is counted as 1 unique visitor.",
-        },
-        {
-            id: 4, title: "Conversion Rate", amount: "57.6%", color: "#30b566", difference: "21.5%", icon: Up,
-            dateDetails: ["3/2/2023", "4/2/2023", "5/2/2023", "6/2/2023", "7/2/2023", "8/2/2023",],
-            amountDetails: [250, 40, 70, 26.67, 16.67, 57.14],
-            tooltipdetails: "The number of unique buyers who paid orders divided by total number of unique visitors.",
-        },
-        {
-            id: 5, title: "Cancelled Orders", amount: "10", color: "#A10B0B", difference: "1.5%", icon: Down,
-            dateDetails: ["3/2/2023", "4/2/2023", "5/2/2023", "6/2/2023", "7/2/2023", "8/2/2023",],
-            amountDetails: [2, 1, 0, 2, 3, 2],
-            tooltipdetails: "Total number of paid orders that were cancelled. Cancelled orders are recorded based on the date they were placed, and not the date of cancellation.",
-        },
-        {
-            id: 6, title: "Returned/Refunded Orders", amount: "0", color: "#30b566", difference: "21.5%", icon: Up,
-            dateDetails: ["3/2/2023", "4/2/2023", "5/2/2023", "6/2/2023", "7/2/2023", "8/2/2023",],
-            amountDetails: [0, 0, 0, 0, 0, 0],
-            tooltipdetails: "Total number of paid orders that were returned/refunded, recorded based on the date these orders were paid for, and not the date of return/refund. An order is counted as returned/refunded only if all products in the same order were returned/refunded.",
-        },
-    ],
+    // cardData: [
+    //     {
+    //         id: 1, title: 'Sales', amount: "RM530.50", color: "#30b566", difference: "21.5%", icon: Up,
+    //         dateDetails: ["3/2/2023", "4/2/2023", "5/2/2023", "6/2/2023", "7/2/2023", "8/2/2023",],
+    //         amountDetails: [100.50, 60.00, 70.50, 180.50, 50.50, 680.50],
+    //         tooltipdetails: "Total value of paid orders over the selected time period, including sales from cancelled and return/refund orders. This value is equivalent to the final amount during checkout.",
+    //     },
+    //     {
+    //         id: 2, title: 'Orders', amount: "53", color: "#30b566", difference: "21.5%", icon: Up,
+    //         dateDetails: ["3/2/2023", "4/2/2023", "5/2/2023", "6/2/2023", "7/2/2023", "8/2/2023",],
+    //         amountDetails: [25, 8, 7, 4, 5, 4],
+    //         tooltipdetails: "Total number of paid orders, including cancelled or return/refund orders.",
+    //     },
+    //     {
+    //         id: 3, title: 'Visitors', amount: "92", color: "#A10B0B", difference: "1.5%", icon: Down,
+    //         dateDetails: ["3/2/2023", "4/2/2023", "5/2/2023", "6/2/2023", "7/2/2023", "8/2/2023",],
+    //         amountDetails: [10, 20, 10, 15, 30, 7],
+    //         tooltipdetails: "Total number of unique visitors who viewed your shop and product detail pages. Multiple views of one page by the same visitor is counted as 1 unique visitor.",
+    //     },
+    //     {
+    //         id: 4, title: "Conversion Rate", amount: "57.6%", color: "#30b566", difference: "21.5%", icon: Up,
+    //         dateDetails: ["3/2/2023", "4/2/2023", "5/2/2023", "6/2/2023", "7/2/2023", "8/2/2023",],
+    //         amountDetails: [250, 40, 70, 26.67, 16.67, 57.14],
+    //         tooltipdetails: "The number of unique buyers who paid orders divided by total number of unique visitors.",
+    //     },
+    //     {
+    //         id: 5, title: "Cancelled Orders", amount: "10", color: "#A10B0B", difference: "1.5%", icon: Down,
+    //         dateDetails: ["3/2/2023", "4/2/2023", "5/2/2023", "6/2/2023", "7/2/2023", "8/2/2023",],
+    //         amountDetails: [2, 1, 0, 2, 3, 2],
+    //         tooltipdetails: "Total number of paid orders that were cancelled. Cancelled orders are recorded based on the date they were placed, and not the date of cancellation.",
+    //     },
+    //     {
+    //         id: 6, title: "Returned/Refunded Orders", amount: "0", color: "#30b566", difference: "21.5%", icon: Up,
+    //         dateDetails: ["3/2/2023", "4/2/2023", "5/2/2023", "6/2/2023", "7/2/2023", "8/2/2023",],
+    //         amountDetails: [0, 0, 0, 0, 0, 0],
+    //         tooltipdetails: "Total number of paid orders that were returned/refunded, recorded based on the date these orders were paid for, and not the date of return/refund. An order is counted as returned/refunded only if all products in the same order were returned/refunded.",
+    //     },
+    // ],
+    cardData: [],
     graphData: [],
     headerDetail: [
         { index: 0, headerName: "By Sales", },
@@ -342,7 +343,7 @@ class MerchantDashboard extends Component {
                 onDatasetHover: { highlightDataSeries: true, },
             },
             xaxis: {
-                categories: this.state.cardData[0].dateDetails,
+                categories: isArrayNotEmpty(this.state.cardData) ? this.state.cardData[0].dateDetails : [],
             },
         }
 

@@ -37,7 +37,6 @@ export const ProductCategory = (props) => {
 
   useEffect(() => {
     let listing = []
-    // console.log((JSON.parse(productCategories[9].HierarchyItem)))
     if (isArrayNotEmpty(productCategories) && isHierachySet === false) {
       let mainListing = {
         HierarchyID: "",
@@ -51,7 +50,7 @@ export const ProductCategory = (props) => {
       productCategories.map((main, index) => {
         // hierarchy 1
         mainListing = {
-          HierarchyID: main.HierarchyID,
+          HierarchyID: 1,
           ProductCategory: main.ProductCategory,
           ProductCategoryID: main.ProductCategoryID,
           Tag: main.Tag,
@@ -61,9 +60,8 @@ export const ProductCategory = (props) => {
         }
         // hierarchy 2
         main.HierarchyItem !== undefined && main.HierarchyItem != "[]" && JSON.parse(main.HierarchyItem).map((details, detailsIndex) => {
-          // console.log(details)
           let detailsList = {
-            HierarchyID: details.HierarchyID,
+            HierarchyID: 2,
             ProductCategoryID: details.ProductCategoryID,
             ProductCategory: details.ProductCategory,
             ParentProductCategoryID: details.ParentProductCategoryID,
@@ -75,9 +73,11 @@ export const ProductCategory = (props) => {
           // hierarchy 3
           details.HierarchyItem !== undefined && details.HierarchyItem != "[]" && JSON.parse(details.HierarchyItem).map((subdetails) => {
             let subDetailsList = {
-              HierarchyID: subdetails.HierarchyID,
+              HierarchyID: 3,
               ProductCategoryID: subdetails.ProductCategoryID,
               ProductCategory: subdetails.ProductCategory,
+              ParentProductCategoryID: subdetails.ParentProductCategoryID,
+              GrandParentProductCategoryID: details.ParentProductCategoryID,
               Tag: subdetails.Tag,
               isOpen: false,
               isEdit: false,
@@ -91,7 +91,6 @@ export const ProductCategory = (props) => {
       setListingDetails(listing)
       setHierachy(true)
     }
-
   }, [productCategories])
 
   useEffect(() => {
@@ -144,160 +143,67 @@ export const ProductCategory = (props) => {
 
   const submitData = (type, HierarchyID, parentCategoryID, categoryID, Category, mainIndex, subIndex, subdetailIndex) => {
     // check duplication
-
     if (type !== 'delete') {
-
-      switch (type) {
-        case 'add':
-          const data_Create = {
-            ProductCategoryImage: "NULL",
-            ProductCategory: Category,
-            HierarchyID: HierarchyID,
-            ParentProductCategoryID: parentCategoryID,
-            ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
-            UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
-          }
-
-
-
-          break;
-
-        case 'edit':
-          let data_Update = {
-            ProductCategoryID: categoryID,
-            ProductCategory: Category,
-            UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
-          }
-
-
-          break;
-
-        default:
-          break;
+      if (categoryID !== "") {
+        let data_Update = {
+          ProductCategoryID: categoryID,
+          ProductCategory: Category,
+          UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+        }
+        dispatch(GitAction.CallUpdateProductCategory(data_Update))
+        toast.success("Successfully updated product category")
+      } else {
+        const data_Create = {
+          ProductCategoryImage: "NULL",
+          ProductCategory: Category,
+          HierarchyID: HierarchyID,
+          ParentProductCategoryID: parentCategoryID,
+          ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
+          UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
+        }
+        dispatch(GitAction.CallAddProductCategory(data_Create))
+        toast.success("Successfully added product category")
       }
-
     } else {
       const data_Delete = {
         ProductCategoryID: categoryID,
         UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
       }
+      dispatch(GitAction.CallDeleteProductCategory(data_Delete))
+      toast.success("Successfully deleted product category")
     }
-
-    // let dupe_subCategories = ""
-    // let dupe_subDetails =""
-    // if(HierarchyID === 3){
-    //     const subCat = JSON.parse(productCategories[mainIndex].HierarchyItem)[subIndex]
-    //     dupe_subDetails = JSON.parse(subCat.HierarchyItem).filter((x)=>(x.ProductCategory === Category))
-    // }
-
-    // else if (HierarchyID === 2){
-    //     dupe_subCategories = JSON.parse(productCategories[mainIndex].HierarchyItem).filter((f=>(f.ProductCategory === Category)))
-    // }
-
-    // if (type !== 'delete' && HierarchyID === 1 && productCategories.filter((x) => x.ProductCategory.toLowerCase() === Category.toLowerCase()) && productCategories.filter((x) => x.ProductCategory.toLowerCase() === Category.toLowerCase()).length >= 1) {
-
-    //   if(edit === true){
-    //     toast.info("Category name unchanged. No changes applied.")
-    //   }
-
-    //   else if(edit === false)
-    //   {
-    //     toast.error("The category is existed, please double check before submitting.")
-    //     categoryListingDetails.splice(mainIndex, 1)
-    //     setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
-    //   }
-
-    // }
-
-    // else if(type !== 'delete' && HierarchyID === 2 && dupe_subCategories.length >= 1 )
-    // {
-    //       if(edit === true ){
-    //         toast.info("Sub category name unchanged. No changes applied.")
-    //       }
-
-    //       else if(edit === false)
-    //       {
-    //         toast.error("The Sub category is existed, please double check before submitting.")
-    //         categoryListingDetails[mainIndex].SubDetails.splice(subIndex, 1)
-    //         setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
-    //       }
-
-
-    // }
-    // else if(type !== 'delete' && HierarchyID === 3 && dupe_subDetails.length >= 1 )
-    // {
-    //   if(edit === true){
-    //     toast.info("The sub category detail unchanged. No changes applied.")
-    //   }
-
-    //   else if(edit === false)
-    //   {
-    //     toast.error("The sub category detail is existed, please double check before submitting.")
-    //     categoryListingDetails[mainIndex].SubDetails.splice(subIndex, 1)
-    //       setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
-    //   }
-
-    //       categoryListingDetails[mainIndex].SubDetails[subIndex].SubDetails.splice(subdetailIndex, 1)
-    //       setTimeout(() => { setListingDetails(categoryListingDetails) }, 200)
-    // }
-    // else {
-    //   if (categoryID === "" && productCategories.filter((x) => x.ProductCategory !== Category)) {
-    //     let propsData = {
-    //       ProductCategoryImage: "NULL",
-    //       ProductCategory: Category,
-    //       HierarchyID: HierarchyID,
-    //       ParentProductCategoryID: parentCategoryID,
-    //       ProjectID: JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID,
-    //       UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
-    //     }
-    //     dispatch(GitAction.CallAddProductCategory(propsData))
-    //     toast.success("Successfully added product category")
-    //   } else {
-    //     if (type === "delete") {
-    //       let propsData = {
-    //         ProductCategoryID: categoryID,
-    //         UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
-    //       }
-    //       dispatch(GitAction.CallDeleteProductCategory(propsData))
-    //       toast.success("Successfully deleted product category")
-    //     }
-    //     else {
-    //       let propsData = {
-    //         ProductCategoryID: categoryID,
-    //         ProductCategory: Category,
-    //         UserID: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
-    //       }
-    //       console.log('propsData', propsData)
-    //       dispatch(GitAction.CallUpdateProductCategory(propsData))
-    //       toast.success("Successfully updated product category")
-    //     }
-    //   }
-    // }
   }
 
   const clickIsEdit = (data, type, mainIndex, subindex, subdetailIndex) => {
     let listingData = !isFiltered ? [...categoryListingDetails] : filteredList
     setEdit(true)
 
-    console.log('edit', type)
+    let target_data;
 
     if (data.HierarchyID === 1) {
-      let listing = listingData[mainIndex]
+      target_data = listingData.findIndex(x => x.ProductCategoryID === data.ProductCategoryID)
+    } else if (data.HierarchyID === 2) {
+      target_data = listingData.findIndex(x => x.ProductCategoryID === data.ParentProductCategoryID)
+    }
+    else if (data.HierarchyID === 3) {
+      target_data = listingData.findIndex(x => x.ProductCategoryID === data.GrandParentProductCategoryID)
+    }
+
+    if (data.HierarchyID === 1) {
+      let listing = listingData[target_data]
 
       if (type === "cancel") {
-        if (listingData[mainIndex].ProductCategoryID === "") {
-          listingData.splice(mainIndex, 1)
+        if (listingData[target_data].ProductCategoryID === "") {
+          listingData.splice(target_data, 1)
         } else {
-          listingData[mainIndex] = productCategories[mainIndex]
+          listingData[target_data] = productCategories[target_data]
           listing.isEdit = !listing.isEdit
         }
-
-
       }
 
       if (type === "done") {
         if (listing.ProductCategory !== "") {
-          submitData(type, listing.HierarchyID, 0, listing.ProductCategoryID, listing.ProductCategory, mainIndex, subindex, subdetailIndex)
+          submitData(type, listing.HierarchyID, 0, listing.ProductCategoryID, listing.ProductCategory, target_data, subindex, subdetailIndex)
           listing.isEdit = !listing.isEdit
         } else {
           toast.warning("Product Category is required")
@@ -305,7 +211,7 @@ export const ProductCategory = (props) => {
       }
 
       if (type === "delete") {
-        submitData(type, listing.HierarchyID, 0, listing.ProductCategoryID, listing.ProductCategory, mainIndex, subindex, subdetailIndex)
+        submitData(type, listing.HierarchyID, 0, listing.ProductCategoryID, listing.ProductCategory, target_data, subindex, subdetailIndex)
         listing.isEdit = !listing.isEdit
       }
 
@@ -316,20 +222,20 @@ export const ProductCategory = (props) => {
     }
 
     if (data.HierarchyID === 2) {
-      let listing = listingData[mainIndex].SubDetails[subindex]
+      let listing = listingData[target_data].SubDetails[subindex]
 
       if (type === "cancel") {
-        if (listingData[mainIndex].SubDetails[subindex].ProductCategoryID === "") {
-          listingData[mainIndex].SubDetails.splice(subindex, 1)
+        if (listingData[target_data].SubDetails[subindex].ProductCategoryID === "") {
+          listingData[target_data].SubDetails.splice(subindex, 1)
         } else {
-          listingData[mainIndex].SubDetails[subindex] = JSON.parse(productCategories[mainIndex].HierarchyItem)[0]
+          listingData[target_data].SubDetails[subindex] = JSON.parse(productCategories[target_data].HierarchyItem)[0]
         }
         listing.isEdit = !listing.isEdit
       }
 
       if (type === "done") {
         if (listing.ProductCategory !== "") {
-          submitData(type, listing.HierarchyID, listingData[mainIndex].ProductCategoryID, listing.ProductCategoryID, listing.ProductCategory, mainIndex, subindex, subdetailIndex)
+          submitData(type, listing.HierarchyID, listingData[target_data].ProductCategoryID, listing.ProductCategoryID, listing.ProductCategory, target_data, subindex, subdetailIndex)
           listing.isEdit = !listing.isEdit
         } else {
           toast.warning("Product Category is required")
@@ -337,7 +243,7 @@ export const ProductCategory = (props) => {
       }
 
       if (type === "delete") {
-        submitData(type, listing.HierarchyID, listingData[mainIndex].ProductCategoryID, listing.ProductCategoryID, listing.ProductCategory, mainIndex, subindex, subdetailIndex)
+        submitData(type, listing.HierarchyID, listingData[target_data].ProductCategoryID, listing.ProductCategoryID, listing.ProductCategory, target_data, subindex, subdetailIndex)
         listing.isEdit = !listing.isEdit
       }
 
@@ -346,16 +252,16 @@ export const ProductCategory = (props) => {
     }
 
     if (data.HierarchyID === 3) {
-      let listing = listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex]
+      let listing = listingData[target_data].SubDetails[subindex].SubDetails[subdetailIndex]
 
       if (type === "cancel") {
-        if (listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex].ProductCategoryID === "") {
-          listingData[mainIndex].SubDetails[subindex].SubDetails.splice(subdetailIndex, 1)
+        if (listingData[target_data].SubDetails[subindex].SubDetails[subdetailIndex].ProductCategoryID === "") {
+          listingData[target_data].SubDetails[subindex].SubDetails.splice(subdetailIndex, 1)
         } else {
-          const SubDetailsHierarchyItem = JSON.parse(productCategories[mainIndex].HierarchyItem)[0]
+          const SubDetailsHierarchyItem = JSON.parse(productCategories[target_data].HierarchyItem)[0]
           const subdetailshierarchyitem = JSON.parse(SubDetailsHierarchyItem.HierarchyItem)[0]
 
-          listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex] = subdetailshierarchyitem
+          listingData[target_data].SubDetails[subindex].SubDetails[subdetailIndex] = subdetailshierarchyitem
         }
         // let filterHierachy = listingData[mainIndex].SubDetails[subindex].SubDetails.filter((x) => x.ProductCategoryID !== "")
         // listingData[mainIndex].SubDetails[subindex].SubDetails = filterHierachy
@@ -364,7 +270,7 @@ export const ProductCategory = (props) => {
 
       if (type === "done") {
         if (listing.ProductCategory !== "") {
-          submitData(type, listing.HierarchyID, listingData[mainIndex].SubDetails[subindex].ProductCategoryID, listing.ProductCategoryID, listing.ProductCategory, mainIndex, subindex, subdetailIndex)
+          submitData(type, listing.HierarchyID, listingData[target_data].SubDetails[subindex].ProductCategoryID, listing.ProductCategoryID, listing.ProductCategory, target_data, subindex, subdetailIndex)
           listing.isEdit = !listing.isEdit
         } else {
           toast.warning("Product Category is required")
@@ -372,7 +278,7 @@ export const ProductCategory = (props) => {
       }
 
       if (type === "delete") {
-        submitData(type, listing.HierarchyID, listingData[mainIndex].SubDetails[subindex].ProductCategoryID, listing.ProductCategoryID, listing.ProductCategory, mainIndex, subindex, subdetailIndex)
+        submitData(type, listing.HierarchyID, listingData[target_data].SubDetails[subindex].ProductCategoryID, listing.ProductCategoryID, listing.ProductCategory, target_data, subindex, subdetailIndex)
         listing.isEdit = !listing.isEdit
       }
 
@@ -387,22 +293,34 @@ export const ProductCategory = (props) => {
     let listingData = isFiltered ? filteredList : [...categoryListingDetails]
     let isEdit = false
 
+    let target_data;
+
+
+
+    if (data.HierarchyID === 1) {
+      target_data = listingData.findIndex(x => x.ProductCategoryID === data.ProductCategoryID)
+    } else if (data.HierarchyID === 2) {
+      target_data = listingData.findIndex(x => x.ProductCategoryID === data.ParentProductCategoryID)
+    }
+    else if (data.HierarchyID === 3) {
+      target_data = listingData.findIndex(x => x.ProductCategoryID === data.GrandParentProductCategoryID)
+    }
+
     if (isArrayNotEmpty(listingData)) {
       if (data.HierarchyID === 1) {
-        if (listingData[mainIndex] !== undefined)
-          isEdit = listingData[mainIndex].isEdit
+        if (listingData[target_data] !== undefined)
+          isEdit = listingData[target_data].isEdit
       }
 
       if (data.HierarchyID === 2) {
-        if (listingData[mainIndex].SubDetails[subindex] !== undefined && listingData[mainIndex].SubDetails[subindex].length !== 0)
-          isEdit = listingData[mainIndex].SubDetails[subindex].isEdit
-
+        if (listingData[target_data].SubDetails[subindex] !== undefined && listingData[target_data].SubDetails[subindex].length !== 0)
+          isEdit = listingData[target_data].SubDetails[subindex].isEdit
       }
 
       if (data.HierarchyID === 3) {
-        if (listingData[mainIndex].SubDetails[subindex] !== undefined && listingData[mainIndex].SubDetails[subindex].SubDetails.length !== 0 &&
-          listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex] !== undefined && listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex].length !== 0)
-          isEdit = listingData[mainIndex].SubDetails[subindex].SubDetails[subdetailIndex].isEdit
+        if (listingData[target_data].SubDetails[subindex] !== undefined && listingData[target_data].SubDetails[subindex].SubDetails.length !== 0 &&
+          listingData[target_data].SubDetails[subindex].SubDetails[subdetailIndex] !== undefined && listingData[target_data].SubDetails[subindex].SubDetails[subdetailIndex].length !== 0)
+          isEdit = listingData[target_data].SubDetails[subindex].SubDetails[subdetailIndex].isEdit
       }
     }
     return isEdit
@@ -411,37 +329,36 @@ export const ProductCategory = (props) => {
   const handleChanges = (type, value, data, mainIndex, subindex, subdetailIndex) => {
 
     let listingData = [...categoryListingDetails]
-
     let target_data;
 
-    if(data.HierarchyID === 1) {
+    if (data.HierarchyID === 1) {
       target_data = listingData.findIndex(x => x.ProductCategoryID === data.ProductCategoryID)
     } else if (data.HierarchyID === 2) {
-      target_data = listingData.findIndex(x => x.ProductCategoryID === data.ProductCategoryID)
+      target_data = listingData.findIndex(x => x.ProductCategoryID === data.ParentProductCategoryID)
+    }
+    else if (data.HierarchyID === 3) {
+      target_data = listingData.findIndex(x => x.ProductCategoryID === data.GrandParentProductCategoryID)
     }
 
     switch (type) {
       case "Category":
+
         if (data.HierarchyID === 1)
           listingData[target_data].ProductCategory = value
 
         if (data.HierarchyID === 2)
-        console.log(data)
           listingData[target_data].SubDetails[subindex].ProductCategory = value
 
         if (data.HierarchyID === 3)
           listingData[target_data].SubDetails[subindex].SubDetails[subdetailIndex].ProductCategory = value
-
         break;
 
       case "Tag":
         if (data.HierarchyID === 1)
           listingData[target_data].Tag = value
 
-
         if (data.HierarchyID === 2)
           listingData[target_data].SubDetails[subindex].Tag = value
-
 
         if (data.HierarchyID === 3)
           listingData[target_data].SubDetails[subindex].SubDetails[subdetailIndex].Tag = value
@@ -451,19 +368,29 @@ export const ProductCategory = (props) => {
         break;
     }
     setListingDetails(listingData)
+
   }
 
-  const handleNewCategory = (hierachy, index, subIndex,) => {
+  const handleNewCategory = (hierachy, index, subIndex, data) => {
     let listingData = [...categoryListingDetails]
     setEdit(false)
     let mainListing = {
       HierarchyID: "",
+      ParentProductCategoryID: "",
+      GrandParentProductCategoryID: "",
       ProductCategory: "",
       Tag: "",
       ProductCategoryID: "",
       isOpen: false,
       isEdit: true,
       SubDetails: []
+    }
+    let target_data;
+
+    if (hierachy === 2) {
+      target_data = listingData.findIndex(x => x.ProductCategoryID === data.ProductCategoryID)
+    } else if (hierachy === 3) {
+      target_data = listingData.findIndex(x => x.ProductCategoryID === data.ParentProductCategoryID)
     }
 
     switch (hierachy) {
@@ -474,12 +401,15 @@ export const ProductCategory = (props) => {
 
       case 2:
         mainListing.HierarchyID = 2
-        listingData[index].SubDetails.push(mainListing)
+        mainListing.ParentProductCategoryID = data.ProductCategoryID
+        listingData[target_data].SubDetails.push(mainListing)
         break;
 
       case 3:
         mainListing.HierarchyID = 3
-        listingData[index].SubDetails[subIndex].SubDetails.push(mainListing)
+        mainListing.GrandParentProductCategoryID = listingData[target_data].ProductCategoryID
+        mainListing.ParentProductCategoryID = listingData[target_data].SubDetails[subIndex].ProductCategoryID
+        listingData[target_data].SubDetails[subIndex].SubDetails.push(mainListing)
         break;
 
       default:
@@ -502,7 +432,6 @@ export const ProductCategory = (props) => {
               {checkCollapseOpen(data, index, subindex, subdetailIndex) ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
             </IconButton>
           }
-
         </TableCell>
         <TableCell component="th" scope="row">
           {
@@ -571,25 +500,12 @@ export const ProductCategory = (props) => {
   const highlightColor = "#ffffff"
 
   const searchSpace = () => {
-    console.log('abc')
-    // setsearchKeywords(event.target.value)
-
-    // let allCategory = categoryListingDetails
     let searchString = searchKeywords.toLowerCase().split(' ')
 
     if (searchKeywords !== "") {
-      // setfilteredList(allCategory)
-      // setListingDetails(categoryListingDetails.filter(category =>
-      //   searchString.some(searchString => category.ProductCategory.toLowerCase().includes(searchString))))
-        return categoryListingDetails.filter(category =>
-          searchString.some(searchString => category.ProductCategory.toLowerCase().includes(searchString)))
+      return categoryListingDetails.filter(category =>
+        searchString.some(searchString => category.ProductCategory.toLowerCase().includes(searchString)))
     } else {
-      // let filteredList = ""
-      // filteredList = allCategory.filter(category =>
-      //   searchString.some(searchString => category.ProductCategory.toLowerCase().includes(searchString)))
-      // setfilteredList(filteredList)
-      // setisFiltered(true)
-      // setListingDetails(categoryListingDetails)
       return categoryListingDetails
     }
   }
@@ -617,7 +533,7 @@ export const ProductCategory = (props) => {
           </div>
           <div className="col-1" style={{ display: "flex", justifyContent: "center" }}>
             <IconButton >
-              <AddIcon onClick={() => handleNewCategory(1, 0, 0,)} />
+              <AddIcon onClick={() => handleNewCategory(1, 0, 0, "")} />
             </IconButton>
           </div>
         </div>
@@ -628,7 +544,6 @@ export const ProductCategory = (props) => {
 
               <TableBody>
                 {searchSpace().length > 0 && searchSpace().map((data, index) => {
-                  console.log(data)
                   return (
                     <>
                       {CollapseLayout(data, index, 0, 0)}
@@ -644,7 +559,7 @@ export const ProductCategory = (props) => {
                                 </div>
                                 <div className="col" style={{ textAlign: "right" }}>
                                   <IconButton>
-                                    <AddIcon onClick={() => handleNewCategory(2, index, 0)} />
+                                    <AddIcon onClick={() => handleNewCategory(2, index, 0, data)} />
                                   </IconButton>
                                 </div>
                               </div>
@@ -672,7 +587,7 @@ export const ProductCategory = (props) => {
                                                           </div>
                                                           <div className="col" style={{ textAlign: "right" }}>
                                                             <IconButton>
-                                                              <AddIcon onClick={() => handleNewCategory(3, index, detailIndex)} />
+                                                              <AddIcon onClick={() => handleNewCategory(3, index, detailIndex, details)} />
                                                             </IconButton>
                                                           </div>
                                                         </div>
@@ -680,7 +595,6 @@ export const ProductCategory = (props) => {
                                                           typeof details.SubDetails !== 'undefined' && details.SubDetails.length > 0 ?
                                                             <Table size="small" aria-label="purchases">
                                                               {headerLayout()}
-
                                                               <TableBody>
                                                                 {
                                                                   details.SubDetails.length > 0 && details.SubDetails.map((subdetails, subdetailIndex) => {

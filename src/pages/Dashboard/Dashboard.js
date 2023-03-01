@@ -186,8 +186,6 @@ class Dashboard extends Component {
                 { title: "Total User", amount: 0, iconImg: 'https://img.icons8.com/ios/256/groups.png' },
                 { title: "Total Visitor", amount: 0, iconImg: 'https://img.icons8.com/external-outline-wichaiwi/256/external-visitors-digital-marketing-outline-wichaiwi.png' },
             ]
-
-            console.log("dsadsada", this.props.maindashboard[0].OverallSales)
             if (this.props.maindashboard[0].OverallSales !== undefined && this.props.maindashboard[0].OverallSales !== "[]" && isArrayNotEmpty(JSON.parse(this.props.maindashboard[0].OverallSales))) {
                 let x = JSON.parse(this.props.maindashboard[0].OverallSales)[0]
                 statisticData[0].amount = x.OrderTotalAmount !== null ? "RM" + parseFloat(x.OrderTotalAmount).toFixed(2) : 0
