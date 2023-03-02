@@ -334,8 +334,6 @@ class EditShopProfile extends Component {
 
         let uploadImageURL = "https://" + localStorage.getItem("projectURL") + "/eCommerceCMSImage/uploadImages.php"
 
-        console.log('uploadImageURL', uploadImageURL)
-
         const updateData = {
             USERID: this.state.USERID,
             FIRSTNAME: this.state.FIRSTNAME,
@@ -372,6 +370,7 @@ class EditShopProfile extends Component {
                     .then((res) => {
                         if (res.status === 200) {
                             this.props.CallGetUpdateMerchantProfile(updateData)
+                            toast.success('Data updated successfully.')
 
                         }
                     });
@@ -379,6 +378,7 @@ class EditShopProfile extends Component {
 
             else if (this.state.fileAdded === true && this.state.newFile === false) {
                 this.props.CallGetUpdateMerchantProfile(updateData)
+                toast.success('Data updated successfully.')
 
             }
 
@@ -394,7 +394,7 @@ class EditShopProfile extends Component {
                     .then((res) => {
                         if (res.status === 200) {
                             this.props.CallUpdateShopDetails(update_ShopProfile)
-
+                            toast.success('Data updated successfully.')
                         }
                     });
             }
@@ -411,15 +411,15 @@ class EditShopProfile extends Component {
                 )
                     .then((res) => {
                         if (res.status === 200) {
-                            console.log('cover image changed!', update_ShopProfile)
                             this.props.CallUpdateShopDetails(update_ShopProfile)
+                            toast.success('Data updated successfully.')
                         }
                     });
             }
 
             else {
                 this.props.CallUpdateShopDetails(update_ShopProfile)
-
+                toast.success('Data updated successfully.')
             }
         }
 
