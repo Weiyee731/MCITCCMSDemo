@@ -276,7 +276,8 @@ class AddStock extends Component {
     }
 
     handleFormInput = (e, name, index) => {
-        let storeListing = this.state.StoreStockInData
+        let storeListing = [...this.state.StoreStockInData] //spread the array so i would not overwrite existing data
+
         switch (name) {
             case "Store":
                 storeListing[index] = {
@@ -570,14 +571,14 @@ class AddStock extends Component {
             )
         }
 
-        const DateData = (title, name, stateValue, error) => {
-            return (
-                <div className="col-12 col-md-6">
-                    <ResponsiveDatePickers variant="standard" title={title} value={stateValue} onChange={(e) => this.onDateChange(e, name)} required />
-                    {error === false && <FormHelperText sx={{ color: 'red' }} id={error}>Invalid {title} </FormHelperText>}
-                </div>
-            )
-        }
+        // const DateData = (title, name, stateValue, error) => {
+        //     return (
+        //         <div className="col-12 col-md-6">
+        //             <ResponsiveDatePickers variant="standard" title={title} value={stateValue} onChange={(e) => this.onDateChange(e, name)} required />
+        //             {error === false && <FormHelperText sx={{ color: 'red' }} id={error}>Invalid {title} </FormHelperText>}
+        //         </div>
+        //     )
+        // }
 
         const ModalListing = () => {
             return (
@@ -612,6 +613,8 @@ class AddStock extends Component {
                         this.state.StoreStockInData.length > 0 && this.state.StoreStockInData.map((data, index) => {
                             return (
                                 <>
+
+          
                                     <div className="row" style={{ paddingTop: "5px", paddingBottom: "5px" }}>
                                         <div className="col-12 col-md-6">
                                             <div className="row">
