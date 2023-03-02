@@ -12,6 +12,8 @@ const LiveServerLoginUrl = ServerConfiguration.LiveServerLoginUrl;
 // const project = 'emporia'
 const project = window.localStorage.getItem("project")
 
+console.log('ss', url + project)
+
 export class GitEpic {
   ///////////////////////////////////////////////////  user account credentials ///////////////////////////////////////////////////
 

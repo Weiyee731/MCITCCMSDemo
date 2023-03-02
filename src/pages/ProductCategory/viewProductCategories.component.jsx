@@ -290,11 +290,12 @@ export const ProductCategory = (props) => {
   }
 
   const checkEdit = (data, mainIndex, subindex, subdetailIndex) => {
-    let listingData = isFiltered ? filteredList : [...categoryListingDetails]
+    let listingData = [...categoryListingDetails]
+
+    console.log('checkEdit', listingData)
     let isEdit = false
 
     let target_data;
-
 
 
     if (data.HierarchyID === 1) {
@@ -373,6 +374,7 @@ export const ProductCategory = (props) => {
 
   const handleNewCategory = (hierachy, index, subIndex, data) => {
     let listingData = [...categoryListingDetails]
+    setsearchKeywords("")
     setEdit(false)
     let mainListing = {
       HierarchyID: "",
@@ -396,7 +398,9 @@ export const ProductCategory = (props) => {
     switch (hierachy) {
       case 1:
         mainListing.HierarchyID = 1
+        console.log('hi')
         listingData = [...listingData, mainListing]
+        console.log('listingData', listingData)
         break;
 
       case 2:
@@ -419,6 +423,8 @@ export const ProductCategory = (props) => {
   }
 
   const CollapseLayout = (data, index, subindex, subdetailIndex) => {
+
+    console.log('add collapse', data, index, subindex, subdetailIndex)
     return (
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
         <TableCell>
