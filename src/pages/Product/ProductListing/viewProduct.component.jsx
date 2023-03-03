@@ -11,6 +11,7 @@ import Logo from "../../../assets/logos/logo.png";
 
 // UI Component
 import GroupAddIcon from '@mui/icons-material/Add';
+import Button from "@mui/material/Button";
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -23,6 +24,8 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
+import { ModalPopOut } from "../../../components/ModalComponent/ModalComponent";
+import { toast } from "react-toastify";
 const history = createHistory()
 
 function mapStateToProps(state) {
@@ -122,12 +125,13 @@ class ViewProductComponent extends Component {
       searchKeywords: "",
       filteredProduct: [],
       isFiltered: false,
-      selectedMerchant: 0
+      selectedMerchant: 0,
+      isErrorOpen: false,
     };
 
     this.props.CallAllProducts({
       type: this.props.match !== undefined ? "Category" : "Merchant",
-      typeValue: this.props.match !== undefined ? this.props.match.params.categoryId : '0',
+      typeValue: this.props.match !== undefined ? this.props.match.params.categoryId : JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? '0' : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
       userId: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
       productPage: '999',
       page: '1',
@@ -224,7 +228,7 @@ class ViewProductComponent extends Component {
         this.props.CallResetProductMgmtReturnVal()
         this.props.CallAllProducts({
           type: this.props.match !== undefined ? "Category" : "Merchant",
-          typeValue: this.props.match !== undefined ? this.props.match.params.categoryId : '0',
+          typeValue: this.props.match !== undefined ? this.props.match.params.categoryId : JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? '0' : JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
           userId: JSON.parse(localStorage.getItem("loginUser"))[0].UserID,
           productPage: '999',
           page: '1',
@@ -267,18 +271,34 @@ class ViewProductComponent extends Component {
             </Tooltip>
           }
           <Tooltip title="Add New Product">
-            <IconButton size="medium" sx={{ color: "#0074ea", marginRight: 1 }}>
-              <Link className="nav-link" to={"/addProductsAllIn"}>
-                <GroupAddIcon />
-              </Link>
-            </IconButton>
+
+            {
+              DataList.length > 0 ?
+                DataList[0].UserVariationLimit > DataList[0].MerchantCurrentVariationNumber && DataList[0].UserVariationLimit > DataList[0].MerchantCurrentProductNumber ?
+                  <IconButton size="medium" sx={{ color: "#0074ea", marginRight: 1 }}>
+                    <Link className="nav-link" to={"/addProductsAllIn"}>
+                      <GroupAddIcon />
+                    </Link>
+                  </IconButton>
+                  :
+                  <IconButton size="medium" sx={{ color: "#0074ea", marginRight: 1 }} onClick={() => this.setState({ isErrorOpen: true })}>
+                    <GroupAddIcon />
+                  </IconButton>
+                :
+                <IconButton size="medium" sx={{ color: "#0074ea", marginRight: 1 }}>
+                  <Link className="nav-link" to={"/addProductsAllIn"}>
+                    <GroupAddIcon />
+                  </Link>
+                </IconButton>
+
+            }
           </Tooltip>
-        </div>
+        </div >
       )
     }
 
     return (
-      <div className="container-fluid my-2">
+      <div className="container-fluid my-2" >
         <div className="row mb-3">
           <div className={JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID === 1 ? "col-10" : "col-12"}>
             <SearchBar
@@ -314,6 +334,8 @@ class ViewProductComponent extends Component {
           }
 
         </div>
+
+        {console.log("DataList", DataList)}
 
         <TableComponents
           // table settings 
@@ -358,7 +380,25 @@ class ViewProductComponent extends Component {
             </Tooltip>
           }
         />
-      </div>
+        <ModalPopOut open={this.state.isErrorOpen} title="Product Upload Limit Reach" showAction={false} handleToggleDialog={() => this.setState({ isErrorOpen: false })}>
+          <div className="container-fluid">
+            <div className="container">
+              <h3>Product Upload Limit Reach</h3>
+              <label>You have reach your product upload limit </label>
+              <p className="text-danger"><i>** Only {DataList.length > 0 && DataList[0].UserVariationLimit} product variation is allow </i></p>
+              <label>Step to solve: </label>
+              <p>1) Contact sales to upgrade plan</p>
+              <p>2) Delete few unused uploaded product from the list</p>
+              <div style={{ textAlign: "right" }}>
+                <Button variant="contained" color="primary" onClick={() => this.setState({ isErrorOpen: false })
+                }>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </div>
+        </ModalPopOut>
+      </div >
     );
   }
 }

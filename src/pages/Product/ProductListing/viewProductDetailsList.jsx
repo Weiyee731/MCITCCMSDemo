@@ -483,7 +483,8 @@ const INITIAL_STATE = {
     isMediaFileSend: false,
     isOverFileSize: false,
 
-    OptionClick: ""
+    OptionClick: "",
+    isErrorOpen: false,
 }
 
 class ProductDetailsComponent extends Component {
@@ -4510,7 +4511,7 @@ class ProductDetailsComponent extends Component {
                         <div>
                             <Card id="basicInfo" className="SubContainer">
                                 <CardContent id="basicInfo">
-                                    <p className="Heading">Basic Information12345</p>
+                                    <p className="Heading">Basic Information</p>
 
                                     <TextField
                                         id="productName"
@@ -5450,15 +5451,25 @@ class ProductDetailsComponent extends Component {
                                                     </div>
                                                 ))
                                                 }
-
                                                 {this.state.toBeEdited ?
-                                                    <Button
-                                                        variant="outlined"
-                                                        className="AddButton"
-                                                        onClick={this.addOptions.bind(this, "1")}
-                                                    >
-                                                        Add Option
-                                                    </Button> : null}
+                                                    this.props.productInfo.length > 0 && this.props.productInfo[0].UserVariationLimit > this.props.productInfo[0].MerchantCurrentVariationNumber && this.props.productInfo[0].UserVariationLimit > this.props.productInfo[0].MerchantCurrentProductNumber
+                                                        ?
+                                                        <Button
+                                                            variant="outlined"
+                                                            className="AddButton"
+                                                            onClick={this.addOptions.bind(this, "1")}
+                                                        >
+                                                            Add Option
+                                                        </Button>
+                                                        :
+                                                        <Button
+                                                            variant="outlined"
+                                                            className="AddButton"
+                                                            onClick={() => this.setState({ isErrorOpen: true })}
+                                                        >
+                                                            Add Option
+                                                        </Button>
+                                                    : null}
                                             </div>
                                             <br />
                                         </div>
@@ -5512,12 +5523,17 @@ class ProductDetailsComponent extends Component {
                                         </>
                                         : null}
                                     <hr />
+
                                     {!this.state.variation1On && this.state.toBeEdited && (
                                         <div className="ItemContainer">
                                             <Button
                                                 variant="outlined"
                                                 className="AddButton"
-                                                onClick={this.addProductVariant.bind(this, "variation")}
+                                                onClick={() =>
+                                                    this.props.productInfo.length > 0 && this.props.productInfo[0].UserVariationLimit > this.props.productInfo[0].MerchantCurrentVariationNumber && this.props.productInfo[0].UserVariationLimit > this.props.productInfo[0].MerchantCurrentProductNumber ?
+                                                        this.addProductVariant.bind(this, "variation") :
+                                                        this.setState({ isErrorOpen: true })
+                                                }
                                             >
                                                 Add Variant
                                             </Button>
@@ -6411,6 +6427,25 @@ class ProductDetailsComponent extends Component {
                                 <p className="text-danger"><i>*** Only image with 1000KB is allow</i></p>
                                 <div style={{ textAlign: "right" }}>
                                     <Button variant="contained" color="primary" onClick={() => this.setState({ isOverFileSize: false })
+                                    }>
+                                        Cancel
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </ModalPopOut>
+
+                    <ModalPopOut open={this.state.isErrorOpen} title="Product Upload Limit Reach" showAction={false} handleToggleDialog={() => this.setState({ isErrorOpen: false })}>
+                        <div className="container-fluid">
+                            <div className="container">
+                                <h3>Product Upload Limit Reach</h3>
+                                <label>You have reach your product upload limit </label>
+                                <p className="text-danger"><i>** Only {this.props.productInfo.length > 0 && this.props.productInfo[0].UserVariationLimit} product variation is allow </i></p>
+                                <label>Step to solve: </label>
+                                <p>1) Contact sales to upgrade plan</p>
+                                <p>2) Delete few unused uploaded product from the list</p>
+                                <div style={{ textAlign: "right" }}>
+                                    <Button variant="contained" color="primary" onClick={() => this.setState({ isErrorOpen: false })
                                     }>
                                         Cancel
                                     </Button>

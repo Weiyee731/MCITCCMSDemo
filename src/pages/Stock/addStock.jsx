@@ -423,19 +423,19 @@ class AddStock extends Component {
             let index = localStorage.getItem("DataSetDraft") !== null && JSON.parse(localStorage.getItem("DataSetDraft")).length
             let DraftNo = localStorage.getItem("DataSetDraft") === null || localStorage.getItem("DataSetDraft") === "[]" ? 0 : JSON.parse(localStorage.getItem("DataSetDraft"))[index - 1].DraftNo + 1
             let Listing = []
-
             var DraftListing = {
                 DraftNo: DraftNo,
                 rowIndex: rowSize,
                 ContainerID: this.state.ContainerID,
                 StockInDate: this.state.StockInDate,
+                ProductVariationDetailID: this.state.filteredProduct[0].ProductVariationDetailID,
+                ProductVariationID: this.state.filteredProduct[0].ProductVariationID,
                 filteredProduct: this.state.filteredProduct,
                 ProductID: this.state.filteredProduct[0].ProductID,
                 ProductName: this.state.filteredProduct[0].ProductName,
                 ProductSKU: this.state.filteredProduct[0].ProductVariationSKU,
                 StoreStockInData: this.state.StoreStockInData,
             }
-
             if (localStorage.getItem("DataSetDraft") !== null) {
                 Listing = JSON.parse(localStorage.getItem("DataSetDraft"))
             }
@@ -507,9 +507,9 @@ class AddStock extends Component {
 
             let Listing = this.DataState
             Listing.length > 0 && Listing.map((data) => {
-                data.StoreStockInData.length > 0 && data.StoreStockInData.map((stockDetails) => {
 
-                    ProductVariationDetailID.push(data.filteredProduct[0].ProductVariationDetailID)
+                data.StoreStockInData.length > 0 && data.StoreStockInData.map((stockDetails) => {
+                    ProductVariationDetailID.push(data.ProductVariationDetailID)
                     ProductStock.push(stockDetails.StockInAmount)
                     ProductVariationCost.push(parseFloat(stockDetails.VariationCost).toFixed(2))
                     GridStorageID.push(stockDetails.id)
@@ -529,8 +529,6 @@ class AddStock extends Component {
             else {
                 toast.error("Product Stock, Product Variation Cost cannnot be null")
             }
-
-
         } else {
             toast.warning("Input Error: Please cross check on All Stock Details Input")
         }
@@ -695,7 +693,6 @@ class AddStock extends Component {
             )
         }
 
-
         const goBack = () => {
             if (this.DataState.length > 0)
                 this.setState({ isBackClick: true })
@@ -704,7 +701,7 @@ class AddStock extends Component {
                 window.location.reload(false)
             }
         }
-
+        
         return (
             <div className="container-fluid my-2" >
                 <div className="row">

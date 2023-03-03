@@ -3350,7 +3350,7 @@ class AddProductComponent extends Component {
           skuLength = this.state.variation1.options.filter((options) => options.sku.length < 8).length
           skuEmpty = this.state.variation1.options.filter((options) => options.sku === "").length
 
-          if (skuLength > 0 || priceEmpty > 0 || skuEmpty > 0 || this.state.selectedVariationID === 0) {
+          if (skuLength > 0 || priceEmpty > 0 || skuEmpty > 0) {
             toast.error("Input Error: Please fill in all variation with requirement")
             let variationData = this.state.variation1
             variationData.options.map((x, index) => {
