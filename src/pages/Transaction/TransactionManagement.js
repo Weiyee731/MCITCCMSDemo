@@ -653,12 +653,11 @@ export const TransactionManagement = (props) => {
             error = true
             toast.error("Please make sure all sender information is set correctly")
         }
-
         let userObject = {
             OrderID: data.OrderID,
             FirstName: data.UserFullName !== "" ? data.UserFullName : "-",
             LastName: "-",
-            PickUpInd: data.Method === "Delivery" ? 0 : 1,
+            PickUpInd: data.PickUpInd,
             UserContactNo: data.UserContactNo !== "" ? data.UserContactNo : "-",
             UserEmailAddress: data.UserEmailAddress !== "" ? data.UserEmailAddress : "-",
             UserAddressLine1: data.UserAddressLine1 !== "" ? data.UserAddressLine1 : "-",
@@ -790,7 +789,6 @@ export const TransactionManagement = (props) => {
                                                     <div style={{ fontSize: "11px", fontWeight: "bold" }}>  {checkLogistic(details.LogisticID)} </div>
                                                     <div style={{ fontSize: "11px", fontWeight: "bold" }}>  {details.TrackingNumber}  </div>
                                                 </div>
-                                                {details.TrackingStatusID === 3 && console.log("dsadsadsa", details)}
                                                 {
                                                     details.PDFLabel !== "" && details.PDFLabel !== "-" && details.PDFLabel !== undefined && details.TrackingNumber !== null && details.TrackingNumber !== undefined && details.TrackingNumber !== "-" &&
                                                     <div className="col-7">
@@ -834,7 +832,6 @@ export const TransactionManagement = (props) => {
                                     >
                                         <div className="container-fluid">
                                             <div className="container">
-                                                {console.log("dasdsasa", orderShipmentStatus)}
                                                 {orderShipmentStatus !== undefined && orderShipmentStatus.returncode !== undefined ?
                                                     <>
                                                         {isArrayNotEmpty(orderShipmentStatus.trackHeader) &&

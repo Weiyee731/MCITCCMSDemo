@@ -184,24 +184,6 @@ export class GitAction {
     };
   }
 
-  static OrderCreateShipment = "ORDER-CREATE-SHIPMENT";
-  static OrderedCreateShipment = "ORDER-CREATED-SHIPMENT";
-  static CallAddOrderShipment(prodData) {
-    return {
-      type: GitAction.OrderCreateShipment,
-      payload: prodData,
-    };
-  }
-
-  static OrderRequestShipmentStatus = "ORDER-REQUEST-SHIPMENT-STATUS";
-  static OrderRequestedShipmentStatus = "ORDER-REQUESTED-SHIPMENT-STATUS";
-  static CallOrderRequestShipmentStatus(prodData) {
-    return {
-      type: GitAction.OrderRequestShipmentStatus,
-      payload: prodData,
-    };
-  }
-
   static OrderUserDetailsUpdate = "UPDATE-ORDER-USERDETAILS";
   static OrderUserDetailsUpdated = "UPDATED-ORDER-USERDETAILS";
   static CallUpdateOrderUserDetails(prodData) {
