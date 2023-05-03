@@ -19,7 +19,7 @@ export const setLogonUser = (loginUser, sidebarItem, project, SLD, projectURL) =
             localStorage.setItem("project", project)
             localStorage.setItem("projectURL", projectURL)
             localStorage.setItem("projectDomain", project + "." + SLD)
-            history.push("/viewProduct")
+            history.push("/MCITCCMSDev/viewProduct")
             window.location.reload(false);
         }
         catch (e) {
@@ -63,9 +63,9 @@ export const resetLogonUser = () => {
     localStorage.removeItem("promotionList");
 
     if (window.location.hostname === "localhost")
-        window.location.href = "/" + projectURL + "/"
+        window.location.href = "/" + projectURL + "/MCITCCMSDev/"
     else
-        window.location.href = "/"
+        window.location.href = "/MCITCCMSDev/"
 }
 
 export const updateLogonUser = (key, value) => {

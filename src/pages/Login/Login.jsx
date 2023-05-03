@@ -108,9 +108,9 @@ class Dashboard extends Component {
                     setLogonUser(
                         this.props.logonUser,
                         this.props.sidebars,
-                        "myemporia",
+                        "mcitc",
                         "my",
-                        "CMS.myemporia.my"
+                        "CMS.MCITC.my"
                     )
                 }
                 else {
@@ -181,7 +181,7 @@ class Dashboard extends Component {
                         username: username,
                         password: password,
                         ProjectDomainName: project,
-                        ProjectDomainName: 'emporia'
+                        ProjectDomainName: 'mcitc'
                     }
                     this.props.CallUserLogin(object)
 
@@ -214,7 +214,7 @@ class Dashboard extends Component {
 
     checkPathName = () => {
         const decryptData = (data) => {
-            var bytes = CryptoJS.AES.decrypt(data, 'myemporia@123');
+            var bytes = CryptoJS.AES.decrypt(data, 'MCITC@123');
             var decryptedData = bytes.toString(CryptoJS.enc.Utf8);
 
             return decryptedData
@@ -228,7 +228,7 @@ class Dashboard extends Component {
         else
             path = window.location.hostname !== "/" && window.location.hostname.split("/");
 
-        if (path !== undefined && path.length > 0 && path[1] !== "" && path[1] !== undefined && path[1].toUpperCase() === "CMS.MYEMPORIA.MY" && path[2] !== undefined && path[2] !== "" && path[2].toUpperCase() !== "ECOMMERCECMS") {
+        if (path !== undefined && path.length > 0 && path[1] !== "" && path[1] !== undefined && path[1].toUpperCase() === "CMS.MCITC.MY" && path[2] !== undefined && path[2] !== "" && path[2].toUpperCase() !== "ECOMMERCECMS") {
 
             // if (path !== undefined && path.length > 0 && path[1] !== "" && path[1] !== undefined && path[1].toUpperCase() === "CMS.MYEMPORIA.MY" && path[2] !== undefined && path[2] !== "" && path[2].toUpperCase() !== "") {
             // credential = path[path.length - 1];
@@ -476,11 +476,10 @@ class Dashboard extends Component {
 
         return (
             <div style={{ display: 'flex', width: '100%', height: '100vh', }}>
-                <div className="container login-container m-auto">
-
-                    <div className="logo-container w-100" style={{ textAlign: "center" }}>
-                        <img src="" alt="System Logo" width='250px' height='100%' onError={event => { event.target.src = GetDefaultImage(); event.onerror = null }} />
-                    </div>
+                <div className="container login-container m-auto">                
+                    <div className="logo-container w-100" style={{ textAlign: "center" }}> 
+                       <img src="" alt="System Logo" width='500px' height='100%' onError={event => { event.target.src = GetDefaultImage(); event.onerror = null }} /> 
+                   </div>
                     <div className="login-inputs-group">
                         <FormControl sx={{ m: 1, width: '100%' }} variant="standard">
                             <InputLabel htmlFor="login-username">Username</InputLabel>

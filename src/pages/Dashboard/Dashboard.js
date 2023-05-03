@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { GitAction } from "../../store/action/gitAction";
 import { Card, CardContent, CardHeader, Grid, Typography, } from "@mui/material";
-import Logo from "../../assets/MyEmporia Logo.png";
+import Logo from "../../assets/logo.png";
 import ReactApexChart from "react-apexcharts";
 import { styled } from '@mui/material/styles';
 import FormControl from '@mui/material/FormControl';

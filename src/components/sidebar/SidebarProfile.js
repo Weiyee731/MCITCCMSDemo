@@ -14,7 +14,7 @@ export default function Profile(props) {
                 whiteSpace: 'nowrap',
             }}
         >
-           MyEmporia Management System
+           MCITC Management System
         </div>
     )
 }

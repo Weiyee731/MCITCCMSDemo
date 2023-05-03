@@ -7,7 +7,7 @@ import { Button } from "@mui/material";
 
 import Decrease from '../../assets/decrease.png';
 import Increase from '../../assets/increase.png';
-import Logo from "../../assets/MyEmporia Logo.png";
+import Logo from "../../assets/logo.png";
 
 function mapStateToProps(state) {
     return {};

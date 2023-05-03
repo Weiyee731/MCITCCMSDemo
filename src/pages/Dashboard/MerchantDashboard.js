@@ -16,7 +16,7 @@ import { isArrayNotEmpty } from "../../tools/Helpers";
 import MarketingCampaigns from "./MarketingCampaign";
 import FullWidthTabs from "../../components/TabsComponent/Tabs";
 import ProductRanking from "./ProductRanking";
-import Logo from "../../assets/MyEmporia Logo.png";
+import Logo from "../../assets/logo.png";
 import moment from 'moment';
 
 const LightTooltip = styled(({ className, ...props }) => (

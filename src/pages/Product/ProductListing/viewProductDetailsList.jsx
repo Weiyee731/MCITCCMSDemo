@@ -3723,7 +3723,11 @@ class ProductDetailsComponent extends Component {
         //check url sent from database since it says 404 not found
         // var productImages = this.props.productInfo.length > 0 && this.props.productInfo[0].ProductImages !== null ? JSON.parse(this.props.productInfo[0].ProductImages) : "";
         var productImages = this.props.productInfo.length > 0 && this.props.productInfo[0].ProductImages !== null ?
-            JSON.parse(this.props.productInfo[0].ProductImages).filter((x) => x.ProductMediaUrl.includes("/products/" + this.props.productInfo[0].ProductID)) : "";
+            JSON.parse(this.props.productInfo[0].ProductImages).filter((x) => x.ProductMediaUrl.includes("/products/")) : "";
+            // JSON.parse(this.props.productInfo[0].ProductImages).filter((x) => x.ProductMediaUrl.includes("/products/" + this.props.productInfo[0].ProductID)) : "";
+
+
+       console.log("productImages",  this.props.productInfo)
         var fileInfo = [];
         var url = [];
         var ImageId = [];
@@ -4465,357 +4469,397 @@ class ProductDetailsComponent extends Component {
             },
         }));
 
-        return (
-
-            this.props.productInfo.length !== 0 && this.state.isProductIntoBind === true ?
-                <div style={{ display: "flex", width: "100%" }}>
-                    <div className="MainTab">
-                        <div>
-                            <div style={{ margin: "1%" }}>
-                                {
-                                    <h3>{typeof this.props.productInfo !== "undefined" ? this.props.productInfo[0].ProductName : "Product Information"}</h3>
-                                }
-                            </div>
-                            {/* {
+        return this.props.productInfo.length !== 0 &&
+          this.state.isProductIntoBind === true ? (
+          <div style={{ display: "flex", width: "100%" }}>
+            <div className="MainTab">
+              <div>
+                <div style={{ margin: "1%" }}>
+                  {
+                    <h3>
+                      {typeof this.props.productInfo !== "undefined"
+                        ? this.props.productInfo[0].ProductName
+                        : "Product Information"}
+                    </h3>
+                  }
+                </div>
+                {/* {
               this.props.isOnViewState ? */}
-                            <div className="row" style={{ display: "flex" }}>
-                                <div className="col-6">
-                                    <Button onClick={() => window.location = url.inventoryProduct(this.props.match.params.productId)}>
-                                        {/* <i className="fas fa-chevron-left"></i> */}
-                                        <ArrowRoundedLeft8x13Svg fontSize="inherit" />
-                                        {/* <Link className="nav-link" to={"/viewProduct"}> */}
+                <div className="row" style={{ display: "flex" }}>
+                  <div className="col-6">
+                    <Button
+                      onClick={() =>
+                        (window.location = url.inventoryProduct(
+                          this.props.match.params.productId
+                        ))
+                      }
+                    >
+                      {/* <i className="fas fa-chevron-left"></i> */}
+                      <ArrowRoundedLeft8x13Svg fontSize="inherit" />
+                      {/* <Link className="nav-link" to={"/viewProduct"}> */}
 
-                                        <Link style={{ paddingLeft: "10px", paddingRight: "10px", textDecoration: "none", color: "black" }}>
-                                            Back
-                                        </Link>
-                                    </Button>
-                                </div>
-                                <div className="col-6" style={{ textAlign: "right" }}>
-                                    <Button
-                                        onClick={this.MakeEditable.bind(this)}>
-                                        {this.state.toBeEdited ? "Cancel" : "Edit"}
-                                    </Button>
-                                </div>
-                            </div>
+                      <Link
+                        style={{
+                          paddingLeft: "10px",
+                          paddingRight: "10px",
+                          textDecoration: "none",
+                          color: "black",
+                        }}
+                      >
+                        Back
+                      </Link>
+                    </Button>
+                  </div>
+                  <div className="col-6" style={{ textAlign: "right" }}>
+                    <Button onClick={this.MakeEditable.bind(this)}>
+                      {this.state.toBeEdited ? "Cancel" : "Edit"}
+                    </Button>
+                  </div>
+                </div>
 
-                            {/* : */}
-                            {/* <Button>
+                {/* : */}
+                {/* <Button>
                   <i className="fas fa-chevron-left"></i>
                   <Link className="nav-link" to={"/viewProduct"}>
                     Back
                   </Link>
                 </Button>
             } */}
+              </div>
+              {/* <Button onClick={() => this.setState({toBeEdited: !this.state.toBeEdited})}>{this.state.toBeEdited? "Cancel" : "Edit"}</Button> */}
+              <div>
+                <Card id="basicInfo" className="SubContainer">
+                  <CardContent id="basicInfo">
+                    <p className="Heading">Basic Information</p>
+
+                    <TextField
+                      id="productName"
+                      value={this.state.name}
+                      onChange={this.handleChange.bind(this, "product")}
+                      InputLabelProps={{ shrink: "true" }}
+                      InputProps={{
+                        readOnly: !this.state.toBeEdited,
+                      }}
+                      error={
+                        (this.state.productNameEmpty ||
+                          this.state.productNameDublicated) &&
+                        this.state.toBeEdited
+                      }
+                      className="InputField"
+                      size="small"
+                      label="Product Name"
+                      variant="outlined"
+                      onFocus={this.setHint.bind(this, "ProductName")}
+                      onBlur={() => this.setState({ FocusOn: false })}
+                    />
+
+                    {this.state.productNameEmpty && this.state.toBeEdited && (
+                      <p className="error">Product name cannot be empty.</p>
+                    )}
+
+                    {this.state.productCategoryEmpty &&
+                      this.state.toBeEdited && (
+                        <p className="error">
+                          Product category cannot be empty.
+                        </p>
+                      )}
+
+                    {this.state.toBeEdited ? (
+                      <div className="CategorySelector">
+                        <Autocomplete
+                          id="free-solo-demo"
+                          options={productCategoriesFullListList.map(
+                            (option) => option.ProductCategory
+                          )}
+                          popupIcon={<SearchIcon className="searchIcon" />}
+                          noOptionsText="No Matching Categories"
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              label="Search"
+                              variant="outlined"
+                              size="small"
+                              InputLabelProps={{
+                                shrink: "true",
+                              }}
+                              InputProps={{
+                                readOnly: !this.state.toBeEdited,
+                              }}
+                              onFocus={this.setHint.bind(this, "Search")}
+                              onBlur={() =>
+                                this.setState({
+                                  FocusOn: false,
+                                })
+                              }
+                            />
+                          )}
+                          onChange={(event, value) => searchCategory(value)}
+                          className="InputField"
+                        />
+                        <div className="CategorySelectorBody">
+                          <div className="CategorySelectorSection">
+                            {productCategoriesList.map((category) => (
+                              <Button
+                                className="CategorySelectorItem"
+                                style={{
+                                  color:
+                                    this.state.categoryH1 ==
+                                    category.ProductCategoryID
+                                      ? "#3d3d3d"
+                                      : "#3d3d3d",
+                                  background:
+                                    this.state.categoryH1 ==
+                                    category.ProductCategoryID
+                                      ? "#ebebeb"
+                                      : "white",
+                                }}
+                                onClick={categoryClick.bind(this, "1")}
+                                id={category.ProductCategoryID}
+                              >
+                                {category.ProductCategory}
+                              </Button>
+                            ))}
+                          </div>
+                          <div className="CategorySelectorSection">
+                            {this.state.categoryH2
+                              ? this.state.categoryH2.map((category) => (
+                                  <Button
+                                    className="CategorySelectorItem"
+                                    style={{
+                                      color:
+                                        this.state.categoryH2ID ==
+                                        category.ProductCategoryID
+                                          ? "#3d3d3d"
+                                          : "#3d3d3d",
+                                      background:
+                                        this.state.categoryH2ID ==
+                                        category.ProductCategoryID
+                                          ? "#ebebeb"
+                                          : "white",
+                                    }}
+                                    onClick={categoryClick.bind(this, "2")}
+                                    id={category.ProductCategoryID}
+                                  >
+                                    {category.ProductCategory}
+                                  </Button>
+                                ))
+                              : null}
+                          </div>
+                          <div className="CategorySelectorSection">
+                            {this.state.categoryH3
+                              ? this.state.categoryH3.map((category) => (
+                                  <Button
+                                    className="CategorySelectorItem"
+                                    style={{
+                                      color:
+                                        this.state.categoryH3ID ==
+                                        category.ProductCategoryID
+                                          ? "#3d3d3d"
+                                          : "#3d3d3d",
+                                      background:
+                                        this.state.categoryH3ID ==
+                                        category.ProductCategoryID
+                                          ? "#ebebeb"
+                                          : "white",
+                                    }}
+                                    onClick={categoryClick.bind(this, "3")}
+                                    id={category.ProductCategoryID}
+                                  >
+                                    {category.ProductCategory}
+                                  </Button>
+                                ))
+                              : null}
+                          </div>
+                          <div className="CategorySelectorSection">
+                            {this.state.categoryH4
+                              ? this.state.categoryH4.map((category) => (
+                                  <Button
+                                    className="CategorySelectorItem"
+                                    style={{
+                                      color:
+                                        this.state.categoryH4ID ==
+                                        category.ProductCategoryID
+                                          ? "#3d3d3d"
+                                          : "#3d3d3d",
+                                      background:
+                                        this.state.categoryH4ID ==
+                                        category.ProductCategoryID
+                                          ? "#ebebeb"
+                                          : "white",
+                                    }}
+                                    onClick={categoryClick.bind(this, "4")}
+                                    id={category.ProductCategoryID}
+                                  >
+                                    {category.ProductCategory}
+                                  </Button>
+                                ))
+                              : null}
+                          </div>
                         </div>
-                        {/* <Button onClick={() => this.setState({toBeEdited: !this.state.toBeEdited})}>{this.state.toBeEdited? "Cancel" : "Edit"}</Button> */}
-                        <div>
-                            <Card id="basicInfo" className="SubContainer">
-                                <CardContent id="basicInfo">
-                                    <p className="Heading">Basic Information</p>
+                      </div>
+                    ) : null}
 
-                                    <TextField
-                                        id="productName"
-                                        value={this.state.name}
-                                        onChange={this.handleChange.bind(this, "product")}
-                                        InputLabelProps={{ shrink: "true", }}
-                                        InputProps={{
-                                            readOnly: !this.state.toBeEdited,
-                                        }}
-                                        error={(this.state.productNameEmpty || this.state.productNameDublicated) && this.state.toBeEdited}
-                                        className="InputField"
-                                        size="small"
-                                        label="Product Name"
-                                        variant="outlined"
-                                        onFocus={this.setHint.bind(this, "ProductName")}
-                                        onBlur={() => this.setState({ FocusOn: false, })}
-                                    />
+                    {this.state.toBeEdited ? (
+                      <p className="Label">Currently Chosen:</p>
+                    ) : (
+                      <TextField
+                        id="productCategory"
+                        label="Product Category"
+                        defaultValue={this.state.productCategory}
+                        value={
+                          isArrayNotEmpty(this.state.CategoryHierachyListing)
+                            ? this.state.CategoryHierachyListing.map((x, i) => {
+                                return x + " >";
+                              })
+                            : "-"
+                        }
+                        InputProps={{
+                          readOnly: true,
+                        }}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        size="small"
+                        variant="outlined"
+                        className="InputField"
+                      />
+                    )}
+                    {this.state.toBeEdited && (
+                      <div className="Label">
+                        {this.state.categoryH1Name ? (
+                          <span>
+                            {this.state.categoryH1Name}
+                            {this.state.categoryH2Name ? (
+                              <span>
+                                {" > " + this.state.categoryH2Name}
+                                {this.state.categoryH3Name ? (
+                                  <span>
+                                    {" > " + this.state.categoryH3Name}
+                                    {this.state.categoryH4Name ? (
+                                      <span>
+                                        {" > " + this.state.categoryH4Name}
+                                      </span>
+                                    ) : null}
+                                  </span>
+                                ) : null}
+                              </span>
+                            ) : null}
+                          </span>
+                        ) : null}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+                <br />
+                <Card id="productDetails" className="SubContainer">
+                  <CardContent>
+                    <p className="Heading">Product Details</p>
+                    {this.state.toBeEdited ? (
+                      // <FormControl
+                      //     variant="outlined"
+                      //     className="InputField"
+                      //     size="small"
+                      // >
+                      //     <InputLabel shrink htmlFor="productSupplier">
+                      //         Supplier
+                      //     </InputLabel>
+                      //     {/* <Select
+                      //         native
+                      //         label="Supplier"
+                      //         value={this.state.productSupplier}
+                      //         onChange={this.handleChange.bind(this, "Product Supplier")}
+                      //         inputProps={{
+                      //             name: "Product Supplier",
+                      //             id: "productSupplier",
+                      //         }}
+                      //         error={this.state.productSupplierEmpty && this.state.toBeEdited}
+                      //         onFocus={this.setHint.bind(this, "ProductSupplier")}
+                      //         onBlur={() =>
+                      //             this.setState({
+                      //                 FocusOn: false,
+                      //             })
+                      //         }
+                      //     >
+                      //         <option aria-label="None" value="">None Selected</option>
+                      //         <option value={JSON.parse(localStorage.getItem("loginUser"))[0].UserID}>
+                      //             {JSON.parse(localStorage.getItem("loginUser"))[0].UserFullName}
+                      //         </option>
+                      //     </Select> */}
 
-                                    {this.state.productNameEmpty && this.state.toBeEdited && (
-                                        <p className="error">Product name cannot be empty.</p>
-                                    )}
-
-                                    {this.state.productCategoryEmpty && this.state.toBeEdited && (
-                                        <p className="error">Product category cannot be empty.</p>
-                                    )}
-
-                                    {this.state.toBeEdited ? <div className="CategorySelector">
-                                        <Autocomplete
-                                            id="free-solo-demo"
-                                            options={productCategoriesFullListList.map(
-                                                (option) => option.ProductCategory
-                                            )}
-                                            popupIcon={<SearchIcon className="searchIcon" />}
-                                            noOptionsText="No Matching Categories"
-                                            renderInput={(params) => (
-                                                <TextField
-                                                    {...params}
-                                                    label="Search"
-                                                    variant="outlined"
-                                                    size="small"
-                                                    InputLabelProps={{
-                                                        shrink: "true",
-                                                    }}
-                                                    InputProps={{
-                                                        readOnly: !this.state.toBeEdited,
-                                                    }}
-                                                    onFocus={this.setHint.bind(this, "Search")}
-                                                    onBlur={() =>
-                                                        this.setState({
-                                                            FocusOn: false,
-                                                        })
-                                                    }
-                                                />
-                                            )}
-                                            onChange={(event, value) => searchCategory(value)}
-                                            className="InputField"
-                                        />
-                                        <div className="CategorySelectorBody">
-                                            <div className="CategorySelectorSection">
-                                                {productCategoriesList.map((category) => (
-                                                    <Button
-                                                        className="CategorySelectorItem"
-                                                        style={{
-                                                            color:
-                                                                this.state.categoryH1 ==
-                                                                    category.ProductCategoryID
-                                                                    ? "#3d3d3d"
-                                                                    : "#3d3d3d",
-                                                            background:
-                                                                this.state.categoryH1 ==
-                                                                    category.ProductCategoryID
-                                                                    ? "#ebebeb"
-                                                                    : "white",
-                                                        }}
-                                                        onClick={categoryClick.bind(this, "1")}
-                                                        id={category.ProductCategoryID}
-                                                    >
-                                                        {category.ProductCategory}
-                                                    </Button>
-                                                ))}
-                                            </div>
-                                            <div className="CategorySelectorSection">
-                                                {this.state.categoryH2
-                                                    ? this.state.categoryH2.map((category) => (
-                                                        <Button
-                                                            className="CategorySelectorItem"
-                                                            style={{
-                                                                color:
-                                                                    this.state.categoryH2ID ==
-                                                                        category.ProductCategoryID
-                                                                        ? "#3d3d3d"
-                                                                        : "#3d3d3d",
-                                                                background:
-                                                                    this.state.categoryH2ID ==
-                                                                        category.ProductCategoryID
-                                                                        ? "#ebebeb"
-                                                                        : "white",
-                                                            }}
-                                                            onClick={categoryClick.bind(this, "2")}
-                                                            id={category.ProductCategoryID}
-                                                        >
-                                                            {category.ProductCategory}
-                                                        </Button>
-                                                    ))
-                                                    : null}
-                                            </div>
-                                            <div className="CategorySelectorSection">
-                                                {this.state.categoryH3
-                                                    ? this.state.categoryH3.map((category) => (
-                                                        <Button
-                                                            className="CategorySelectorItem"
-                                                            style={{
-                                                                color:
-                                                                    this.state.categoryH3ID ==
-                                                                        category.ProductCategoryID
-                                                                        ? "#3d3d3d"
-                                                                        : "#3d3d3d",
-                                                                background:
-                                                                    this.state.categoryH3ID ==
-                                                                        category.ProductCategoryID
-                                                                        ? "#ebebeb"
-                                                                        : "white",
-                                                            }}
-                                                            onClick={categoryClick.bind(this, "3")}
-                                                            id={category.ProductCategoryID}
-                                                        >
-                                                            {category.ProductCategory}
-                                                        </Button>
-                                                    ))
-                                                    : null}
-                                            </div>
-                                            <div className="CategorySelectorSection">
-                                                {this.state.categoryH4
-                                                    ? this.state.categoryH4.map((category) => (
-                                                        <Button
-                                                            className="CategorySelectorItem"
-                                                            style={{
-                                                                color:
-                                                                    this.state.categoryH4ID ==
-                                                                        category.ProductCategoryID
-                                                                        ? "#3d3d3d"
-                                                                        : "#3d3d3d",
-                                                                background:
-                                                                    this.state.categoryH4ID ==
-                                                                        category.ProductCategoryID
-                                                                        ? "#ebebeb"
-                                                                        : "white",
-                                                            }}
-                                                            onClick={categoryClick.bind(this, "4")}
-                                                            id={category.ProductCategoryID}
-                                                        >
-                                                            {category.ProductCategory}
-                                                        </Button>
-                                                    ))
-                                                    : null}
-                                            </div>
-                                        </div>
-                                    </div>
-                                        : null}
-
-                                    {this.state.toBeEdited ? <p className="Label">Currently Chosen:</p> : <TextField
-                                        id="productCategory"
-                                        label="Product Category"
-                                        defaultValue={this.state.productCategory}
-                                        value={
-                                            isArrayNotEmpty(this.state.CategoryHierachyListing) ?
-                                                this.state.CategoryHierachyListing.map((x, i) => {
-                                                    return (x + " >")
-                                                }) : "-"
-                                        }
-                                        InputProps={{
-                                            readOnly: true,
-                                        }}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                        }}
-                                        size="small"
-                                        variant="outlined"
-                                        className="InputField"
-                                    />}
-                                    {
-                                        this.state.toBeEdited &&
-                                        <div className="Label">
-                                            {this.state.categoryH1Name ? (
-                                                <span>
-                                                    {this.state.categoryH1Name}
-                                                    {this.state.categoryH2Name ? (
-                                                        <span>
-                                                            {" > " + this.state.categoryH2Name}
-                                                            {this.state.categoryH3Name ? (
-                                                                <span>
-                                                                    {" > " + this.state.categoryH3Name}
-                                                                    {this.state.categoryH4Name ? (
-                                                                        <span>{" > " + this.state.categoryH4Name}</span>
-                                                                    ) : null}
-                                                                </span>
-                                                            ) : null}
-                                                        </span>
-                                                    ) : null}
-                                                </span>
-                                            ) : null}
-                                        </div>
-                                    }
-
-                                </CardContent>
-                            </Card>
-                            <br />
-                            <Card id="productDetails" className="SubContainer">
-                                <CardContent>
-                                    <p className="Heading">Product Details</p>
-                                    {this.state.toBeEdited ?
-                                        // <FormControl
-                                        //     variant="outlined"
-                                        //     className="InputField"
-                                        //     size="small"
-                                        // >
-                                        //     <InputLabel shrink htmlFor="productSupplier">
-                                        //         Supplier
-                                        //     </InputLabel>
-                                        //     {/* <Select
-                                        //         native
-                                        //         label="Supplier"
-                                        //         value={this.state.productSupplier}
-                                        //         onChange={this.handleChange.bind(this, "Product Supplier")}
-                                        //         inputProps={{
-                                        //             name: "Product Supplier",
-                                        //             id: "productSupplier",
-                                        //         }}
-                                        //         error={this.state.productSupplierEmpty && this.state.toBeEdited}
-                                        //         onFocus={this.setHint.bind(this, "ProductSupplier")}
-                                        //         onBlur={() =>
-                                        //             this.setState({
-                                        //                 FocusOn: false,
-                                        //             })
-                                        //         }
-                                        //     >
-                                        //         <option aria-label="None" value="">None Selected</option>
-                                        //         <option value={JSON.parse(localStorage.getItem("loginUser"))[0].UserID}>
-                                        //             {JSON.parse(localStorage.getItem("loginUser"))[0].UserFullName}
-                                        //         </option>
-                                        //     </Select> */}
-
-
-                                        //     <TextField
-                                        //         id="productSupplier"
-                                        //         label="Product Supplier"
-                                        //         defaultValue={JSON.parse(localStorage.getItem("loginUser"))[0].UserFullName}
-                                        //         InputProps={{
-                                        //             readOnly: true,
-                                        //         }}
-                                        //         InputLabelProps={{
-                                        //             shrink: true,
-                                        //         }}
-                                        //         size="small"
-                                        //         variant="outlined"
-                                        //         className="InputField"
-                                        //     />
-                                        // </FormControl>
-                                        <>
-                                            <FormControl
-                                                variant="outlined"
-                                                className="InputField"
-                                                size="small"
-                                            >
-                                                <TextField
-                                                    id="productSupplier"
-                                                    label="Product Supplier"
-                                                    onChange={this.handleChange.bind(this, "Product Supplier")}
-                                                    value={this.state.productSupplier}
-                                                    error={this.state.productSupplierEmpty}
-                                                    InputLabelProps={{
-                                                        shrink: true,
-                                                    }}
-                                                    onFocus={this.setHint.bind(this, "ProductSupplier")}
-                                                    onBlur={() => this.setState({ FocusOn: false, })}
-                                                    size="small"
-                                                    variant="outlined"
-                                                    className="InputField"
-                                                />
-                                            </FormControl>
-                                            {this.state.productSupplierEmpty && (
-                                                <p className="error">Product supplier cannot be empty.</p>
-                                            )}
-                                        </>
-                                        :
-                                        <TextField
-                                            id="productSupplier"
-                                            label="Product Supplier"
-                                            // defaultValue={JSON.parse(localStorage.getItem("loginUser"))[0].UserFullName}
-                                            defaultValue={isArrayNotEmpty(this.props.productInfo) ? this.props.productInfo[0].SupplierName : "-"}
-                                            InputProps={{
-                                                readOnly: true,
-                                            }}
-                                            InputLabelProps={{
-                                                shrink: true,
-                                            }}
-                                            size="small"
-                                            variant="outlined"
-                                            className="InputField"
-                                        />}
-                                    {this.state.productSupplierEmpty && this.state.toBeEdited && (
-                                        <p className="error">Product supplier cannot be empty.</p>
-                                    )}
-                                    {/* <div className="HorizontalContainer">
+                      //     <TextField
+                      //         id="productSupplier"
+                      //         label="Product Supplier"
+                      //         defaultValue={JSON.parse(localStorage.getItem("loginUser"))[0].UserFullName}
+                      //         InputProps={{
+                      //             readOnly: true,
+                      //         }}
+                      //         InputLabelProps={{
+                      //             shrink: true,
+                      //         }}
+                      //         size="small"
+                      //         variant="outlined"
+                      //         className="InputField"
+                      //     />
+                      // </FormControl>
+                      <>
+                        <FormControl
+                          variant="outlined"
+                          className="InputField"
+                          size="small"
+                        >
+                          <TextField
+                            id="productSupplier"
+                            label="Product Supplier"
+                            onChange={this.handleChange.bind(
+                              this,
+                              "Product Supplier"
+                            )}
+                            value={this.state.productSupplier}
+                            error={this.state.productSupplierEmpty}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            onFocus={this.setHint.bind(this, "ProductSupplier")}
+                            onBlur={() => this.setState({ FocusOn: false })}
+                            size="small"
+                            variant="outlined"
+                            className="InputField"
+                          />
+                        </FormControl>
+                        {this.state.productSupplierEmpty && (
+                          <p className="error">
+                            Product supplier cannot be empty.
+                          </p>
+                        )}
+                      </>
+                    ) : (
+                      <TextField
+                        id="productSupplier"
+                        label="Product Supplier"
+                        // defaultValue={JSON.parse(localStorage.getItem("loginUser"))[0].UserFullName}
+                        defaultValue={
+                          isArrayNotEmpty(this.props.productInfo)
+                            ? this.props.productInfo[0].SupplierName
+                            : "-"
+                        }
+                        InputProps={{
+                          readOnly: true,
+                        }}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        size="small"
+                        variant="outlined"
+                        className="InputField"
+                      />
+                    )}
+                    {this.state.productSupplierEmpty &&
+                      this.state.toBeEdited && (
+                        <p className="error">
+                          Product supplier cannot be empty.
+                        </p>
+                      )}
+                    {/* <div className="HorizontalContainer">
                                         <TextField
                                             id="productSku"
                                             value={this.state.sku}
@@ -4841,73 +4885,81 @@ class ProductDetailsComponent extends Component {
                                         />
                                     </div> */}
 
-                                    {this.state.skuEmpty && this.state.toBeEdited && (
-                                        <p className="error">Product SKU cannot be empty.</p>
-                                    )}
-                                    {this.state.skuNotLongEnough && this.state.sku && this.state.toBeEdited && (
-                                        <p className="error">
-                                            Product SKU has to be at least 8 characters long.
-                                        </p>
-                                    )}
-                                    <div className="HorizontalContainer ">
-                                        <div className="InputFieldFirstElement">
-                                            <TextField
-                                                id="productBrand"
-                                                className="CategorySelectorItem"
-                                                label="Brand"
-                                                value={this.state.brand}
-                                                onChange={this.handleChange.bind(this, "Brand")}
-                                                onFocus={this.setHint.bind(this, "ProductBrand")}
-                                                onBlur={() =>
-                                                    this.setState({
-                                                        FocusOn: false,
-                                                    })
-                                                }
-                                                error={this.state.brandEmpty && this.state.toBeEdited}
-                                                variant="outlined"
-                                                size="small"
-                                                InputLabelProps={{
-                                                    shrink: "true",
-                                                }}
-                                                InputProps={{
-                                                    readOnly: !this.state.toBeEdited,
-                                                }}
-                                            />
-                                            {this.state.brandEmpty && this.state.toBeEdited && <br />}
-                                            {this.state.brandEmpty && this.state.toBeEdited && (
-                                                <p className="error">Product brand cannot be empty.</p>
-                                            )}
-                                        </div>
-                                        <div className="InputFieldSecondElement">
-                                            <TextField
-                                                id="productModel"
-                                                className="CategorySelectorItem"
-                                                label="Model"
-                                                value={this.state.model}
-                                                onChange={this.handleChange.bind(this, "Model")}
-                                                onFocus={this.setHint.bind(this, "ProductModel")}
-                                                onBlur={() =>
-                                                    this.setState({
-                                                        FocusOn: false,
-                                                    })
-                                                }
-                                                error={this.state.modelEmpty && this.state.toBeEdited}
-                                                variant="outlined"
-                                                size="small"
-                                                InputLabelProps={{
-                                                    shrink: "true",
-                                                }}
-                                                InputProps={{
-                                                    readOnly: !this.state.toBeEdited,
-                                                }}
-                                            />
-                                            <br />
-                                            {this.state.modelEmpty && this.state.toBeEdited && (
-                                                <p className="error">Product model cannot be empty.</p>
-                                            )}
-                                        </div>
-                                    </div>
-                                    {/* <TextField
+                    {this.state.skuEmpty && this.state.toBeEdited && (
+                      <p className="error">Product SKU cannot be empty.</p>
+                    )}
+                    {this.state.skuNotLongEnough &&
+                      this.state.sku &&
+                      this.state.toBeEdited && (
+                        <p className="error">
+                          Product SKU has to be at least 8 characters long.
+                        </p>
+                      )}
+                    <div className="HorizontalContainer ">
+                      <div className="InputFieldFirstElement">
+                        <TextField
+                          id="productBrand"
+                          className="CategorySelectorItem"
+                          label="Brand"
+                          value={this.state.brand}
+                          onChange={this.handleChange.bind(this, "Brand")}
+                          onFocus={this.setHint.bind(this, "ProductBrand")}
+                          onBlur={() =>
+                            this.setState({
+                              FocusOn: false,
+                            })
+                          }
+                          error={this.state.brandEmpty && this.state.toBeEdited}
+                          variant="outlined"
+                          size="small"
+                          InputLabelProps={{
+                            shrink: "true",
+                          }}
+                          InputProps={{
+                            readOnly: !this.state.toBeEdited,
+                          }}
+                        />
+                        {this.state.brandEmpty && this.state.toBeEdited && (
+                          <br />
+                        )}
+                        {this.state.brandEmpty && this.state.toBeEdited && (
+                          <p className="error">
+                            Product brand cannot be empty.
+                          </p>
+                        )}
+                      </div>
+                      <div className="InputFieldSecondElement">
+                        <TextField
+                          id="productModel"
+                          className="CategorySelectorItem"
+                          label="Model"
+                          value={this.state.model}
+                          onChange={this.handleChange.bind(this, "Model")}
+                          onFocus={this.setHint.bind(this, "ProductModel")}
+                          onBlur={() =>
+                            this.setState({
+                              FocusOn: false,
+                            })
+                          }
+                          error={this.state.modelEmpty && this.state.toBeEdited}
+                          variant="outlined"
+                          size="small"
+                          InputLabelProps={{
+                            shrink: "true",
+                          }}
+                          InputProps={{
+                            readOnly: !this.state.toBeEdited,
+                          }}
+                        />
+                        <br />
+                        {this.state.modelEmpty && this.state.toBeEdited && (
+                          <p className="error">
+                            Product model cannot be empty.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    {/* <TextField
                   id="productDescription"
                   label="Product Description"
                   multiline
@@ -4929,410 +4981,516 @@ class ProductDetailsComponent extends Component {
                   error={this.state.productDesciptionEmpty}
                 /> */}
 
-                                    <TextField
-                                        id="productTags"
-                                        label="Product Tags"
-                                        value={this.state.tags}
-                                        onChange={this.handleChange.bind(this, "Tags")}
-                                        onFocus={this.setHint.bind(this, "ProductTags")}
-                                        onBlur={() =>
-                                            this.setState({
-                                                FocusOn: false,
-                                            })
-                                        }
-                                        className="InputField"
-                                        InputLabelProps={{
-                                            shrink: "true",
-                                        }}
-                                        InputProps={{
-                                            readOnly: !this.state.toBeEdited,
-                                        }}
-                                        size="small"
-                                        variant="outlined"
-                                        error={this.state.productTagsEmpty && this.state.toBeEdited}
-                                    />
-                                    {this.state.productTagsEmpty && this.state.toBeEdited && (
-                                        <p className="error">Product tags cannot be empty.</p>
-                                    )}
-                                </CardContent>
-                            </Card>
-                            <br />
-                            <Card className="SubContainer" id="productMedia">
-                                <CardContent>
-                                    <p className="Heading">Product Media</p>
-                                    <p className="FontType1">Product Images</p>
-                                    <p className="FontType1">
-                                        {/* Main product images of size 512x512: */}
-                                        Main product images
-                                    </p>
-                                    <div className="DropZoneMain">
-                                        <div className="DropZoneGrid">
-                                            {!this.state.file1Added && (
-                                                <Dropzone
-                                                    onDrop={this.handleDrop.bind(this, "512x512")}
-                                                    accept="image/*"
-                                                    maxSize="1000000"
-                                                    onFocus={this.setHint.bind(this, "ProductImages")}
-                                                    onBlur={() =>
-                                                        this.setState({
-                                                            FocusOn: false,
-                                                        })
-                                                    }
-                                                >
-                                                    {({
-                                                        getRootProps,
-                                                        getInputProps,
-                                                        isDragActive,
-                                                        isDragAccept,
-                                                        isDragReject,
-                                                    }) => (
-                                                        <div
-                                                            {...getRootProps({
-                                                                className: "dropzone",
-                                                            })}
-                                                            style={{
-                                                                borderColor: isDragActive
-                                                                    ? isDragReject
-                                                                        ? "#fc5447"
-                                                                        : "#a0d100"
-                                                                    : "#b8b8b8",
-                                                                color: isDragActive
-                                                                    ? isDragReject
-                                                                        ? "#a31702"
-                                                                        : "#507500"
-                                                                    : "#828282",
-                                                            }}
-                                                        >
-                                                            {this.state.toBeEdited ? <input {...getInputProps()} /> : ""}
-                                                            <AddIcon className="DropZoneAddIcon" />
-                                                        </div>
-                                                    )}
-                                                </Dropzone>
-                                            )}
-                                            {this.state.file1Added && (
-                                                <div
-                                                    onMouseLeave={this.mouseOut.bind(this, 1)}
-                                                    onMouseEnter={this.mouseIn.bind(this, 1)}
-                                                    className="DropZoneImageMain"
-                                                >
-                                                    {this.state.onImage && this.state.url[0] !== undefined &&
-                                                        this.state.currentlyHovered === 1 && this.state.toBeEdited && (
-                                                            <div className="DropZoneImageDeleteButtonDiv">
-                                                                <IconButton
-                                                                    className="DropZoneImageDeleteButtonIconLocation"
-                                                                    onClick={() => this.onDelete(0, "512x512", this.state.url[0])}
-                                                                >
-                                                                    <CloseIcon
-                                                                        className="DropZoneImageDeleteButtonIcon"
-                                                                        color="secondary"
-                                                                    />
-                                                                </IconButton>
-                                                            </div>
-                                                        )}
-                                                    {
-                                                        this.state.url[0] !== undefined &&
-                                                        <img
-                                                            className="DropZoneImage"
-                                                            src={this.state.url[0]}
-                                                            alt=""
-                                                        />
-                                                    }
-
-                                                </div>
-                                            )}
-                                            {!this.state.file2Added && (
-                                                <Dropzone
-                                                    onDrop={this.handleDrop.bind(this, "512x512")}
-                                                    accept="image/*"
-                                                    maxSize="1000000"
-                                                    onFocus={this.setHint.bind(this, "ProductImages")}
-                                                    onBlur={() =>
-                                                        this.setState({
-                                                            FocusOn: false,
-                                                        })
-                                                    }
-                                                >
-                                                    {({
-                                                        getRootProps,
-                                                        getInputProps,
-                                                        isDragActive,
-                                                        isDragAccept,
-                                                        isDragReject,
-                                                    }) => (
-                                                        <div
-                                                            {...getRootProps({
-                                                                className: "dropzone",
-                                                            })}
-                                                            style={{
-                                                                borderColor: isDragActive
-                                                                    ? isDragReject
-                                                                        ? "#fc5447"
-                                                                        : "#a0d100"
-                                                                    : "#b8b8b8",
-                                                                color: isDragActive
-                                                                    ? isDragReject
-                                                                        ? "#a31702"
-                                                                        : "#507500"
-                                                                    : "#828282",
-                                                            }}
-                                                        >
-                                                            {this.state.toBeEdited ? <input {...getInputProps()} /> : ""}
-
-                                                            <AddIcon className="DropZoneAddIcon" />
-                                                        </div>
-                                                    )}
-                                                </Dropzone>
-                                            )}
-                                            {this.state.file2Added && (
-                                                <div
-                                                    onMouseLeave={this.mouseOut.bind(this, 2)}
-                                                    onMouseEnter={this.mouseIn.bind(this, 2)}
-                                                    className="DropZoneImageMain"
-                                                >
-                                                    {this.state.onImage && this.state.url[1] !== undefined &&
-                                                        this.state.currentlyHovered === 2 && this.state.toBeEdited && (
-                                                            <div className="DropZoneImageDeleteButtonDiv">
-                                                                <IconButton
-                                                                    className="DropZoneImageDeleteButtonIconLocation"
-                                                                    onClick={() => this.onDelete(1, "512x512", this.state.url[1])}
-                                                                >
-                                                                    <CloseIcon
-                                                                        className="DropZoneImageDeleteButtonIcon"
-                                                                        color="secondary"
-                                                                    />
-                                                                </IconButton>
-                                                            </div>
-                                                        )}
-                                                    {
-                                                        this.state.url[1] !== undefined &&
-                                                        <img
-                                                            className="DropZoneImage"
-                                                            src={this.state.url[1]}
-                                                            alt=""
-                                                        />
-                                                    }
-
-                                                </div>
-                                            )}
-                                            {!this.state.file3Added && (
-                                                <Dropzone
-                                                    onDrop={this.handleDrop.bind(this, "512x512")}
-                                                    accept="image/*"
-                                                    maxSize="1000000"
-                                                    onFocus={this.setHint.bind(this, "ProductImages")}
-                                                    onBlur={() =>
-                                                        this.setState({
-                                                            FocusOn: false,
-                                                        })
-                                                    }
-                                                >
-                                                    {({
-                                                        getRootProps,
-                                                        getInputProps,
-                                                        isDragActive,
-                                                        isDragAccept,
-                                                        isDragReject,
-                                                    }) => (
-                                                        <div
-                                                            {...getRootProps({
-                                                                className: "dropzone",
-                                                            })}
-                                                            style={{
-                                                                borderColor: isDragActive
-                                                                    ? isDragReject
-                                                                        ? "#fc5447"
-                                                                        : "#a0d100"
-                                                                    : "#b8b8b8",
-                                                                color: isDragActive
-                                                                    ? isDragReject
-                                                                        ? "#a31702"
-                                                                        : "#507500"
-                                                                    : "#828282",
-                                                            }}
-                                                        >
-                                                            {this.state.toBeEdited ? <input {...getInputProps()} /> : ""}
-                                                            <AddIcon className="DropZoneAddIcon" />
-                                                        </div>
-                                                    )}
-                                                </Dropzone>
-                                            )}
-                                            {this.state.file3Added && (
-                                                <div
-                                                    onMouseLeave={this.mouseOut.bind(this, 3)}
-                                                    onMouseEnter={this.mouseIn.bind(this, 3)}
-                                                    className="DropZoneImageMain"
-                                                >
-                                                    {this.state.onImage && this.state.url[2] !== undefined &&
-                                                        this.state.currentlyHovered === 3 && this.state.toBeEdited && (
-                                                            <div className="DropZoneImageDeleteButtonDiv">
-                                                                <IconButton
-                                                                    className="DropZoneImageDeleteButtonIconLocation"
-                                                                    onClick={() => this.onDelete(2, "512x512", this.state.url[2])}
-                                                                >
-                                                                    <CloseIcon
-                                                                        className="DropZoneImageDeleteButtonIcon"
-                                                                        color="secondary"
-                                                                    />
-                                                                </IconButton>
-                                                            </div>
-                                                        )}
-                                                    {
-                                                        this.state.url[2] !== undefined &&
-                                                        <img
-                                                            className="DropZoneImage"
-                                                            src={this.state.url[2]}
-                                                            alt=""
-                                                        />
-                                                    }
-
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        {this.state.url.map((imageName, i) => (
-                                            <img
-                                                src={imageName}
-                                                data-key={i}
-                                                onLoad={this.onLoad.bind(this, "512x512")}
-                                                className="DropZoneImageForMeasurment"
-                                                alt=""
-                                            />
-                                        ))}
-                                    </div>
-                                    {this.state.notEnoughFiles512x512 && this.state.toBeEdited && (
-                                        <p className="error">
-                                            There has to be at least 1 images of the size 512x512 added.
-                                        </p>
-                                    )}
-
-                                </CardContent>
-                            </Card>
-                            <br />
-                            <Card id="descriptionCard" className="SubContainer">
-                                <CardContent>
-                                    <p className="Heading">Product Description</p>
-                                    <DescriptionFunction
-                                        post_content={this.props.productInfo.length > 0 ? this.props.productInfo[0].ProductDescription : ""}
-                                        handleChange={this.handleChangeEditor}
-                                        content={this.state.description}
-                                        imageFileUrl="productDescription"
-                                        editorState={this.state.toBeEdited}
-                                        projectID={JSON.parse(localStorage.getItem("loginUser"))[0].ProjectID}
-                                    />
-                                    {this.state.productDesciptionEmpty && this.state.toBeEdited && (
-                                        <p className="error">Product description cannot be empty.</p>
-                                    )}
-                                </CardContent>
-                            </Card>
-                            <br />
-
-                            <Card id="specification" className="SubContainer">
-                                <CardContent>
-                                    <p className="Heading">Product Specification</p>
-                                    {this.state.toBeEdited ? <Button
-                                        variant="outlined"
-                                        className="AddButton"
-                                        onClick={this.handleAddProductSpecification.bind(this, "add", '', '')}
-                                    >
-                                        Add Product Specification
-                                    </Button> : this.state.productSpecification ? null : <div style={{ width: "100%", textAlign: "center" }}><p>This product has no specifications</p></div>}
-                                    {
-                                        this.state.productSpecificationOptions.length > 0 && this.state.productSpecificationOptions.map((el, idx) => {
-                                            return (
-                                                <div>
-                                                    <div className="d-flex align-items-center" >
-                                                        {this.state.toBeEdited ?
-                                                            <RemoveCircleOutlineIcon
-                                                                className="DeleteOptionButton mr-2"
-                                                                style={{ cursor: 'pointer' }}
-                                                                color="secondary"
-                                                                onClick={this.handleAddProductSpecification.bind(this, "remove", idx, el)}
-                                                            /> : null
-
-                                                        }
-
-                                                        <FormControl variant="outlined" className="mr-2 w-50" size="small">
-                                                            <InputLabel id="specifications-dropdown">Specifications</InputLabel>
-
-                                                            <Select
-                                                                labelId="specifications-dropdown"
-                                                                id="specifications-dropdown-label"
-                                                                defaultValue={this.state.productSpecificationOptions[idx].categoryId}
-                                                                value={this.state.productSpecificationOptions[idx].categoryId}
-                                                                onChange={e => this.handleProductSpecificationInput(idx, "select", e)}
-                                                                disabled={this.state.toBeEdited ? false : true}
-                                                            >
-                                                                <MenuItem value="0">
-                                                                    <em>None</em>
-                                                                </MenuItem>
-                                                                {
-                                                                    this.props.variations.length > 0 && typeof this.props.variations[0].ReturnVal === "undefined" &&
-                                                                    this.props.variations.map((el, idx) => {
-                                                                        return (<MenuItem key={idx} value={el.ProductVariationID}>{el.ProductVariation}</MenuItem>)
-                                                                    })
-                                                                }
-                                                            </Select>
-                                                        </FormControl>
-                                                        <TextField
-                                                            className="InputField"
-                                                            InputLabelProps={{ shrink: "true", }}
-                                                            InputProps={{
-                                                                readOnly: !this.state.toBeEdited,
-                                                            }}
-                                                            label={"Specification " + (idx + 1)}
-                                                            id="standard-start-adornment"
-                                                            size="small"
-                                                            variant="outlined"
-                                                            key={idx}
-                                                            onChange={e => this.handleProductSpecificationInput(idx, "input", e)}
-                                                            error={this.state.toBeEdited ? el.error : false}
-                                                            defaultValue={this.state.productSpecificationOptions[idx].value}
-                                                            value={this.state.productSpecificationOptions[idx].value}
-                                                        />
-                                                    </div>
-                                                    {el.error && this.state.toBeEdited && (
-                                                        <p className="error">
-                                                            Specification name has to be filled.
-                                                        </p>
-                                                    )}
-
-                                                </div>
-                                            )
-                                        })
+                    <TextField
+                      id="productTags"
+                      label="Product Tags"
+                      value={this.state.tags}
+                      onChange={this.handleChange.bind(this, "Tags")}
+                      onFocus={this.setHint.bind(this, "ProductTags")}
+                      onBlur={() =>
+                        this.setState({
+                          FocusOn: false,
+                        })
+                      }
+                      className="InputField"
+                      InputLabelProps={{
+                        shrink: "true",
+                      }}
+                      InputProps={{
+                        readOnly: !this.state.toBeEdited,
+                      }}
+                      size="small"
+                      variant="outlined"
+                      error={
+                        this.state.productTagsEmpty && this.state.toBeEdited
+                      }
+                    />
+                    {this.state.productTagsEmpty && this.state.toBeEdited && (
+                      <p className="error">Product tags cannot be empty.</p>
+                    )}
+                  </CardContent>
+                </Card>
+                <br />
+                {console.log("sdsadasdasdasd", this.state.url)}
+                {console.log("sdsadasdasdasd", this.props)}
+                <Card className="SubContainer" id="productMedia">
+                  <CardContent>
+                    <p className="Heading">Product Media</p>
+                    <p className="FontType1">Product Images</p>
+                    <p className="FontType1">
+                      {/* Main product images of size 512x512: */}
+                      Main product images
+                    </p>
+                    <div className="DropZoneMain">
+                      <div className="DropZoneGrid">
+                        {!this.state.file1Added && (
+                          <Dropzone
+                            onDrop={this.handleDrop.bind(this, "512x512")}
+                            accept="image/*"
+                            maxSize="1000000"
+                            onFocus={this.setHint.bind(this, "ProductImages")}
+                            onBlur={() =>
+                              this.setState({
+                                FocusOn: false,
+                              })
+                            }
+                          >
+                            {({
+                              getRootProps,
+                              getInputProps,
+                              isDragActive,
+                              isDragAccept,
+                              isDragReject,
+                            }) => (
+                              <div
+                                {...getRootProps({
+                                  className: "dropzone",
+                                })}
+                                style={{
+                                  borderColor: isDragActive
+                                    ? isDragReject
+                                      ? "#fc5447"
+                                      : "#a0d100"
+                                    : "#b8b8b8",
+                                  color: isDragActive
+                                    ? isDragReject
+                                      ? "#a31702"
+                                      : "#507500"
+                                    : "#828282",
+                                }}
+                              >
+                                {this.state.toBeEdited ? (
+                                  <input {...getInputProps()} />
+                                ) : (
+                                  ""
+                                )}
+                                <AddIcon className="DropZoneAddIcon" />
+                              </div>
+                            )}
+                          </Dropzone>
+                        )}
+                        {this.state.file1Added && (
+                          <div
+                            onMouseLeave={this.mouseOut.bind(this, 1)}
+                            onMouseEnter={this.mouseIn.bind(this, 1)}
+                            className="DropZoneImageMain"
+                          >
+                            {this.state.onImage &&
+                              this.state.url[0] !== undefined &&
+                              this.state.currentlyHovered === 1 &&
+                              this.state.toBeEdited && (
+                                <div className="DropZoneImageDeleteButtonDiv">
+                                  <IconButton
+                                    className="DropZoneImageDeleteButtonIconLocation"
+                                    onClick={() =>
+                                      this.onDelete(
+                                        0,
+                                        "512x512",
+                                        this.state.url[0]
+                                      )
                                     }
-                                </CardContent>
-                            </Card>
-                            <br />
-                            <Card className="SubContainer" id="productVariation">
-                                <CardContent>
-                                    <p className="Heading">Product Variation</p>
-                                    {!this.state.variation1On && !this.state.variation2On ? (
-                                        <div>
-                                            <TextField type="number" size="small"
-                                                inputProps={{ min: "0", step: "0.10" }}
-                                                onFocus={this.setHint.bind(this, "ProductPrice")}
-                                                onBlur={() =>
-                                                    this.setState({
-                                                        FocusOn: false,
-                                                    })
-                                                }
-                                                disabled={!this.state.toBeEdited}
-                                                onChange={this.handleChange.bind(this, "Price")}
-                                                fullWidth label="Price"
-                                                value={this.state.price}
-                                                invalid={this.state.priceEmpty}
-                                                name="Price"
-                                                InputProps={{
-                                                    startAdornment: <InputAdornment position="start">RM</InputAdornment>,
-                                                }} required />
+                                  >
+                                    <CloseIcon
+                                      className="DropZoneImageDeleteButtonIcon"
+                                      color="secondary"
+                                    />
+                                  </IconButton>
+                                </div>
+                              )}
+                            {this.state.url[0] !== undefined && (
+                              <img
+                                className="DropZoneImage"
+                                src={this.state.url[0]}
+                                alt=""
+                              />
+                            )}
+                          </div>
+                        )}
+                        {!this.state.file2Added && (
+                          <Dropzone
+                            onDrop={this.handleDrop.bind(this, "512x512")}
+                            accept="image/*"
+                            maxSize="1000000"
+                            onFocus={this.setHint.bind(this, "ProductImages")}
+                            onBlur={() =>
+                              this.setState({
+                                FocusOn: false,
+                              })
+                            }
+                          >
+                            {({
+                              getRootProps,
+                              getInputProps,
+                              isDragActive,
+                              isDragAccept,
+                              isDragReject,
+                            }) => (
+                              <div
+                                {...getRootProps({
+                                  className: "dropzone",
+                                })}
+                                style={{
+                                  borderColor: isDragActive
+                                    ? isDragReject
+                                      ? "#fc5447"
+                                      : "#a0d100"
+                                    : "#b8b8b8",
+                                  color: isDragActive
+                                    ? isDragReject
+                                      ? "#a31702"
+                                      : "#507500"
+                                    : "#828282",
+                                }}
+                              >
+                                {this.state.toBeEdited ? (
+                                  <input {...getInputProps()} />
+                                ) : (
+                                  ""
+                                )}
 
-                                            {this.state.priceEmpty && this.state.toBeEdited ? (
-                                                <p className="error">
-                                                    Price has to be filled and not less than 0.
-                                                </p>
-                                            ) : null}
-                                            {/* <div className="Margin ItemContainer">
+                                <AddIcon className="DropZoneAddIcon" />
+                              </div>
+                            )}
+                          </Dropzone>
+                        )}
+                        {this.state.file2Added && (
+                          <div
+                            onMouseLeave={this.mouseOut.bind(this, 2)}
+                            onMouseEnter={this.mouseIn.bind(this, 2)}
+                            className="DropZoneImageMain"
+                          >
+                            {this.state.onImage &&
+                              this.state.url[1] !== undefined &&
+                              this.state.currentlyHovered === 2 &&
+                              this.state.toBeEdited && (
+                                <div className="DropZoneImageDeleteButtonDiv">
+                                  <IconButton
+                                    className="DropZoneImageDeleteButtonIconLocation"
+                                    onClick={() =>
+                                      this.onDelete(
+                                        1,
+                                        "512x512",
+                                        this.state.url[1]
+                                      )
+                                    }
+                                  >
+                                    <CloseIcon
+                                      className="DropZoneImageDeleteButtonIcon"
+                                      color="secondary"
+                                    />
+                                  </IconButton>
+                                </div>
+                              )}
+                            {this.state.url[1] !== undefined && (
+                              <img
+                                className="DropZoneImage"
+                                src={this.state.url[1]}
+                                alt=""
+                              />
+                            )}
+                          </div>
+                        )}
+                        {!this.state.file3Added && (
+                          <Dropzone
+                            onDrop={this.handleDrop.bind(this, "512x512")}
+                            accept="image/*"
+                            maxSize="1000000"
+                            onFocus={this.setHint.bind(this, "ProductImages")}
+                            onBlur={() =>
+                              this.setState({
+                                FocusOn: false,
+                              })
+                            }
+                          >
+                            {({
+                              getRootProps,
+                              getInputProps,
+                              isDragActive,
+                              isDragAccept,
+                              isDragReject,
+                            }) => (
+                              <div
+                                {...getRootProps({
+                                  className: "dropzone",
+                                })}
+                                style={{
+                                  borderColor: isDragActive
+                                    ? isDragReject
+                                      ? "#fc5447"
+                                      : "#a0d100"
+                                    : "#b8b8b8",
+                                  color: isDragActive
+                                    ? isDragReject
+                                      ? "#a31702"
+                                      : "#507500"
+                                    : "#828282",
+                                }}
+                              >
+                                {this.state.toBeEdited ? (
+                                  <input {...getInputProps()} />
+                                ) : (
+                                  ""
+                                )}
+                                <AddIcon className="DropZoneAddIcon" />
+                              </div>
+                            )}
+                          </Dropzone>
+                        )}
+                        {this.state.file3Added && (
+                          <div
+                            onMouseLeave={this.mouseOut.bind(this, 3)}
+                            onMouseEnter={this.mouseIn.bind(this, 3)}
+                            className="DropZoneImageMain"
+                          >
+                            {this.state.onImage &&
+                              this.state.url[2] !== undefined &&
+                              this.state.currentlyHovered === 3 &&
+                              this.state.toBeEdited && (
+                                <div className="DropZoneImageDeleteButtonDiv">
+                                  <IconButton
+                                    className="DropZoneImageDeleteButtonIconLocation"
+                                    onClick={() =>
+                                      this.onDelete(
+                                        2,
+                                        "512x512",
+                                        this.state.url[2]
+                                      )
+                                    }
+                                  >
+                                    <CloseIcon
+                                      className="DropZoneImageDeleteButtonIcon"
+                                      color="secondary"
+                                    />
+                                  </IconButton>
+                                </div>
+                              )}
+                            {this.state.url[2] !== undefined && (
+                              <img
+                                className="DropZoneImage"
+                                src={this.state.url[2]}
+                                alt=""
+                              />
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      {this.state.url.map((imageName, i) => (
+                        <img
+                          src={imageName}
+                          data-key={i}
+                          onLoad={this.onLoad.bind(this, "512x512")}
+                          className="DropZoneImageForMeasurment"
+                          alt=""
+                        />
+                      ))}
+                    </div>
+                    {this.state.notEnoughFiles512x512 &&
+                      this.state.toBeEdited && (
+                        <p className="error">
+                          There has to be at least 1 images of the size 512x512
+                          added.
+                        </p>
+                      )}
+                  </CardContent>
+                </Card>
+                <br />
+                <Card id="descriptionCard" className="SubContainer">
+                  <CardContent>
+                    <p className="Heading">Product Description</p>
+                    <DescriptionFunction
+                      post_content={
+                        this.props.productInfo.length > 0
+                          ? this.props.productInfo[0].ProductDescription
+                          : ""
+                      }
+                      handleChange={this.handleChangeEditor}
+                      content={this.state.description}
+                      imageFileUrl="productDescription"
+                      editorState={this.state.toBeEdited}
+                      projectID={
+                        JSON.parse(localStorage.getItem("loginUser"))[0]
+                          .ProjectID
+                      }
+                    />
+                    {this.state.productDesciptionEmpty &&
+                      this.state.toBeEdited && (
+                        <p className="error">
+                          Product description cannot be empty.
+                        </p>
+                      )}
+                  </CardContent>
+                </Card>
+                <br />
+
+                <Card id="specification" className="SubContainer">
+                  <CardContent>
+                    <p className="Heading">Product Specification</p>
+                    {this.state.toBeEdited ? (
+                      <Button
+                        variant="outlined"
+                        className="AddButton"
+                        onClick={this.handleAddProductSpecification.bind(
+                          this,
+                          "add",
+                          "",
+                          ""
+                        )}
+                      >
+                        Add Product Specification
+                      </Button>
+                    ) : this.state.productSpecification ? null : (
+                      <div style={{ width: "100%", textAlign: "center" }}>
+                        <p>This product has no specifications</p>
+                      </div>
+                    )}
+                    {this.state.productSpecificationOptions.length > 0 &&
+                      this.state.productSpecificationOptions.map((el, idx) => {
+                        return (
+                          <div>
+                            <div className="d-flex align-items-center">
+                              {this.state.toBeEdited ? (
+                                <RemoveCircleOutlineIcon
+                                  className="DeleteOptionButton mr-2"
+                                  style={{ cursor: "pointer" }}
+                                  color="secondary"
+                                  onClick={this.handleAddProductSpecification.bind(
+                                    this,
+                                    "remove",
+                                    idx,
+                                    el
+                                  )}
+                                />
+                              ) : null}
+
+                              <FormControl
+                                variant="outlined"
+                                className="mr-2 w-50"
+                                size="small"
+                              >
+                                <InputLabel id="specifications-dropdown">
+                                  Specifications
+                                </InputLabel>
+
+                                <Select
+                                  labelId="specifications-dropdown"
+                                  id="specifications-dropdown-label"
+                                  defaultValue={
+                                    this.state.productSpecificationOptions[idx]
+                                      .categoryId
+                                  }
+                                  value={
+                                    this.state.productSpecificationOptions[idx]
+                                      .categoryId
+                                  }
+                                  onChange={(e) =>
+                                    this.handleProductSpecificationInput(
+                                      idx,
+                                      "select",
+                                      e
+                                    )
+                                  }
+                                  disabled={
+                                    this.state.toBeEdited ? false : true
+                                  }
+                                >
+                                  <MenuItem value="0">
+                                    <em>None</em>
+                                  </MenuItem>
+                                  {this.props.variations.length > 0 &&
+                                    typeof this.props.variations[0]
+                                      .ReturnVal === "undefined" &&
+                                    this.props.variations.map((el, idx) => {
+                                      return (
+                                        <MenuItem
+                                          key={idx}
+                                          value={el.ProductVariationID}
+                                        >
+                                          {el.ProductVariation}
+                                        </MenuItem>
+                                      );
+                                    })}
+                                </Select>
+                              </FormControl>
+                              <TextField
+                                className="InputField"
+                                InputLabelProps={{ shrink: "true" }}
+                                InputProps={{
+                                  readOnly: !this.state.toBeEdited,
+                                }}
+                                label={"Specification " + (idx + 1)}
+                                id="standard-start-adornment"
+                                size="small"
+                                variant="outlined"
+                                key={idx}
+                                onChange={(e) =>
+                                  this.handleProductSpecificationInput(
+                                    idx,
+                                    "input",
+                                    e
+                                  )
+                                }
+                                error={this.state.toBeEdited ? el.error : false}
+                                defaultValue={
+                                  this.state.productSpecificationOptions[idx]
+                                    .value
+                                }
+                                value={
+                                  this.state.productSpecificationOptions[idx]
+                                    .value
+                                }
+                              />
+                            </div>
+                            {el.error && this.state.toBeEdited && (
+                              <p className="error">
+                                Specification name has to be filled.
+                              </p>
+                            )}
+                          </div>
+                        );
+                      })}
+                  </CardContent>
+                </Card>
+                <br />
+                <Card className="SubContainer" id="productVariation">
+                  <CardContent>
+                    <p className="Heading">Product Variation</p>
+                    {!this.state.variation1On && !this.state.variation2On ? (
+                      <div>
+                        <TextField
+                          type="number"
+                          size="small"
+                          inputProps={{ min: "0", step: "0.10" }}
+                          onFocus={this.setHint.bind(this, "ProductPrice")}
+                          onBlur={() =>
+                            this.setState({
+                              FocusOn: false,
+                            })
+                          }
+                          disabled={!this.state.toBeEdited}
+                          onChange={this.handleChange.bind(this, "Price")}
+                          fullWidth
+                          label="Price"
+                          value={this.state.price}
+                          invalid={this.state.priceEmpty}
+                          name="Price"
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                RM
+                              </InputAdornment>
+                            ),
+                          }}
+                          required
+                        />
+
+                        {this.state.priceEmpty && this.state.toBeEdited ? (
+                          <p className="error">
+                            Price has to be filled and not less than 0.
+                          </p>
+                        ) : null}
+                        {/* <div className="Margin ItemContainer">
                                                 <TextField
                                                     id="standard-start-adornment"
                                                     label="Stock"
@@ -5362,125 +5520,179 @@ class ProductDetailsComponent extends Component {
                                                     </p>
                                                 ) : null}
                                             </div> */}
-                                        </div>
-                                    ) : null}
+                      </div>
+                    ) : null}
 
-                                    {this.state.variation1On && this.state.toBeEdited && (
-                                        <div className="VariantMain">
-                                            <div className="VariantText">
-                                                <p>Product Variation</p>
-                                            </div>
-                                            <div className="VariantOptionsSection">
-                                                <FormControl variant="outlined" className="w-100" size="small">
-                                                    <InputLabel id="demo-simple-select-outlined-label">Product Variation</InputLabel>
-                                                    <Select
-                                                        labelId="Product_Variation"
-                                                        id="Product_Variation"
-                                                        value={this.state.selectedVariationID}
-                                                        defaultValue={this.state.selectedVariationID}
-                                                        onChange={(e) => { this.handleProductVariantInput("select", e) }}
-                                                        label="Product Variation"
-                                                        place
-                                                    >
-                                                        <MenuItem value={0}><em>None</em></MenuItem>
-                                                        {this.props.variations ?
-                                                            this.props.variations.length > 0 && typeof this.props.variations[0].ReturnVal === "undefined" &&
-                                                            this.props.variations.map((el, idx) => {
-                                                                return (<MenuItem key={idx} value={el.ProductVariationID}>{el.ProductVariation}</MenuItem>)
-                                                            })
-                                                            : null
-                                                        }
-                                                    </Select>
-                                                </FormControl>
+                    {this.state.variation1On && this.state.toBeEdited && (
+                      <div className="VariantMain">
+                        <div className="VariantText">
+                          <p>Product Variation</p>
+                        </div>
+                        <div className="VariantOptionsSection">
+                          <FormControl
+                            variant="outlined"
+                            className="w-100"
+                            size="small"
+                          >
+                            <InputLabel id="demo-simple-select-outlined-label">
+                              Product Variation
+                            </InputLabel>
+                            <Select
+                              labelId="Product_Variation"
+                              id="Product_Variation"
+                              value={this.state.selectedVariationID}
+                              defaultValue={this.state.selectedVariationID}
+                              onChange={(e) => {
+                                this.handleProductVariantInput("select", e);
+                              }}
+                              label="Product Variation"
+                              place
+                            >
+                              <MenuItem value={0}>
+                                <em>None</em>
+                              </MenuItem>
+                              {this.props.variations
+                                ? this.props.variations.length > 0 &&
+                                  typeof this.props.variations[0].ReturnVal ===
+                                    "undefined" &&
+                                  this.props.variations.map((el, idx) => {
+                                    return (
+                                      <MenuItem
+                                        key={idx}
+                                        value={el.ProductVariationID}
+                                      >
+                                        {el.ProductVariation}
+                                      </MenuItem>
+                                    );
+                                  })
+                                : null}
+                            </Select>
+                          </FormControl>
 
-                                                {!this.state.toBeEdited &&
-                                                    <TextField
-                                                        id="Variant Variation"
-                                                        label="Product Variation"
-                                                        defaultValue={this.state.selectedVariationName}
-                                                        InputProps={{
-                                                            readOnly: true,
-                                                        }}
-                                                        InputLabelProps={{
-                                                            shrink: true,
-                                                        }}
-                                                        size="small"
-                                                        variant="outlined"
-                                                        className="InputField"
-                                                    />
-                                                }
+                          {!this.state.toBeEdited && (
+                            <TextField
+                              id="Variant Variation"
+                              label="Product Variation"
+                              defaultValue={this.state.selectedVariationName}
+                              InputProps={{
+                                readOnly: true,
+                              }}
+                              InputLabelProps={{
+                                shrink: true,
+                              }}
+                              size="small"
+                              variant="outlined"
+                              className="InputField"
+                            />
+                          )}
 
-                                                {this.state.variation1NameEmpty && this.state.toBeEdited && (
-                                                    <p className="error">
-                                                        Variation name has to be filled.
-                                                    </p>
-                                                )}
+                          {this.state.variation1NameEmpty &&
+                            this.state.toBeEdited && (
+                              <p className="error">
+                                Variation name has to be filled.
+                              </p>
+                            )}
 
-                                                {[...Array(this.state.variation1Options)].map((e, i) => (
-                                                    <div>
-                                                        <div className="VariantOption align-items-center">
-                                                            {this.state.toBeEdited && this.state.variation1.options.length > 1 ? <RemoveCircleOutlineIcon
-                                                                className="DeleteOptionButton"
-                                                                color="secondary"
-                                                                onClick={this.onDeleteVariant.bind(this, i, "variant1Option", this.state.variation1.options[i].optionID)}
-                                                            /> : null}
-                                                            <TextField
-                                                                className="InputField"
-                                                                InputLabelProps={{ shrink: "true", }}
-                                                                InputProps={{
-                                                                    readOnly: !this.state.toBeEdited,
-                                                                }}
-                                                                label={"Option " + (i + 1)}
-                                                                id="standard-start-adornment"
-                                                                size="small"
-                                                                variant="outlined"
-                                                                key={i}
-                                                                onChange={this.handleChangeOptions.bind(this, "variant1Options", i)}
-                                                                error={this.state.variation1.options[i].errorOption && this.state.toBeEdited}
-                                                                onFocus={this.setHint.bind(this, "VariantOption")}
-                                                                onBlur={() => this.setState({ FocusOn: false, })}
-                                                                value={this.state.variation1.options[i].optionName}
-                                                            />
-                                                            {/* :null} */}
-                                                        </div>
-                                                        {this.state.variation1.options[i].errorOption && this.state.toBeEdited && (
-                                                            <p className="error">
-                                                                Variation option name has to be filled.
-                                                            </p>
-                                                        )}
-                                                    </div>
-                                                ))
-                                                }
-                                                {this.state.toBeEdited ?
-                                                    this.props.productInfo.length > 0 && this.props.productInfo[0].UserVariationLimit > this.props.productInfo[0].MerchantCurrentVariationNumber && this.props.productInfo[0].UserVariationLimit > this.props.productInfo[0].MerchantCurrentProductNumber
-                                                        ?
-                                                        <Button
-                                                            variant="outlined"
-                                                            className="AddButton"
-                                                            onClick={this.addOptions.bind(this, "1")}
-                                                        >
-                                                            Add Option
-                                                        </Button>
-                                                        :
-                                                        <Button
-                                                            variant="outlined"
-                                                            className="AddButton"
-                                                            onClick={() => this.setState({ isErrorOpen: true })}
-                                                        >
-                                                            Add Option
-                                                        </Button>
-                                                    : null}
-                                            </div>
-                                            <br />
-                                        </div>
+                          {[...Array(this.state.variation1Options)].map(
+                            (e, i) => (
+                              <div>
+                                <div className="VariantOption align-items-center">
+                                  {this.state.toBeEdited &&
+                                  this.state.variation1.options.length > 1 ? (
+                                    <RemoveCircleOutlineIcon
+                                      className="DeleteOptionButton"
+                                      color="secondary"
+                                      onClick={this.onDeleteVariant.bind(
+                                        this,
+                                        i,
+                                        "variant1Option",
+                                        this.state.variation1.options[i]
+                                          .optionID
+                                      )}
+                                    />
+                                  ) : null}
+                                  <TextField
+                                    className="InputField"
+                                    InputLabelProps={{ shrink: "true" }}
+                                    InputProps={{
+                                      readOnly: !this.state.toBeEdited,
+                                    }}
+                                    label={"Option " + (i + 1)}
+                                    id="standard-start-adornment"
+                                    size="small"
+                                    variant="outlined"
+                                    key={i}
+                                    onChange={this.handleChangeOptions.bind(
+                                      this,
+                                      "variant1Options",
+                                      i
                                     )}
-                                    {this.state.toBeEdited === false ?
-                                        <>
-                                            {[...Array(this.state.variation1Options)].map((e, i) => (
-                                                <div>
-                                                    <div className="VariantOption align-items-center">
-                                                        <div className="col-3">
-                                                            {/* <FormInput
+                                    error={
+                                      this.state.variation1.options[i]
+                                        .errorOption && this.state.toBeEdited
+                                    }
+                                    onFocus={this.setHint.bind(
+                                      this,
+                                      "VariantOption"
+                                    )}
+                                    onBlur={() =>
+                                      this.setState({ FocusOn: false })
+                                    }
+                                    value={
+                                      this.state.variation1.options[i]
+                                        .optionName
+                                    }
+                                  />
+                                  {/* :null} */}
+                                </div>
+                                {this.state.variation1.options[i].errorOption &&
+                                  this.state.toBeEdited && (
+                                    <p className="error">
+                                      Variation option name has to be filled.
+                                    </p>
+                                  )}
+                              </div>
+                            )
+                          )}
+                          {this.state.toBeEdited ? (
+                            this.props.productInfo.length > 0 &&
+                            this.props.productInfo[0].UserVariationLimit >
+                              this.props.productInfo[0]
+                                .MerchantCurrentVariationNumber &&
+                            this.props.productInfo[0].UserVariationLimit >
+                              this.props.productInfo[0]
+                                .MerchantCurrentProductNumber ? (
+                              <Button
+                                variant="outlined"
+                                className="AddButton"
+                                onClick={this.addOptions.bind(this, "1")}
+                              >
+                                Add Option
+                              </Button>
+                            ) : (
+                              <Button
+                                variant="outlined"
+                                className="AddButton"
+                                onClick={() =>
+                                  this.setState({ isErrorOpen: true })
+                                }
+                              >
+                                Add Option
+                              </Button>
+                            )
+                          ) : null}
+                        </div>
+                        <br />
+                      </div>
+                    )}
+                    {this.state.toBeEdited === false ? (
+                      <>
+                        {[...Array(this.state.variation1Options)].map(
+                          (e, i) => (
+                            <div>
+                              <div className="VariantOption align-items-center">
+                                <div className="col-3">
+                                  {/* <FormInput
                                                                 variant="outlined"
                                                                 disabled="true"
                                                                 size="small"
@@ -5491,210 +5703,271 @@ class ProductDetailsComponent extends Component {
                                                                     })
                                                                 }
                                                             /> */}
-                                                            <TextField id="outlined-basic" variant="outlined" disabled={true} fullWidth size="small"
-                                                                value={
-                                                                    this.props.variations.length > 0 && typeof this.props.variations[0].ReturnVal === "undefined" ?
-                                                                        this.props.variations.filter(data => data.ProductVariationID === this.state.variation1.options[i].variationID).map((x) => {
-                                                                            return (x.ProductVariation)
-                                                                        })
-                                                                        : "None"
-                                                                }
-                                                            />
-                                                        </div>
-                                                        <div className="col-9" style={{ paddingLeft: "10px" }}>
-                                                            {/* <FormInput
+                                  <TextField
+                                    id="outlined-basic"
+                                    variant="outlined"
+                                    disabled={true}
+                                    fullWidth
+                                    size="small"
+                                    value={
+                                      this.props.variations.length > 0 &&
+                                      typeof this.props.variations[0]
+                                        .ReturnVal === "undefined"
+                                        ? this.props.variations
+                                            .filter(
+                                              (data) =>
+                                                data.ProductVariationID ===
+                                                this.state.variation1.options[i]
+                                                  .variationID
+                                            )
+                                            .map((x) => {
+                                              return x.ProductVariation;
+                                            })
+                                        : "None"
+                                    }
+                                  />
+                                </div>
+                                <div
+                                  className="col-9"
+                                  style={{ paddingLeft: "10px" }}
+                                >
+                                  {/* <FormInput
                                                                 variant="outlined"
                                                                 disabled="true"
                                                                 size="small"
                                                                 value={this.state.variation1.options[i].optionName}
                                                             /> */}
-                                                            <TextField id="outlined-basic" variant="outlined" disabled={true} fullWidth size="small"
-                                                                value={this.state.variation1.options[i].optionName} />
-                                                        </div>
-                                                    </div>
-                                                    {this.state.variation1.options[i].errorOption && this.state.toBeEdited && (
-                                                        <p className="error">
-                                                            Variation option name has to be filled.
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            ))
-                                            }
-                                        </>
-                                        : null}
-                                    <hr />
+                                  <TextField
+                                    id="outlined-basic"
+                                    variant="outlined"
+                                    disabled={true}
+                                    fullWidth
+                                    size="small"
+                                    value={
+                                      this.state.variation1.options[i]
+                                        .optionName
+                                    }
+                                  />
+                                </div>
+                              </div>
+                              {this.state.variation1.options[i].errorOption &&
+                                this.state.toBeEdited && (
+                                  <p className="error">
+                                    Variation option name has to be filled.
+                                  </p>
+                                )}
+                            </div>
+                          )
+                        )}
+                      </>
+                    ) : null}
+                    <hr />
 
-                                    {!this.state.variation1On && this.state.toBeEdited && (
-                                        <div className="ItemContainer">
-                                            <Button
-                                                variant="outlined"
-                                                className="AddButton"
-                                                onClick={() =>
-                                                    this.props.productInfo.length > 0 && this.props.productInfo[0].UserVariationLimit > this.props.productInfo[0].MerchantCurrentVariationNumber && this.props.productInfo[0].UserVariationLimit > this.props.productInfo[0].MerchantCurrentProductNumber ?
-                                                        this.addProductVariant.bind(this, "variation") :
-                                                        this.setState({ isErrorOpen: true })
-                                                }
-                                            >
-                                                Add Variant
-                                            </Button>
-                                        </div>
-                                    )}
+                    {!this.state.variation1On && this.state.toBeEdited && (
+                      <div className="ItemContainer">
+                        <Button
+                          variant="outlined"
+                          className="AddButton"
+                          onClick={() =>
+                            this.props.productInfo.length > 0 &&
+                            this.props.productInfo[0].UserVariationLimit >
+                              this.props.productInfo[0]
+                                .MerchantCurrentVariationNumber &&
+                            this.props.productInfo[0].UserVariationLimit >
+                              this.props.productInfo[0]
+                                .MerchantCurrentProductNumber
+                              ? this.addProductVariant.bind(this, "variation")
+                              : this.setState({ isErrorOpen: true })
+                          }
+                        >
+                          Add Variant
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+                <br />
 
-                                </CardContent>
-                            </Card>
-                            <br />
+                <Card className="SubContainer" id="variation">
+                  <CardContent>
+                    {this.state.variation1On ? (
+                      <p className="Heading">Product Variations Pricing</p>
+                    ) : // <p className="FontType1">Product Variations Pricing</p>
+                    null}
+                    {this.state.variation1On &&
+                    this.state.variation1.options.length > 1 ? (
+                      <div className="VariantMain">
+                        <div className="ItemContainer">
+                          <div className="VariantContainer">
+                            <TextField
+                              type="number"
+                              size="small"
+                              inputProps={{ min: "0", step: "0.10" }}
+                              onFocus={this.setHint.bind(
+                                this,
+                                "VariationPrice"
+                              )}
+                              onBlur={() =>
+                                this.setState({
+                                  FocusOn: false,
+                                })
+                              }
+                              disabled={!this.state.toBeEdited}
+                              onChange={this.handleChange.bind(this, "Price")}
+                              fullWidth
+                              label="Price"
+                              value={this.state.price}
+                              name="Price"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    RM
+                                  </InputAdornment>
+                                ),
+                              }}
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="StockField">
+                          <TextField
+                            id="standard-start-adornment"
+                            label="Parent SKU"
+                            variant="outlined"
+                            className="InputField2"
+                            InputLabelProps={{
+                              shrink: "true",
+                            }}
+                            InputProps={{
+                              readOnly: !this.state.toBeEdited,
+                            }}
+                            onChange={this.handleChange.bind(this, "SKU")}
+                            onFocus={this.setHint.bind(this, "VariationSKU")}
+                            onBlur={() =>
+                              this.setState({
+                                FocusOn: false,
+                              })
+                            }
+                            value={this.state.sku}
+                            // error={this.state.skuEmpty}
+                            size="small"
+                          />
+                        </div>
 
-                            <Card className="SubContainer" id="variation">
-                                <CardContent>
-                                    {this.state.variation1On ? (
-                                        <p className="Heading">Product Variations Pricing</p>
-                                        // <p className="FontType1">Product Variations Pricing</p>
-                                    ) : null}
-                                    {this.state.variation1On && this.state.variation1.options.length > 1 ? (
-                                        <div className="VariantMain">
-                                            <div className="ItemContainer">
-                                                <div className="VariantContainer">
-                                                    <TextField type="number" size="small"
-                                                        inputProps={{ min: "0", step: "0.10" }}
-                                                        onFocus={this.setHint.bind(this, "VariationPrice")}
-                                                        onBlur={() =>
-                                                            this.setState({
-                                                                FocusOn: false,
-                                                            })
-                                                        }
-                                                        disabled={!this.state.toBeEdited}
-                                                        onChange={this.handleChange.bind(this, "Price")}
-                                                        fullWidth label="Price"
-                                                        value={this.state.price}
-                                                        name="Price"
-                                                        InputProps={{
-                                                            startAdornment: <InputAdornment position="start">RM</InputAdornment>,
-                                                        }} required />
-                                                </div>
-                                            </div>
-                                            <div className="StockField">
-                                                <TextField
-                                                    id="standard-start-adornment"
-                                                    label="Parent SKU"
-                                                    variant="outlined"
-                                                    className="InputField2"
-                                                    InputLabelProps={{
-                                                        shrink: "true",
-                                                    }}
-                                                    InputProps={{
-                                                        readOnly: !this.state.toBeEdited,
-                                                    }}
-                                                    onChange={this.handleChange.bind(this, "SKU")}
-                                                    onFocus={this.setHint.bind(this, "VariationSKU")}
-                                                    onBlur={() =>
-                                                        this.setState({
-                                                            FocusOn: false,
-                                                        })
-                                                    }
-                                                    value={this.state.sku}
-                                                    // error={this.state.skuEmpty}
-                                                    size="small"
-                                                />
-                                            </div>
+                        {this.state.toBeEdited ? (
+                          <Button
+                            variant="outlined"
+                            className="ApplyAllButton"
+                            onClick={() => this.applyToAllVariant()}
+                          >
+                            Apply to All
+                          </Button>
+                        ) : null}
+                      </div>
+                    ) : null}
 
-                                            {this.state.toBeEdited ? <Button variant="outlined" className="ApplyAllButton" onClick={() => this.applyToAllVariant()}>
-                                                Apply to All
-                                            </Button> : null}
-                                        </div>
-                                    ) : null}
+                    {this.state.variation1On ? (
+                      <p className="FontType1">Variation Pricing Details</p>
+                    ) : null}
+                    {this.state.variation1On ? (
+                      <table className="TableMain">
+                        <tr className="trHeading">
+                          <td className="tdHeading">
+                            {this.state.variation1Name
+                              ? this.state.variation1Name
+                              : "Variation 1 Name"}
+                          </td>
+                          <td className="tdHeading"> Price </td>
+                          {/* <td className="tdHeading"> Stock </td> */}
+                          <td className="tdHeading">SKU</td>
+                        </tr>
 
+                        {[...Array(this.state.variation1Options)].map((a, x) =>
+                          this.state.variation2On ? (
+                            <tr className="trBody">
+                              <td className="tdNestedText">
+                                {this.state.variation1.options[x].optionName
+                                  ? this.state.variation1.options[x].optionName
+                                  : "Option " + (x + 1) + " Variant 1"}
+                              </td>
+                              <td colSpan="4">
+                                <table>
+                                  {[...Array(this.state.variation2Options)].map(
+                                    (e, i) => (
+                                      <tr className="trBody">
+                                        <td className="tdNestedNew">
+                                          {this.state.variation1.options[x]
+                                            .variation2Options.options[i]
+                                            .optionName
+                                            ? this.state.variation1.options[x]
+                                                .variation2Options.options[i]
+                                                .optionName
+                                            : "Option " +
+                                              (i + 1) +
+                                              " Variant 2"}
+                                        </td>
+                                        <td className="tdNestedNew">
+                                          <div className="StepContainer">
+                                            <TextField
+                                              type="number"
+                                              size="small"
+                                              key={"price " + i}
+                                              onChange={this.handleChangeOptionsVariant2.bind(
+                                                this,
+                                                "variation2Price",
+                                                x,
+                                                i
+                                              )}
+                                              onFocus={this.setHint.bind(
+                                                this,
+                                                "VariationPrice"
+                                              )}
+                                              onBlur={() =>
+                                                this.setState({
+                                                  FocusOn: false,
+                                                })
+                                              }
+                                              value={
+                                                this.state.variation1.options[x]
+                                                  .variation2Options.options[i]
+                                                  .price
+                                              }
+                                              invalid={
+                                                this.state.variation1.options[x]
+                                                  .variation2Options.options[i]
+                                                  .errorPrice &&
+                                                this.state.toBeEdited
+                                              }
+                                              disabled={!this.state.toBeEdited}
+                                              // inputProps={{ min: "0", step: "0.10" }}
+                                              // onFocus={this.setHint.bind(this, "VariationPrice")}
+                                              // onBlur={() =>
+                                              //     this.setState({
+                                              //         FocusOn: false,
+                                              //     })
+                                              // }
+                                              // disabled={!this.state.toBeEdited}
+                                              // onChange={this.handleChangeOptionsVariant2.bind(
+                                              //     this,
+                                              //     "variation2Price",
+                                              //     x,
+                                              //     i
+                                              // )}
+                                              // fullWidth label="Price"
 
+                                              // value={this.state.price}
+                                              // name="Price"
+                                              InputProps={{
+                                                startAdornment: (
+                                                  <InputAdornment position="start">
+                                                    RM
+                                                  </InputAdornment>
+                                                ),
+                                              }}
+                                              required
+                                            />
 
-                                    {this.state.variation1On ? (
-                                        <p className="FontType1">Variation Pricing Details</p>
-                                    ) : null}
-                                    {this.state.variation1On ? (
-                                        <table className="TableMain">
-                                            <tr className="trHeading">
-                                                <td className="tdHeading">
-                                                    {this.state.variation1Name ? this.state.variation1Name : "Variation 1 Name"}
-                                                </td>
-                                                <td className="tdHeading"> Price </td>
-                                                {/* <td className="tdHeading"> Stock </td> */}
-                                                <td className="tdHeading">SKU</td>
-                                            </tr>
-
-                                            {[...Array(this.state.variation1Options)].map((a, x) =>
-                                                this.state.variation2On ? (
-                                                    <tr className="trBody">
-                                                        <td className="tdNestedText">
-                                                            {this.state.variation1.options[x].optionName
-                                                                ? this.state.variation1.options[x].optionName
-                                                                : "Option " + (x + 1) + " Variant 1"}
-                                                        </td>
-                                                        <td colSpan="4">
-                                                            <table>
-
-                                                                {[...Array(this.state.variation2Options)].map(
-                                                                    (e, i) => (
-                                                                        <tr className="trBody">
-                                                                            <td className="tdNestedNew">
-                                                                                {this.state.variation1.options[x]
-                                                                                    .variation2Options.options[i].optionName
-                                                                                    ? this.state.variation1.options[x]
-                                                                                        .variation2Options.options[i]
-                                                                                        .optionName
-                                                                                    : "Option " + (i + 1) + " Variant 2"}
-                                                                            </td>
-                                                                            <td className="tdNestedNew">
-                                                                                <div className="StepContainer">
-
-                                                                                    <TextField type="number" size="small" key={"price " + i}
-                                                                                        onChange={this.handleChangeOptionsVariant2.bind(
-                                                                                            this,
-                                                                                            "variation2Price",
-                                                                                            x,
-                                                                                            i
-                                                                                        )}
-                                                                                        onFocus={this.setHint.bind(
-                                                                                            this,
-                                                                                            "VariationPrice"
-                                                                                        )}
-                                                                                        onBlur={() =>
-                                                                                            this.setState({
-                                                                                                FocusOn: false,
-                                                                                            })
-                                                                                        }
-                                                                                        value={
-                                                                                            this.state.variation1.options[x]
-                                                                                                .variation2Options.options[i]
-                                                                                                .price
-                                                                                        }
-                                                                                        invalid={
-                                                                                            this.state.variation1.options[x]
-                                                                                                .variation2Options.options[i]
-                                                                                                .errorPrice && this.state.toBeEdited
-                                                                                        }
-                                                                                        disabled={!this.state.toBeEdited}
-                                                                                        // inputProps={{ min: "0", step: "0.10" }}
-                                                                                        // onFocus={this.setHint.bind(this, "VariationPrice")}
-                                                                                        // onBlur={() =>
-                                                                                        //     this.setState({
-                                                                                        //         FocusOn: false,
-                                                                                        //     })
-                                                                                        // }
-                                                                                        // disabled={!this.state.toBeEdited}
-                                                                                        // onChange={this.handleChangeOptionsVariant2.bind(
-                                                                                        //     this,
-                                                                                        //     "variation2Price",
-                                                                                        //     x,
-                                                                                        //     i
-                                                                                        // )}
-                                                                                        // fullWidth label="Price"
-
-                                                                                        // value={this.state.price}
-                                                                                        // name="Price"
-                                                                                        InputProps={{
-                                                                                            startAdornment: <InputAdornment position="start">RM</InputAdornment>,
-                                                                                        }} required />
-
-
-                                                                                    {/* <InputGroup className="TextFieldsTables">
+                                            {/* <InputGroup className="TextFieldsTables">
                                                                                         <InputGroupAddon type="prepend">
                                                                                             <InputGroupText className="groupText">
                                                                                                 RM
@@ -5733,20 +6006,21 @@ class ProductDetailsComponent extends Component {
                                                                                             disabled={!this.state.toBeEdited}
                                                                                         />
                                                                                     </InputGroup> */}
-                                                                                    {this.state.variation1.options[x]
-                                                                                        .variation2Options.options[i]
-                                                                                        .errorPrice && this.state.toBeEdited ? (
-                                                                                        <Tooltip
-                                                                                            placement="top-end"
-                                                                                            title="Price has to be filled and greater than 0."
-                                                                                            interactive="true"
-                                                                                        >
-                                                                                            <p className="error">*</p>
-                                                                                        </Tooltip>
-                                                                                    ) : null}
-                                                                                </div>
-                                                                            </td>
-                                                                            {/* <td className="tdNestedNew">
+                                            {this.state.variation1.options[x]
+                                              .variation2Options.options[i]
+                                              .errorPrice &&
+                                            this.state.toBeEdited ? (
+                                              <Tooltip
+                                                placement="top-end"
+                                                title="Price has to be filled and greater than 0."
+                                                interactive="true"
+                                              >
+                                                <p className="error">*</p>
+                                              </Tooltip>
+                                            ) : null}
+                                          </div>
+                                        </td>
+                                        {/* <td className="tdNestedNew">
                                                                                 <div className="StepContainer">
                                                                                     <TextField
                                                                                         id="productStock1"
@@ -5800,100 +6074,118 @@ class ProductDetailsComponent extends Component {
                                                                                     ) : null}
                                                                                 </div>
                                                                             </td> */}
-                                                                            <td className="tdNestedNew">
-                                                                                <div className="StepContainer">
-                                                                                    <TextField
-                                                                                        id="productStock1"
-                                                                                        size="small"
-                                                                                        onChange={this.handleChangeOptionsVariant2.bind(
-                                                                                            this,
-                                                                                            "variation2SKU",
-                                                                                            x,
-                                                                                            i
-                                                                                        )}
-                                                                                        onFocus={this.setHint.bind(
-                                                                                            this,
-                                                                                            "VariationSKU"
-                                                                                        )}
-                                                                                        onBlur={() =>
-                                                                                            this.setState({
-                                                                                                FocusOn: false,
-                                                                                            })
-                                                                                        }
-                                                                                        InputProps={{
-                                                                                            readOnly: !this.state.toBeEdited,
-                                                                                        }}
-                                                                                        value={
-                                                                                            this.state.variation1.options[x]
-                                                                                                .variation2Options.options[i].sku
-                                                                                        }
-                                                                                        error={
-                                                                                            this.state.variation1.options[x]
-                                                                                                .variation2Options.options[i]
-                                                                                                .errorSKU && this.state.toBeEdited
-                                                                                        }
-                                                                                        type="number"
-                                                                                        InputLabelProps={{
-                                                                                            shrink: "true",
-                                                                                        }}
-                                                                                        variant="outlined"
-                                                                                        className="InputField2"
-                                                                                    // error={this.state.stock || this.state.skuNotLongEnough}
-                                                                                    />
-                                                                                    {this.state.variation1.options[x]
-                                                                                        .variation2Options.options[i]
-                                                                                        .errorSKU && this.state.toBeEdited ? (
-                                                                                        <Tooltip
-                                                                                            placement="top-end"
-                                                                                            title="SKU has to be filled and at least 8 characters long."
-                                                                                            interactive="true"
-                                                                                        >
-                                                                                            <p className="error">*</p>
-                                                                                        </Tooltip>
-                                                                                    ) : null}
-                                                                                </div>
-                                                                            </td>
-                                                                        </tr>
-                                                                    )
-                                                                )}
-                                                            </table>
-                                                        </td>
-                                                    </tr>
-                                                ) : (
+                                        <td className="tdNestedNew">
+                                          <div className="StepContainer">
+                                            <TextField
+                                              id="productStock1"
+                                              size="small"
+                                              onChange={this.handleChangeOptionsVariant2.bind(
+                                                this,
+                                                "variation2SKU",
+                                                x,
+                                                i
+                                              )}
+                                              onFocus={this.setHint.bind(
+                                                this,
+                                                "VariationSKU"
+                                              )}
+                                              onBlur={() =>
+                                                this.setState({
+                                                  FocusOn: false,
+                                                })
+                                              }
+                                              InputProps={{
+                                                readOnly:
+                                                  !this.state.toBeEdited,
+                                              }}
+                                              value={
+                                                this.state.variation1.options[x]
+                                                  .variation2Options.options[i]
+                                                  .sku
+                                              }
+                                              error={
+                                                this.state.variation1.options[x]
+                                                  .variation2Options.options[i]
+                                                  .errorSKU &&
+                                                this.state.toBeEdited
+                                              }
+                                              type="number"
+                                              InputLabelProps={{
+                                                shrink: "true",
+                                              }}
+                                              variant="outlined"
+                                              className="InputField2"
+                                              // error={this.state.stock || this.state.skuNotLongEnough}
+                                            />
+                                            {this.state.variation1.options[x]
+                                              .variation2Options.options[i]
+                                              .errorSKU &&
+                                            this.state.toBeEdited ? (
+                                              <Tooltip
+                                                placement="top-end"
+                                                title="SKU has to be filled and at least 8 characters long."
+                                                interactive="true"
+                                              >
+                                                <p className="error">*</p>
+                                              </Tooltip>
+                                            ) : null}
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    )
+                                  )}
+                                </table>
+                              </td>
+                            </tr>
+                          ) : (
+                            <tr>
+                              <td className="tdNestedText">
+                                {this.state.variation1.options[x].optionName
+                                  ? this.state.variation1.options[x].optionName
+                                  : "Option " + (x + 1) + " Variant 1"}
+                              </td>
+                              <td className="tdNestedText">
+                                <div className="StepContainer">
+                                  <TextField
+                                    type="number"
+                                    size="small"
+                                    inputProps={{ min: "0", step: "0.10" }}
+                                    onFocus={this.setHint.bind(
+                                      this,
+                                      "VariationPrice"
+                                    )}
+                                    onBlur={() =>
+                                      this.setState({
+                                        FocusOn: false,
+                                      })
+                                    }
+                                    disabled={!this.state.toBeEdited}
+                                    onChange={this.handleChangeOptions.bind(
+                                      this,
+                                      "variation1Price",
+                                      x
+                                    )}
+                                    fullWidth
+                                    label="Price"
+                                    value={
+                                      this.state.variation1.options[x].price
+                                    }
+                                    invalid={
+                                      this.state.variation1.options[x]
+                                        .errorPrice && this.state.toBeEdited
+                                    }
+                                    // name="Price"
+                                    InputProps={{
+                                      startAdornment: (
+                                        <InputAdornment position="start">
+                                          RM
+                                        </InputAdornment>
+                                      ),
+                                    }}
+                                    required
+                                  />
 
-                                                    <tr>
-                                                        <td className="tdNestedText">
-                                                            {this.state.variation1.options[x].optionName
-                                                                ? this.state.variation1.options[x].optionName
-                                                                : "Option " + (x + 1) + " Variant 1"}
-                                                        </td>
-                                                        <td className="tdNestedText">
-                                                            <div className="StepContainer">
-                                                                <TextField type="number" size="small"
-                                                                    inputProps={{ min: "0", step: "0.10" }}
-                                                                    onFocus={this.setHint.bind(this, "VariationPrice")}
-                                                                    onBlur={() =>
-                                                                        this.setState({
-                                                                            FocusOn: false,
-                                                                        })
-                                                                    }
-                                                                    disabled={!this.state.toBeEdited}
-                                                                    onChange={this.handleChangeOptions.bind(
-                                                                        this,
-                                                                        "variation1Price",
-                                                                        x
-                                                                    )}
-                                                                    fullWidth label="Price"
-                                                                    value={this.state.variation1.options[x].price}
-                                                                    invalid={
-                                                                        this.state.variation1.options[x].errorPrice && this.state.toBeEdited
-                                                                    }
-                                                                    // name="Price"
-                                                                    InputProps={{
-                                                                        startAdornment: <InputAdornment position="start">RM</InputAdornment>,
-                                                                    }} required />
-
-                                                                {/* <TextField type="number" size="small"
+                                  {/* <TextField type="number" size="small"
                                                                     step=".10"
                                                                     onFocus={this.setHint.bind(
                                                                         this,
@@ -5920,7 +6212,7 @@ class ProductDetailsComponent extends Component {
                                                                     }}
                                                                     required /> */}
 
-                                                                {/* <InputGroup className="ItemContainer">
+                                  {/* <InputGroup className="ItemContainer">
                                                                     <InputGroupAddon type="prepend">
                                                                         <InputGroupText className="groupText">
                                                                             RM
@@ -5950,18 +6242,19 @@ class ProductDetailsComponent extends Component {
                                                                         disabled={!this.state.toBeEdited}
                                                                     />
                                                                 </InputGroup> */}
-                                                                {this.state.variation1.options[x].errorPrice && this.state.toBeEdited ? (
-                                                                    <Tooltip
-                                                                        placement="top-end"
-                                                                        title="Price has to be filled and greater than 0."
-                                                                        interactive="true"
-                                                                    >
-                                                                        <p className="error">*</p>
-                                                                    </Tooltip>
-                                                                ) : null}
-                                                            </div>
-                                                        </td>
-                                                        {/* <td className="tdNestedText">
+                                  {this.state.variation1.options[x]
+                                    .errorPrice && this.state.toBeEdited ? (
+                                    <Tooltip
+                                      placement="top-end"
+                                      title="Price has to be filled and greater than 0."
+                                      interactive="true"
+                                    >
+                                      <p className="error">*</p>
+                                    </Tooltip>
+                                  ) : null}
+                                </div>
+                              </td>
+                              {/* <td className="tdNestedText">
                                                             <div className="StepContainer">
                                                                 <TextField
                                                                     id="productStock1"
@@ -6008,453 +6301,551 @@ class ProductDetailsComponent extends Component {
                                                                 ) : null}
                                                             </div>
                                                         </td> */}
-                                                        <td className="tdNestedText">
-                                                            <div className="StepContainer">
-                                                                <TextField
-                                                                    id="productSku"
-                                                                    size="small"
-                                                                    value={this.state.variation1.options[x].sku}
-                                                                    onFocus={this.setHint.bind(
-                                                                        this,
-                                                                        "VariationSKU"
-                                                                    )}
-                                                                    onBlur={() =>
-                                                                        this.setState({
-                                                                            FocusOn: false,
-                                                                        })
-                                                                    }
-                                                                    label="SKU"
-                                                                    onChange={this.handleChangeOptions.bind(
-                                                                        this,
-                                                                        "variation1SKU",
-                                                                        x
-                                                                    )}
-                                                                    InputProps={{
-                                                                        readOnly: !this.state.toBeEdited,
-                                                                    }}
-                                                                    InputLabelProps={{
-                                                                        shrink: "true",
-                                                                    }}
-                                                                    variant="outlined"
-                                                                    className="InputField2"
-                                                                    error={
-                                                                        this.state.variation1.options[x].errorSKU && this.state.toBeEdited
-                                                                    }
-                                                                    disabled={!this.state.toBeEdited}
-                                                                />
-                                                                {this.state.variation1.options[x].errorSKU && this.state.toBeEdited ? (
-                                                                    <Tooltip
-                                                                        placement="top-end"
-                                                                        title="SKU has to be filled and be at least 8 characters long."
-                                                                        interactive="true"
-                                                                    >
-                                                                        <p className="error">*</p>
-                                                                    </Tooltip>
-                                                                ) : null}
-                                                            </div>
-                                                            {
-                                                                this.ExistanceSKU.length > 0 && this.ExistanceSKU.filter((data) =>
-                                                                    data.ProductSKU === this.state.variation1.options[x].sku
-                                                                ).length > 0 &&
-                                                                <p className="error">SKU already exists</p>
-                                                            }
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            )}
-                                        </table>
-                                    ) : null}
-                                </CardContent>
-                            </Card>
+                              <td className="tdNestedText">
+                                <div className="StepContainer">
+                                  <TextField
+                                    id="productSku"
+                                    size="small"
+                                    value={this.state.variation1.options[x].sku}
+                                    onFocus={this.setHint.bind(
+                                      this,
+                                      "VariationSKU"
+                                    )}
+                                    onBlur={() =>
+                                      this.setState({
+                                        FocusOn: false,
+                                      })
+                                    }
+                                    label="SKU"
+                                    onChange={this.handleChangeOptions.bind(
+                                      this,
+                                      "variation1SKU",
+                                      x
+                                    )}
+                                    InputProps={{
+                                      readOnly: !this.state.toBeEdited,
+                                    }}
+                                    InputLabelProps={{
+                                      shrink: "true",
+                                    }}
+                                    variant="outlined"
+                                    className="InputField2"
+                                    error={
+                                      this.state.variation1.options[x]
+                                        .errorSKU && this.state.toBeEdited
+                                    }
+                                    disabled={!this.state.toBeEdited}
+                                  />
+                                  {this.state.variation1.options[x].errorSKU &&
+                                  this.state.toBeEdited ? (
+                                    <Tooltip
+                                      placement="top-end"
+                                      title="SKU has to be filled and be at least 8 characters long."
+                                      interactive="true"
+                                    >
+                                      <p className="error">*</p>
+                                    </Tooltip>
+                                  ) : null}
+                                </div>
+                                {this.ExistanceSKU.length > 0 &&
+                                  this.ExistanceSKU.filter(
+                                    (data) =>
+                                      data.ProductSKU ===
+                                      this.state.variation1.options[x].sku
+                                  ).length > 0 && (
+                                    <p className="error">SKU already exists</p>
+                                  )}
+                              </td>
+                            </tr>
+                          )
+                        )}
+                      </table>
+                    ) : null}
+                  </CardContent>
+                </Card>
 
-                            <br />
+                <br />
 
-
-
-                            <Card className="SubContainer" id="shippingInfo">
-                                <CardContent>
-                                    <div className="row" style={{ display: "flex" }}>
-                                        <div className="col-6">
-                                            <p className="Heading">Shipping Information</p>
+                <Card className="SubContainer" id="shippingInfo">
+                  <CardContent>
+                    <div className="row" style={{ display: "flex" }}>
+                      <div className="col-6">
+                        <p className="Heading">Shipping Information</p>
+                      </div>
+                      <div className="col-6" style={{ textAlign: "right" }}>
+                        <HtmlTooltip
+                          title={
+                            <React.Fragment>
+                              <div style={{ padding: "10px" }}>
+                                <Typography color="inherit">
+                                  <label style={{ fontWeight: "bold" }}>
+                                    Standard Shipping Packaging (m)
+                                  </label>
+                                </Typography>
+                                {dummyStandard.length > 0 &&
+                                  dummyStandard.map((data, index) => {
+                                    return (
+                                      <div
+                                        className="row"
+                                        style={{ paddingTop: "5px", flex: "1" }}
+                                      >
+                                        <div className="col-2">
+                                          <label style={{ fontWeight: "bold" }}>
+                                            Option{index + 1}
+                                          </label>
                                         </div>
-                                        <div className="col-6" style={{ textAlign: "right" }}>
-                                            <HtmlTooltip
-                                                title={
-                                                    <React.Fragment>
-                                                        <div style={{ padding: "10px" }}>
-                                                            <Typography color="inherit"><label style={{ fontWeight: "bold" }}>Standard Shipping Packaging (m)</label></Typography>
-                                                            {
-                                                                dummyStandard.length > 0 && dummyStandard.map((data, index) => {
-                                                                    return (
-                                                                        <div className="row" style={{ paddingTop: "5px", flex: "1" }}>
-                                                                            <div className="col-2">
-                                                                                <label style={{ fontWeight: "bold" }}>Option{index + 1}</label>
-                                                                            </div>
-                                                                            <div className="col-3">
-                                                                                <label>Width:</label> {data.Width}
-                                                                            </div>
-                                                                            <div className="col-3">
-                                                                                <label>Height:</label>{data.Height}
-                                                                            </div>
-                                                                            <div className="col-2">
-                                                                                <label>Depth:</label>{data.Depth}
-                                                                            </div>
-                                                                            <div className="col-1" style={{ paddingBottom: "5px" }}>
-                                                                                {
-                                                                                    this.state.toBeEdited &&
-                                                                                    <IconButton onClick={() => handleShipping(data, index)}
-                                                                                    // disabled={this.state.toBeEdited ? false : true}
-                                                                                    >
-                                                                                        <CheckBoxIcon style={{ color: this.state.OptionClick === index ? "blue" : "grey" }} />
-                                                                                    </IconButton>
-                                                                                }
-                                                                            </div>
-                                                                        </div>
-                                                                    )
-                                                                })
-                                                            }
-                                                        </div>
-                                                    </React.Fragment>
-                                                }
-                                            >
-                                                <IconButton size="medium">
-                                                    <InfoIcon />
-                                                </IconButton>
-                                            </HtmlTooltip>
+                                        <div className="col-3">
+                                          <label>Width:</label> {data.Width}
                                         </div>
-                                    </div>
-
-
-                                    <div className="HorizontalContainer">
-                                        <p className="FontType3">Dimension: </p>
-                                        <div className="InputFieldMiddleElementNested">
-                                            <p className="FontTypeInputLabel">Height</p>
-                                            <FormControl style={{ width: "100%" }} variant="outlined">
-                                                <OutlinedInput
-                                                    endAdornment={<InputAdornment position="end">m</InputAdornment>}
-                                                    size="small"
-                                                    value={this.state.height}
-                                                    invalid={
-                                                        this.state.heightEmpty || this.state.heightNotDecimal
-                                                    }
-                                                    onChange={this.handleChange.bind(this, "height")}
-                                                    onFocus={this.setHint.bind(this, "ProductHeight")}
-                                                    onBlur={() =>
-                                                        this.setState({
-                                                            FocusOn: false,
-                                                        })
-                                                    }
-                                                    label="" required
-                                                    disabled={!this.state.toBeEdited}
-                                                />
-                                            </FormControl>
+                                        <div className="col-3">
+                                          <label>Height:</label>
+                                          {data.Height}
                                         </div>
-                                        <div className="InputFieldMiddleElementNested">
-                                            <p className="FontTypeInputLabel">Width</p>
-                                            <FormControl style={{ width: "100%" }} variant="outlined">
-                                                <OutlinedInput
-                                                    endAdornment={<InputAdornment position="end">m</InputAdornment>}
-                                                    size="small"
-                                                    value={this.state.width}
-                                                    invalid={
-                                                        this.state.widthEmpty || this.state.widthNotDecimal
-                                                    }
-                                                    onChange={this.handleChange.bind(this, "width")}
-                                                    onFocus={this.setHint.bind(this, "ProductWidth")}
-                                                    onBlur={() =>
-                                                        this.setState({
-                                                            FocusOn: false,
-                                                        })
-                                                    }
-                                                    label="" required
-                                                    disabled={!this.state.toBeEdited}
-                                                />
-                                            </FormControl>
+                                        <div className="col-2">
+                                          <label>Depth:</label>
+                                          {data.Depth}
                                         </div>
-                                        <div className="InputFieldMiddleElementNested">
-                                            <p className="FontTypeInputLabel">Depth</p>
-                                            <FormControl style={{ width: "100%" }} variant="outlined">
-                                                <OutlinedInput
-                                                    endAdornment={<InputAdornment position="end">m</InputAdornment>}
-                                                    size="small"
-                                                    value={this.state.depth}
-                                                    invalid={
-                                                        this.state.depthEmpty || this.state.depthNotDecimal
-                                                    }
-                                                    onChange={this.handleChange.bind(this, "depth")}
-                                                    onFocus={this.setHint.bind(this, "ProductDepth")}
-                                                    onBlur={() =>
-                                                        this.setState({
-                                                            FocusOn: false,
-                                                        })
-                                                    }
-                                                    disabled={!this.state.toBeEdited}
-                                                    label="" required
-                                                />
-                                            </FormControl>
-                                        </div>
-                                    </div>
-
-                                    {this.state.heightEmpty && this.state.toBeEdited && (
-                                        <p className="error">Product height cannot be empty.</p>
-                                    )}
-                                    {this.state.heightNotDecimal && this.state.height && this.state.toBeEdited && (
-                                        <p className="error">
-                                            Product height has to be positive and in two decimal places.
-                                        </p>
-                                    )}
-                                    {this.state.widthEmpty && this.state.toBeEdited && (
-                                        <p className="error">Product width cannot be empty.</p>
-                                    )}
-                                    {this.state.widthNotDecimal && this.state.width && this.state.toBeEdited && (
-                                        <p className="error">
-                                            Product width has to be positive and in two decimal places.
-                                        </p>
-                                    )}
-                                    {this.state.depthEmpty && this.state.toBeEdited && (
-                                        <p className="error">Product depth cannot be empty.</p>
-                                    )}
-                                    {this.state.depthNotDecimal && this.state.depth && this.state.toBeEdited && (
-                                        <p className="error">
-                                            Product depth has to be positive and in two decimal places.
-                                        </p>
-                                    )}
-                                    <div className="HorizontalContainer">
-                                        <div className="InputFieldMiddleElement">
-                                            <p className="FontTypeInputLabel">Weight</p>
-                                            <FormControl className="InputField" variant="outlined">
-                                                <OutlinedInput
-                                                    endAdornment={<InputAdornment position="end">kg</InputAdornment>}
-                                                    size="small"
-                                                    value={this.state.weight}
-                                                    onChange={this.handleChange.bind(this, "weight")}
-                                                    onFocus={this.setHint.bind(this, "ProductWeight")}
-                                                    onBlur={() =>
-                                                        this.setState({
-                                                            FocusOn: false,
-                                                        })
-                                                    }
-                                                    invalid={
-                                                        this.state.weightEmpty || this.state.weightNotDecimal
-                                                    }
-                                                    disabled={!this.state.toBeEdited}
-                                                    label="" required
-                                                />
-                                            </FormControl>
-                                        </div>
-                                    </div>
-
-                                    {this.state.weightEmpty && this.state.toBeEdited && (
-                                        <p className="error">Product weight cannot be empty.</p>
-                                    )}
-
-                                    {this.state.weightNotDecimal && this.state.weight && this.state.toBeEdited && (
-                                        <p className="error">
-                                            Product weight has to be in two decimal place.
-                                        </p>
-                                    )}
-                                </CardContent>
-                            </Card>
-                        </div >
-                        <br />
-                        <div className="SubmitButtonContainer w-100">
-                            {this.state.toBeEdited ?
-                                <Button variant="contained" className="w-100" onClick={() => { this.OnSubmit() }} color="primary">
-                                    Update Product Details
-                                </Button> : null}
-                        </div>
-                    </div >
-
-                    <div className="StepContainer">
-                        <div className="ProgressTab">
-                            <Card>
-                                <CardContent>
-                                    <div className="HorizontalContainer">
-                                        <Stepper
-                                            activeStep={this.state.activeStep}
-                                            orientation="vertical"
-                                            className="ItemContainer"
-                                            nonLinear
+                                        <div
+                                          className="col-1"
+                                          style={{ paddingBottom: "5px" }}
                                         >
-                                            <Step key="basicInfo">
-                                                <StepLabel>
-                                                    <HashLink
-                                                        to={`/viewProductDetailList/${this.props.match.params.productId}#basicInfo`}
-                                                        className="FontType4"
-                                                    >
-                                                        Basic Information
-                                                    </HashLink>
-                                                </StepLabel>
-                                                <StepContent>
-                                                    <LinearProgressWithLabel
-                                                        value={this.state.progressBasic}
-                                                    />
-                                                </StepContent>
-                                            </Step>
-
-                                            <Step key="productDetails">
-                                                <StepLabel>
-                                                    <HashLink
-                                                        to={`/viewProductDetailList/${this.props.match.params.productId}#productDetails`}
-                                                        className="FontType4"
-                                                    >
-                                                        Product Details
-                                                    </HashLink>
-                                                </StepLabel>
-                                                <StepContent>
-                                                    <LinearProgressWithLabel
-                                                        value={this.state.progressDetails}
-                                                    />
-                                                </StepContent>
-                                            </Step>
-
-                                            <Step key="productMedia">
-                                                <StepLabel>
-                                                    <HashLink
-                                                        to={`/viewProductDetailList/${this.props.match.params.productId}#productMedia`}
-                                                        className="FontType4"
-                                                    >
-                                                        Product Media
-                                                    </HashLink>
-                                                </StepLabel>
-                                                <StepContent>
-                                                    <LinearProgressWithLabel
-                                                        value={this.state.progressMedia}
-                                                    />
-                                                </StepContent>
-                                            </Step>
-
-                                            <Step key="descriptionCard">
-                                                <StepLabel>
-                                                    <HashLink
-                                                        to={`/viewProductDetailList/${this.props.match.params.productId}#descriptionCard`}
-                                                        className="FontType4"
-                                                    >
-                                                        Product Description
-                                                    </HashLink>
-                                                </StepLabel>
-                                                <StepContent>
-                                                    <LinearProgressWithLabel
-                                                        value={this.state.progressDescription}
-                                                    />
-                                                </StepContent>
-                                            </Step>
-                                            <Step key="specification">
-                                                <StepLabel>
-                                                    <HashLink
-                                                        to={`/viewProductDetailList/${this.props.match.params.productId}#specification`}
-                                                        className="FontType4"
-                                                    >
-                                                        Product Specification
-                                                    </HashLink>
-                                                </StepLabel>
-                                                <StepContent>
-                                                    <LinearProgressWithLabel
-                                                        value={this.state.progressSpecification}
-                                                    />
-                                                </StepContent>
-                                            </Step>
-                                            <Step key="productVariations">
-                                                <StepLabel>
-                                                    <HashLink
-                                                        to={`/viewProductDetailList/${this.props.match.params.productId}#productVariation`}
-                                                        className="FontType4"
-                                                    >
-                                                        Product Variations
-                                                    </HashLink>
-                                                </StepLabel>
-                                                <StepContent>
-                                                    <LinearProgressWithLabel
-                                                        value={this.state.progressVariation}
-                                                    />
-                                                </StepContent>
-                                            </Step>
-                                            <Step key="shippingInfo">
-                                                <StepLabel>
-                                                    <HashLink
-                                                        to={`/viewProductDetailList/${this.props.match.params.productId}#shippingInfo`}
-                                                        className="FontType4"
-                                                    >
-                                                        Shipping Information
-                                                    </HashLink>
-                                                </StepLabel>
-                                                <StepContent>
-                                                    <LinearProgressWithLabel
-                                                        value={this.state.progressShipping}
-                                                    />
-                                                </StepContent>
-                                            </Step>
-                                        </Stepper>
-                                    </div>
-                                </CardContent>
-                            </Card>
-
-                            {this.state.toBeEdited ?
-
-                                <Fade in={this.state.FocusOn} className="mt-2">
-                                    <Card className="HintsCard">
-                                        <CardContent>
-                                            <div className="HintsContainer">
-                                                <div className="HintsTitleContainer">
-                                                    <InfoOutlinedIcon
-                                                        color="disabled"
-                                                        className="HintsIcon"
-                                                    />
-                                                    <p className="HintsTitleText">Hints</p>
-                                                </div>
-                                                <div className="HintsBodyContainer">
-                                                    <ul>
-                                                        {this.state.helpText.map((text) => (
-                                                            <li>
-                                                                <p className="HintBodyText">{text}</p>
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                </Fade>
-                                : null}
-                        </div>
+                                          {this.state.toBeEdited && (
+                                            <IconButton
+                                              onClick={() =>
+                                                handleShipping(data, index)
+                                              }
+                                              // disabled={this.state.toBeEdited ? false : true}
+                                            >
+                                              <CheckBoxIcon
+                                                style={{
+                                                  color:
+                                                    this.state.OptionClick ===
+                                                    index
+                                                      ? "blue"
+                                                      : "grey",
+                                                }}
+                                              />
+                                            </IconButton>
+                                          )}
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                              </div>
+                            </React.Fragment>
+                          }
+                        >
+                          <IconButton size="medium">
+                            <InfoIcon />
+                          </IconButton>
+                        </HtmlTooltip>
+                      </div>
                     </div>
 
-                    <ModalPopOut open={this.state.isOverFileSize} title="File Size Error" showAction={false} handleToggleDialog={() => this.setState({ isOverFileSize: false })}>
-                        <div className="container-fluid">
-                            <div className="container">
-                                <h3>Media Error</h3>
-                                <label>Image choose has over the size permitted. Please try a smaller size image</label>
-                                <p className="text-danger"><i>*** Only image with 1000KB is allow</i></p>
-                                <div style={{ textAlign: "right" }}>
-                                    <Button variant="contained" color="primary" onClick={() => this.setState({ isOverFileSize: false })
-                                    }>
-                                        Cancel
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    </ModalPopOut>
+                    <div className="HorizontalContainer">
+                      <p className="FontType3">Dimension: </p>
+                      <div className="InputFieldMiddleElementNested">
+                        <p className="FontTypeInputLabel">Height</p>
+                        <FormControl
+                          style={{ width: "100%" }}
+                          variant="outlined"
+                        >
+                          <OutlinedInput
+                            endAdornment={
+                              <InputAdornment position="end">m</InputAdornment>
+                            }
+                            size="small"
+                            value={this.state.height}
+                            invalid={
+                              this.state.heightEmpty ||
+                              this.state.heightNotDecimal
+                            }
+                            onChange={this.handleChange.bind(this, "height")}
+                            onFocus={this.setHint.bind(this, "ProductHeight")}
+                            onBlur={() =>
+                              this.setState({
+                                FocusOn: false,
+                              })
+                            }
+                            label=""
+                            required
+                            disabled={!this.state.toBeEdited}
+                          />
+                        </FormControl>
+                      </div>
+                      <div className="InputFieldMiddleElementNested">
+                        <p className="FontTypeInputLabel">Width</p>
+                        <FormControl
+                          style={{ width: "100%" }}
+                          variant="outlined"
+                        >
+                          <OutlinedInput
+                            endAdornment={
+                              <InputAdornment position="end">m</InputAdornment>
+                            }
+                            size="small"
+                            value={this.state.width}
+                            invalid={
+                              this.state.widthEmpty ||
+                              this.state.widthNotDecimal
+                            }
+                            onChange={this.handleChange.bind(this, "width")}
+                            onFocus={this.setHint.bind(this, "ProductWidth")}
+                            onBlur={() =>
+                              this.setState({
+                                FocusOn: false,
+                              })
+                            }
+                            label=""
+                            required
+                            disabled={!this.state.toBeEdited}
+                          />
+                        </FormControl>
+                      </div>
+                      <div className="InputFieldMiddleElementNested">
+                        <p className="FontTypeInputLabel">Depth</p>
+                        <FormControl
+                          style={{ width: "100%" }}
+                          variant="outlined"
+                        >
+                          <OutlinedInput
+                            endAdornment={
+                              <InputAdornment position="end">m</InputAdornment>
+                            }
+                            size="small"
+                            value={this.state.depth}
+                            invalid={
+                              this.state.depthEmpty ||
+                              this.state.depthNotDecimal
+                            }
+                            onChange={this.handleChange.bind(this, "depth")}
+                            onFocus={this.setHint.bind(this, "ProductDepth")}
+                            onBlur={() =>
+                              this.setState({
+                                FocusOn: false,
+                              })
+                            }
+                            disabled={!this.state.toBeEdited}
+                            label=""
+                            required
+                          />
+                        </FormControl>
+                      </div>
+                    </div>
 
-                    <ModalPopOut open={this.state.isErrorOpen} title="Product Upload Limit Reach" showAction={false} handleToggleDialog={() => this.setState({ isErrorOpen: false })}>
-                        <div className="container-fluid">
-                            <div className="container">
-                                <h3>Product Upload Limit Reach</h3>
-                                <label>You have reach your product upload limit </label>
-                                <p className="text-danger"><i>** Only {this.props.productInfo.length > 0 && this.props.productInfo[0].UserVariationLimit} product variation is allow </i></p>
-                                <label>Step to solve: </label>
-                                <p>1) Contact sales to upgrade plan</p>
-                                <p>2) Delete few unused uploaded product from the list</p>
-                                <div style={{ textAlign: "right" }}>
-                                    <Button variant="contained" color="primary" onClick={() => this.setState({ isErrorOpen: false })
-                                    }>
-                                        Cancel
-                                    </Button>
-                                </div>
-                            </div>
+                    {this.state.heightEmpty && this.state.toBeEdited && (
+                      <p className="error">Product height cannot be empty.</p>
+                    )}
+                    {this.state.heightNotDecimal &&
+                      this.state.height &&
+                      this.state.toBeEdited && (
+                        <p className="error">
+                          Product height has to be positive and in two decimal
+                          places.
+                        </p>
+                      )}
+                    {this.state.widthEmpty && this.state.toBeEdited && (
+                      <p className="error">Product width cannot be empty.</p>
+                    )}
+                    {this.state.widthNotDecimal &&
+                      this.state.width &&
+                      this.state.toBeEdited && (
+                        <p className="error">
+                          Product width has to be positive and in two decimal
+                          places.
+                        </p>
+                      )}
+                    {this.state.depthEmpty && this.state.toBeEdited && (
+                      <p className="error">Product depth cannot be empty.</p>
+                    )}
+                    {this.state.depthNotDecimal &&
+                      this.state.depth &&
+                      this.state.toBeEdited && (
+                        <p className="error">
+                          Product depth has to be positive and in two decimal
+                          places.
+                        </p>
+                      )}
+                    <div className="HorizontalContainer">
+                      <div className="InputFieldMiddleElement">
+                        <p className="FontTypeInputLabel">Weight</p>
+                        <FormControl className="InputField" variant="outlined">
+                          <OutlinedInput
+                            endAdornment={
+                              <InputAdornment position="end">kg</InputAdornment>
+                            }
+                            size="small"
+                            value={this.state.weight}
+                            onChange={this.handleChange.bind(this, "weight")}
+                            onFocus={this.setHint.bind(this, "ProductWeight")}
+                            onBlur={() =>
+                              this.setState({
+                                FocusOn: false,
+                              })
+                            }
+                            invalid={
+                              this.state.weightEmpty ||
+                              this.state.weightNotDecimal
+                            }
+                            disabled={!this.state.toBeEdited}
+                            label=""
+                            required
+                          />
+                        </FormControl>
+                      </div>
+                    </div>
+
+                    {this.state.weightEmpty && this.state.toBeEdited && (
+                      <p className="error">Product weight cannot be empty.</p>
+                    )}
+
+                    {this.state.weightNotDecimal &&
+                      this.state.weight &&
+                      this.state.toBeEdited && (
+                        <p className="error">
+                          Product weight has to be in two decimal place.
+                        </p>
+                      )}
+                  </CardContent>
+                </Card>
+              </div>
+              <br />
+              <div className="SubmitButtonContainer w-100">
+                {this.state.toBeEdited ? (
+                  <Button
+                    variant="contained"
+                    className="w-100"
+                    onClick={() => {
+                      this.OnSubmit();
+                    }}
+                    color="primary"
+                  >
+                    Update Product Details
+                  </Button>
+                ) : null}
+              </div>
+            </div>
+
+            <div className="StepContainer">
+              <div className="ProgressTab">
+                <Card>
+                  <CardContent>
+                    <div className="HorizontalContainer">
+                      <Stepper
+                        activeStep={this.state.activeStep}
+                        orientation="vertical"
+                        className="ItemContainer"
+                        nonLinear
+                      >
+                        <Step key="basicInfo">
+                          <StepLabel>
+                            <HashLink
+                              to={`/viewProductDetailList/${this.props.match.params.productId}#basicInfo`}
+                              className="FontType4"
+                            >
+                              Basic Information
+                            </HashLink>
+                          </StepLabel>
+                          <StepContent>
+                            <LinearProgressWithLabel
+                              value={this.state.progressBasic}
+                            />
+                          </StepContent>
+                        </Step>
+
+                        <Step key="productDetails">
+                          <StepLabel>
+                            <HashLink
+                              to={`/viewProductDetailList/${this.props.match.params.productId}#productDetails`}
+                              className="FontType4"
+                            >
+                              Product Details
+                            </HashLink>
+                          </StepLabel>
+                          <StepContent>
+                            <LinearProgressWithLabel
+                              value={this.state.progressDetails}
+                            />
+                          </StepContent>
+                        </Step>
+
+                        <Step key="productMedia">
+                          <StepLabel>
+                            <HashLink
+                              to={`/viewProductDetailList/${this.props.match.params.productId}#productMedia`}
+                              className="FontType4"
+                            >
+                              Product Media
+                            </HashLink>
+                          </StepLabel>
+                          <StepContent>
+                            <LinearProgressWithLabel
+                              value={this.state.progressMedia}
+                            />
+                          </StepContent>
+                        </Step>
+
+                        <Step key="descriptionCard">
+                          <StepLabel>
+                            <HashLink
+                              to={`/viewProductDetailList/${this.props.match.params.productId}#descriptionCard`}
+                              className="FontType4"
+                            >
+                              Product Description
+                            </HashLink>
+                          </StepLabel>
+                          <StepContent>
+                            <LinearProgressWithLabel
+                              value={this.state.progressDescription}
+                            />
+                          </StepContent>
+                        </Step>
+                        <Step key="specification">
+                          <StepLabel>
+                            <HashLink
+                              to={`/viewProductDetailList/${this.props.match.params.productId}#specification`}
+                              className="FontType4"
+                            >
+                              Product Specification
+                            </HashLink>
+                          </StepLabel>
+                          <StepContent>
+                            <LinearProgressWithLabel
+                              value={this.state.progressSpecification}
+                            />
+                          </StepContent>
+                        </Step>
+                        <Step key="productVariations">
+                          <StepLabel>
+                            <HashLink
+                              to={`/viewProductDetailList/${this.props.match.params.productId}#productVariation`}
+                              className="FontType4"
+                            >
+                              Product Variations
+                            </HashLink>
+                          </StepLabel>
+                          <StepContent>
+                            <LinearProgressWithLabel
+                              value={this.state.progressVariation}
+                            />
+                          </StepContent>
+                        </Step>
+                        <Step key="shippingInfo">
+                          <StepLabel>
+                            <HashLink
+                              to={`/viewProductDetailList/${this.props.match.params.productId}#shippingInfo`}
+                              className="FontType4"
+                            >
+                              Shipping Information
+                            </HashLink>
+                          </StepLabel>
+                          <StepContent>
+                            <LinearProgressWithLabel
+                              value={this.state.progressShipping}
+                            />
+                          </StepContent>
+                        </Step>
+                      </Stepper>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {this.state.toBeEdited ? (
+                  <Fade in={this.state.FocusOn} className="mt-2">
+                    <Card className="HintsCard">
+                      <CardContent>
+                        <div className="HintsContainer">
+                          <div className="HintsTitleContainer">
+                            <InfoOutlinedIcon
+                              color="disabled"
+                              className="HintsIcon"
+                            />
+                            <p className="HintsTitleText">Hints</p>
+                          </div>
+                          <div className="HintsBodyContainer">
+                            <ul>
+                              {this.state.helpText.map((text) => (
+                                <li>
+                                  <p className="HintBodyText">{text}</p>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
                         </div>
-                    </ModalPopOut>
-                </div >
-                : <LoadingPanel />
+                      </CardContent>
+                    </Card>
+                  </Fade>
+                ) : null}
+              </div>
+            </div>
+
+            <ModalPopOut
+              open={this.state.isOverFileSize}
+              title="File Size Error"
+              showAction={false}
+              handleToggleDialog={() =>
+                this.setState({ isOverFileSize: false })
+              }
+            >
+              <div className="container-fluid">
+                <div className="container">
+                  <h3>Media Error</h3>
+                  <label>
+                    Image choose has over the size permitted. Please try a
+                    smaller size image
+                  </label>
+                  <p className="text-danger">
+                    <i>*** Only image with 1000KB is allow</i>
+                  </p>
+                  <div style={{ textAlign: "right" }}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => this.setState({ isOverFileSize: false })}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </ModalPopOut>
+
+            <ModalPopOut
+              open={this.state.isErrorOpen}
+              title="Product Upload Limit Reach"
+              showAction={false}
+              handleToggleDialog={() => this.setState({ isErrorOpen: false })}
+            >
+              <div className="container-fluid">
+                <div className="container">
+                  <h3>Product Upload Limit Reach</h3>
+                  <label>You have reach your product upload limit </label>
+                  <p className="text-danger">
+                    <i>
+                      ** Only{" "}
+                      {this.props.productInfo.length > 0 &&
+                        this.props.productInfo[0].UserVariationLimit}{" "}
+                      product variation is allow{" "}
+                    </i>
+                  </p>
+                  <label>Step to solve: </label>
+                  <p>1) Contact sales to upgrade plan</p>
+                  <p>2) Delete few unused uploaded product from the list</p>
+                  <div style={{ textAlign: "right" }}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => this.setState({ isErrorOpen: false })}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </ModalPopOut>
+          </div>
+        ) : (
+          <LoadingPanel />
         );
     }
 }

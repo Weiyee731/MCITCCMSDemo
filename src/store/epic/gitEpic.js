@@ -10,7 +10,7 @@ const loginUrl = ServerConfiguration.LoginUrl;
 const LiveServerLoginUrl = ServerConfiguration.LiveServerLoginUrl;
 
 // const project = 'emporia'
-const project = window.localStorage.getItem("project")
+const project = window.localStorage.getItem("project") === null ? window.location.hostname === "localhost" ? window.location.pathname.split("/")[1].split(".")[1] : window.location.hostname.split(".")[1] : window.localStorage.getItem("project")
 
 console.log('ss', url + project)
 
@@ -21,7 +21,8 @@ export class GitEpic {
     action$.pipe(filter(action => action.type === GitAction.Login), map(action => {
       return dispatch => {
         try {
-          console.log(url + project + "/" +
+          console.log(
+            loginUrl + project + "/" +
             // url + project + "/" +
             "User_Login?username=" +
             action.payload.username +
@@ -30,7 +31,7 @@ export class GitEpic {
             "&ProjectDomainName=" +
             action.payload.ProjectDomainName)
           return fetch(
-            url + project + "/" +
+            loginUrl + project + "/" +
             // url + project + "/" +
             "User_Login?username=" +
             action.payload.username +
