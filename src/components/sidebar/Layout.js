@@ -72,7 +72,7 @@ function Layout() {
   };
 
   const decryptData = (data) => {
-    var bytes = CryptoJS.AES.decrypt(data, 'myemporia@123');
+    var bytes = CryptoJS.AES.decrypt(data, 'mcitc@123');
     var decryptedData = bytes.toString(CryptoJS.enc.Utf8);
 
     return decryptedData
@@ -87,9 +87,9 @@ function Layout() {
         UserID: systemPath[pathLength - 1],
         UserName: systemPath[pathLength - 2],
       })
-      localStorage.setItem("project", "myemporia")
-      localStorage.setItem("projectURL", "CMS.myemporia.my")
-      localStorage.setItem("projectDomain", "myemporia" + "." + "MY")
+      localStorage.setItem("project", "mcitc")
+      localStorage.setItem("projectURL", "CMS.mcitc.my")
+      localStorage.setItem("projectDomain", "mcitc" + "." + "MY")
       dispatch(GitAction.CallUserProfile({
         TYPE: "UserProfile",
         TYPEVALUE: systemPath[pathLength - 1],

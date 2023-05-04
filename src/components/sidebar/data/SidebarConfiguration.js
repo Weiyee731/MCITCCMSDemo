@@ -131,15 +131,16 @@ const SidebarConfiguration = () => {
         dispatch(
             GitAction.CallFetchSidebar({
                 ROLEGROUPID: JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID,
-                PROJECTID: 2,
+                PROJECTID: 1,
             })
         );
     }, []);
 
     let overallListing = [];
 
-    const eCommercePlatform = window.location.hostname === "localhost" ? "http://localhost:3000/EmporiaDev" : "https://myemporia.my/emporiadev/"
+    const eCommercePlatform = window.location.hostname === "localhost" ? "http://localhost:3000" : "https://mcitc.my/"
 
+    console.log("Dasdadadas", sidebars)
     sidebars.length > 0 &&
         JSON.parse(localStorage.getItem("loginUser"))[0].UserTypeID !== 1 ?
         sidebars.filter((x) => x.PageID !== 15).map((data) => {
@@ -192,7 +193,7 @@ const SidebarConfiguration = () => {
                 overallListing.push(listing);
             } else {
                 let listing = {
-                    to: data.page === '/' ? eCommercePlatform : data.page,
+                    to: data.page === '/' ? eCommercePlatform : "." + data.page,
                     title: data.title,
                     icon: data.icon,
                 };
